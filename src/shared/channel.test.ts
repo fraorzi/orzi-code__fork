@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   appIdFor,
@@ -14,18 +15,18 @@ describe("channel", () => {
   });
 
   it("returns the right product names", () => {
-    expect(productNameFor("stable")).toBe("Poracode");
-    expect(productNameFor("nightly")).toBe("Poracode Nightly");
+    expect(productNameFor("stable")).toBe("Poracode Personal");
+    expect(productNameFor("nightly")).toBe("Poracode Personal Nightly");
   });
 
   it("returns the right app ids", () => {
-    expect(appIdFor("stable")).toBe("com.lightcode.app");
-    expect(appIdFor("nightly")).toBe("com.lightcode.app.nightly");
+    expect(appIdFor("stable")).toBe("com.franciszek.poracode.personal");
+    expect(appIdFor("nightly")).toBe("com.franciszek.poracode.personal.nightly");
   });
 
   it("returns the right user data dir names", () => {
-    expect(userDataDirNameFor("stable")).toBe(".poracode");
-    expect(userDataDirNameFor("nightly")).toBe(".poracode-nightly");
+    expect(userDataDirNameFor("stable")).toBe(".poracode-personal");
+    expect(userDataDirNameFor("nightly")).toBe(".poracode-personal-nightly");
   });
 
   it("only returns a published channel name for nightly", () => {
@@ -34,8 +35,8 @@ describe("channel", () => {
   });
 
   it("returns artifact prefixes that are distinct between channels", () => {
-    expect(artifactPrefixFor("stable")).toBe("Poracode");
-    expect(artifactPrefixFor("nightly")).toBe("Poracode-Nightly");
+    expect(artifactPrefixFor("stable")).toBe("Poracode Personal");
+    expect(artifactPrefixFor("nightly")).toBe("Poracode-Personal-Nightly");
     expect(artifactPrefixFor("stable")).not.toBe(artifactPrefixFor("nightly"));
   });
 });

@@ -1,3 +1,4 @@
+# Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 msgid ""
 msgstr ""
 "POT-Creation-Date: 2026-06-17 10:29-0700\n"
@@ -1013,6 +1014,10 @@ msgstr "이 스레드를 실행하려면 먼저 자격 증명을 추가하세요
 #~ msgid "Add Cursor profile"
 #~ msgstr "Cursor 프로필 추가"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Add fallback model"
+msgstr "대체 모델 추가"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 msgid "Add folder"
 msgstr "폴더 추가"
@@ -1061,6 +1066,11 @@ msgstr "공급자 추가"
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/GitReviewSidebar.tsx
 msgid "Add Remote"
 msgstr "리모트 추가"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Add role"
+msgstr "역할 추가"
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Add shortcut"
@@ -1115,6 +1125,14 @@ msgstr "새 터미널 패널 셸마다 전달할 추가 인수입니다. 공백�
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Additional arguments passed to each new Windows shell. Quote values containing spaces."
 #~ msgstr "새 Windows 셸마다 전달할 추가 인수입니다. 공백이 포함된 값은 따옴표로 묶으세요."
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Additional resets: {count}"
+msgstr "추가 초기화: {count}"
+
+#: src/renderer/components/thread/PresentationModeTabs.tsx
+msgid "Advanced"
+msgstr "고급"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Advertise a custom base URL, e.g. a reverse proxy or tunnel. Leave empty for automatic."
@@ -1547,6 +1565,7 @@ msgstr "{archivedTime}에 보관됨"
 
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1752,6 +1771,10 @@ msgstr "자동"
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Automatic ({0})"
 #~ msgstr "자동 ({0})"
+
+#: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+msgid "Automatic agent updates"
+msgstr "에이전트 자동 업데이트"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -2213,6 +2236,7 @@ msgstr "원격 서버에 연결할 수 없습니다. 온라인 상태인지 확�
 #: src/renderer/views/ProfileOverlay/parts/EditProfileDialog.tsx
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
@@ -2335,6 +2359,10 @@ msgstr "변경 사항은 새 채팅에 적용됩니다. 실시간 스킬 다시 
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 msgid "Changes in PR"
 msgstr "PR의 변경 사항"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changes in this prompt"
+msgstr "이 프롬프트의 변경 사항"
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Changes requested"
@@ -2477,6 +2505,10 @@ msgstr "상위 폴더 선택"
 msgid "Choose a project icon image"
 msgstr "프로젝트 아이콘 이미지 선택"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
+msgid "Choose an available model from the worker pool."
+msgstr "작업자 풀에서 사용 가능한 모델을 선택하세요."
+
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconPicker.tsx
 msgid "Choose an image inside the project folder."
 msgstr "프로젝트 폴더 내의 이미지를 선택하세요."
@@ -2523,6 +2555,10 @@ msgstr "SSH ID 파일 선택"
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 msgid "Choose the display language for Poracode's interface."
 msgstr "Poracode 인터페이스의 표시 언어를 선택하세요."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Choose the providers and models available for delegation. This pool also applies to roles and their fallback models."
+msgstr "위임에 사용할 공급자와 모델을 선택하세요. 이 풀은 역할과 대체 모델에도 적용됩니다."
 
 #: src/renderer/views/SettingsOverlay/parts/CursorProviderSettings.tsx
 #~ msgid "Choose the runtime for new Cursor GUI chats. SDK becomes available after its package is detected and its API key is authenticated."
@@ -3604,6 +3640,10 @@ msgstr "커밋 메시지를 생성할 수 없습니다: {detail}"
 msgid "Could not load pull requests for {0}."
 msgstr "{0}의 풀 리퀘스트를 불러올 수 없습니다."
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Could not load this diff."
+msgstr "이 변경 내역을 불러오지 못했습니다."
+
 #: src/renderer/components/pdf/PdfViewer.tsx
 #~ msgid "Could not open this PDF."
 #~ msgstr "이 PDF를 열 수 없습니다."
@@ -4115,6 +4155,7 @@ msgstr "DeepSeek"
 
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconPicker.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconSources.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "Default"
 msgstr "기본값"
@@ -4785,6 +4826,14 @@ msgstr "프로필 편집"
 msgid "Edit queued follow-up"
 msgstr "대기 중인 후속 메시지 편집"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Edit role"
+msgstr "역할 편집"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Edit role for {tagLabel}"
+msgstr "{tagLabel} 역할 편집"
+
 #: src/renderer/views/SchedulesView/parts/ScheduleRow.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 msgid "Edit schedule"
@@ -5013,6 +5062,10 @@ msgstr "데스크톱에서 개발 서버가 대기 중인 포트를 입력하세
 #: src/mobile/views/DesktopsView.tsx
 msgid "Enter the SSH password."
 msgstr "SSH 암호를 입력하세요."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Enter up to five tags, separated by commas. The role matches tasks containing all these tags."
+msgstr "쉼표로 구분하여 최대 5개의 태그를 입력하세요. 이 태그가 모두 포함된 작업에 역할이 적용됩니다."
 
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Enter valid JSON."
@@ -5261,6 +5314,14 @@ msgstr "실험 평가의 우승자는 1에서 {candidateCount} 사이여야 합�
 msgid "Experiment prompt must not be blank"
 msgstr "실험 프롬프트는 비워 둘 수 없습니다"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Expires {date}"
+msgstr "만료: {date}"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Expiry not reported"
+msgstr "만료일 정보 없음"
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 msgid "Explicit selections recorded from past delegations — they feed the routing order above. Edit the tags or remove entries to reshape it."
 msgstr "과거 위임에서 기록된 명시적 선택으로, 위의 라우팅 순서에 반영됩니다. 태그를 편집하거나 항목을 제거하여 조정하세요."
@@ -5365,12 +5426,21 @@ msgstr "소유권이 표시된 브랜치 메타데이터를 기록하지 못했�
 #~ msgid "Failed to update goal"
 #~ msgstr "목표를 업데이트하지 못했습니다"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Fallback models"
+msgstr "대체 모델"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Fallbacks run only if a worker fails to start its task."
+msgstr "작업자가 작업을 시작하지 못한 경우에만 대체 모델이 실행됩니다."
+
 #: src/renderer/components/experiment/ExperimentDraftTargets.tsx
 #: src/renderer/components/providers/modelDisplay.ts
 #: src/renderer/components/thread/buildModelPickerControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRankedRow.tsx
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Fast"
 msgstr "빠르게"
 
@@ -6584,6 +6654,10 @@ msgstr "플러그인을 관리하려면 OpenCode 2를 설치하세요."
 msgid "Install packages"
 msgstr "패키지 설치"
 
+#: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+msgid "Install stable agent updates in the background after agent sessions close."
+msgstr "에이전트 세션이 종료되면 백그라운드에서 안정 버전 업데이트를 설치합니다."
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Install Tailscale"
 msgstr "Tailscale 설치"
@@ -6652,6 +6726,10 @@ msgstr "지침"
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
 msgid "Instructions agents follow when choosing which agent or model to delegate to."
 msgstr "에이전트가 어떤 에이전트나 모델에 위임할지 선택할 때 따르는 지침입니다."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Instructions are added to the delegated task. They do not restrict the worker's file access."
+msgstr "지침은 위임된 작업에 추가됩니다. 작업자의 파일 접근을 제한하지는 않습니다."
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -6999,6 +7077,10 @@ msgstr "워크플로 입력 불러오는 중"
 msgid "Loading workflow runs"
 msgstr "워크플로 실행 불러오는 중"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Loading..."
+msgstr "불러오는 중..."
+
 #: src/mobile/routeComponents.tsx
 #: src/mobile/ThreadDetail.tsx
 #: src/mobile/views/FilesView.tsx
@@ -7218,8 +7300,8 @@ msgid "Manual override"
 msgstr "수동 재정의"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Manual routes override learned routing whenever all of their task tags match."
-msgstr "모든 작업 태그가 일치하면 수동 경로가 학습된 라우팅보다 우선합니다."
+#~ msgid "Manual routes override learned routing whenever all of their task tags match."
+#~ msgstr "모든 작업 태그가 일치하면 수동 경로가 학습된 라우팅보다 우선합니다."
 
 #. placeholder {0}: thread.title
 #: src/renderer/views/MainView/parts/Sidebar/parts/SortableThreadItem/parts/ThreadItemSuffix.tsx
@@ -7841,6 +7923,10 @@ msgstr "my-mcp-server"
 msgid "Name"
 msgstr "이름"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Name a role and assign task tags, model preferences and instructions. The lead agent chooses roles by matching task tags."
+msgstr "역할 이름을 지정하고 작업 태그, 모델 기본 설정 및 지침을 할당하세요. 주 에이전트는 작업 태그에 따라 역할을 선택합니다."
+
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Name is required."
 msgstr "이름을 입력해야 합니다."
@@ -8281,6 +8367,10 @@ msgstr "{visiblePath}에는 차이가 없습니다."
 msgid "No external skills were found in this scope."
 msgstr "이 범위에서 외부 스킬을 찾지 못했습니다."
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "No file changes in this prompt."
+msgstr "이 프롬프트에서는 파일이 변경되지 않았습니다."
+
 #: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "No file checkpoint is stored for this message."
 msgstr "이 메시지에 대해 저장된 파일 체크포인트가 없습니다."
@@ -8570,6 +8660,10 @@ msgstr "아직 스레드가 없습니다."
 #: src/renderer/components/providers/usageFormat.ts
 msgid "No windows reported"
 msgstr "보고된 창 없음"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "No worker roles yet."
+msgstr "아직 작업자 역할이 없습니다."
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunList.tsx
 msgid "No workflow runs found."
@@ -9047,6 +9141,10 @@ msgstr "노력 선택 도구 열기"
 msgid "Open the model picker"
 msgstr "모델 선택기 열기"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Open usage page"
+msgstr "사용량 페이지 열기"
+
 #: src/renderer/components/providers/opencode/manifest.ts
 msgid "OpenCode"
 msgstr "OpenCode"
@@ -9469,8 +9567,8 @@ msgid "Pinned"
 msgstr "고정됨"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Pinned task routes"
-msgstr "고정된 작업 경로"
+#~ msgid "Pinned task routes"
+#~ msgstr "고정된 작업 경로"
 
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
@@ -9787,6 +9885,10 @@ msgstr "이전 실행"
 #: src/renderer/commands/registry.ts
 msgid "Previous tab"
 msgstr "이전 탭"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Primary model"
+msgstr "기본 모델"
 
 #: src/mobile/views/MoreView.tsx
 msgid "Privacy Policy"
@@ -10277,6 +10379,7 @@ msgid "Ready. Turn this on to advertise the Tailscale HTTPS URL in new pairing c
 msgstr "준비됨. 이 옵션을 켜면 새 페어링 코드에 Tailscale HTTPS URL이 광고됩니다."
 
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
 msgid "Reasoning"
 msgstr "추론"
 
@@ -10402,6 +10505,10 @@ msgstr "새로고침"
 #: src/renderer/commands/shortcutCatalog.ts
 msgid "Reload browser page"
 msgstr "브라우저 페이지 새로고침"
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Remaining limits"
+msgstr "남은 사용량"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -10583,6 +10690,11 @@ msgstr "Cursor SDK API 키 제거"
 msgid "Remove environment variable"
 msgstr "환경 변수 제거"
 
+#. placeholder {0}: index + 1
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Remove fallback {0}"
+msgstr "대체 모델 {0} 삭제"
+
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Remove from favorites"
 msgstr "즐겨찾기에서 제거"
@@ -10604,7 +10716,7 @@ msgstr "{0}의 메모리 항목 제거"
 msgid "Remove model"
 msgstr "모델 제거"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Remove pinned route for {tagLabel}"
 msgstr "{tagLabel}의 고정 경로 제거"
 
@@ -10823,6 +10935,14 @@ msgstr "사이드바 프로스트를 기본값으로 재설정"
 msgid "Reset to default"
 msgstr "기본값으로 재설정"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Resets: check provider website"
+msgstr "초기화: 제공업체 웹사이트 확인"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Resets: no data"
+msgstr "초기화: 데이터 없음"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserHost.tsx
 msgid "Resize browser drawer"
 msgstr "브라우저 서랍 크기 조정"
@@ -10887,6 +11007,7 @@ msgid "Restart Poracode"
 msgstr "Poracode 다시 시작"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "복원"
 
@@ -11083,6 +11204,14 @@ msgstr "오른쪽 패널"
 #: src/renderer/components/providers/ProviderUsageRail.tsx
 msgid "Right-click to switch ring"
 msgstr "마우스 오른쪽 버튼을 클릭해 링 전환"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Role instructions"
+msgstr "역할 지침"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Role name"
+msgstr "역할 이름"
 
 #: src/mobile/views/threadActionSurfaces.tsx
 #: src/mobile/views/threadContextMenus.tsx
@@ -11304,6 +11433,10 @@ msgstr "이미지 저장"
 #: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
 msgid "Save MCP servers"
 msgstr "MCP 서버 저장"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Save role"
+msgstr "역할 저장"
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Save shortcut"
@@ -12347,6 +12480,10 @@ msgstr "스테이지됨"
 msgid "Staged ({0})"
 msgstr "스테이지됨 ({0})"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Stale data"
+msgstr "오래된 데이터"
+
 #: src/renderer/commands/registry.ts
 msgid "Star or unstar the current chat or model"
 msgstr "현재 채팅 또는 모델을 즐겨찾기에 추가하거나 제거"
@@ -12564,6 +12701,10 @@ msgstr "동기화 중지"
 #: src/renderer/components/thread/ChatPane/parts/items/toolDisplay.ts
 msgid "Stop task"
 msgstr "작업 중지"
+
+#: src/renderer/actions/threadActions.ts
+msgid "Stop the agent before archiving this thread."
+msgstr "이 스레드를 보관하기 전에 에이전트를 중지하세요."
 
 #: src/renderer/actions/projectActions.ts
 #: src/renderer/i18n/sharedMessages.ts
@@ -12895,12 +13036,17 @@ msgid "Task output"
 msgstr "작업 출력"
 
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Task tags"
 msgstr "작업 태그"
 
 #: src/renderer/utils/projectIconColors.ts
 msgid "Teal"
 msgstr "직상"
+
+#: src/renderer/components/thread/ThreadDraftView.tsx
+msgid "Teamwork"
+msgstr "팀 작업"
 
 #. placeholder {0}: selectedAgent?.label ?? targetProviderFallback
 #: src/renderer/components/thread/ContinueInProviderDialog.tsx
@@ -13293,6 +13439,10 @@ msgstr "이 기기에는 사용할 수 있는 카메라가 없습니다. 대신 
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "this environment"
 msgstr "이 환경"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "This existing route retries after any failure. A retry may repeat completed work."
+msgstr "이 기존 규칙은 모든 실패 후 다시 시도합니다. 재시도하면 완료된 작업이 반복될 수 있습니다."
 
 #: src/mobile/views/MobileFileEditor.tsx
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPane/FileEditorPane.tsx
@@ -13956,7 +14106,7 @@ msgstr "{0} 자격 증명을 제거할 수 없습니다."
 msgid "Unable to remove memory entry."
 msgstr "메모리 항목을 제거할 수 없습니다."
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unable to remove pinned route."
 msgstr "고정 경로를 제거할 수 없습니다."
 
@@ -13996,6 +14146,10 @@ msgstr "Claude {displayLabel} 프로필을 저장할 수 없습니다."
 #: src/renderer/components/composer/ImageLightboxActions.tsx
 msgid "Unable to save image."
 msgstr "이미지를 저장할 수 없습니다."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Unable to save role. Check for duplicate task tags and try again."
+msgstr "역할을 저장할 수 없습니다. 작업 태그가 중복되는지 확인한 후 다시 시도하세요."
 
 #: src/renderer/utils/shellUtils.ts
 msgid "Unable to start {label}."
@@ -14098,6 +14252,10 @@ msgstr "미지정"
 msgid "Unavailable"
 msgstr "사용할 수 없음"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Unavailable model"
+msgstr "사용할 수 없는 모델"
+
 #: src/renderer/components/plugins/PluginDetail.tsx
 #: src/renderer/components/plugins/PluginMarketplace.tsx
 msgid "Unavailable on this device"
@@ -14107,7 +14265,7 @@ msgstr "이 기기에서 사용할 수 없음"
 msgid "Unavailable project"
 msgstr "사용할 수 없는 프로젝트"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unavailable provider"
 msgstr "사용할 수 없는 제공자"
 
@@ -14465,7 +14623,6 @@ msgstr "URL을 입력해야 합니다."
 #: src/mobile/views/DesktopWorkspacePanel.tsx
 #: src/mobile/WideShell.tsx
 #: src/renderer/components/layout/PanelDock/panelTabMeta.ts
-#: src/renderer/components/providers/ProviderUsageRail.tsx
 #: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 msgid "Usage"
@@ -14964,6 +15121,18 @@ msgstr "Chrome에 이미 열려 있는 페이지와 로그인 세션으로 작�
 #: src/renderer/components/thread/ChatPane/parts/MessageList.tsx
 msgid "Worked for {elapsed}"
 msgstr "{elapsed} 동안 작업함"
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Worker model pool"
+msgstr "작업자 모델 풀"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Worker roles"
+msgstr "작업자 역할"
+
+#: src/renderer/components/thread/ThreadDraftView.tsx
+msgid "Workers' changes are integrated automatically. Requires a local Git project and a chat agent with Crossagents enabled."
+msgstr "작업 에이전트의 변경 사항이 자동으로 통합됩니다. 로컬 Git 프로젝트와 Crossagents가 활성화된 채팅 에이전트가 필요합니다."
 
 #: src/renderer/components/thread/ChatPane/parts/items/toolDisplay.ts
 msgid "Workflow"

@@ -1,3 +1,5 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { teamInstructions } from "@/supervisor/crossagentMcp/teamInstructions";
 import { randomUUID } from "node:crypto";
 import { msg } from "@/shared/messages";
 import type {
@@ -683,6 +685,15 @@ export class ThreadSessionManager {
   }
 
   async startThread(payload: StartThreadPayload): Promise<StartThreadResult> {
+    const release = await this.options.acquireAgentLaunch?.();
+    try {
+      return await this.startThreadUnlocked(payload);
+    } finally {
+      release?.();
+    }
+  }
+
+  private async startThreadUnlocked(payload: StartThreadPayload): Promise<StartThreadResult> {
     if (this.disposed) {
       throw new Error("ThreadSessionManager is disposed.");
     }
@@ -1097,13 +1108,22 @@ export class ThreadSessionManager {
     session: SessionRuntime,
     segments: readonly PromptSegment[] | undefined,
   ): Promise<string | undefined> {
-    if (!segments?.some((segment) => segment.kind === "skill")) return undefined;
-    return this.options.buildSkillTurnInjection?.({
-      agentKind: session.agentKind,
-      projectLocation: session.projectLocation,
-      ...(session.nativePlugins ? { nativePlugins: session.nativePlugins } : {}),
-      segments,
-    });
+    const skillInstructions = segments?.some((segment) => segment.kind === "skill")
+      ? await this.options.buildSkillTurnInjection?.({
+          agentKind: session.agentKind,
+          projectLocation: session.projectLocation,
+          ...(session.nativePlugins ? { nativePlugins: session.nativePlugins } : {}),
+          segments,
+        })
+      : undefined;
+    return (
+      [
+        teamInstructions(this.getSubagentParentContext(session.threadId)?.config ?? session.config),
+        skillInstructions,
+      ]
+        .filter(Boolean)
+        .join("\n\n") || undefined
+    );
   }
 
   /** Portable-skills fallback for a terminal (PTY) prompt (see managerOptions).

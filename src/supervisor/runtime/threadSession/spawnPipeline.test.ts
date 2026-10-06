@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ProjectLocation, ThreadConfig } from "@/shared/contracts";
 import type { AgentAdapter } from "../../agents/base";
@@ -207,6 +208,13 @@ describe("workspaceLaunchConfig — Home scope unrestricted for every agent", ()
 });
 
 describe("applyAgentSettingsMcpFlags", () => {
+  it("enables opted-in teamwork only with trusted routing and respects hard disables", () => {
+    const config = { ...baseConfig, teamMode: true };
+    expect(applyAgentSettingsMcpFlags(config, {}, [], true).crossagentMcp).toBe(true);
+    expect(applyAgentSettingsMcpFlags(config, {}, [], false).crossagentMcp).toBe(false);
+    expect(applyAgentSettingsMcpFlags(config, {}, ["crossagents"], true).crossagentMcp).toBe(false);
+  });
+
   it("maps agentSettings booleans and keeps Crossagents off without provider-session routing", () => {
     const result = applyAgentSettingsMcpFlags(baseConfig, { browserMcp: true }, [], false);
     expect(result).toEqual({

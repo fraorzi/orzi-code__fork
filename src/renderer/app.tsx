@@ -1,3 +1,6 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { isThreadTurnActive } from "@/shared/contracts";
+import { finalizeLatestPromptChanges } from "@/renderer/state/fileCheckpointActions";
 import { toast } from "@heroui/react";
 import { msg as linguiMsg } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -164,6 +167,13 @@ function appendRuntimeEvents(threadId: string, events: readonly RuntimeEvent[]):
   } else {
     pendingRuntimeEvents.set(threadId, [...events]);
   }
+  if (events.some((event) => event.type === "turn.completed")) {
+    const previousTurn = useAppStore.getState().runtimeCompletedTurnsByThread[threadId]?.at(-1);
+    flushPendingRuntimeEventsSync(threadId);
+    if (useAppStore.getState().runtimeCompletedTurnsByThread[threadId]?.at(-1) !== previousTurn) {
+      void finalizeLatestPromptChanges(threadId);
+    }
+  }
 }
 
 function flushPendingRuntimeEventsSync(threadId: string): void {
@@ -233,10 +243,15 @@ function handleSupervisorEvent(event: SupervisorEvent): void {
     const shouldCheckNotifications =
       threadStateNotificationsArmed && shouldInspectThreadStateForNotification();
     const appStore = useAppStore.getState();
-    const oldThread = shouldCheckNotifications
-      ? appStore.threads.find((t) => t.id === event.threadId)
-      : undefined;
+    const oldThread = appStore.threads.find((t) => t.id === event.threadId);
+    const previousTurn = appStore.runtimeCompletedTurnsByThread[event.threadId]?.at(-1);
     appStore.updateThreadRuntime(event.threadId, event);
+    if (
+      !isThreadTurnActive(event.status) &&
+      useAppStore.getState().runtimeCompletedTurnsByThread[event.threadId]?.at(-1) !== previousTurn
+    ) {
+      void finalizeLatestPromptChanges(event.threadId);
+    }
     if (shouldCheckNotifications) {
       const newThread = useAppStore.getState().threads.find((t) => t.id === event.threadId);
       handleThreadStateNotification(event, oldThread, newThread);

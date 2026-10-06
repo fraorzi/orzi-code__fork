@@ -1,3 +1,6 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { PromptChanges } from "./parts/PromptChanges";
+import { chatMessageSurfaceClass } from "./parts/items/chatMessageSurface";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "@lingui/react/macro";
 import { useShallow } from "zustand/react/shallow";
@@ -14,10 +17,7 @@ import {
   releaseThreadRuntimeItems,
   retainThreadRuntimeItems,
 } from "@/renderer/state/chatRuntimePersister";
-import {
-  finalizeFileCheckpoint,
-  hydrateFileCheckpoints,
-} from "@/renderer/state/fileCheckpointActions";
+import { hydrateFileCheckpoints } from "@/renderer/state/fileCheckpointActions";
 import { useProjectRootNames } from "@/renderer/state/projectRootNamesStore";
 import { useRemoteServersStore } from "@/renderer/state/remoteServersStore";
 import { buildFileEditorContext, resolveWorktreeBranch } from "@/renderer/utils/gitHelpers";
@@ -61,17 +61,6 @@ interface ChatPaneProps {
   initialScrollRevealDelayMs?: number | undefined;
   onInitialScrollSettled?: (() => void) | undefined;
 }
-
-const EMPTY_COMPLETED_TURNS: NonNullable<
-  ReturnType<typeof useAppStore.getState>["runtimeCompletedTurnsByThread"][string]
-> = [];
-const EMPTY_ITEM_IDS: readonly string[] = [];
-const EMPTY_FILE_CHECKPOINT_TURNS: NonNullable<
-  ReturnType<typeof useAppStore.getState>["fileCheckpointTurnsByThread"][string]
-> = {};
-const EMPTY_FILE_CHECKPOINTS: NonNullable<
-  ReturnType<typeof useAppStore.getState>["fileCheckpointsByThread"][string]
-> = {};
 
 /**
  * Renderer-native chat surface for `presentationMode === "gui"` threads.
@@ -231,46 +220,6 @@ export function ChatPane(props: ChatPaneProps) {
     });
   }, [isHomeScope, targetContext, threadId]);
 
-  const completedTurns = useAppStore(
-    (s) => s.runtimeCompletedTurnsByThread[threadId] ?? EMPTY_COMPLETED_TURNS,
-  );
-  const fileCheckpointTurns = useAppStore(
-    (s) => s.fileCheckpointTurnsByThread[threadId] ?? EMPTY_FILE_CHECKPOINT_TURNS,
-  );
-  const fileCheckpoints = useAppStore(
-    (s) => s.fileCheckpointsByThread[threadId] ?? EMPTY_FILE_CHECKPOINTS,
-  );
-  const finalizingFileCheckpointIdsRef = useRef(new Set<string>());
-
-  useEffect(() => {
-    if (!targetContext || isHomeScope || completedTurns.length === 0) return;
-    for (const turn of completedTurns) {
-      const checkpointItemId = turn.anchorItemId;
-      if (!checkpointItemId) continue;
-      if (fileCheckpointTurns[checkpointItemId]) continue;
-      if (finalizingFileCheckpointIdsRef.current.has(checkpointItemId)) continue;
-      const state = useAppStore.getState();
-      const runtimeItemIds = state.runtimeItemIdsByThread[threadId] ?? EMPTY_ITEM_IDS;
-      const runtimeItemsById = state.runtimeItemsByIdByThread[threadId];
-      const baseCheckpointItemId = findBaseCheckpointItemId(
-        runtimeItemIds,
-        runtimeItemsById,
-        checkpointItemId,
-      );
-      if (!baseCheckpointItemId) continue;
-      if (!fileCheckpoints[baseCheckpointItemId]) continue;
-      finalizingFileCheckpointIdsRef.current.add(checkpointItemId);
-      void finalizeFileCheckpoint({
-        threadId,
-        checkpointItemId,
-        baseCheckpointItemId,
-        projectLocation: targetContext.projectLocation,
-      }).finally(() => {
-        finalizingFileCheckpointIdsRef.current.delete(checkpointItemId);
-      });
-    }
-  }, [completedTurns, fileCheckpoints, fileCheckpointTurns, isHomeScope, targetContext, threadId]);
-
   const isEmpty = timelineEntries.length === 0 && !hasSupplementaryContent;
   const isLive = isThreadTurnActive(status);
   const isWorktreeProvisioning = useAppStore(
@@ -386,7 +335,18 @@ export function ChatPane(props: ChatPaneProps) {
               ) : isConnecting ? (
                 <ChatConnectingFooter />
               ) : showTailLoader && tailTurn ? (
-                <ChatTurnElapsedFooter turn={tailTurn} isPaused={isTurnPaused} />
+                <>
+                  <ChatTurnElapsedFooter turn={tailTurn} isPaused={isTurnPaused} />
+                  {completedTurnCanRenderInTail && mostRecentCompletedTurnAnchor && (
+                    <div className={`mx-auto w-full max-w-[920px] ${chatMessageSurfaceClass}`}>
+                      <PromptChanges
+                        key={mostRecentCompletedTurnAnchor}
+                        threadId={threadId}
+                        checkpointItemId={mostRecentCompletedTurnAnchor}
+                      />
+                    </div>
+                  )}
+                </>
               ) : null
             }
             onWheelCapture={(event) => {
@@ -561,20 +521,4 @@ function resolveCheckpointGuard(input: {
 
 function checkpointTreeKey(projectId: string, worktreePath: string | undefined): string {
   return `${projectId}\0${worktreePath ?? ""}`;
-}
-
-function findBaseCheckpointItemId(
-  itemIds: readonly string[],
-  itemsById:
-    | ReturnType<typeof useAppStore.getState>["runtimeItemsByIdByThread"][string]
-    | undefined,
-  checkpointItemId: string,
-): string | null {
-  const checkpointIndex = itemIds.indexOf(checkpointItemId);
-  if (checkpointIndex < 0) return null;
-  for (let idx = checkpointIndex; idx >= 0; idx -= 1) {
-    const itemId = itemIds[idx]!;
-    if (itemsById?.[itemId]?.type === "user_message") return itemId;
-  }
-  return null;
 }

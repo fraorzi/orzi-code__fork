@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
 import {
@@ -86,6 +87,7 @@ import {
 } from "@/shared/ipc";
 import { supportsNativeWindowMaterial, syncNativeThemeForMaterial } from "../window/windowMaterial";
 import type { SharedSettings } from "@/shared/settings";
+import { saveCrossagentRole } from "@/shared/crossagentRoles";
 import {
   removeCrossagentRoutingOverride,
   removeCrossagentSelectionUsageEntry,
@@ -425,6 +427,15 @@ export function createLocalIpcHandlers(
       const settingsPath = options.requirePoracodePaths().settingsPath;
       const current = readSharedSettingsFile(settingsPath);
       const overrides = removeCrossagentRoutingOverride(current.crossagentRoutingOverrides, tags);
+      const settings = { ...current, crossagentRoutingOverrides: overrides };
+      writeSharedSettingsFile(settingsPath, settings);
+      options.onSharedSettingsChanged?.(settings);
+      return overrides;
+    },
+    saveCrossagentRole: (payload) => {
+      const settingsPath = options.requirePoracodePaths().settingsPath;
+      const current = readSharedSettingsFile(settingsPath);
+      const overrides = saveCrossagentRole(current.crossagentRoutingOverrides, payload);
       const settings = { ...current, crossagentRoutingOverrides: overrides };
       writeSharedSettingsFile(settingsPath, settings);
       options.onSharedSettingsChanged?.(settings);

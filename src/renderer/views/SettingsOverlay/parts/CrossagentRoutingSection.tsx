@@ -1,9 +1,8 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { useEffect, useRef, useState } from "react";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { toast } from "@heroui/react";
-import { Trash2 } from "lucide-react";
-import { isRemoteSession, readBridge } from "@/renderer/bridge";
-import { Button, TextArea } from "@/renderer/components/common";
+import { readBridge } from "@/renderer/bridge";
+import { TextArea } from "@/renderer/components/common";
 import { distinctSubProviderLabel } from "@/renderer/components/common/ProviderModelMenu";
 import { useAgentStatusesStore } from "@/renderer/state/agentStatusesStore";
 import { useSharedSettings } from "@/renderer/state/sharedSettingsStore";
@@ -12,9 +11,9 @@ import type {
   CrossagentRoutingState,
 } from "@/shared/crossagentRanking";
 import { presentedCrossagentCapabilities } from "@/shared/crossagentVisibility";
-import { formatReasoningLabel } from "@/shared/modelLabels";
 import { CrossagentMemorySection } from "./crossagent/CrossagentMemorySection";
 import { CrossagentProviderModelFilter } from "./crossagent/CrossagentProviderModelFilter";
+import { CrossagentRolesSection } from "./crossagent/CrossagentRolesSection";
 import { CrossagentRankedRow } from "./crossagent/CrossagentRankedRow";
 
 /**
@@ -39,7 +38,6 @@ export function CrossagentRoutingSection() {
   const setCrossagentRoutingGuide = useSharedSettings((s) => s.setCrossagentRoutingGuide);
   const [draft, setDraft] = useState(crossagentRoutingGuide);
   const [routing, setRouting] = useState<CrossagentRoutingState>({ ranked: [], providers: [] });
-  const [removingRoute, setRemovingRoute] = useState<string | null>(null);
   // Eligible providers missing from the ranked order were excluded by the
   // user's checklist (paused, or every model unchecked) — keep them glanceable
   // while the popover is closed.
@@ -105,29 +103,28 @@ export function CrossagentRoutingSection() {
     };
   }, [routingRefreshKey]);
 
-  async function removePinnedRoute(tags: string[]) {
-    const key = tags.join(" ");
-    setRemovingRoute(key);
-    try {
-      const nextOverrides = await readBridge().removeCrossagentRoutingOverride({
-        tags,
-      });
-      useSharedSettings.setState({ crossagentRoutingOverrides: nextOverrides });
-    } catch {
-      toast.danger(t`Unable to remove pinned route.`);
-    } finally {
-      setRemovingRoute(null);
-    }
-  }
-
   return (
     <div className="space-y-5">
       <section className="space-y-2">
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-medium text-foreground">
-            <Trans>Current routing order</Trans>
+            <Trans>Worker model pool</Trans>
           </p>
           <CrossagentProviderModelFilter providers={routing.providers} />
+        </div>
+        <p className="text-xs text-muted">
+          <Trans>
+            Choose the providers and models available for delegation. This pool also applies to
+            roles and their fallback models.
+          </Trans>
+        </p>
+      </section>
+      <CrossagentRolesSection providers={routing.providers} />
+      <section className="space-y-2">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-medium text-foreground">
+            <Trans>Current routing order</Trans>
+          </p>
         </div>
         <p className="text-xs text-muted">
           <Trans>
@@ -161,61 +158,6 @@ export function CrossagentRoutingSection() {
             skipped automatically. Unchecked providers and models are skipped until re-checked.
           </Trans>
         </p>
-        {crossagentRoutingOverrides.length > 0 ? (
-          <div className="space-y-2">
-            <div>
-              <p className="text-sm font-medium text-foreground">
-                <Trans>Pinned task routes</Trans>
-              </p>
-              <p className="text-xs text-muted">
-                <Trans>
-                  Manual routes override learned routing whenever all of their task tags match.
-                </Trans>
-              </p>
-            </div>
-            <div className="overflow-hidden rounded-lg border border-border">
-              {crossagentRoutingOverrides.map((override) => {
-                const key = override.tags.join(" ");
-                const routeDetail = [
-                  override.agentKind,
-                  override.modelId,
-                  ...(override.effort ? [formatReasoningLabel(override.effort)] : []),
-                  ...(override.fast === true ? [t`Fast`] : []),
-                ]
-                  .filter(Boolean)
-                  .join(" · ");
-                const providerAvailable = rankedProviderKinds.has(override.agentKind);
-                const tagLabel = override.tags.map((tag) => `#${tag}`).join(" + ");
-                return (
-                  <div
-                    key={key}
-                    className="flex items-center gap-3 border-b border-border px-3 py-2 last:border-b-0"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs text-foreground">{tagLabel}</p>
-                      <p className="truncate text-xs text-muted">
-                        {routeDetail}
-                        {!providerAvailable ? ` · ${t`Unavailable provider`}` : null}
-                      </p>
-                    </div>
-                    {!isRemoteSession() ? (
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="ghost"
-                        aria-label={t`Remove pinned route for ${tagLabel}`}
-                        isPending={removingRoute === key}
-                        onPress={() => void removePinnedRoute(override.tags)}
-                      >
-                        <Trash2 className="size-3.5 text-danger" />
-                      </Button>
-                    ) : null}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ) : null}
       </section>
       <CrossagentMemorySection />
       <section className="space-y-2">

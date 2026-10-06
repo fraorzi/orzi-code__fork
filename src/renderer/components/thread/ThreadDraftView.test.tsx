@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import {
   Children,
   isValidElement,
@@ -1863,21 +1864,67 @@ describe("ThreadDraftView", () => {
     });
   });
 
-  it("renders Chat first and selects it by default for dual-mode agents", async () => {
+  it.each(["launch", "always"] satisfies Array<"launch" | "always">)(
+    "launches teamwork only after an explicit per-draft opt-in (%s MCP)",
+    async (scope) => {
+      const onStart = vi.fn<(input: unknown) => void>();
+      useGitStore.setState({
+        statuses: {
+          [project.id]: {
+            isRepo: true,
+            branch: "main",
+            tracking: "",
+            hasRemote: false,
+            remoteInfo: null,
+            ahead: 0,
+            behind: 0,
+            staged: [],
+            unstaged: [],
+            totalInsertions: 0,
+            totalDeletions: 0,
+          },
+        },
+      });
+      const localProject: Project = { ...project, location: { kind: "posix", path: "/tmp/repo" } };
+      const agent: AgentStatus = {
+        ...dualModeCodexStatus,
+        capabilities: { ...dualModeCodexStatus.capabilities, mcpScope: { gui: scope } },
+      };
+      render(<ThreadDraftView project={localProject} agentStatuses={[agent]} onStart={onStart} />);
+      const button = await screen.findByRole("button", { name: "Teamwork" });
+      expect(button).toHaveAttribute("aria-pressed", "false");
+      expect(button).not.toBeDisabled();
+      fireEvent.click(button);
+      expect(button).toHaveAttribute("aria-pressed", "true");
+      fireEvent.click(screen.getByText("set-prompt"));
+      fireEvent.click(screen.getByText("submit"));
+      expect(onStart).toHaveBeenCalledWith(
+        expect.objectContaining({
+          config: expect.objectContaining({ teamMode: true, crossagentMcp: true }),
+          prompt: "hello world",
+          presentationMode: "gui",
+        }),
+      );
+    },
+  );
+
+  it("keeps Chat as the selected default inside Advanced", async () => {
     const onStart = vi.fn<(input: unknown) => void>();
 
     render(
       <ThreadDraftView project={project} agentStatuses={[dualModeCodexStatus]} onStart={onStart} />,
     );
 
-    await waitFor(() => {
-      const tabs = screen.getAllByRole("tab");
-      expect(tabs.map((tab) => tab.textContent?.replace(/\s+/g, " ").trim())).toEqual([
-        "Chat",
-        "CLI",
-      ]);
-      expect(screen.getByRole("tab", { name: "Chat" })).toHaveAttribute("aria-selected", "true");
-    });
+    fireEvent.click(await screen.findByRole("button", { name: "Advanced" }));
+    expect(await screen.findByRole("menuitemradio", { name: "Chat" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    expect(
+      screen
+        .getAllByRole("menuitemradio")
+        .map((item) => item.textContent?.replace(/\s+/g, " ").trim()),
+    ).toEqual(["Chat", "CLI"]);
   });
 
   it("surfaces terminal-only providers in the draft model picker", async () => {
@@ -1989,9 +2036,11 @@ describe("ThreadDraftView", () => {
       <ThreadDraftView project={project} agentStatuses={[dualModeCodexStatus]} onStart={onStart} />,
     );
 
-    await waitFor(() => {
-      expect(screen.getByRole("tab", { name: "Chat" })).toHaveAttribute("aria-selected", "true");
-    });
+    fireEvent.click(await screen.findByRole("button", { name: "Advanced" }));
+    expect(await screen.findByRole("menuitemradio", { name: "Chat" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
   });
 
   it("adds a provider to the mounted draft picker when it becomes installed", async () => {
@@ -2074,9 +2123,11 @@ describe("ThreadDraftView", () => {
       <ThreadDraftView project={project} agentStatuses={[dualModeCodexStatus]} onStart={onStart} />,
     );
 
-    await waitFor(() => {
-      expect(screen.getByRole("tab", { name: "CLI" })).toHaveAttribute("aria-selected", "true");
-    });
+    fireEvent.click(await screen.findByRole("button", { name: "Advanced" }));
+    expect(await screen.findByRole("menuitemradio", { name: "CLI" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
   });
 
   it("applies a saved codex effort after shared settings load", async () => {

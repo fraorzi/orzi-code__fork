@@ -1,3 +1,5 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { PromptChanges } from "./PromptChanges";
 import {
   memo,
   useCallback,
@@ -708,9 +710,14 @@ const VirtualChatListRow = memo(function VirtualChatListRow({
   );
 });
 
-function CompletedTurnIndicator({ record }: { threadId: string; record: CompletedTurnRecord }) {
+function CompletedTurnIndicator({
+  threadId,
+  record,
+}: {
+  threadId: string;
+  record: CompletedTurnRecord;
+}) {
   const elapsedSeconds = Math.max(0, Math.floor((record.endedAt - record.startedAt) / 1000));
-  if (elapsedSeconds < 1) return null;
   const elapsed = formatElapsed(elapsedSeconds);
   return (
     <Surface variant="transparent" className={chatMessageSurfaceClass}>
@@ -720,6 +727,13 @@ function CompletedTurnIndicator({ record }: { threadId: string; record: Complete
             <Trans>Worked for {elapsed}</Trans>
           </span>
         ) : null}
+        {record.anchorItemId && (
+          <PromptChanges
+            key={record.anchorItemId}
+            threadId={threadId}
+            checkpointItemId={record.anchorItemId}
+          />
+        )}
       </div>
     </Surface>
   );

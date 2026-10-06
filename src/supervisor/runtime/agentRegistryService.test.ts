@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { describe, expect, it, vi } from "vitest";
 import type {
   AgentKind,
@@ -125,11 +126,13 @@ describe("AgentRegistryService.updateAgentBinary", () => {
       listWslDistros,
     } as unknown as AgentStatusService;
     const service = new AgentRegistryService({
+      hasAgentSessions: () => false,
       adapters: new Map([["opencode", adapter]]),
       settingsPath: "C:\\data\\settings.json",
       baseDir: "C:\\data",
       acpIconsDir: "C:\\data\\icons",
       sharedSettingsCache: {
+        read: () => ({ ...defaultSharedSettings }),
         invalidate: vi.fn<SupervisorSharedSettingsCache["invalidate"]>(),
       } as unknown as SupervisorSharedSettingsCache,
       getAgentStatusService: () => agentStatusService,
@@ -222,11 +225,13 @@ describe("AgentRegistryService.updateAgentBinary", () => {
       listWslDistros,
     } as unknown as AgentStatusService;
     const service = new AgentRegistryService({
+      hasAgentSessions: () => false,
       adapters,
       settingsPath: "/data/settings.json",
       baseDir: "/data",
       acpIconsDir: "/data/icons",
       sharedSettingsCache: {
+        read: () => ({ ...defaultSharedSettings }),
         invalidate: vi.fn<SupervisorSharedSettingsCache["invalidate"]>(),
       } as unknown as SupervisorSharedSettingsCache,
       getAgentStatusService: () => agentStatusService,
@@ -293,11 +298,13 @@ describe("AgentRegistryService.updateAgentBinary", () => {
       listWslDistros,
     } as unknown as AgentStatusService;
     const service = new AgentRegistryService({
+      hasAgentSessions: () => false,
       adapters: new Map([["qwen", adapter]]),
       settingsPath: "C:\\data\\settings.json",
       baseDir: "C:\\data",
       acpIconsDir: "C:\\data\\icons",
       sharedSettingsCache: {
+        read: () => ({ ...defaultSharedSettings }),
         invalidate: vi.fn<SupervisorSharedSettingsCache["invalidate"]>(),
       } as unknown as SupervisorSharedSettingsCache,
       getAgentStatusService: () => agentStatusService,
@@ -352,11 +359,13 @@ describe("AgentRegistryService.getLatestAgentVersion", () => {
 
   function makeService(): AgentRegistryService {
     return new AgentRegistryService({
+      hasAgentSessions: () => false,
       adapters: new Map([["cursor", adapter]]),
       settingsPath: "/data/settings.json",
       baseDir: "/data",
       acpIconsDir: "/data/icons",
       sharedSettingsCache: {
+        read: () => ({ ...defaultSharedSettings }),
         invalidate: vi.fn<SupervisorSharedSettingsCache["invalidate"]>(),
       } as unknown as SupervisorSharedSettingsCache,
       getAgentStatusService: () => ({}) as unknown as AgentStatusService,
@@ -431,11 +440,13 @@ describe("AgentRegistryService project-scoped ACP refreshes", () => {
       listWslDistros,
     } as unknown as AgentStatusService;
     const service = new AgentRegistryService({
+      hasAgentSessions: () => false,
       adapters: initialAdapters,
       settingsPath: "/data/settings.json",
       baseDir: "/data",
       acpIconsDir: "/data/icons",
       sharedSettingsCache: {
+        read: () => ({ ...defaultSharedSettings }),
         invalidate: vi.fn<SupervisorSharedSettingsCache["invalidate"]>(),
       } as unknown as SupervisorSharedSettingsCache,
       getAgentStatusService: () => agentStatusService,
@@ -607,11 +618,13 @@ describe("AgentRegistryService first-class ACP auto-install", () => {
     });
     acpRegistryMocks.installAcpRegistryAgent.mockReset().mockResolvedValue([]);
     const service = new AgentRegistryService({
+      hasAgentSessions: () => false,
       adapters: new Map([["antigravity", antigravity]]),
       settingsPath: "/data/settings.json",
       baseDir: "/data",
       acpIconsDir: "/data/icons",
       sharedSettingsCache: {
+        read: () => ({ ...defaultSharedSettings }),
         invalidate: vi.fn<SupervisorSharedSettingsCache["invalidate"]>(),
       } as unknown as SupervisorSharedSettingsCache,
       getAgentStatusService: () => agentStatusService,
@@ -827,11 +840,13 @@ describe("AgentRegistryService.refreshAgentRegistryAdapters", () => {
   function createService() {
     const adapters = new Map<AgentKind, AgentAdapter>();
     const service = new AgentRegistryService({
+      hasAgentSessions: () => false,
       adapters,
       settingsPath: "/data/settings.json",
       baseDir: "/data",
       acpIconsDir: "/data/icons",
       sharedSettingsCache: {
+        read: () => ({ ...defaultSharedSettings }),
         invalidate: vi.fn<SupervisorSharedSettingsCache["invalidate"]>(),
       } as unknown as SupervisorSharedSettingsCache,
       getAgentStatusService: () => ({}) as AgentStatusService,

@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import type {
   AgentKind,
   AgentCapability,
@@ -14,6 +15,7 @@ import type {
   CrossagentRankSource,
 } from "@/shared/crossagentRanking";
 import type { McpThreadIdentity } from "@/shared/browserMcpThread";
+import type { TeamIntegration } from "./TeamWorktreeService";
 import type { CrossagentRoutingOverride } from "@/shared/settings";
 
 /** Terminal states a subagent run can settle into. */
@@ -229,6 +231,8 @@ export interface SubagentWaitResult {
   output: string;
   /** Full run transcript length and cursor for the next incremental read. */
   total_output_chars?: number;
+  workspace?: { path: string; patch_path: string };
+  integration?: TeamIntegration;
   error?: {
     message: string;
     may_have_side_effects: boolean;

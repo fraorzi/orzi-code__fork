@@ -1,4 +1,6 @@
-import { type FormEvent, useState } from "react";
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { UsageResetCredits } from "@/renderer/components/providers/UsageResetCredits";
+import { type FormEvent, useEffect, useState } from "react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { ChevronDown, ChevronRight, GripVertical, LogOut, RefreshCw } from "lucide-react";
 import { Trans, useLingui } from "@lingui/react/macro";
@@ -112,10 +114,11 @@ export function UsageProviderCard(props: {
     snapshot?.status === "ok" &&
     (snapshot.windows.length > 0 || Boolean(snapshot.cost) || Boolean(credits));
   const hasWindows = snapshot?.status === "ok" && snapshot.windows.length > 0;
-  // Mount-time clock for the reset label (same pattern as UsageWindowBars):
-  // impure reads can't run during render, and the card re-renders on snapshot
-  // updates anyway.
-  const [now] = useState(() => Date.now());
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(timer);
+  }, []);
   const sharedReset = usesSharedWindowReset(id) ? sharedWindowResetLabel(snapshot, now) : undefined;
   const Chevron = collapsed ? ChevronRight : ChevronDown;
 
@@ -206,6 +209,11 @@ export function UsageProviderCard(props: {
         </div>
       ) : null}
 
+      {snapshot?.resetCredits && (
+        <div className="px-3 pb-2">
+          <UsageResetCredits credits={snapshot.resetCredits} now={now} allowNavigation />
+        </div>
+      )}
       {!collapsed ? (
         <div className="space-y-2.5 border-t border-[color:var(--separator)] px-3 pb-4 pt-3">
           {hasUsage && snapshot ? (

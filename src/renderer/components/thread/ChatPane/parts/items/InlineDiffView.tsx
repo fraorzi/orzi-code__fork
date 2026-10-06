@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { Component, useEffect, useState, type ReactNode } from "react";
 import { Trans } from "@lingui/react/macro";
 import { DiffView, highlighter } from "@git-diff-view/react";
@@ -20,6 +21,7 @@ const MAX_DIFF_LENGTH = 100_000;
 export interface InlineDiffViewProps {
   diffText: string;
   filePath: string;
+  showFileNames?: boolean;
   /** When set (Cursor ACP content diffs), passed to git-diff-view for reliable rich rendering. */
   oldText?: string;
   newText?: string;
@@ -31,7 +33,13 @@ export interface InlineDiffViewProps {
  * keep the UI thread responsive. Falls back to Shiki-highlighted raw diff text
  * when the patch is too large or the worker build fails.
  */
-export function InlineDiffView({ diffText, filePath, oldText, newText }: InlineDiffViewProps) {
+export function InlineDiffView({
+  diffText,
+  filePath,
+  oldText,
+  newText,
+  showFileNames = false,
+}: InlineDiffViewProps) {
   const theme = useDiffTheme();
   const [diffFiles, setDiffFiles] = useState<InlineDiffFile[]>([]);
   const [state, setState] = useState<"building" | "ready" | "fallback">(
@@ -84,9 +92,18 @@ export function InlineDiffView({ diffText, filePath, oldText, newText }: InlineD
     void buildInWorker(items, theme)
       .then((results) => {
         if (cancelled) return;
-        const built = results.flatMap((r) =>
-          r.bundle ? [{ key: r.key, diffFile: diffFileFromBundle(r.data, r.bundle) }] : [],
-        );
+        const built = results.flatMap((r, index) => {
+          const part = parts[index];
+          return r.bundle && part
+            ? [
+                {
+                  key: r.key,
+                  displayPath: part.displayPath,
+                  diffFile: diffFileFromBundle(r.data, r.bundle),
+                },
+              ]
+            : [];
+        });
         if (built.length === results.length && built.length > 0) {
           setDiffFiles(built);
           setState("ready");
@@ -118,17 +135,23 @@ export function InlineDiffView({ diffText, filePath, oldText, newText }: InlineD
   return (
     <DiffViewErrorBoundary fallback={<CommandOutputViewport text={diffText} language="diff" />}>
       <div className="flex max-h-[min(24rem,50vh)] flex-col gap-2 overflow-auto [scrollbar-gutter:stable]">
-        {diffFiles.map(({ key, diffFile }) => (
-          <DiffView
-            key={key}
-            diffFile={diffFile}
-            diffViewMode={UNIFIED_MODE}
-            diffViewTheme={theme}
-            diffViewFontSize={12}
-            registerHighlighter={highlighter}
-            diffViewHighlight={true}
-            diffViewWrap={false}
-          />
+        {diffFiles.map(({ key, displayPath, diffFile }) => (
+          <div key={key}>
+            {showFileNames && (
+              <div className="mb-2 break-all font-mono text-xs text-foreground-muted">
+                {displayPath}
+              </div>
+            )}
+            <DiffView
+              diffFile={diffFile}
+              diffViewMode={UNIFIED_MODE}
+              diffViewTheme={theme}
+              diffViewFontSize={12}
+              registerHighlighter={highlighter}
+              diffViewHighlight={true}
+              diffViewWrap={false}
+            />
+          </div>
         ))}
       </div>
     </DiffViewErrorBoundary>
@@ -137,6 +160,7 @@ export function InlineDiffView({ diffText, filePath, oldText, newText }: InlineD
 
 interface InlineDiffFile {
   key: string;
+  displayPath: string;
   diffFile: DiffFile;
 }
 

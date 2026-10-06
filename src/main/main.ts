@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { watch } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -112,9 +113,8 @@ import {
   buildSharedAppControlsIngressDeps,
   createAppControlsSupervisorCaller,
 } from "./app-controls";
-import { legacyProductNameFor, resolveLegacyElectronUserDataDir } from "./legacyDataMigration";
+import { resolveLegacyElectronUserDataDir } from "./legacyDataMigration";
 import { refreshMacDockIcon } from "./macDockIcon";
-import { repairLegacyMacAppPath } from "./macAppPathMigration";
 import { persistSupervisorEvent } from "./remote/server/runtimePersistence";
 import {
   buildPrWatchExecutionDeps,
@@ -127,20 +127,12 @@ const isDev = Boolean(process.env.VITE_DEV_SERVER_URL);
 const channel = resolvePoracodeChannel();
 const baseDirOverride = process.env.PORACODE_BASE_DIR;
 const legacyBaseDirOverride = process.env.LIGHTCODE_BASE_DIR?.trim() || undefined;
+app.setName(productNameFor(channel));
+app.setPath("userData", join(app.getPath("appData"), productNameFor(channel)));
 const defaultElectronUserDataDir = app.getPath("userData");
 const legacyElectronUserDataDir = legacyBaseDirOverride
   ? join(legacyBaseDirOverride, "userData")
   : resolveLegacyElectronUserDataDir(defaultElectronUserDataDir, channel, isDev);
-
-// Electron keys macOS Keychain and Linux secret-store entries by app name.
-// Initialize Chromium's crypto under the pre-rebrand technical identity so
-// migrated secrets and browser sessions remain decryptable. The visible name
-// is restored after Electron captures the crypto configuration during startup.
-const preserveLegacySafeStorageIdentity = !isDev && process.platform !== "win32";
-if (preserveLegacySafeStorageIdentity) {
-  app.setName(legacyProductNameFor(channel));
-  app.setPath("userData", defaultElectronUserDataDir);
-}
 
 if (process.env.PORACODE_CDP_PORT) {
   app.commandLine.appendSwitch("remote-debugging-port", process.env.PORACODE_CDP_PORT);
@@ -681,8 +673,6 @@ if (!hasSingleInstanceLock) {
   void app
     .whenReady()
     .then(async () => {
-      if (preserveLegacySafeStorageIdentity) app.setName(productNameFor(channel));
-      repairLegacyMacAppPath(channel, { isPackaged: app.isPackaged });
       refreshMacDockIcon();
       Menu.setApplicationMenu(null);
 

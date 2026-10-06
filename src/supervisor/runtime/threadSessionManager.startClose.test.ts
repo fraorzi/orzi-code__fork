@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -868,4 +869,30 @@ describe("ThreadSessionManager fork mention handoff", () => {
       "Thread mentions require the Poracode read_thread tool",
     );
   });
+});
+
+it("delivers teamwork instructions to the runtime without changing the displayed prompt", async () => {
+  const handle = createStructuredSession(Promise.resolve());
+  handle.startTurn = vi.fn<NonNullable<StructuredSessionHandle["startTurn"]>>(
+    async () => undefined,
+  );
+  const adapter = createAdapter("codex", handle);
+  const manager = createManager("codex", adapter);
+  await manager.startThread({
+    threadId: "team-instructions",
+    projectLocation: { kind: "posix", path: "/tmp/project" },
+    agentKind: "codex",
+    config: { model: "codex/model", teamMode: true, crossagentMcp: true },
+    prompt: "Implement a feature",
+    initialSize: { cols: 80, rows: 24 },
+    presentationMode: "gui",
+  });
+  expect(handle.startTurn).toHaveBeenCalledWith(
+    "Implement a feature",
+    expect.objectContaining({ teamMode: true }),
+    undefined,
+    expect.objectContaining({
+      inlineInstructions: expect.stringContaining("without asking for approval"),
+    }),
+  );
 });

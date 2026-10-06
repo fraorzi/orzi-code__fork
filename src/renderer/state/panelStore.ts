@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { create } from "zustand";
 import type { ThreadDockKind } from "@/shared/settings";
 import type { ProjectLocation } from "@/shared/contracts";
@@ -261,7 +262,7 @@ function sanitizeThreadSortMode(value: unknown): ThreadSortMode {
 }
 
 function sanitizeThreadListLayout(value: unknown): ThreadListLayout {
-  return value === "grouped" || value === "flat" ? value : "flat";
+  return value === "grouped" || value === "flat" ? value : "grouped";
 }
 
 /**

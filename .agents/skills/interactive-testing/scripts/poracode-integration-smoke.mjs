@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 
 import { execFileSync, spawnSync } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -15,6 +16,7 @@ import {
 } from "./smoke-scenarios.mjs";
 import { inspectCdpWindowTargets } from "./poracode-cdp-target.mjs";
 import { resolveDebugConnection } from "./poracode-debug-session.mjs";
+import { crossagentRolesScenario } from "../../../../scripts/smoke-crossagent-roles.mjs";
 import { mockLiveVoiceGate } from "./smoke-live-voice.mjs";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
@@ -193,12 +195,32 @@ async function runSmoke(plan) {
   try {
     await client.send("Page.enable");
     await client.send("Runtime.enable");
+    // Mock scenarios use English accessible names, independent of the host OS locale.
+    if (mode === "mock") {
+      await evaluate(
+        client,
+        'window.__poracodeDev.stores.sharedSettings.getState().setLocale("en"); new Promise(resolve => setTimeout(resolve, 300))',
+        true,
+      );
+    }
     await runScenario(report, "welcome-dismissal", () => welcomeDismissalScenario(client));
     await installWindowErrorCollector(client);
     await runScenario(report, "baseline", () => baselineScenario(client));
     if (plan.automated.includes("settings")) {
       await runScenario(report, "settings", () => settingsScenario(client));
       await runScenario(report, "control-geometry", () => controlGeometryScenario(client));
+    }
+    if (plan.automated.includes("crossagent-roles")) {
+      await runScenario(report, "crossagent-roles", () =>
+        crossagentRolesScenario({
+          client,
+          evaluate,
+          bridgeInvoke,
+          waitForValue,
+          screenshot,
+          outDir,
+        }),
+      );
     }
     if (plan.automated.includes("schedules")) {
       await runScenario(report, "schedules", () => schedulesScenario(client));
@@ -1721,7 +1743,7 @@ async function runMockGate(client, gate, fixture) {
           evaluate(
             client,
             `(() => ({
-              selectControls: document.querySelectorAll('[aria-label="Select"]').length,
+              selectControls: document.querySelectorAll('button[aria-label="Select model"]').length,
             }))()`,
           ),
         (candidate) => candidate.selectControls > 0,
@@ -1746,13 +1768,34 @@ async function runMockGate(client, gate, fixture) {
       );
       return "runtime request store and resolution IPC contract were checked";
     }
-    case "terminal-pty":
+    case "terminal-pty": {
       assert(fixture.bridgeKeys.includes("startThread"), "thread launch bridge is missing");
-      assert(
-        /\bCLI\b/i.test(await evaluate(client, "document.body.innerText")),
-        "terminal presentation control did not render",
+      await evaluate(client, `document.querySelector('button[aria-label="Advanced"]').click()`);
+      const controls = await waitForValue(
+        () =>
+          evaluate(
+            client,
+            `Array.from(document.querySelectorAll('[role="menuitemradio"], [role="menuitem"]')).some(item => item.textContent.trim() === "CLI")`,
+          ),
+        Boolean,
+        "terminal presentation menu",
       );
-      return "terminal launch contract and entry point were checked without spawning a real provider";
+      assert(controls, "terminal presentation menu did not render CLI");
+      await evaluate(
+        client,
+        `document.querySelector('[role="menuitemradio"][aria-checked="true"]').click()`,
+      );
+      await waitForValue(
+        () =>
+          evaluate(
+            client,
+            `document.querySelector('[role="menu"][aria-label="Thread mode"]') === null`,
+          ),
+        Boolean,
+        "terminal menu dismissed",
+      );
+      return "terminal launch contract and advanced entry point were checked without spawning a real provider";
+    }
     case "visual-a11y": {
       const result = await evaluate(
         client,

@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import type { SupervisorEvent } from "@/shared/ipc";
 import type {
   AgentKind,
@@ -15,6 +16,7 @@ import type { AgentAdapter, AgentNativePlugin } from "../../agents/base";
 import type { WindowsShellPreference } from "../../shellPreference";
 
 export interface ThreadSessionManagerOptions {
+  acquireAgentLaunch?: () => Promise<() => void>;
   emit(event: SupervisorEvent): void;
   isDev: boolean;
   logsDir: string;

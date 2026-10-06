@@ -1,3 +1,4 @@
+# Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 msgid ""
 msgstr ""
 "POT-Creation-Date: 2026-06-15 03:02-0700\n"
@@ -1013,6 +1014,10 @@ msgstr "Додайте облікові дані, перш ніж цей тре�
 #~ msgid "Add Cursor profile"
 #~ msgstr "Додати профіль Cursor"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Add fallback model"
+msgstr "Додати резервну модель"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 msgid "Add folder"
 msgstr "Додати теку"
@@ -1061,6 +1066,11 @@ msgstr "Додати постачальника"
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/GitReviewSidebar.tsx
 msgid "Add Remote"
 msgstr "Додати віддалений репозиторій"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Add role"
+msgstr "Додати роль"
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Add shortcut"
@@ -1115,6 +1125,14 @@ msgstr "Додаткові аргументи для кожної нової о�
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Additional arguments passed to each new Windows shell. Quote values containing spaces."
 #~ msgstr "Додаткові аргументи, що передаються кожній новій оболонці Windows. Значення з пробілами беріть у лапки."
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Additional resets: {count}"
+msgstr "Додаткові скидання: {count}"
+
+#: src/renderer/components/thread/PresentationModeTabs.tsx
+msgid "Advanced"
+msgstr "Додатково"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Advertise a custom base URL, e.g. a reverse proxy or tunnel. Leave empty for automatic."
@@ -1547,6 +1565,7 @@ msgstr "Архівовано о {archivedTime}"
 
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1752,6 +1771,10 @@ msgstr "Автоматично"
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Automatic ({0})"
 #~ msgstr "Автоматично ({0})"
+
+#: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+msgid "Automatic agent updates"
+msgstr "Автоматичне оновлення агентів"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -2213,6 +2236,7 @@ msgstr "Не вдалося зв’язатися з віддаленим сер
 #: src/renderer/views/ProfileOverlay/parts/EditProfileDialog.tsx
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
@@ -2335,6 +2359,10 @@ msgstr "Зміни застосовуються до нових чатів. Пр
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 msgid "Changes in PR"
 msgstr "Зміни в PR"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changes in this prompt"
+msgstr "Зміни за цим запитом"
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Changes requested"
@@ -2477,6 +2505,10 @@ msgstr "Виберіть батьківську папку"
 msgid "Choose a project icon image"
 msgstr "Оберіть зображення іконки проєкту"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
+msgid "Choose an available model from the worker pool."
+msgstr "Виберіть доступну модель із пулу виконавців."
+
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconPicker.tsx
 msgid "Choose an image inside the project folder."
 msgstr "Оберіть зображення всередині теки проєкту."
@@ -2523,6 +2555,10 @@ msgstr "Вибрати файл ідентифікації SSH"
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 msgid "Choose the display language for Poracode's interface."
 msgstr "Виберіть мову відображення інтерфейсу Poracode."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Choose the providers and models available for delegation. This pool also applies to roles and their fallback models."
+msgstr "Виберіть провайдерів і моделі для делегування. Цей пул також застосовується до ролей та їхніх резервних моделей."
 
 #: src/renderer/views/SettingsOverlay/parts/CursorProviderSettings.tsx
 #~ msgid "Choose the runtime for new Cursor GUI chats. SDK becomes available after its package is detected and its API key is authenticated."
@@ -3604,6 +3640,10 @@ msgstr "Не вдалося згенерувати повідомлення ко
 msgid "Could not load pull requests for {0}."
 msgstr "Не вдалося завантажити pull request для {0}."
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Could not load this diff."
+msgstr "Не вдалося завантажити ці зміни."
+
 #: src/renderer/components/pdf/PdfViewer.tsx
 #~ msgid "Could not open this PDF."
 #~ msgstr "Не вдалося відкрити цей PDF-файл."
@@ -4115,6 +4155,7 @@ msgstr "DeepSeek"
 
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconPicker.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconSources.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "Default"
 msgstr "За замовчуванням"
@@ -4785,6 +4826,14 @@ msgstr "Редагувати профіль"
 msgid "Edit queued follow-up"
 msgstr "Редагувати повідомлення в черзі"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Edit role"
+msgstr "Редагувати роль"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Edit role for {tagLabel}"
+msgstr "Редагувати роль для {tagLabel}"
+
 #: src/renderer/views/SchedulesView/parts/ScheduleRow.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 msgid "Edit schedule"
@@ -5013,6 +5062,10 @@ msgstr "Введіть порт, який слухає сервер розроб
 #: src/mobile/views/DesktopsView.tsx
 msgid "Enter the SSH password."
 msgstr "Введіть пароль SSH."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Enter up to five tags, separated by commas. The role matches tasks containing all these tags."
+msgstr "Введіть до п’яти тегів через кому. Роль відповідає завданням, що містять усі ці теги."
 
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Enter valid JSON."
@@ -5261,6 +5314,14 @@ msgstr "Номер переможця експерименту має бути �
 msgid "Experiment prompt must not be blank"
 msgstr "Промпт експерименту не може бути порожнім"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Expires {date}"
+msgstr "Дійсні до {date}"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Expiry not reported"
+msgstr "Термін дії не вказано"
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 msgid "Explicit selections recorded from past delegations — they feed the routing order above. Edit the tags or remove entries to reshape it."
 msgstr "Явні вибори, записані з попередніх делегувань, — вони формують порядок маршрутизації вище. Відредагуйте теги або видаліть записи, щоб змінити його."
@@ -5365,12 +5426,21 @@ msgstr "Не вдалося записати метадані гілки, що �
 #~ msgid "Failed to update goal"
 #~ msgstr "Не вдалося оновити мету"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Fallback models"
+msgstr "Резервні моделі"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Fallbacks run only if a worker fails to start its task."
+msgstr "Резервні моделі запускаються лише якщо виконавець не зміг розпочати завдання."
+
 #: src/renderer/components/experiment/ExperimentDraftTargets.tsx
 #: src/renderer/components/providers/modelDisplay.ts
 #: src/renderer/components/thread/buildModelPickerControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRankedRow.tsx
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Fast"
 msgstr "Швидкий"
 
@@ -6584,6 +6654,10 @@ msgstr "Установіть OpenCode 2, щоб керувати його пла
 msgid "Install packages"
 msgstr "Встановити пакети"
 
+#: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+msgid "Install stable agent updates in the background after agent sessions close."
+msgstr "Установлювати стабільні оновлення агентів у фоні після закриття їхніх сеансів."
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Install Tailscale"
 msgstr "Встановити Tailscale"
@@ -6652,6 +6726,10 @@ msgstr "Інструкції"
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
 msgid "Instructions agents follow when choosing which agent or model to delegate to."
 msgstr "Інструкції, яких дотримуються агенти, обираючи, якому агенту чи моделі делегувати."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Instructions are added to the delegated task. They do not restrict the worker's file access."
+msgstr "Інструкції додаються до делегованого завдання. Вони не обмежують доступ виконавця до файлів."
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -6999,6 +7077,10 @@ msgstr "Завантаження параметрів workflow"
 msgid "Loading workflow runs"
 msgstr "Завантаження запусків робочих процесів"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Loading..."
+msgstr "Завантаження..."
+
 #: src/mobile/routeComponents.tsx
 #: src/mobile/ThreadDetail.tsx
 #: src/mobile/views/FilesView.tsx
@@ -7218,8 +7300,8 @@ msgid "Manual override"
 msgstr "Ручне перевизначення"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Manual routes override learned routing whenever all of their task tags match."
-msgstr "Ручні маршрути перевизначають вивчену маршрутизацію, коли збігаються всі їхні теги завдань."
+#~ msgid "Manual routes override learned routing whenever all of their task tags match."
+#~ msgstr "Ручні маршрути перевизначають вивчену маршрутизацію, коли збігаються всі їхні теги завдань."
 
 #. placeholder {0}: thread.title
 #: src/renderer/views/MainView/parts/Sidebar/parts/SortableThreadItem/parts/ThreadItemSuffix.tsx
@@ -7841,6 +7923,10 @@ msgstr "my-mcp-server"
 msgid "Name"
 msgstr "Ім'я"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Name a role and assign task tags, model preferences and instructions. The lead agent chooses roles by matching task tags."
+msgstr "Назвіть роль і задайте теги завдань, уподобання моделей та інструкції. Головний агент вибирає ролі за тегами завдання."
+
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Name is required."
 msgstr "Назва обов’язкова."
@@ -8281,6 +8367,10 @@ msgstr "Немає diff для {visiblePath}"
 msgid "No external skills were found in this scope."
 msgstr "У цій області не знайдено зовнішніх навичок."
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "No file changes in this prompt."
+msgstr "За цим запитом файли не змінено."
+
 #: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "No file checkpoint is stored for this message."
 msgstr "Для цього повідомлення не збережено контрольну точку файлів."
@@ -8570,6 +8660,10 @@ msgstr "Гілок ще немає."
 #: src/renderer/components/providers/usageFormat.ts
 msgid "No windows reported"
 msgstr "Вікна не повідомлені"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "No worker roles yet."
+msgstr "Ролей виконавців поки немає."
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunList.tsx
 msgid "No workflow runs found."
@@ -9047,6 +9141,10 @@ msgstr "Відкрити вибір зусилля"
 msgid "Open the model picker"
 msgstr "Відкрити вибір моделі"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Open usage page"
+msgstr "Відкрити сторінку використання"
+
 #: src/renderer/components/providers/opencode/manifest.ts
 msgid "OpenCode"
 msgstr "OpenCode"
@@ -9469,8 +9567,8 @@ msgid "Pinned"
 msgstr "Закріплено"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Pinned task routes"
-msgstr "Закріплені маршрути завдань"
+#~ msgid "Pinned task routes"
+#~ msgstr "Закріплені маршрути завдань"
 
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
@@ -9787,6 +9885,10 @@ msgstr "Попередні запуски"
 #: src/renderer/commands/registry.ts
 msgid "Previous tab"
 msgstr "Попередня вкладка"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Primary model"
+msgstr "Основна модель"
 
 #: src/mobile/views/MoreView.tsx
 msgid "Privacy Policy"
@@ -10277,6 +10379,7 @@ msgid "Ready. Turn this on to advertise the Tailscale HTTPS URL in new pairing c
 msgstr "Готово. Увімкніть, щоб оголошувати HTTPS-URL Tailscale у нових кодах сполучення."
 
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
 msgid "Reasoning"
 msgstr "Міркування"
 
@@ -10402,6 +10505,10 @@ msgstr "Перезавантажити"
 #: src/renderer/commands/shortcutCatalog.ts
 msgid "Reload browser page"
 msgstr "Перезавантажити сторінку браузера"
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Remaining limits"
+msgstr "Залишок лімітів"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -10583,6 +10690,11 @@ msgstr "Видалити API-ключ Cursor SDK"
 msgid "Remove environment variable"
 msgstr "Видалити змінну середовища"
 
+#. placeholder {0}: index + 1
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Remove fallback {0}"
+msgstr "Видалити резервну модель {0}"
+
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Remove from favorites"
 msgstr "Видалити з обраного"
@@ -10604,7 +10716,7 @@ msgstr "Видалити запис пам'яті для {0}"
 msgid "Remove model"
 msgstr "Видалити модель"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Remove pinned route for {tagLabel}"
 msgstr "Видалити закріплений маршрут для {tagLabel}"
 
@@ -10823,6 +10935,14 @@ msgstr "Скинути матовість бічної панелі до тип�
 msgid "Reset to default"
 msgstr "Скинути до типового"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Resets: check provider website"
+msgstr "Скидання: перевірте сайт постачальника"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Resets: no data"
+msgstr "Скидання: немає даних"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserHost.tsx
 msgid "Resize browser drawer"
 msgstr "Змінити розмір панелі браузера"
@@ -10887,6 +11007,7 @@ msgid "Restart Poracode"
 msgstr "Перезапустити Poracode"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "Відновити"
 
@@ -11083,6 +11204,14 @@ msgstr "Права панель"
 #: src/renderer/components/providers/ProviderUsageRail.tsx
 msgid "Right-click to switch ring"
 msgstr "Клацніть правою кнопкою, щоб перемкнути кільце"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Role instructions"
+msgstr "Інструкції ролі"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Role name"
+msgstr "Назва ролі"
 
 #: src/mobile/views/threadActionSurfaces.tsx
 #: src/mobile/views/threadContextMenus.tsx
@@ -11304,6 +11433,10 @@ msgstr "Зберегти зображення"
 #: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
 msgid "Save MCP servers"
 msgstr "Зберегти сервери MCP"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Save role"
+msgstr "Зберегти роль"
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Save shortcut"
@@ -12347,6 +12480,10 @@ msgstr "Підготовлено"
 msgid "Staged ({0})"
 msgstr "Підготовлено ({0})"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Stale data"
+msgstr "Застарілі дані"
+
 #: src/renderer/commands/registry.ts
 msgid "Star or unstar the current chat or model"
 msgstr "Додати поточний чат чи модель до обраного або видалити з нього"
@@ -12564,6 +12701,10 @@ msgstr "Припинити синхронізацію"
 #: src/renderer/components/thread/ChatPane/parts/items/toolDisplay.ts
 msgid "Stop task"
 msgstr "Зупинити завдання"
+
+#: src/renderer/actions/threadActions.ts
+msgid "Stop the agent before archiving this thread."
+msgstr "Зупиніть агента перед архівуванням цієї гілки."
 
 #: src/renderer/actions/projectActions.ts
 #: src/renderer/i18n/sharedMessages.ts
@@ -12895,12 +13036,17 @@ msgid "Task output"
 msgstr "Вивід завдання"
 
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Task tags"
 msgstr "Теги завдань"
 
 #: src/renderer/utils/projectIconColors.ts
 msgid "Teal"
 msgstr "Бірюзовий"
+
+#: src/renderer/components/thread/ThreadDraftView.tsx
+msgid "Teamwork"
+msgstr "Командна робота"
 
 #. placeholder {0}: selectedAgent?.label ?? targetProviderFallback
 #: src/renderer/components/thread/ContinueInProviderDialog.tsx
@@ -13293,6 +13439,10 @@ msgstr "На цьому пристрої немає придатної каме�
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "this environment"
 msgstr "це середовище"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "This existing route retries after any failure. A retry may repeat completed work."
+msgstr "Це наявне правило повторює спробу після будь-якої помилки. Повторна спроба може повторити вже виконану роботу."
 
 #: src/mobile/views/MobileFileEditor.tsx
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPane/FileEditorPane.tsx
@@ -13956,7 +14106,7 @@ msgstr "Не вдалося видалити облікові дані {0}."
 msgid "Unable to remove memory entry."
 msgstr "Не вдалося видалити запис пам'яті."
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unable to remove pinned route."
 msgstr "Не вдалося видалити закріплений маршрут."
 
@@ -13996,6 +14146,10 @@ msgstr "Не вдалося зберегти профіль Claude {displayLabel
 #: src/renderer/components/composer/ImageLightboxActions.tsx
 msgid "Unable to save image."
 msgstr "Не вдалося зберегти зображення."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Unable to save role. Check for duplicate task tags and try again."
+msgstr "Не вдалося зберегти роль. Перевірте, чи немає дублікатів тегів завдань, і спробуйте знову."
 
 #: src/renderer/utils/shellUtils.ts
 msgid "Unable to start {label}."
@@ -14098,6 +14252,10 @@ msgstr "Не призначено"
 msgid "Unavailable"
 msgstr "Недоступно"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Unavailable model"
+msgstr "Модель недоступна"
+
 #: src/renderer/components/plugins/PluginDetail.tsx
 #: src/renderer/components/plugins/PluginMarketplace.tsx
 msgid "Unavailable on this device"
@@ -14107,7 +14265,7 @@ msgstr "Недоступно на цьому пристрої"
 msgid "Unavailable project"
 msgstr "Недоступний проєкт"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unavailable provider"
 msgstr "Недоступний провайдер"
 
@@ -14465,7 +14623,6 @@ msgstr "Потрібно вказати URL."
 #: src/mobile/views/DesktopWorkspacePanel.tsx
 #: src/mobile/WideShell.tsx
 #: src/renderer/components/layout/PanelDock/panelTabMeta.ts
-#: src/renderer/components/providers/ProviderUsageRail.tsx
 #: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 msgid "Usage"
@@ -14964,6 +15121,18 @@ msgstr "Працюйте зі сторінками та авторизовани
 #: src/renderer/components/thread/ChatPane/parts/MessageList.tsx
 msgid "Worked for {elapsed}"
 msgstr "Працював {elapsed}"
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Worker model pool"
+msgstr "Пул моделей виконавців"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Worker roles"
+msgstr "Ролі виконавців"
+
+#: src/renderer/components/thread/ThreadDraftView.tsx
+msgid "Workers' changes are integrated automatically. Requires a local Git project and a chat agent with Crossagents enabled."
+msgstr "Зміни виконавців інтегруються автоматично. Потрібен локальний Git-проєкт і чат-агент з увімкненим Crossagents."
 
 #: src/renderer/components/thread/ChatPane/parts/items/toolDisplay.ts
 msgid "Workflow"

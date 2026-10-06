@@ -1,6 +1,7 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { toast } from "@heroui/react";
-import { Trans } from "@lingui/react/macro";
+import { Button, toast } from "@heroui/react";
+import { Trans, useLingui } from "@lingui/react/macro";
 import type {
   AgentStatus,
   BuiltInMcpServerId,
@@ -197,6 +198,7 @@ export function ThreadDraftView(props: {
     headerNeedsTrafficLightPad = false,
   } = props;
   const gitBranch = useGitStore((s) => s.statuses[project.id]?.branch);
+  const isGitRepo = useGitStore((s) => s.statuses[project.id]?.isRepo === true);
   const disabledAgents = useSharedSettings((s) => s.disabledAgents);
   const sharedSettingsHydrated = useSharedSettings((s) => s.sharedSettingsHydrated);
   const showAgentDiscovery = useAgentStatusesStore((s) =>
@@ -257,6 +259,8 @@ export function ThreadDraftView(props: {
   // flag is `mention || (persistent && scope available)`, computed below.
   const [browserMcpMention, setBrowserMcpMention] = useState(false);
   const [crossagentMcpMention, setCrossagentMcpMention] = useState(false);
+  const [teamMode, setTeamMode] = useState(false);
+  const { t } = useLingui();
   const [chromeMcpMention, setChromeMcpMention] = useState(false);
   const [computerUseMention, setComputerUseMention] = useState(false);
   const [worktreeMode, setWorktreeMode] = useState(
@@ -1167,10 +1171,21 @@ export function ThreadDraftView(props: {
     disabledBuiltInMcpServers[id] !== true &&
     (mention || (enabledMcpServers[id] === true && scope !== "none"));
   const selectedMcpScope = resolveMcpScope(selectedAgent.capabilities.mcpScope, presentationMode);
+  const teamAvailable =
+    !isHomeScope &&
+    !project.remoteServerId &&
+    project.location.kind === "posix" &&
+    isGitRepo &&
+    presentationMode === "gui" &&
+    selectedMcpScope !== "none" &&
+    (selectedAgent.capabilities.mcpConfigSource !== "agentSettings" ||
+      selectedAgent.capabilities.crossagentMcpRouting === "provider-session") &&
+    disabledBuiltInMcpServers.crossagents !== true;
+  const effectiveTeamMode = teamMode && teamAvailable;
   const effectiveBrowserMcp = effectiveMcp("browser", browserMcpMention, selectedMcpScope);
   const effectiveCrossagentMcp = effectiveMcp(
     "crossagents",
-    crossagentMcpMention,
+    crossagentMcpMention || effectiveTeamMode,
     selectedMcpScope,
   );
   const effectiveChromeMcp = effectiveMcp(
@@ -1233,12 +1248,27 @@ export function ThreadDraftView(props: {
               {...(props.paneId ? { paneId: props.paneId } : {})}
               {...(props.onProjectChange ? { onSelectProject: props.onProjectChange } : {})}
             />
-            <PresentationModeTabs
-              presentationMode={presentationMode}
-              supportsTerminal={supportsTerminalMode}
-              supportsGui={supportsGuiMode}
-              onChange={handlePresentationChange}
-            />
+            <div className="flex items-center gap-2">
+              <span
+                title={t`Workers' changes are integrated automatically. Requires a local Git project and a chat agent with Crossagents enabled.`}
+              >
+                <Button
+                  size="sm"
+                  variant={effectiveTeamMode ? "secondary" : "ghost"}
+                  aria-pressed={effectiveTeamMode}
+                  isDisabled={!teamAvailable}
+                  onPress={() => setTeamMode(!effectiveTeamMode)}
+                >
+                  <Trans>Teamwork</Trans>
+                </Button>
+              </span>
+              <PresentationModeTabs
+                presentationMode={presentationMode}
+                supportsTerminal={supportsTerminalMode}
+                supportsGui={supportsGuiMode}
+                onChange={handlePresentationChange}
+              />
+            </div>
           </div>
           <ThreadDraftComposerArea
             project={project}
@@ -1264,6 +1294,7 @@ export function ThreadDraftView(props: {
               ...(sandboxMode ? { sandboxMode } : {}),
               ...(effectiveBrowserMcp ? { browserMcp: true } : {}),
               ...(effectiveCrossagentMcp ? { crossagentMcp: true } : {}),
+              ...(effectiveTeamMode ? { teamMode: true } : {}),
               ...(effectiveChromeMcp ? { chromeMcp: true } : {}),
               ...(effectiveComputerUse ? { computerUse: true } : {}),
             }}

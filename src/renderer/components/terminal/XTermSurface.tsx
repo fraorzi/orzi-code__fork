@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { ClipboardAddon } from "@xterm/addon-clipboard";
 import { FitAddon } from "@xterm/addon-fit";
 import { ImageAddon } from "@xterm/addon-image";
@@ -155,7 +156,7 @@ export const XTermSurface = forwardRef<
     className,
     baseFontSize = 12,
     enabled = true,
-    openLinksInNativeBrowser = false,
+    openLinksInNativeBrowser = true,
     preferDomRenderer = false,
     visible = true,
     fixedTerminalSize,

@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { z } from "zod";
 import { agentKindSchema, threadModeSchema } from "./common";
 
@@ -13,6 +14,8 @@ const threadConfigShape = {
   sandboxMode: z.string().optional(),
   browserMcp: z.boolean().optional(),
   crossagentMcp: z.boolean().optional(),
+  /** Opt-in delegation with isolated worktrees and automatic integration. */
+  teamMode: z.boolean().optional(),
   computerUse: z.boolean().optional(),
   chromeMcp: z.boolean().optional(),
   /** Runtime environment selected for a provider that cannot execute natively. */
@@ -60,6 +63,7 @@ export function isThreadConfigEqual(
     left.sandboxMode === right.sandboxMode &&
     left.browserMcp === right.browserMcp &&
     left.crossagentMcp === right.crossagentMcp &&
+    left.teamMode === right.teamMode &&
     left.computerUse === right.computerUse &&
     left.chromeMcp === right.chromeMcp &&
     left.executionEnvironment?.kind === right.executionEnvironment?.kind &&

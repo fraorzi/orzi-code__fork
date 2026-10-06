@@ -1,3 +1,17 @@
+<!-- Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06. -->
+
+# orzi-code__fork
+
+Personal macOS fork of [Poracode](https://github.com/Porabuild/Poracode), maintained by Franciszek Orzechowski. This repository publishes the fork source code. The local application currently uses the name `Poracode Personal`.
+
+Fork features and verification are recorded in [the implementation status](docs/fork/implementation.md). Before developing this checkout, read [the handoff](docs/fork/HANDOFF.md).
+
+The upstream Apache-2.0 license and author notices are preserved. Bundled Geist fonts retain their [OFL-1.1 license](src/renderer/fonts/OFL.txt). Provider SDKs and native dependencies keep their own terms; publishing source code does not establish permission to distribute every bundled binary. See [NOTICE](NOTICE) and [the licensing findings](docs/fork/research.md#publiczne-repozytorium-i-licencje).
+
+The original upstream README follows.
+
+---
+
 <p align="center">
   <img src="build/icon.png" width="128" height="128" alt="Poracode" />
 </p>

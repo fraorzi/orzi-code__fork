@@ -1,0 +1,122 @@
+# Stan implementacji
+
+Data: 2026-10-06. Lokalna wersja testowa na bazie PoraCode 1.8.1.
+
+## Edytor ról i puli modeli - bieżący kod
+
+Zmiana z 2026-10-06 jest sprawdzona w izolowanej aplikacji deweloperskiej. Nie została jeszcze dodana do `/Applications/Poracode Personal.app` ani do istniejącego DMG.
+
+- Wejście: Ustawienia > Serwery MCP > Crossagents > ustawienia routingu.
+- Pula modeli korzysta z dotychczasowego filtra Crossagents. Wykluczeni dostawcy i modele nie pojawiają się jako dostępne wybory roli, a niedostępny model podstawowy lub zapasowy blokuje zapis edytora.
+- Można tworzyć, edytować i usuwać role z nazwą, maksymalnie pięcioma tagami, modelem, rozumowaniem, Fast, instrukcjami i maksymalnie trzema modelami zapasowymi.
+- Role rozszerzają istniejące zapisane reguły routingu. Wybór odbywa się przez wszystkie tagi roli, nie przez osobny obowiązkowy etap w zwykłym czacie. Jawny wybór dostawcy i modelu zachowuje pierwszeństwo.
+- MCP `list_routing_preferences` pokazuje także nazwy i instrukcje ról. Główny agent dostaje wskazówkę, jak ich używać. Instrukcje trafiają do promptu wykonawcy, gdy używana jest odpowiadająca im reguła. Modele zapasowe otrzymują ten sam prompt. Instrukcje nie zmieniają uprawnień wykonawcy.
+- Nowe role zachowują domyślną politykę ponowienia tylko przed rozpoczęciem zadania. Edycja starej reguły zachowuje jej `retryMode`; dla `any-failure` formularz wyświetla istniejące ryzyko powtórzenia pracy.
+- Zapis przez osobny handler main `saveCrossagentRole` atomowo zastępuje stare tagi i odrzuca kolizje, nie usuwając innej roli. Odczyt po restarcie oraz zwykłe zapisy renderera zachowują metadane.
+- Granice zgodności: `name` i `instructions` są opcjonalne w `crossagentRoutingOverrideSchema`; stare reguły pozostają poprawne. Nowy handler IPC jest dodatkową metodą lokalną. Baza, istniejące cache i protokoły helperów nie wymagają zmiany wersji. Test zaczyna od formatu sprzed dodania ról.
+- Sprawdzono 160 testów w 6 zestawach, typecheck, oba etapy lintu na zmienionych plikach i brak brakujących tłumaczeń w 12 katalogach.
+- Powtarzalny test Electron: `scripts/smoke-crossagent-roles.mjs`, wywoływany przez istniejący runner. Weryfikuje rzeczywisty IPC zapis/odczyt, ochronę przed starym zapisem ustawień, kolizje, zmianę tagów, usuwanie i otwarcie edytora z niedostępną konfiguracją. Używa izolowanego profilu, bez uruchamiania płatnej tury dostawcy.
+- Raport i zrzut: `/private/tmp/poracode-roles-smoke/roles-20261006/artifacts/smoke-report.json` oraz `smoke-worker-role-editor.png`. Skrypt sprawdza też ustawienia, wyszukiwanie wątków, geometrię kontrolek i 9 deterministycznych bramek. Liczba błędów renderera: 0.
+- Testy z rzeczywistymi modelami dla nazwanych ról i nowe pakowanie pozostają do wykonania. Wcześniejszy test rzeczywistych dostawców dotyczy pracy zespołowej opisanej niżej.
+
+## Dostępna aplikacja
+
+- Zainstalowana w `/Applications/Poracode Personal.app`.
+- Instalator: `release/Poracode Personal-1.8.1-arm64.dmg`.
+- Wersja dla Apple Silicon. Do uruchomienia aplikacji nie potrzeba terminala, skryptu, serwera deweloperskiego ani checkoutu.
+- Osobny identyfikator `com.franciszek.poracode.personal`, dane w `~/.poracode-personal`, osobny profil Electron i tożsamość magazynu systemowego.
+- Brak automatycznego importu bazy starej aplikacji. Własne projekty można dodać z GUI. Migracja dotychczasowej historii nie jest jeszcze przygotowana.
+- Aktualizacje samej aplikacji nie korzystają z repozytorium upstreamu. Osobny kanał publikacji forka nie został skonfigurowany.
+- Pakiet podpisany lokalnie ad hoc, bez notaryzacji Apple. Zweryfikowano podpis zainstalowanej aplikacji przez `codesign --verify --deep --strict`.
+
+## Wdrożone zachowanie
+
+- Domyślny sidebar grupuje wątki według projektów. Pod projektem jest rozwijane archiwum z przywracaniem. Rozwinięcie archiwum korzysta z istniejącego trwałego stanu sidebaru.
+- Archiwizacja w trakcie aktywnej tury jest blokowana z komunikatem. Nie zatrzymuje wtedy agenta po cichu.
+- Wybór Chat/CLI przeniesiony do menu zaawansowanego. Istniejący resolver preferuje chat, jeśli agent go obsługuje, i zachowuje zapisany wybór użytkownika.
+- Linki obsługiwane przez wspólny helper wiadomości otwierają domyślną przeglądarkę systemową. Terminal również domyślnie korzysta z tej ścieżki. Panel wbudowanej przeglądarki pozostaje dostępny osobno.
+- W rozwiniętym sidebarze limity są wierszami z pozostałym procentem, paskiem i czasem resetu. Nieaktualny odczyt ma oznaczenie. Zwijany sidebar zachowuje kompaktowe wskaźniki.
+- Odczyt Antigravity wykorzystuje istniejący skaner. W zainstalowanej aplikacji otrzymano rzeczywiste okna Gemini i Claude: 5h oraz tygodniowe.
+- Domyślnie włączone automatyczne aktualizacje agentów, z przełącznikiem w ustawieniach ogólnych. Wykorzystują istniejące aktualizatory CLI oraz instalacje ACP, także first-class.
+- Sprawdzanie wersji co 6 godzin; harmonogram co minutę ponawia odroczone zadania. Niepowodzenie pojedynczej aktualizacji ma 15-minutową przerwę przed kolejną próbą.
+- Instalacje wstrzymują się, gdy fork ma sesje agentów, i są koordynowane z uruchamianiem nowych sesji. Aktualizacja jednego programu nie może nakładać się na drugi instalator sterowany tym koordynatorem.
+- Wbudowany Agent SDK nadal aktualizuje się wraz z pakietem aplikacji. Automat CLI nie zmienia bibliotek spakowanych w aplikacji.
+
+## Praca zespołowa
+
+- Nowy przełącznik przy tworzeniu wątku, domyślnie wyłączony. Wybrany model jest głównym agentem i nadal sam implementuje oraz prowadzi rozmowę.
+- Crossagents działa także bez opcjonalnego skilla pluginu. Usunięto warunek, który zatrzymywał rzeczywistą sesję mimo dostępnych narzędzi MCP.
+- Instrukcje głównego agenta dopuszczają delegowanie zarówno prostych zadań słabszemu modelowi, jak i trudnych, niezależnych części mocnemu modelowi innego dostawcy. Używane są istniejące adaptery, katalog modeli i reguły Crossagents.
+- Maksymalnie dwóch wykonawców naraz. Brak dziedziczenia Crossagents przez wykonawcę, czyli bez kolejnego poziomu delegowania tym mechanizmem.
+- Każdy wykonawca otrzymuje osobny Git worktree z migawką bieżących plików. Migawka zawiera zmiany staged, unstaged i untracked, z wyłączeniem ignorowanych plików.
+- Po pomyślnym zakończeniu i zamknięciu sesji wykonawcy aplikacja stosuje jego różnicę względem migawki. Integracje do tego samego katalogu są wykonywane kolejno. Nie powstają commity i nie zmienia się indeks głównego repozytorium.
+- Konflikt nie uruchamia okna zatwierdzania. Główny agent dostaje status `needs_resolution`, ścieżkę worktree i poprawki, rozwiązuje problem i testuje połączone zmiany. Status `completed` opisuje zakończenie wykonawcy; powodzenie integracji jest osobnym polem.
+- Błąd lub anulowanie wykonawcy nie powoduje automatycznej integracji. Nie ma automatycznego ponawiania po awarii procesu aplikacji.
+- Pierwsza wersja wymaga lokalnego projektu POSIX z istniejącym HEAD, chatu i obsługi Crossagents. Submoduły, WSL i projekty zdalne nie są jeszcze objęte tym mechanizmem.
+- Ignorowane pliki, np. zależności i lokalne `.env`, nie są kopiowane. Wykonawca może potrzebować przygotowania zależności do testów. Worktree nie ogranicza systemowych uprawnień procesu.
+- Migawki i katalogi są zachowywane pod `~/.poracode-personal/team-worktrees`. Manifest `workspace.json` ma wersję 1. Nie ma jeszcze ekranu sprzątania ani automatycznego usuwania zachowanych katalogów.
+- Pole `teamMode` jest opcjonalne w istniejącym schemacie konfiguracji. Starsze wątki pozostają poprawne i nie włączają trybu zespołowego. Testy obejmują tę zgodność; migracja bazy ani zmiana wersji protokołu nie jest potrzebna.
+
+## Diff pojedynczego promptu
+
+- Przycisk "Zmiany w tym prompcie" pod zakończoną odpowiedzią pokazuje zapisany diff tej pracy. Dotyczy zarówno ostatniej odpowiedzi, jak i wcześniejszych odpowiedzi w wątku.
+- Porównanie zaczyna się od plików sprzed wysłania promptu, więc pomija wcześniejsze lokalne zmiany. Zakończony diff jest niezmienny mimo kolejnych promptów i edycji.
+- Końcowa migawka jest zapisywana z obsługi zdarzenia zakończenia tury, także dla niewidocznego wątku. Otwarcie historycznej rozmowy nie tworzy pozornego diffu na podstawie aktualnych plików.
+- Migawka następnego promptu czeka na dokończenie zapisu poprzedniego wyniku.
+- Obejmuje zmiany wykonawców włączone przed zakończeniem głównej tury. Migawka jest porównaniem plików w czasie, nie detektorem autorstwa: równoległe ręczne zmiany lub zmiany innego wątku w tym samym katalogu mogą również wejść do diffu.
+- Starsze prompty bez zapisanych dwóch stanów nie mają odtwarzanego diffu. Obsługa tego widoku dotyczy lokalnych wątków; nie rozszerzono zdalnego protokołu klienta.
+- Nowy format natywnych migawek ma `storageVersion: 2`. Przechowuje drzewa Git i osobne metadane w obiektach blob, bez tworzenia commitów. HEAD i indeks pozostają bez zmian. Odczyt wcześniejszych migawek zapisanych jako commity jest zachowany i przetestowany.
+- `commit` w istniejącym rekordzie jest zachowanym dla zgodności polem identyfikatora obiektu. Dla v2 jest identyfikatorem drzewa. Starsze wydania forka nie odczytają nowych migawek v2; dane starszego formatu nie są usuwane.
+
+## Dodatkowe resety limitów
+
+- Sidebar i panel zużycia pokazują liczbę zapisanych resetów oraz dokładną datę wygaśnięcia w lokalnej strefie czasowej. Każdy grant może mieć własny termin; brak daty jest oznaczony.
+- Odczyt Codex używa osobnego endpointu z tym samym kontem OAuth co odczyt limitów. Uwzględnia status kredytu, obsługę przez plan, datę przyznania i datę wygaśnięcia. Odczyt nie zużywa resetu.
+- Odczyt Claude pyta o programy resetów w odpowiedzi zużycia. Odpowiedź `ineligible_reason: "surface"` oznacza ograniczenie do strony/aplikacji dostawcy. UI pokazuje ten stan i link do strony zużycia, bez zgadywania liczby lub terminu.
+- W odczycie konta użytkownika Codex zwrócił 1 dostępny reset do 2026-10-29 16:33 UTC. Claude zwrócił ograniczenie `surface`, więc nie potwierdzono jego liczby resetów.
+- Wykorzystane, wygasłe, przyszłe, wstrzymane lub niedostępne w planie granty nie zwiększają licznika. Błąd odczytu nie jest zamieniany na zero. Parser odrzuca nieznany format i nieprawidłowe daty.
+- Błąd dodatkowego odczytu Codex nie usuwa poprawnie pobranych zwykłych limitów. Odpowiedź 429 zachowuje przerwę podaną przez serwer.
+- `resetCredits` jest opcjonalnym rozszerzeniem `UsageSnapshot`. Starszy cache nadal zawiera poprawne limity i zostaje uzupełniony podczas odświeżenia. Test obejmuje odczyt starego formatu; wersja cache pozostaje 5. Renderer porównuje także nową część danych.
+
+## Sprawdzone
+
+- Pierwszy etap: 164 testy w 11 zestawach dotyczących aktualizacji, ustawień, tożsamości aplikacji, sidebaru i akcji wątków.
+- Tryb zespołowy: 288 testów w 13 zestawach, w tym rzeczywiste repozytoria Git oraz przebieg uruchomienia, anulowania i integracji.
+- Resety i powiązane zapisy migawek: 76 testów w 6 zestawach.
+- Diff promptu: 113 testów w 7 zestawach, w tym rozdzielenie dwóch promptów, trwałość historycznego diffu i odczyt starszych migawek.
+- Po poprawce finalizacji na zdarzeniu zakończenia sesji: 37 testów aplikacji i akcji migawek oraz 5 testów widoku diffu przeszło.
+- Typecheck i oba etapy lintu przeszły.
+- Build renderera i procesów Electron przeszedł; utworzono DMG.
+- Lingui: brak brakujących tłumaczeń we wszystkich 12 katalogach poza źródłowym angielskim.
+- Zainstalowany pakiet uruchomiony przez macOS Launch Services w oddzielnym profilu testowym, bez dev servera.
+- Sprawdzono rzeczywisty renderer: widok limitów, domyślny chat, menu trybów, projekt, archiwum i przywrócenie wątku. Po pełnym ponownym uruchomieniu aplikacji przywrócony wątek nadal należy do tego projektu.
+- Test z rzeczywistymi dostawcami w zainstalowanej aplikacji: Codex 6 Luna zlecił Claude Haiku zmianę `task.txt`, aplikacja zwróciła integrację `applied`, a plik w projekcie głównym zawierał wynik wykonawcy. Nie było zatwierdzania scalenia. Dowód: `.tmp/installed-smoke/team-live-result.json`.
+- Rzeczywisty prompt Claude Haiku w zainstalowanej aplikacji zapisał diff tylko `task.txt`, mimo wcześniejszych zmian w innych plikach. Późniejsze ręczne zmiany `task.txt` i `unrelated.txt` nie zmieniły zapisanego diffu. HEAD i indeks Git pozostały bez zmian. Po pełnym restarcie aplikacji diff był identyczny; końcowy widok pokazuje także nazwę pliku (`prompt-diff-final.png`). Dowody: `.tmp/installed-smoke/prompt-checkpoints-final.json` i `prompt-frozen-diff.json`.
+- Sidebar i panel użycia pokazały rzeczywisty dodatkowy reset Codex z datą 29 października 2026, 17:33 czasu lokalnego. Claude pokazał informację o sprawdzeniu strony dostawcy, zgodnie z odpowiedzią API `surface`. Nie zużyto żadnego resetu. Zrzut: `.tmp/installed-smoke/reset-panel.png`.
+- Materiały testowe i zrzuty są w `.tmp/installed-smoke/`. Dane produkcyjnego PoraCode nie były migrowane ani modyfikowane.
+
+## Pozostały zakres i ograniczenia
+
+- Figma: nadal potrzebny jest konkretny plik/węzeł do porównania z działającą aplikacją Codex. Nie oznaczono problemu jako naprawionego i nie zmieniono autoryzacji produkcyjnego wpisu MCP.
+- Nie wykonano rzeczywistej aktualizacji zainstalowanych CLI podczas testów. Harmonogram, koordynacja i obsługa błędów mają testy; próby instalacji w profilu testowym były wyłączone.
+- Aktualizatory zewnętrznych instalacji nadal zależą od uprawnień i zachowania instalatora producenta. Nie wdrożono uniwersalnego rollbacku programów ani osobnego magazynu ich wersji.
+- Koordynator nie stanowi blokady instalatorów uruchomionych poza forkiem. Nie należy traktować go jako ochrony wszystkich procesów agentów z innych aplikacji.
+- Nie przeprowadzono pełnych sesji generowania dla wszystkich dostawców ani testu zgodności każdej nowej wersji agenta ze wszystkimi funkcjami adaptera.
+- Brak pełnego importu historii oraz nowego brandingu graficznego. Dalszy kierunek wizualny pozostaje otwarty.
+- Edytor nazwanych ról i puli modeli jest dodany w bieżącym kodzie, ale jeszcze nie w zainstalowanym pakiecie. Stan i ograniczenia w pierwszej sekcji tego dokumentu.
+
+## Odtworzenie buildu
+
+Repo wymaga Node >= 24.10.0 i pnpm 12.3.4. Lokalny toolchain przygotowano pod `.tmp/toolchain`, bez zmiany domyślnego Node użytkownika.
+
+Komputer nie miał Rust. Do tego wydania skopiowano niezmieniony moduł sterowania komputerem z zainstalowanego PoraCode: helper 0.4.3, protokół 3, commit źródłowy w jego manifeście `ce33db772f0e3a95bcae48874d919c923523e82a`. Przeszedł `node scripts/prepare-computer-use-helper.mjs --check --platform mac` i kontrolę pakowania. Pełny build tego modułu ze źródeł wymaga Rust 1.98 i narzędzi Apple.
+
+Pakowanie gotowych artefaktów aplikacji i przygotowanych zasobów:
+
+```sh
+node scripts/build-desktop-artifact.mjs --platform mac --target dmg --arch arm64 --skip-build
+```
+
+`--skip-build` wymaga uprzedniego buildu bieżącego kodu, przygotowania zasobów oraz zweryfikowanego modułu sterowania komputerem. Nie służy do uruchamiania aplikacji przez użytkownika.
+
+Publikację bieżących źródeł w `fraorzi/orzi-code__fork` zatwierdził użytkownik 2026-10-06. Instalator i dane lokalnych kont pozostają poza repozytorium.

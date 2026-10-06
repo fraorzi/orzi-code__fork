@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { create } from "zustand";
 import type { UsageCredits, UsageSnapshot } from "@/shared/contracts";
 
@@ -31,6 +32,7 @@ function snapshotEqual(a: UsageSnapshot | undefined, b: UsageSnapshot): boolean 
     a.plan !== b.plan ||
     a.fetchedAt !== b.fetchedAt ||
     !creditsEqual(a.credits, b.credits) ||
+    JSON.stringify(a.resetCredits) !== JSON.stringify(b.resetCredits) ||
     a.windows.length !== b.windows.length
   ) {
     return false;

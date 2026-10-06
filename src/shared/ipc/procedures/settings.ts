@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { z } from "zod";
 import type {
   AgentInstanceConfig,
@@ -14,6 +15,10 @@ import {
   type SharedSettingsInput,
 } from "../../settings";
 import { defineNoArgProcedure, definePayloadProcedure } from "../core";
+import {
+  saveCrossagentRolePayloadSchema,
+  type SaveCrossagentRolePayload,
+} from "../../crossagentRoles";
 import {
   windowChromePayloadSchema,
   type WindowChromePayload,
@@ -54,6 +59,11 @@ export const settingsProcedures = {
       tags: z.array(z.string().min(1).max(32)).min(1).max(5),
     }),
   ),
+  saveCrossagentRole: definePayloadProcedure<
+    SaveCrossagentRolePayload,
+    CrossagentRoutingOverride[],
+    "main-local"
+  >("saveCrossagentRole", "main-local", saveCrossagentRolePayloadSchema),
   // Learned-memory edits from the Crossagents settings UI. `crossagentSelectionUsage`
   // is supervisor-managed (renderer persists can't write it), so removals and tag
   // edits round-trip through main like `removeCrossagentRoutingOverride`.

@@ -1,3 +1,4 @@
+# Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 msgid ""
 msgstr ""
 "POT-Creation-Date: 2026-06-17 10:29-0700\n"
@@ -1012,6 +1013,10 @@ msgstr "このスレッドを実行する前に認証情報を追加してくだ
 #~ msgid "Add Cursor profile"
 #~ msgstr "Cursorプロファイルを追加"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Add fallback model"
+msgstr "代替モデルを追加"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 msgid "Add folder"
 msgstr "フォルダーを追加"
@@ -1060,6 +1065,11 @@ msgstr "プロバイダーを追加"
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/GitReviewSidebar.tsx
 msgid "Add Remote"
 msgstr "リモートの追加"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Add role"
+msgstr "ロールを追加"
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Add shortcut"
@@ -1114,6 +1124,14 @@ msgstr "新しいターミナルパネルのシェルごとに渡す追加引数
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Additional arguments passed to each new Windows shell. Quote values containing spaces."
 #~ msgstr "新しい各 Windows シェルに渡す追加引数です。スペースを含む値は引用符で囲んでください。"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Additional resets: {count}"
+msgstr "追加リセット: {count}"
+
+#: src/renderer/components/thread/PresentationModeTabs.tsx
+msgid "Advanced"
+msgstr "詳細設定"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Advertise a custom base URL, e.g. a reverse proxy or tunnel. Leave empty for automatic."
@@ -1546,6 +1564,7 @@ msgstr "{archivedTime} にアーカイブ"
 
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1751,6 +1770,10 @@ msgstr "自動"
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Automatic ({0})"
 #~ msgstr "自動 ({0})"
+
+#: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+msgid "Automatic agent updates"
+msgstr "エージェントの自動更新"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -2212,6 +2235,7 @@ msgstr "リモートサーバーに接続できません。オンラインであ
 #: src/renderer/views/ProfileOverlay/parts/EditProfileDialog.tsx
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
@@ -2334,6 +2358,10 @@ msgstr "変更は新しいチャットに適用されます。スキルのライ
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 msgid "Changes in PR"
 msgstr "PR の変更点"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changes in this prompt"
+msgstr "このプロンプトでの変更"
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Changes requested"
@@ -2476,6 +2504,10 @@ msgstr "親フォルダーを選択"
 msgid "Choose a project icon image"
 msgstr "プロジェクトアイコンの画像を選択"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
+msgid "Choose an available model from the worker pool."
+msgstr "ワーカープールから利用可能なモデルを選択してください。"
+
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconPicker.tsx
 msgid "Choose an image inside the project folder."
 msgstr "プロジェクトフォルダ内の画像を選択してください。"
@@ -2522,6 +2554,10 @@ msgstr "SSH 秘密鍵ファイルを選択"
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 msgid "Choose the display language for Poracode's interface."
 msgstr "Poracode のインターフェースの表示言語を選択します。"
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Choose the providers and models available for delegation. This pool also applies to roles and their fallback models."
+msgstr "委任に利用できるプロバイダーとモデルを選択します。このプールはロールとその代替モデルにも適用されます。"
 
 #: src/renderer/views/SettingsOverlay/parts/CursorProviderSettings.tsx
 #~ msgid "Choose the runtime for new Cursor GUI chats. SDK becomes available after its package is detected and its API key is authenticated."
@@ -3603,6 +3639,10 @@ msgstr "コミットメッセージを生成できませんでした:{detail}"
 msgid "Could not load pull requests for {0}."
 msgstr "{0} のプルリクエストを読み込めませんでした。"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Could not load this diff."
+msgstr "差分を読み込めませんでした。"
+
 #: src/renderer/components/pdf/PdfViewer.tsx
 #~ msgid "Could not open this PDF."
 #~ msgstr "このPDFを開けませんでした。"
@@ -4114,6 +4154,7 @@ msgstr "DeepSeek"
 
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconPicker.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconSources.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "Default"
 msgstr "デフォルト"
@@ -4784,6 +4825,14 @@ msgstr "プロフィールを編集"
 msgid "Edit queued follow-up"
 msgstr "待機中の追加メッセージを編集"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Edit role"
+msgstr "ロールを編集"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Edit role for {tagLabel}"
+msgstr "{tagLabel} のロールを編集"
+
 #: src/renderer/views/SchedulesView/parts/ScheduleRow.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 msgid "Edit schedule"
@@ -5012,6 +5061,10 @@ msgstr "デスクトップの開発サーバーが待ち受けているポート
 #: src/mobile/views/DesktopsView.tsx
 msgid "Enter the SSH password."
 msgstr "SSH パスワードを入力してください。"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Enter up to five tags, separated by commas. The role matches tasks containing all these tags."
+msgstr "カンマ区切りで最大5個のタグを入力してください。すべてのタグを含むタスクにロールが適用されます。"
 
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Enter valid JSON."
@@ -5260,6 +5313,14 @@ msgstr "実験の勝者は 1 から {candidateCount} の範囲である必要が
 msgid "Experiment prompt must not be blank"
 msgstr "実験のプロンプトを空にすることはできません"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Expires {date}"
+msgstr "有効期限: {date}"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Expiry not reported"
+msgstr "有効期限の情報なし"
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 msgid "Explicit selections recorded from past delegations — they feed the routing order above. Edit the tags or remove entries to reshape it."
 msgstr "過去の委任から記録された明示的な選択です。上のルーティング順に反映されます。タグを編集するか、エントリを削除して調整してください。"
@@ -5364,12 +5425,21 @@ msgstr "所有権付きブランチのメタデータを記録できませんで
 #~ msgid "Failed to update goal"
 #~ msgstr "目標を更新できませんでした"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Fallback models"
+msgstr "代替モデル"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Fallbacks run only if a worker fails to start its task."
+msgstr "ワーカーがタスクを開始できなかった場合のみ、代替モデルが実行されます。"
+
 #: src/renderer/components/experiment/ExperimentDraftTargets.tsx
 #: src/renderer/components/providers/modelDisplay.ts
 #: src/renderer/components/thread/buildModelPickerControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRankedRow.tsx
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Fast"
 msgstr "速い"
 
@@ -6583,6 +6653,10 @@ msgstr "プラグインを管理するには OpenCode 2 をインストールし
 msgid "Install packages"
 msgstr "パッケージをインストールする"
 
+#: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+msgid "Install stable agent updates in the background after agent sessions close."
+msgstr "エージェントのセッション終了後に、安定版の更新をバックグラウンドでインストールします。"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Install Tailscale"
 msgstr "Tailscaleをインストール"
@@ -6651,6 +6725,10 @@ msgstr "指示"
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
 msgid "Instructions agents follow when choosing which agent or model to delegate to."
 msgstr "どのエージェントやモデルに委任するかを選ぶ際に、エージェントが従う指示。"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Instructions are added to the delegated task. They do not restrict the worker's file access."
+msgstr "指示は委任されたタスクに追加されます。ワーカーのファイルアクセスは制限されません。"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -6998,6 +7076,10 @@ msgstr "ワークフロー入力を読み込み中"
 msgid "Loading workflow runs"
 msgstr "ワークフロー実行を読み込み中"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Loading..."
+msgstr "読み込み中..."
+
 #: src/mobile/routeComponents.tsx
 #: src/mobile/ThreadDetail.tsx
 #: src/mobile/views/FilesView.tsx
@@ -7217,8 +7299,8 @@ msgid "Manual override"
 msgstr "手動オーバーライド"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Manual routes override learned routing whenever all of their task tags match."
-msgstr "すべてのタスクタグが一致する場合、手動ルートが学習済みルーティングより優先されます。"
+#~ msgid "Manual routes override learned routing whenever all of their task tags match."
+#~ msgstr "すべてのタスクタグが一致する場合、手動ルートが学習済みルーティングより優先されます。"
 
 #. placeholder {0}: thread.title
 #: src/renderer/views/MainView/parts/Sidebar/parts/SortableThreadItem/parts/ThreadItemSuffix.tsx
@@ -7839,6 +7921,10 @@ msgstr "my-mcp-server"
 msgid "Name"
 msgstr "名前"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Name a role and assign task tags, model preferences and instructions. The lead agent chooses roles by matching task tags."
+msgstr "ロールに名前を付け、タスクタグ、モデルの設定、指示を割り当てます。主担当エージェントはタスクタグに基づいてロールを選択します。"
+
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Name is required."
 msgstr "名前は必須です。"
@@ -8279,6 +8365,10 @@ msgstr "{visiblePath}の差分はありません"
 msgid "No external skills were found in this scope."
 msgstr "このスコープには外部スキルが見つかりませんでした。"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "No file changes in this prompt."
+msgstr "このプロンプトではファイルの変更はありません。"
+
 #: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "No file checkpoint is stored for this message."
 msgstr "このメッセージにはファイル チェックポイントは保存されません。"
@@ -8568,6 +8658,10 @@ msgstr "まだスレッドがありません。"
 #: src/renderer/components/providers/usageFormat.ts
 msgid "No windows reported"
 msgstr "ウィンドウは報告されませんでした"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "No worker roles yet."
+msgstr "ワーカーロールはまだありません。"
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunList.tsx
 msgid "No workflow runs found."
@@ -9045,6 +9139,10 @@ msgstr "工数ピッカーを開く"
 msgid "Open the model picker"
 msgstr "モデルピッカーを開く"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Open usage page"
+msgstr "使用状況ページを開く"
+
 #: src/renderer/components/providers/opencode/manifest.ts
 msgid "OpenCode"
 msgstr "OpenCode"
@@ -9467,8 +9565,8 @@ msgid "Pinned"
 msgstr "固定された"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Pinned task routes"
-msgstr "固定されたタスクルート"
+#~ msgid "Pinned task routes"
+#~ msgstr "固定されたタスクルート"
 
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
@@ -9785,6 +9883,10 @@ msgstr "過去の実行"
 #: src/renderer/commands/registry.ts
 msgid "Previous tab"
 msgstr "前のタブ"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Primary model"
+msgstr "主モデル"
 
 #: src/mobile/views/MoreView.tsx
 msgid "Privacy Policy"
@@ -10275,6 +10377,7 @@ msgid "Ready. Turn this on to advertise the Tailscale HTTPS URL in new pairing c
 msgstr "準備完了。オンにすると、新しいペアリングコードで Tailscale HTTPS URL が通知されます。"
 
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
 msgid "Reasoning"
 msgstr "推論"
 
@@ -10400,6 +10503,10 @@ msgstr "リロード"
 #: src/renderer/commands/shortcutCatalog.ts
 msgid "Reload browser page"
 msgstr "ブラウザのページをリロード"
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Remaining limits"
+msgstr "残りの利用枠"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -10581,6 +10688,11 @@ msgstr "Cursor SDK API キーを削除"
 msgid "Remove environment variable"
 msgstr "環境変数を削除"
 
+#. placeholder {0}: index + 1
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Remove fallback {0}"
+msgstr "代替モデル {0} を削除"
+
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Remove from favorites"
 msgstr "お気に入りから削除"
@@ -10602,7 +10714,7 @@ msgstr "{0}のメモリエントリーを削除"
 msgid "Remove model"
 msgstr "モデルを削除"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Remove pinned route for {tagLabel}"
 msgstr "{tagLabel} の固定ルートを削除"
 
@@ -10821,6 +10933,14 @@ msgstr "サイドバーのすりガラス効果をデフォルトに戻す"
 msgid "Reset to default"
 msgstr "デフォルトに戻す"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Resets: check provider website"
+msgstr "リセット: プロバイダーのサイトで確認"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Resets: no data"
+msgstr "リセット: データなし"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserHost.tsx
 msgid "Resize browser drawer"
 msgstr "ブラウザドロワーのサイズを変更する"
@@ -10885,6 +11005,7 @@ msgid "Restart Poracode"
 msgstr "Poracode を再起動"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "復元"
 
@@ -11081,6 +11202,14 @@ msgstr "右パネル"
 #: src/renderer/components/providers/ProviderUsageRail.tsx
 msgid "Right-click to switch ring"
 msgstr "右クリックでリングを切り替え"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Role instructions"
+msgstr "ロールの指示"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Role name"
+msgstr "ロール名"
 
 #: src/mobile/views/threadActionSurfaces.tsx
 #: src/mobile/views/threadContextMenus.tsx
@@ -11302,6 +11431,10 @@ msgstr "画像を保存"
 #: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
 msgid "Save MCP servers"
 msgstr "MCPサーバーを保存"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Save role"
+msgstr "ロールを保存"
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Save shortcut"
@@ -12345,6 +12478,10 @@ msgstr "ステージ済み"
 msgid "Staged ({0})"
 msgstr "ステージング済み ({0})"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Stale data"
+msgstr "古いデータ"
+
 #: src/renderer/commands/registry.ts
 msgid "Star or unstar the current chat or model"
 msgstr "現在のチャットまたはモデルをお気に入りに追加または解除する"
@@ -12562,6 +12699,10 @@ msgstr "同期を停止"
 #: src/renderer/components/thread/ChatPane/parts/items/toolDisplay.ts
 msgid "Stop task"
 msgstr "タスクの停止"
+
+#: src/renderer/actions/threadActions.ts
+msgid "Stop the agent before archiving this thread."
+msgstr "このスレッドをアーカイブする前にエージェントを停止してください。"
 
 #: src/renderer/actions/projectActions.ts
 #: src/renderer/i18n/sharedMessages.ts
@@ -12893,12 +13034,17 @@ msgid "Task output"
 msgstr "タスクの出力"
 
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Task tags"
 msgstr "タスクタグ"
 
 #: src/renderer/utils/projectIconColors.ts
 msgid "Teal"
 msgstr "ティール"
+
+#: src/renderer/components/thread/ThreadDraftView.tsx
+msgid "Teamwork"
+msgstr "チーム作業"
 
 #. placeholder {0}: selectedAgent?.label ?? targetProviderFallback
 #: src/renderer/components/thread/ContinueInProviderDialog.tsx
@@ -13291,6 +13437,10 @@ msgstr "このデバイスには使用できるカメラがありません。代
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "this environment"
 msgstr "この環境"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "This existing route retries after any failure. A retry may repeat completed work."
+msgstr "この既存ルールは、失敗するたびに再試行します。再試行によって完了済みの作業が繰り返される場合があります。"
 
 #: src/mobile/views/MobileFileEditor.tsx
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPane/FileEditorPane.tsx
@@ -13954,7 +14104,7 @@ msgstr "{0}資格情報を削除できません。"
 msgid "Unable to remove memory entry."
 msgstr "メモリエントリーを削除できません。"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unable to remove pinned route."
 msgstr "固定ルートを削除できませんでした。"
 
@@ -13994,6 +14144,10 @@ msgstr "Claudeの{displayLabel}プロファイルを保存できません。"
 #: src/renderer/components/composer/ImageLightboxActions.tsx
 msgid "Unable to save image."
 msgstr "画像を保存できませんでした。"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Unable to save role. Check for duplicate task tags and try again."
+msgstr "ロールを保存できません。タスクタグの重複を確認して、もう一度お試しください。"
 
 #: src/renderer/utils/shellUtils.ts
 msgid "Unable to start {label}."
@@ -14096,6 +14250,10 @@ msgstr "未割り当て"
 msgid "Unavailable"
 msgstr "利用不可"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Unavailable model"
+msgstr "モデルを利用できません"
+
 #: src/renderer/components/plugins/PluginDetail.tsx
 #: src/renderer/components/plugins/PluginMarketplace.tsx
 msgid "Unavailable on this device"
@@ -14105,7 +14263,7 @@ msgstr "このデバイスでは利用できません"
 msgid "Unavailable project"
 msgstr "利用できないプロジェクト"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unavailable provider"
 msgstr "利用できないプロバイダー"
 
@@ -14463,7 +14621,6 @@ msgstr "URLは必須です。"
 #: src/mobile/views/DesktopWorkspacePanel.tsx
 #: src/mobile/WideShell.tsx
 #: src/renderer/components/layout/PanelDock/panelTabMeta.ts
-#: src/renderer/components/providers/ProviderUsageRail.tsx
 #: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 msgid "Usage"
@@ -14962,6 +15119,18 @@ msgstr "すでに Chrome で開いているページやサインイン済みセ�
 #: src/renderer/components/thread/ChatPane/parts/MessageList.tsx
 msgid "Worked for {elapsed}"
 msgstr "{elapsed}稼働しました"
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Worker model pool"
+msgstr "ワーカーモデルプール"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Worker roles"
+msgstr "ワーカーロール"
+
+#: src/renderer/components/thread/ThreadDraftView.tsx
+msgid "Workers' changes are integrated automatically. Requires a local Git project and a chat agent with Crossagents enabled."
+msgstr "作業エージェントの変更は自動的に統合されます。ローカルのGitプロジェクトと、Crossagentsが有効なチャットエージェントが必要です。"
 
 #: src/renderer/components/thread/ChatPane/parts/items/toolDisplay.ts
 msgid "Workflow"

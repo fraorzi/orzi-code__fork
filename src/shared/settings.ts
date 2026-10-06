@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { z } from "zod";
 import { allUsageProviderDescriptors } from "@poracode/agents-usage/providers";
 import {
@@ -119,6 +120,9 @@ export type CrossagentRoutingSelection = z.infer<typeof crossagentRoutingSelecti
 
 export const crossagentRoutingOverrideSchema = z.object({
   tags: z.array(z.string().min(1).max(32)).min(1).max(5),
+  // Optional role metadata extends existing routes; pre-role settings remain valid.
+  name: z.string().trim().min(1).max(80).optional(),
+  instructions: z.string().trim().max(8_000).optional(),
   ...crossagentRoutingSelectionSchema.shape,
   fallbacks: z.array(crossagentRoutingSelectionSchema).max(3).optional(),
   retryMode: z.enum(["startup", "any-failure"]).optional(),
@@ -291,6 +295,7 @@ export function reorderVisibleThreadDocks(
 }
 
 export const sharedSettingsSchema = z.object({
+  automaticAgentUpdates: z.boolean().default(true),
   themeMode: themeModeSchema,
   /**
    * Selected app theme preset id (see `renderer/theme/themePresets`). The
@@ -714,6 +719,7 @@ export type SharedSettingsInput = Omit<
 >;
 
 export const defaultSharedSettings: SharedSettings = {
+  automaticAgentUpdates: true,
   themeMode: "dark",
   themePreset: "default",
   locale: "system",

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 // Stage-and-install packaging entrypoint.
 //
 // Why: building electron-builder against the project's pnpm workspace pulls in
@@ -454,12 +455,10 @@ function buildElectronBuilderConfig(macArtifactKind = "branded") {
   const channel = channelTable.normalizeChannel(process.env.PORACODE_CHANNEL);
   const appId = channelTable.appIdFor(channel);
   const productName = channelTable.productNameFor(channel);
-  const updaterChannel = channelTable.updaterChannelFor(channel);
   const prefix = channelTable.artifactPrefixFor(channel);
   const iconSuffix = channel === "nightly" ? "-nightly" : "";
   const runtimeIconSuffix = channel === "nightly" ? "-nightly-mac" : "-mac";
   const macExecutableName = channelTable.macExecutableNameFor(channel, macArtifactKind);
-  const publishChannelLine = updaterChannel ? `\n  channel: ${updaterChannel}` : "";
   const macEntitlements = "build/entitlements.mac.plist";
   const macEntitlementsInherit = "build/entitlements.mac.plist";
   const packagedDistFilesYaml = PACKAGED_DIST_FILES.map((glob) =>
@@ -533,10 +532,7 @@ asarUnpack:
 
 afterPack: build/after-pack.cjs
 
-publish:
-  provider: github
-  owner: Porabuild
-  repo: Poracode${publishChannelLine}
+publish: null
 
 win:
   target:
@@ -587,7 +583,8 @@ mac:
     NSMicrophoneUsageDescription: Poracode uses the microphone for local voice input in the composer.
   entitlements: ${macEntitlements}
   entitlementsInherit: ${macEntitlementsInherit}
-  notarize: true
+  identity: "-"
+  notarize: false
 
 npmRebuild: false
 `;

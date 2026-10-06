@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithI18n as render } from "@/renderer/testUtils/i18n";
@@ -5,10 +6,17 @@ import { useAgentStatusesStore } from "@/renderer/state/agentStatusesStore";
 import { useSharedSettings } from "@/renderer/state/sharedSettingsStore";
 import type { AgentStatus } from "@/shared/contracts";
 import type { CrossagentRoutingState } from "@/shared/crossagentRanking";
+import { saveCrossagentRole, type SaveCrossagentRolePayload } from "@/shared/crossagentRoles";
 import { CrossagentRoutingSection } from "./CrossagentRoutingSection";
 
 const mocks = vi.hoisted(() => ({
   getCrossagentRouting: vi.fn<() => Promise<CrossagentRoutingState>>(),
+  saveCrossagentRole:
+    vi.fn<
+      (
+        payload: SaveCrossagentRolePayload,
+      ) => Promise<ReturnType<typeof useSharedSettings.getState>["crossagentRoutingOverrides"]>
+    >(),
   removeCrossagentRoutingOverride:
     vi.fn<
       (payload: {
@@ -24,6 +32,7 @@ vi.mock("@/renderer/bridge", () => ({
   readBridge: () => ({
     appVersion: "desktop",
     getCrossagentRouting: mocks.getCrossagentRouting,
+    saveCrossagentRole: mocks.saveCrossagentRole,
     removeCrossagentRoutingOverride: mocks.removeCrossagentRoutingOverride,
     removeCrossagentMemoryEntry: mocks.removeCrossagentMemoryEntry,
     updateCrossagentMemoryEntryTags: mocks.updateCrossagentMemoryEntryTags,
@@ -42,6 +51,7 @@ function makeStatus(kind: string, label: string, model: string): AgentStatus {
       efforts: ["high", "max"],
       defaultEffort: "high",
       modelEfforts: {},
+      fastModels: [model],
       modes: ["agent"],
       approvalPolicies: [],
       sandboxModes: [],
@@ -57,6 +67,9 @@ function makeStatus(kind: string, label: string, model: string): AgentStatus {
 
 describe("CrossagentRoutingSection", () => {
   beforeEach(() => {
+    mocks.saveCrossagentRole.mockImplementation(async (payload) =>
+      saveCrossagentRole(useSharedSettings.getState().crossagentRoutingOverrides, payload, 30),
+    );
     mocks.removeCrossagentRoutingOverride.mockResolvedValue([]);
     mocks.getCrossagentRouting.mockImplementation(async () => {
       const { disabledAgents, crossagentPausedProviders, crossagentHiddenModels } =
@@ -153,6 +166,113 @@ describe("CrossagentRoutingSection", () => {
         },
       ],
     });
+  });
+
+  it("creates a named role using the real model picker and saves its instructions", async () => {
+    render(<CrossagentRoutingSection />);
+    await waitFor(() => expect(screen.getByRole("button", { name: "Add role" })).toBeEnabled());
+    fireEvent.click(screen.getByRole("button", { name: "Add role" }));
+    fireEvent.change(await screen.findByRole("textbox", { name: "Role name" }), {
+      target: { value: "UI specialist" },
+    });
+    fireEvent.change(screen.getByRole("textbox", { name: "Task tags" }), {
+      target: { value: "ui, frontend" },
+    });
+    fireEvent.change(screen.getByRole("textbox", { name: "Role instructions" }), {
+      target: { value: "Verify keyboard navigation." },
+    });
+    expect(screen.getByRole("button", { name: "Save role" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click((await screen.findAllByRole("option", { name: /SONNET/ }))[0]!);
+    fireEvent.click(screen.getByRole("button", { name: "Save role" }));
+    await waitFor(() =>
+      expect(mocks.saveCrossagentRole).toHaveBeenCalledWith({
+        override: {
+          tags: ["frontend", "ui"],
+          name: "UI specialist",
+          instructions: "Verify keyboard navigation.",
+          agentKind: "claude",
+          modelId: "sonnet",
+          fallbacks: [],
+        },
+      }),
+    );
+    expect(await screen.findByText("UI specialist")).toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: "Role name" })).not.toBeInTheDocument();
+  });
+
+  it("edits legacy routes, blocks unavailable selections and preserves model fallbacks", async () => {
+    useSharedSettings.setState({
+      crossagentRoutingOverrides: [
+        {
+          tags: ["review"],
+          name: "Reviewer",
+          agentKind: "claude",
+          modelId: "sonnet",
+          fallbacks: [{ agentKind: "kimi", modelId: "k3" }],
+          updatedAt: 1,
+        },
+      ],
+    });
+    render(<CrossagentRoutingSection />);
+    await waitFor(() => expect(screen.getByRole("button", { name: "Add role" })).toBeEnabled());
+    fireEvent.click(screen.getByRole("button", { name: "Edit role for #review" }));
+    fireEvent.change(await screen.findByRole("textbox", { name: "Task tags" }), {
+      target: { value: "testing" },
+    });
+    expect(screen.getByRole("button", { name: "Save role" })).toBeEnabled();
+    act(() => useSharedSettings.setState({ crossagentPausedProviders: ["kimi"] }));
+    expect(screen.getByRole("button", { name: "Save role" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Remove fallback 1" }));
+    fireEvent.click(screen.getByRole("button", { name: "Save role" }));
+    await waitFor(() =>
+      expect(mocks.saveCrossagentRole).toHaveBeenCalledWith(
+        expect.objectContaining({
+          previousTags: ["review"],
+          override: expect.objectContaining({ tags: ["testing"], fallbacks: [] }),
+        }),
+      ),
+    );
+    expect(await screen.findByText("#testing")).toBeInTheDocument();
+    expect(screen.queryByText("#review")).not.toBeInTheDocument();
+  });
+
+  it("keeps the editor open and existing roles intact when persistence rejects a collision", async () => {
+    mocks.saveCrossagentRole.mockRejectedValueOnce(new Error("duplicate task tags"));
+    render(<CrossagentRoutingSection />);
+    await waitFor(() => expect(screen.getByRole("button", { name: "Add role" })).toBeEnabled());
+    fireEvent.click(screen.getByRole("button", { name: "Edit role for #frontend + #design" }));
+    fireEvent.change(await screen.findByRole("textbox", { name: "Role name" }), {
+      target: { value: "Designer" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save role" }));
+    await waitFor(() => expect(mocks.saveCrossagentRole).toHaveBeenCalled());
+    expect(screen.getByRole("textbox", { name: "Role name" })).toHaveValue("Designer");
+    expect(useSharedSettings.getState().crossagentRoutingOverrides[0]?.name).toBeUndefined();
+  });
+
+  it("lets a saved role turn off Fast after the provider disables it", async () => {
+    useAgentStatusesStore.setState({
+      agentStatuses: useAgentStatusesStore.getState().agentStatuses.map((status) => ({
+        ...status,
+        capabilities: { ...status.capabilities, fastDisabledReason: "Temporarily unavailable" },
+      })),
+    });
+    render(<CrossagentRoutingSection />);
+    await waitFor(() => expect(screen.getByRole("button", { name: "Add role" })).toBeEnabled());
+    fireEvent.click(screen.getByRole("button", { name: "Edit role for #frontend + #design" }));
+    fireEvent.change(await screen.findByRole("textbox", { name: "Role name" }), {
+      target: { value: "Designer" },
+    });
+    expect(screen.getByRole("button", { name: "Save role" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Fast" }));
+    expect(screen.getByRole("button", { name: "Save role" })).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: "Save role" }));
+    await waitFor(() =>
+      expect(mocks.saveCrossagentRole).toHaveBeenCalledWith(
+        expect.objectContaining({ override: expect.objectContaining({ fast: false }) }),
+      ),
+    );
   });
 
   it("shows the supervisor's active learned order and refreshes it when availability changes", async () => {

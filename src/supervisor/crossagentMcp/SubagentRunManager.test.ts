@@ -1,3 +1,5 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import type { TeamWorkspace, TeamIntegration } from "./TeamWorktreeService";
 import { tmpdir } from "node:os";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type {
@@ -17,6 +19,7 @@ import {
   MAX_RUNNING_OUTPUT_TAIL_CHARS,
   SubagentRunManager,
   SubagentSpawnError,
+  type SubagentRunManagerDeps,
 } from "./SubagentRunManager";
 import { parseWaitOptions } from "./toolResult";
 import { buildUnrestrictedChildConfig, type SubagentRunHost } from "./types";
@@ -106,6 +109,8 @@ interface Harness {
 }
 
 function makeHarness(options?: {
+  teamMode?: boolean;
+  teamWorktrees?: SubagentRunManagerDeps["teamWorktrees"];
   providerLabel?: string;
   models?: Array<{ id: string; label: string }>;
   subProviders?: Array<{ id: string; label: string }>;
@@ -175,6 +180,7 @@ function makeHarness(options?: {
             projectLocation: options?.projectLocation ?? PROJECT,
             config: {
               model: "parent-model",
+              ...(options?.teamMode ? { teamMode: true } : {}),
               ...(options?.executionEnvironment
                 ? { executionEnvironment: options.executionEnvironment }
                 : {}),
@@ -212,6 +218,7 @@ function makeHarness(options?: {
     adapters: new Map([["codex" as never, adapter]]),
     ...(hasStatusCapabilities ? { getStatusCapabilities: () => statusCapabilities } : {}),
     host,
+    ...(options?.teamWorktrees ? { teamWorktrees: options.teamWorktrees } : {}),
   });
   return { manager, handles, inputs, appended, mcpTargets, mcpLocations, releaseCreate };
 }
@@ -1717,5 +1724,107 @@ describe("SubagentRunManager", () => {
       );
     expect(resolvedEvents).toHaveLength(1);
     expect(resolvedEvents[0]!.outcome).toBe("accepted");
+  });
+});
+
+describe("opt-in team lifecycle", () => {
+  const workspace: TeamWorkspace = {
+    version: 1,
+    runId: "aaaaaaaaaaaa",
+    parentRoot: "/project",
+    root: "/team/worktree",
+    projectPath: "/team/worktree",
+    baselineTree: "snapshot",
+    baselineRef: "refs/poracode-team/baseline",
+    patchPath: "/team/changes.patch",
+  };
+
+  it("waits for disposal and automatic integration before returning a completed child", async () => {
+    let releaseIntegration: (value: TeamIntegration) => void = () => {};
+    const integration = new Promise<TeamIntegration>((resolve) => {
+      releaseIntegration = resolve;
+    });
+    const integrate = vi.fn<() => Promise<TeamIntegration>>(() => integration);
+    const h = makeHarness({
+      teamMode: true,
+      teamWorktrees: { create: async () => workspace, integrate },
+    });
+    const { runId } = h.manager.spawn(PARENT, { agent: "codex", prompt: "Implement a module" });
+    await flush();
+    expect(h.inputs[0]?.projectLocation).toEqual({ kind: "posix", path: workspace.projectPath });
+    expect(h.handles[0]?.startTurns[0]?.prompt).toContain("isolated Git worktree");
+    expect(h.handles[0]?.startTurns[0]?.config.teamMode).toBeUndefined();
+    expect(h.handles[0]?.startTurns[0]?.config.crossagentMcp).toBeUndefined();
+    h.handles[0]?.completeTurn("completed");
+    await flush();
+    expect(h.handles[0]?.disposed).toBe(true);
+    expect(integrate).toHaveBeenCalledOnce();
+    expect(h.manager.getStatus(runId, PARENT).status).toBe("running");
+    releaseIntegration({ status: "applied", files: ["module.ts"] });
+    const result = await h.manager.waitFor(runId, 1000, PARENT);
+    expect(result.status).toBe("completed");
+    expect(result.integration).toEqual({ status: "applied", files: ["module.ts"] });
+    expect(result.workspace?.path).toBe(workspace.root);
+  });
+
+  it("returns conflicts to the leader without a user approval request", async () => {
+    const h = makeHarness({
+      teamMode: true,
+      teamWorktrees: {
+        create: async () => workspace,
+        integrate: async () => ({
+          status: "needs_resolution",
+          files: ["module.ts"],
+          message: "conflict",
+        }),
+      },
+    });
+    const { runId } = h.manager.spawn(PARENT, { agent: "codex", prompt: "Implement a module" });
+    await flush();
+    h.handles[0]?.completeTurn("completed");
+    const result = await h.manager.waitFor(runId, 1000, PARENT);
+    expect(result.integration?.status).toBe("needs_resolution");
+    expect(result.workspace?.patch_path).toBe(workspace.patchPath);
+    expect(h.appended.some(({ event }) => event.type === "request.opened")).toBe(false);
+  });
+
+  it("does not integrate a failed worker", async () => {
+    const integrate = vi.fn<() => Promise<TeamIntegration>>(async (): Promise<TeamIntegration> => ({
+      status: "applied",
+      files: [],
+    }));
+    const h = makeHarness({
+      teamMode: true,
+      teamWorktrees: { create: async () => workspace, integrate },
+    });
+    const { runId } = h.manager.spawn(PARENT, { agent: "codex", prompt: "Implement a module" });
+    await flush();
+    h.handles[0]?.completeTurn("failed");
+    const result = await h.manager.waitFor(runId, 1000, PARENT);
+    expect(result.status).toBe("failed");
+    expect(result.workspace?.path).toBe(workspace.root);
+    expect(integrate).not.toHaveBeenCalled();
+  });
+
+  it("does not launch after cancellation during worktree preparation and enforces two worker slots", async () => {
+    let releaseCreate: (value: TeamWorkspace) => void = () => {};
+    const created = new Promise<TeamWorkspace>((resolve) => {
+      releaseCreate = resolve;
+    });
+    const integrate = vi.fn<() => Promise<TeamIntegration>>(async (): Promise<TeamIntegration> => ({
+      status: "applied",
+      files: [],
+    }));
+    const h = makeHarness({ teamMode: true, teamWorktrees: { create: () => created, integrate } });
+    const first = h.manager.spawn(PARENT, { agent: "codex", prompt: "First" });
+    const second = h.manager.spawn(PARENT, { agent: "codex", prompt: "Second" });
+    expect(h.manager.getCapacity(PARENT)).toEqual({ running: 2, limit: 2, available_slots: 0 });
+    expect(() => h.manager.spawn(PARENT, { agent: "codex", prompt: "Third" })).toThrow("max 2");
+    await h.manager.cancel(first.runId, PARENT);
+    await h.manager.cancel(second.runId, PARENT);
+    releaseCreate(workspace);
+    await flush();
+    expect(h.inputs).toHaveLength(0);
+    expect(integrate).not.toHaveBeenCalled();
   });
 });

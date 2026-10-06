@@ -1,4 +1,6 @@
-import { startTransition, useEffect, useLayoutEffect, useRef, useState } from "react";
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { ProviderUsageRows } from "./ProviderUsageRows";
+import { startTransition, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { PointerActivationConstraints } from "@dnd-kit/dom";
 import { DragDropProvider, type DragEndEvent, KeyboardSensor, PointerSensor } from "@dnd-kit/react";
@@ -33,14 +35,7 @@ import {
   usesSharedWindowReset,
   type UsageProvider,
 } from "./usageProviders";
-import {
-  fitUsageRail,
-  RAIL_CIRCLE_SIZE,
-  RAIL_COLUMN_GAP,
-  RAIL_COLUMN_MAX,
-  RAIL_ROW_GAP,
-  railSlots,
-} from "./usageRailFit";
+import { RAIL_CIRCLE_SIZE, RAIL_COLUMN_GAP, RAIL_COLUMN_MAX, RAIL_ROW_GAP } from "./usageRailFit";
 
 // A 5px activation distance lets a plain click open the panel while a drag
 // reorders — mirrors the app's global pointer sensor. `configure` returns a
@@ -267,55 +262,6 @@ function UsageRailStrip(props: {
 }
 
 /**
- * Expanded sidebar rail: as many circles as fit one row, then a "+N" chip whose
- * tooltip carries the rest. The row is measured rather than wrapped so the rail
- * keeps a fixed height as the sidebar is resized.
- */
-function UsageRailRow(props: { providers: readonly UsageProvider[]; onReorder: ReorderHandler }) {
-  const { providers, onReorder } = props;
-  const rowRef = useRef<HTMLDivElement | null>(null);
-  const [slots, setSlots] = useState(0);
-
-  // Measured before paint so the first frame is already fitted. Storing the
-  // derived slot count rather than the raw width means a resize drag only
-  // re-renders when a circle actually gains or loses its place. The measured div
-  // is block-level, so its width follows the sidebar and never the circles
-  // inside it — no measure/relayout feedback loop.
-  useLayoutEffect(() => {
-    const el = rowRef.current;
-    if (!el) return;
-    const measure = (width: number) => setSlots(railSlots(width));
-    measure(el.getBoundingClientRect().width);
-    const ro = new ResizeObserver((entries) => {
-      const cr = entries[0]?.contentRect;
-      if (cr) measure(cr.width);
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  // A labeled "Usage" section that sits between the thread list and the footer
-  // nav. The column's gap above and the footer's top border below provide the
-  // separation, so no extra dividers here — that avoids the cramped boxed strip.
-  // `px-2` aligns the circles with the footer button icons.
-  return (
-    <div className="px-2">
-      <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted/70">
-        <Trans>Usage</Trans>
-      </p>
-      <div ref={rowRef}>
-        <UsageRailStrip
-          providers={providers}
-          shownCount={fitUsageRail(slots, providers.length)}
-          orientation="row"
-          onReorder={onReorder}
-        />
-      </div>
-    </div>
-  );
-}
-
-/**
  * A compact rail of per-provider usage rings for the sidebar footer. Hidden when
  * the user turns off `usage.showInSidebar`. On mount it hydrates the store from
  * the supervisor cache (which also triggers a refresh if the cache is stale).
@@ -385,5 +331,5 @@ export function ProviderUsageRail(props: { orientation?: "row" | "column" }) {
       />
     );
   }
-  return <UsageRailRow providers={providers} onReorder={handleReorder} />;
+  return <ProviderUsageRows providers={providers} />;
 }

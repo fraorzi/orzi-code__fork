@@ -1,5 +1,7 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import {
   createFileCheckpointPayloadSchema,
+  getFileCheckpointDiffPayloadSchema,
   finalizeFileCheckpointPayloadSchema,
   generateCommitMessagePayloadSchema,
   generatePrSummaryPayloadSchema,
@@ -45,6 +47,7 @@ import {
 } from "../../contracts";
 import type {
   CreateFileCheckpointPayload,
+  GetFileCheckpointDiffPayload,
   CreateFileCheckpointResult,
   FinalizeFileCheckpointPayload,
   FinalizeFileCheckpointResult,
@@ -116,6 +119,11 @@ import type {
 import { definePayloadProcedure } from "../core";
 
 export const gitProcedures = {
+  getFileCheckpointDiff: definePayloadProcedure<
+    GetFileCheckpointDiffPayload,
+    GitDiffResult,
+    "supervisor"
+  >("getFileCheckpointDiff", "supervisor", getFileCheckpointDiffPayloadSchema),
   createFileCheckpoint: definePayloadProcedure<
     CreateFileCheckpointPayload,
     CreateFileCheckpointResult,

@@ -1,3 +1,5 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { readCodexResetCredits } from "./codexResetCredits";
 import { DEFAULT_CLIENT_VERSIONS } from "../clientVersions";
 import { toEpochMs } from "../formatters";
 import type { CollectOptions, HostPort, HttpResponse } from "../host";
@@ -319,7 +321,10 @@ export async function collectCodex(host: HostPort, _opts?: CollectOptions): Prom
     };
   }
 
-  return parseCodexUsage(parsed, res.headers, now);
+  return {
+    ...parseCodexUsage(parsed, res.headers, now),
+    ...(await readCodexResetCredits(host, token, version, now)),
+  };
 }
 
 export { SESSION_WINDOW_MINUTES, WEEKLY_WINDOW_MINUTES };

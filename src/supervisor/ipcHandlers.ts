@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import type { ListPluginsPayload } from "@/shared/contracts";
 import { defineSupervisorIpcHandlers, type SupervisorIpcHandlerMap } from "@/shared/ipc";
 import { getProjectFsPath } from "@/shared/wsl";
@@ -111,6 +112,7 @@ export function createSupervisorIpcHandlers(runtime: SupervisorRuntime): Supervi
       const { readWorkflowAgentChatEvents } = await import("./workflows/agentChatEvents");
       return { events: await readWorkflowAgentChatEvents(payload) };
     },
+    getFileCheckpointDiff: (payload) => checkpoints.diff(payload),
     createFileCheckpoint: async (payload) => ({
       checkpoint: await checkpoints.create(payload),
     }),

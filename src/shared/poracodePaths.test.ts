@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -5,11 +6,11 @@ import { resolvePoracodeBaseDir, resolvePoracodePaths } from "./poracodePaths";
 
 describe("poracodePaths", () => {
   it("derives the default base dir under the user home", () => {
-    expect(resolvePoracodeBaseDir("stable")).toBe(join(homedir(), ".poracode"));
+    expect(resolvePoracodeBaseDir("stable")).toBe(join(homedir(), ".poracode-personal"));
   });
 
   it("returns the nightly base dir when the channel is nightly", () => {
-    expect(resolvePoracodeBaseDir("nightly")).toBe(join(homedir(), ".poracode-nightly"));
+    expect(resolvePoracodeBaseDir("nightly")).toBe(join(homedir(), ".poracode-personal-nightly"));
   });
 
   it("derives all persisted paths from the provided base dir", () => {

@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import type { ProjectLocation, RuntimeEvent } from "@/shared/contracts";
 import {
   resolveAgentProjectLocation,
@@ -41,7 +42,10 @@ export class SubagentAttemptRunner {
     void this.runResolved(state, attemptIndex, attempt, callbacks);
   }
 
-  async teardown(state: AttemptExecutionState): Promise<void> {
+  async teardown(
+    state: AttemptExecutionState,
+    options?: { requireDispose: boolean },
+  ): Promise<void> {
     if (state.oneShot) {
       state.oneShot.cancel();
       state.oneShot = undefined;
@@ -49,7 +53,7 @@ export class SubagentAttemptRunner {
     const handle = state.handle;
     if (!handle) return;
     state.handle = undefined;
-    await this.disposeHandle(handle);
+    await this.disposeHandle(handle, options?.requireDispose);
   }
 
   private async runResolved(
@@ -202,12 +206,17 @@ export class SubagentAttemptRunner {
     if (state.cancelRequested) handle.cancel();
   }
 
-  private async disposeHandle(handle: StructuredSessionHandle): Promise<void> {
+  private async disposeHandle(
+    handle: StructuredSessionHandle,
+    requireDispose = false,
+  ): Promise<void> {
     try {
       if (handle.interruptTurn) await handle.interruptTurn();
     } catch {}
     try {
       await handle.dispose();
-    } catch {}
+    } catch (error) {
+      if (requireDispose) throw error;
+    }
   }
 }

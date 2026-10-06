@@ -1,3 +1,5 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { ProjectArchive } from "./ProjectArchive";
 import type { Project } from "@/shared/contracts";
 import {
   useCurrentThreadIdsCount,
@@ -69,6 +71,7 @@ export function SidebarProjectThreadList(props: { project: Project; sortMode: Th
           ),
         )}
       </div>
+      <ProjectArchive projectId={project.id} />
     </div>
   );
 }

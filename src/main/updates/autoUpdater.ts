@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { autoUpdater } from "electron-updater";
 import type { PoracodeChannel } from "@/shared/channel";
 import type { UpdateStatus } from "@/shared/ipc";
@@ -36,7 +37,7 @@ export interface AutoUpdaterController {
 export function createAutoUpdaterController(
   onStatus: (status: UpdateStatus) => void,
   channel: PoracodeChannel,
-  isDev: boolean,
+  _isDev: boolean,
   reportError: (error: unknown, tags?: PoracodeDiagnosticTags) => void = () => {},
   beforeInstall: () => void = () => {},
 ): AutoUpdaterController {
@@ -201,7 +202,7 @@ export function createAutoUpdaterController(
   }
 
   function initialize(): void {
-    if (initialized) {
+    if (initialized || !process.env.UPDATE_SERVER_URL) {
       return;
     }
     initialized = true;
@@ -297,7 +298,7 @@ export function createAutoUpdaterController(
   }
 
   async function checkForUpdate(): Promise<void> {
-    if (isDev && !process.env.UPDATE_SERVER_URL) {
+    if (!process.env.UPDATE_SERVER_URL) {
       sendStatus({ type: "error", messageKey: "update.devUnavailable" });
       return;
     }

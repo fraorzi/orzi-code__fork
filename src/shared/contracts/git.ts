@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { z } from "zod";
 import { agentKindSchema, projectLocationSchema, sessionRefSchema } from "./common";
 
@@ -69,6 +70,8 @@ export const fileCheckpointRecordSchema = z.object({
   ref: z.string().min(1),
   commit: z.string().min(1),
   capturedAt: z.string().min(1),
+  /** Native v2 snapshots store a tree and separate metadata instead of a commit. */
+  storageVersion: z.literal(2).optional(),
 });
 export type FileCheckpointRecord = z.infer<typeof fileCheckpointRecordSchema>;
 
@@ -107,6 +110,14 @@ export type FinalizeFileCheckpointPayload = z.infer<typeof finalizeFileCheckpoin
 export interface FinalizeFileCheckpointResult {
   checkpoint: FileCheckpointTurn;
 }
+
+export const getFileCheckpointDiffPayloadSchema = z.object({
+  threadId: z.string().min(1),
+  checkpointItemId: z.string().min(1),
+  projectLocation: projectLocationSchema,
+  filePath: z.string().optional(),
+});
+export type GetFileCheckpointDiffPayload = z.infer<typeof getFileCheckpointDiffPayloadSchema>;
 
 export const listFileCheckpointsPayloadSchema = z.object({
   threadId: z.string().min(1),

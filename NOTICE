@@ -1,0 +1,19 @@
+orzi-code__fork
+
+Personal fork of Poracode: https://github.com/Porabuild/Poracode
+Upstream copyright: Copyright 2025-present Serhii Vecherenko
+Upstream license: Apache License, Version 2.0 (see LICENSE).
+
+Personal fork maintained by Franciszek Orzechowski.
+Fork modifications are identified in modified source files and Git history.
+Unless otherwise noted, fork source changes use Apache License, Version 2.0.
+
+Geist and Geist Mono fonts retain the SIL Open Font License, Version 1.1.
+Copyright 2024 The Geist Project Authors.
+See src/renderer/fonts/OFL.txt.
+
+Third-party dependencies retain their own copyright notices, licenses, and
+terms. This source repository does not include node_modules, provider program
+binaries, account data, or local application installers. Distribution of a
+built application requires reviewing the licenses and terms of its included
+components independently of the source license.

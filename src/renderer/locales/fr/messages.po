@@ -1,3 +1,4 @@
+# Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 msgid ""
 msgstr ""
 "POT-Creation-Date: 2026-06-17 10:29-0700\n"
@@ -1013,6 +1014,10 @@ msgstr "Ajoutez des informations d'identification avant que ce fil puisse s'exé
 #~ msgid "Add Cursor profile"
 #~ msgstr "Ajouter un profil Cursor"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Add fallback model"
+msgstr "Ajouter un modèle de secours"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 msgid "Add folder"
 msgstr "Ajouter un dossier"
@@ -1061,6 +1066,11 @@ msgstr "Ajouter un fournisseur"
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/GitReviewSidebar.tsx
 msgid "Add Remote"
 msgstr "Ajouter un dépôt distant"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Add role"
+msgstr "Ajouter un rôle"
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Add shortcut"
@@ -1115,6 +1125,14 @@ msgstr "Arguments supplémentaires transmis à chaque nouveau shell du panneau d
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Additional arguments passed to each new Windows shell. Quote values containing spaces."
 #~ msgstr "Arguments supplémentaires transmis à chaque nouveau shell Windows. Placez entre guillemets les valeurs contenant des espaces."
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Additional resets: {count}"
+msgstr "Réinitialisations supplémentaires : {count}"
+
+#: src/renderer/components/thread/PresentationModeTabs.tsx
+msgid "Advanced"
+msgstr "Avancé"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Advertise a custom base URL, e.g. a reverse proxy or tunnel. Leave empty for automatic."
@@ -1547,6 +1565,7 @@ msgstr "Archivé à {archivedTime}"
 
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1752,6 +1771,10 @@ msgstr "Automatique"
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Automatic ({0})"
 #~ msgstr "Automatique ({0})"
+
+#: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+msgid "Automatic agent updates"
+msgstr "Mises à jour automatiques des agents"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -2213,6 +2236,7 @@ msgstr "Serveur distant inaccessible. Vérifiez qu'il est en ligne, puis reconne
 #: src/renderer/views/ProfileOverlay/parts/EditProfileDialog.tsx
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
@@ -2335,6 +2359,10 @@ msgstr "Les modifications s’appliquent aux nouvelles discussions. Les fourniss
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 msgid "Changes in PR"
 msgstr "Modifications dans la PR"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changes in this prompt"
+msgstr "Modifications de ce prompt"
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Changes requested"
@@ -2477,6 +2505,10 @@ msgstr "Choisissez un dossier parent"
 msgid "Choose a project icon image"
 msgstr "Choisir une image d'icône de projet"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
+msgid "Choose an available model from the worker pool."
+msgstr "Choisissez un modèle disponible dans le groupe des exécutants."
+
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconPicker.tsx
 msgid "Choose an image inside the project folder."
 msgstr "Choisissez une image dans le dossier du projet."
@@ -2523,6 +2555,10 @@ msgstr "Choisir le fichier d’identité SSH"
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 msgid "Choose the display language for Poracode's interface."
 msgstr "Choisissez la langue d'affichage de l'interface de Poracode."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Choose the providers and models available for delegation. This pool also applies to roles and their fallback models."
+msgstr "Choisissez les fournisseurs et modèles disponibles pour la délégation. Ce groupe concerne aussi les rôles et leurs modèles de secours."
 
 #: src/renderer/views/SettingsOverlay/parts/CursorProviderSettings.tsx
 #~ msgid "Choose the runtime for new Cursor GUI chats. SDK becomes available after its package is detected and its API key is authenticated."
@@ -3604,6 +3640,10 @@ msgstr "Impossible de générer le message de validation : {detail}"
 msgid "Could not load pull requests for {0}."
 msgstr "Impossible de charger les pull requests pour {0}."
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Could not load this diff."
+msgstr "Impossible de charger ce diff."
+
 #: src/renderer/components/pdf/PdfViewer.tsx
 #~ msgid "Could not open this PDF."
 #~ msgstr "Impossible d’ouvrir ce PDF."
@@ -4115,6 +4155,7 @@ msgstr "DeepSeek"
 
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconPicker.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconSources.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "Default"
 msgstr "Par défaut"
@@ -4785,6 +4826,14 @@ msgstr "Modifier le profil"
 msgid "Edit queued follow-up"
 msgstr "Modifier le message en attente"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Edit role"
+msgstr "Modifier le rôle"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Edit role for {tagLabel}"
+msgstr "Modifier le rôle pour {tagLabel}"
+
 #: src/renderer/views/SchedulesView/parts/ScheduleRow.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 msgid "Edit schedule"
@@ -5013,6 +5062,10 @@ msgstr "Saisissez le port sur lequel un serveur de développement de votre burea
 #: src/mobile/views/DesktopsView.tsx
 msgid "Enter the SSH password."
 msgstr "Saisissez le mot de passe SSH."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Enter up to five tags, separated by commas. The role matches tasks containing all these tags."
+msgstr "Saisissez jusqu’à cinq tags, séparés par des virgules. Le rôle correspond aux tâches contenant tous ces tags."
 
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Enter valid JSON."
@@ -5261,6 +5314,14 @@ msgstr "Le gagnant désigné par le juge de l'expérience doit être compris ent
 msgid "Experiment prompt must not be blank"
 msgstr "L'invite de l'expérience ne doit pas être vide"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Expires {date}"
+msgstr "Expire le {date}"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Expiry not reported"
+msgstr "Date d’expiration non indiquée"
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 msgid "Explicit selections recorded from past delegations — they feed the routing order above. Edit the tags or remove entries to reshape it."
 msgstr "Sélections explicites enregistrées lors de délégations passées — elles alimentent l'ordre de routage ci-dessus. Modifiez les tags ou supprimez des entrées pour le remodeler."
@@ -5365,12 +5426,21 @@ msgstr "Échec de l'enregistrement des métadonnées de propriété de la branch
 #~ msgid "Failed to update goal"
 #~ msgstr "Impossible de mettre à jour l'objectif"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Fallback models"
+msgstr "Modèles de secours"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Fallbacks run only if a worker fails to start its task."
+msgstr "Les modèles de secours sont lancés uniquement si un exécutant ne peut pas démarrer sa tâche."
+
 #: src/renderer/components/experiment/ExperimentDraftTargets.tsx
 #: src/renderer/components/providers/modelDisplay.ts
 #: src/renderer/components/thread/buildModelPickerControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRankedRow.tsx
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Fast"
 msgstr "Rapide"
 
@@ -6584,6 +6654,10 @@ msgstr "Installez OpenCode 2 pour gérer ses plugins."
 msgid "Install packages"
 msgstr "Installer des packages"
 
+#: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+msgid "Install stable agent updates in the background after agent sessions close."
+msgstr "Installer les mises à jour stables des agents en arrière-plan après la fermeture de leurs sessions."
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Install Tailscale"
 msgstr "Installer Tailscale"
@@ -6652,6 +6726,10 @@ msgstr "Instructions"
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
 msgid "Instructions agents follow when choosing which agent or model to delegate to."
 msgstr "Instructions que les agents suivent pour choisir à quel agent ou modèle déléguer."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Instructions are added to the delegated task. They do not restrict the worker's file access."
+msgstr "Les instructions sont ajoutées à la tâche déléguée. Elles ne limitent pas l’accès de l’exécutant aux fichiers."
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -6999,6 +7077,10 @@ msgstr "Chargement des entrées du workflow"
 msgid "Loading workflow runs"
 msgstr "Chargement des exécutions de workflows"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Loading..."
+msgstr "Chargement..."
+
 #: src/mobile/routeComponents.tsx
 #: src/mobile/ThreadDetail.tsx
 #: src/mobile/views/FilesView.tsx
@@ -7218,8 +7300,8 @@ msgid "Manual override"
 msgstr "Remplacement manuel"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Manual routes override learned routing whenever all of their task tags match."
-msgstr "Les routes manuelles remplacent le routage appris lorsque toutes leurs étiquettes de tâche correspondent."
+#~ msgid "Manual routes override learned routing whenever all of their task tags match."
+#~ msgstr "Les routes manuelles remplacent le routage appris lorsque toutes leurs étiquettes de tâche correspondent."
 
 #. placeholder {0}: thread.title
 #: src/renderer/views/MainView/parts/Sidebar/parts/SortableThreadItem/parts/ThreadItemSuffix.tsx
@@ -7840,6 +7922,10 @@ msgstr "my-mcp-server"
 msgid "Name"
 msgstr "Nom"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Name a role and assign task tags, model preferences and instructions. The lead agent chooses roles by matching task tags."
+msgstr "Nommez un rôle et définissez ses tags de tâche, préférences de modèles et instructions. L’agent principal choisit les rôles selon les tags de la tâche."
+
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Name is required."
 msgstr "Le nom est obligatoire."
@@ -8280,6 +8366,10 @@ msgstr "Aucune différence pour {visiblePath}"
 msgid "No external skills were found in this scope."
 msgstr "Aucune compétence externe n’a été trouvée dans cette portée."
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "No file changes in this prompt."
+msgstr "Aucune modification de fichier dans ce prompt."
+
 #: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "No file checkpoint is stored for this message."
 msgstr "Aucun point de contrôle de fichier n'est stocké pour ce message."
@@ -8569,6 +8659,10 @@ msgstr "Aucun fil pour l'instant."
 #: src/renderer/components/providers/usageFormat.ts
 msgid "No windows reported"
 msgstr "Aucune fenêtre signalée"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "No worker roles yet."
+msgstr "Aucun rôle d’exécutant pour le moment."
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunList.tsx
 msgid "No workflow runs found."
@@ -9046,6 +9140,10 @@ msgstr "Ouvrir le sélecteur d'effort"
 msgid "Open the model picker"
 msgstr "Ouvrir le sélecteur de modèle"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Open usage page"
+msgstr "Ouvrir la page d’utilisation"
+
 #: src/renderer/components/providers/opencode/manifest.ts
 msgid "OpenCode"
 msgstr "OpenCode"
@@ -9468,8 +9566,8 @@ msgid "Pinned"
 msgstr "Épinglé"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Pinned task routes"
-msgstr "Routes de tâche épinglées"
+#~ msgid "Pinned task routes"
+#~ msgstr "Routes de tâche épinglées"
 
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
@@ -9786,6 +9884,10 @@ msgstr "Exécutions précédentes"
 #: src/renderer/commands/registry.ts
 msgid "Previous tab"
 msgstr "Onglet précédent"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Primary model"
+msgstr "Modèle principal"
 
 #: src/mobile/views/MoreView.tsx
 msgid "Privacy Policy"
@@ -10276,6 +10378,7 @@ msgid "Ready. Turn this on to advertise the Tailscale HTTPS URL in new pairing c
 msgstr "Prêt. Activez cette option pour annoncer l’URL HTTPS Tailscale dans les nouveaux codes d’appairage."
 
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
 msgid "Reasoning"
 msgstr "Raisonnement"
 
@@ -10401,6 +10504,10 @@ msgstr "Recharger"
 #: src/renderer/commands/shortcutCatalog.ts
 msgid "Reload browser page"
 msgstr "Recharger la page du navigateur"
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Remaining limits"
+msgstr "Quotas restants"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -10582,6 +10689,11 @@ msgstr "Supprimer la clé API du SDK Cursor"
 msgid "Remove environment variable"
 msgstr "Supprimer la variable d'environnement"
 
+#. placeholder {0}: index + 1
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Remove fallback {0}"
+msgstr "Supprimer le modèle de secours {0}"
+
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Remove from favorites"
 msgstr "Supprimer des favoris"
@@ -10603,7 +10715,7 @@ msgstr "Supprimer l'entrée mémoire pour {0}"
 msgid "Remove model"
 msgstr "Supprimer le modèle"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Remove pinned route for {tagLabel}"
 msgstr "Supprimer la route épinglée pour {tagLabel}"
 
@@ -10822,6 +10934,14 @@ msgstr "Réinitialiser le givrage de la barre latérale"
 msgid "Reset to default"
 msgstr "Réinitialiser par défaut"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Resets: check provider website"
+msgstr "Réinitialisations : consulter le fournisseur"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Resets: no data"
+msgstr "Réinitialisations : aucune donnée"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserHost.tsx
 msgid "Resize browser drawer"
 msgstr "Redimensionner le tiroir du navigateur"
@@ -10886,6 +11006,7 @@ msgid "Restart Poracode"
 msgstr "Redémarrer Poracode"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "Restaurer"
 
@@ -11082,6 +11203,14 @@ msgstr "Panneau droit"
 #: src/renderer/components/providers/ProviderUsageRail.tsx
 msgid "Right-click to switch ring"
 msgstr "Clic droit pour changer d'anneau"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Role instructions"
+msgstr "Instructions du rôle"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Role name"
+msgstr "Nom du rôle"
 
 #: src/mobile/views/threadActionSurfaces.tsx
 #: src/mobile/views/threadContextMenus.tsx
@@ -11303,6 +11432,10 @@ msgstr "Enregistrer l’image"
 #: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
 msgid "Save MCP servers"
 msgstr "Enregistrer les serveurs MCP"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Save role"
+msgstr "Enregistrer le rôle"
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Save shortcut"
@@ -12346,6 +12479,10 @@ msgstr "Indexé"
 msgid "Staged ({0})"
 msgstr "Indexé ({0})"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Stale data"
+msgstr "Données obsolètes"
+
 #: src/renderer/commands/registry.ts
 msgid "Star or unstar the current chat or model"
 msgstr "Ajouter ou retirer des favoris le chat ou le modèle actuel"
@@ -12563,6 +12700,10 @@ msgstr "Arrêter la synchronisation"
 #: src/renderer/components/thread/ChatPane/parts/items/toolDisplay.ts
 msgid "Stop task"
 msgstr "Arrêter la tâche"
+
+#: src/renderer/actions/threadActions.ts
+msgid "Stop the agent before archiving this thread."
+msgstr "Arrêtez l'agent avant d'archiver ce fil."
 
 #: src/renderer/actions/projectActions.ts
 #: src/renderer/i18n/sharedMessages.ts
@@ -12894,12 +13035,17 @@ msgid "Task output"
 msgstr "Résultat de la tâche"
 
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Task tags"
 msgstr "Étiquettes de tâche"
 
 #: src/renderer/utils/projectIconColors.ts
 msgid "Teal"
 msgstr "Sarcelle"
+
+#: src/renderer/components/thread/ThreadDraftView.tsx
+msgid "Teamwork"
+msgstr "Travail en équipe"
 
 #. placeholder {0}: selectedAgent?.label ?? targetProviderFallback
 #: src/renderer/components/thread/ContinueInProviderDialog.tsx
@@ -13292,6 +13438,10 @@ msgstr "Cet appareil n'a pas de caméra utilisable. Saisissez plutôt l'endpoint
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "this environment"
 msgstr "cet environnement"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "This existing route retries after any failure. A retry may repeat completed work."
+msgstr "Cette règle existante réessaie après tout échec. Une nouvelle tentative peut répéter un travail déjà terminé."
 
 #: src/mobile/views/MobileFileEditor.tsx
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPane/FileEditorPane.tsx
@@ -13955,7 +14105,7 @@ msgstr "Impossible de supprimer les informations d'identification {0}."
 msgid "Unable to remove memory entry."
 msgstr "Impossible de supprimer l'entrée mémoire."
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unable to remove pinned route."
 msgstr "Impossible de supprimer la route épinglée."
 
@@ -13995,6 +14145,10 @@ msgstr "Impossible d'enregistrer le profil Claude {displayLabel}."
 #: src/renderer/components/composer/ImageLightboxActions.tsx
 msgid "Unable to save image."
 msgstr "Impossible d’enregistrer l’image."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Unable to save role. Check for duplicate task tags and try again."
+msgstr "Impossible d’enregistrer le rôle. Vérifiez les tags de tâche en double et réessayez."
 
 #: src/renderer/utils/shellUtils.ts
 msgid "Unable to start {label}."
@@ -14097,6 +14251,10 @@ msgstr "Non attribué"
 msgid "Unavailable"
 msgstr "Indisponible"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Unavailable model"
+msgstr "Modèle indisponible"
+
 #: src/renderer/components/plugins/PluginDetail.tsx
 #: src/renderer/components/plugins/PluginMarketplace.tsx
 msgid "Unavailable on this device"
@@ -14106,7 +14264,7 @@ msgstr "Indisponible sur cet appareil"
 msgid "Unavailable project"
 msgstr "Projet indisponible"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unavailable provider"
 msgstr "Fournisseur indisponible"
 
@@ -14464,7 +14622,6 @@ msgstr "L’URL est obligatoire."
 #: src/mobile/views/DesktopWorkspacePanel.tsx
 #: src/mobile/WideShell.tsx
 #: src/renderer/components/layout/PanelDock/panelTabMeta.ts
-#: src/renderer/components/providers/ProviderUsageRail.tsx
 #: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 msgid "Usage"
@@ -14963,6 +15120,18 @@ msgstr "Travaillez avec les pages et sessions connectées déjà ouvertes dans C
 #: src/renderer/components/thread/ChatPane/parts/MessageList.tsx
 msgid "Worked for {elapsed}"
 msgstr "A travaillé pendant {elapsed}"
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Worker model pool"
+msgstr "Groupe de modèles des exécutants"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Worker roles"
+msgstr "Rôles des exécutants"
+
+#: src/renderer/components/thread/ThreadDraftView.tsx
+msgid "Workers' changes are integrated automatically. Requires a local Git project and a chat agent with Crossagents enabled."
+msgstr "Les modifications des agents sont intégrées automatiquement. Nécessite un projet Git local et un agent de chat avec Crossagents activé."
 
 #: src/renderer/components/thread/ChatPane/parts/items/toolDisplay.ts
 msgid "Workflow"

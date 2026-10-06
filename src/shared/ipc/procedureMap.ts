@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { agentCredentialProcedures } from "./procedures/agentCredentials";
 import { appProcedures } from "./procedures/app";
 import { browserProcedures } from "./procedures/browser";
@@ -119,6 +120,7 @@ export const MAIN_LOCAL_PROCEDURE_NAMES = [
   "setSharedSettings",
   "setAgentSecretSetting",
   "removeCrossagentRoutingOverride",
+  "saveCrossagentRole",
   "removeCrossagentMemoryEntry",
   "updateCrossagentMemoryEntryTags",
   "setProfileEnvironment",

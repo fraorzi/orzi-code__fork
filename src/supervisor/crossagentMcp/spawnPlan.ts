@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import type { AgentCapability, AgentKind, ProjectLocation, ThreadConfig } from "@/shared/contracts";
 import { capabilitiesForPresentation, validateAgentModelSelection } from "@/shared/agentSelection";
 import type { CrossagentExecution } from "@/shared/crossagentRanking";
@@ -26,6 +27,7 @@ export interface PreparedSubagentRun {
   prompt: string;
   projectLocation: ProjectLocation;
   background: boolean;
+  teamMode?: boolean;
   retryMode: "startup" | "any-failure";
   attempts: ResolvedSpawnAttempt[];
 }
@@ -65,6 +67,7 @@ export function prepareSubagentRun(
     prompt,
     projectLocation: parent.projectLocation,
     background: request.background === true,
+    ...(parent.config.teamMode ? { teamMode: true } : {}),
     retryMode: request.retryMode ?? "startup",
     attempts,
   };

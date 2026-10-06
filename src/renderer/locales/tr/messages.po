@@ -1,3 +1,4 @@
+# Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 msgid ""
 msgstr ""
 "POT-Creation-Date: 2026-06-17 10:29-0700\n"
@@ -1013,6 +1014,10 @@ msgstr "Bu ileti dizisi çalışabilmesi için kimlik bilgilerini ekleyin."
 #~ msgid "Add Cursor profile"
 #~ msgstr "Cursor profili ekle"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Add fallback model"
+msgstr "Yedek model ekle"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 msgid "Add folder"
 msgstr "Klasör ekle"
@@ -1061,6 +1066,11 @@ msgstr "Sağlayıcı ekle"
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/GitReviewSidebar.tsx
 msgid "Add Remote"
 msgstr "Uzak Depo Ekle"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Add role"
+msgstr "Rol ekle"
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Add shortcut"
@@ -1115,6 +1125,14 @@ msgstr "Her yeni terminal paneli kabuğuna aktarılan ek bağımsız değişkenl
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Additional arguments passed to each new Windows shell. Quote values containing spaces."
 #~ msgstr "Her yeni Windows kabuğuna aktarılan ek bağımsız değişkenler. Boşluk içeren değerleri tırnak içine alın."
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Additional resets: {count}"
+msgstr "Ek sıfırlamalar: {count}"
+
+#: src/renderer/components/thread/PresentationModeTabs.tsx
+msgid "Advanced"
+msgstr "Gelişmiş"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Advertise a custom base URL, e.g. a reverse proxy or tunnel. Leave empty for automatic."
@@ -1547,6 +1565,7 @@ msgstr "{archivedTime} saatinde arşivlendi"
 
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1752,6 +1771,10 @@ msgstr "Otomatik"
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Automatic ({0})"
 #~ msgstr "Otomatik ({0})"
+
+#: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+msgid "Automatic agent updates"
+msgstr "Otomatik ajan güncellemeleri"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -2213,6 +2236,7 @@ msgstr "Uzak sunucuya ulaşılamıyor. Çevrimiçi olduğunu doğrulayıp yenide
 #: src/renderer/views/ProfileOverlay/parts/EditProfileDialog.tsx
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
@@ -2335,6 +2359,10 @@ msgstr "Değişiklikler yeni sohbetlere uygulanır. Canlı beceri yenilemeyi des
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 msgid "Changes in PR"
 msgstr "PR'deki değişiklikler"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changes in this prompt"
+msgstr "Bu istemdeki değişiklikler"
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Changes requested"
@@ -2477,6 +2505,10 @@ msgstr "Bir ana klasör seçin"
 msgid "Choose a project icon image"
 msgstr "Proje simgesi görseli seçin"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
+msgid "Choose an available model from the worker pool."
+msgstr "Çalışan havuzundan kullanılabilir bir model seçin."
+
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconPicker.tsx
 msgid "Choose an image inside the project folder."
 msgstr "Proje klasörü içinden bir görsel seçin."
@@ -2523,6 +2555,10 @@ msgstr "SSH kimlik dosyasını seç"
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 msgid "Choose the display language for Poracode's interface."
 msgstr "Poracode'un arayüzü için görüntüleme dilini seçin."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Choose the providers and models available for delegation. This pool also applies to roles and their fallback models."
+msgstr "Görev devri için kullanılabilecek sağlayıcıları ve modelleri seçin. Bu havuz, roller ve yedek modelleri için de geçerlidir."
 
 #: src/renderer/views/SettingsOverlay/parts/CursorProviderSettings.tsx
 #~ msgid "Choose the runtime for new Cursor GUI chats. SDK becomes available after its package is detected and its API key is authenticated."
@@ -3604,6 +3640,10 @@ msgstr "Commit mesajı oluşturulamadı: {detail}"
 msgid "Could not load pull requests for {0}."
 msgstr "{0} için çekme istekleri yüklenemedi."
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Could not load this diff."
+msgstr "Bu fark yüklenemedi."
+
 #: src/renderer/components/pdf/PdfViewer.tsx
 #~ msgid "Could not open this PDF."
 #~ msgstr "Bu PDF açılamadı."
@@ -4115,6 +4155,7 @@ msgstr "DeepSeek"
 
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconPicker.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconSources.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "Default"
 msgstr "Varsayılan"
@@ -4785,6 +4826,14 @@ msgstr "Profili düzenle"
 msgid "Edit queued follow-up"
 msgstr "Kuyruktaki takip mesajını düzenle"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Edit role"
+msgstr "Rolü düzenle"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Edit role for {tagLabel}"
+msgstr "{tagLabel} için rolü düzenle"
+
 #: src/renderer/views/SchedulesView/parts/ScheduleRow.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 msgid "Edit schedule"
@@ -5013,6 +5062,10 @@ msgstr "Masaüstünüzdeki bir geliştirme sunucusunun dinlediği portu girin."
 #: src/mobile/views/DesktopsView.tsx
 msgid "Enter the SSH password."
 msgstr "SSH parolasını girin."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Enter up to five tags, separated by commas. The role matches tasks containing all these tags."
+msgstr "Virgülle ayırarak en fazla beş etiket girin. Rol, bu etiketlerin tümünü içeren görevlerle eşleşir."
 
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Enter valid JSON."
@@ -5261,6 +5314,14 @@ msgstr "Deney hakeminin kazananı 1 ile {candidateCount} arasında olmalıdır"
 msgid "Experiment prompt must not be blank"
 msgstr "Deney istemi boş olmamalıdır"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Expires {date}"
+msgstr "Son geçerlilik: {date}"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Expiry not reported"
+msgstr "Son geçerlilik bildirilmedi"
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 msgid "Explicit selections recorded from past delegations — they feed the routing order above. Edit the tags or remove entries to reshape it."
 msgstr "Geçmiş devretmelerden kaydedilen açık seçimler — yukarıdaki yönlendirme sırasını besler. Yeniden şekillendirmek için etiketleri düzenleyin veya girişleri kaldırın."
@@ -5365,12 +5426,21 @@ msgstr "Sahipli şube meta verileri kaydedilemedi: {detail}. Geri alma işlemi {
 #~ msgid "Failed to update goal"
 #~ msgstr "Hedef güncellenemedi"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Fallback models"
+msgstr "Yedek modeller"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Fallbacks run only if a worker fails to start its task."
+msgstr "Yedek modeller yalnızca bir çalışan görevini başlatamadığında çalışır."
+
 #: src/renderer/components/experiment/ExperimentDraftTargets.tsx
 #: src/renderer/components/providers/modelDisplay.ts
 #: src/renderer/components/thread/buildModelPickerControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRankedRow.tsx
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Fast"
 msgstr "Hızlı"
 
@@ -6584,6 +6654,10 @@ msgstr "Eklentilerini yönetmek için OpenCode 2'yi yükleyin."
 msgid "Install packages"
 msgstr "Paketleri yükle"
 
+#: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+msgid "Install stable agent updates in the background after agent sessions close."
+msgstr "Ajan oturumları kapandıktan sonra kararlı güncellemeleri arka planda yükle."
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Install Tailscale"
 msgstr "Tailscale'i yükle"
@@ -6652,6 +6726,10 @@ msgstr "Talimatlar"
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
 msgid "Instructions agents follow when choosing which agent or model to delegate to."
 msgstr "Aracıların hangi aracıya veya modele devredeceğini seçerken izlediği talimatlar."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Instructions are added to the delegated task. They do not restrict the worker's file access."
+msgstr "Talimatlar devredilen göreve eklenir. Çalışanın dosya erişimini kısıtlamaz."
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -6999,6 +7077,10 @@ msgstr "Workflow girdileri yükleniyor"
 msgid "Loading workflow runs"
 msgstr "İş akışı çalıştırmaları yükleniyor"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Loading..."
+msgstr "Yükleniyor..."
+
 #: src/mobile/routeComponents.tsx
 #: src/mobile/ThreadDetail.tsx
 #: src/mobile/views/FilesView.tsx
@@ -7218,8 +7300,8 @@ msgid "Manual override"
 msgstr "Manuel geçersiz kılma"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Manual routes override learned routing whenever all of their task tags match."
-msgstr "Tüm görev etiketleri eşleştiğinde manuel rotalar öğrenilmiş yönlendirmeyi geçersiz kılar."
+#~ msgid "Manual routes override learned routing whenever all of their task tags match."
+#~ msgstr "Tüm görev etiketleri eşleştiğinde manuel rotalar öğrenilmiş yönlendirmeyi geçersiz kılar."
 
 #. placeholder {0}: thread.title
 #: src/renderer/views/MainView/parts/Sidebar/parts/SortableThreadItem/parts/ThreadItemSuffix.tsx
@@ -7841,6 +7923,10 @@ msgstr "my-mcp-server"
 msgid "Name"
 msgstr "Ad"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Name a role and assign task tags, model preferences and instructions. The lead agent chooses roles by matching task tags."
+msgstr "Bir role ad verin ve görev etiketlerini, model tercihlerini ve talimatları belirleyin. Ana ajan, görev etiketlerine göre rol seçer."
+
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Name is required."
 msgstr "Ad gereklidir."
@@ -8281,6 +8367,10 @@ msgstr "{visiblePath} için fark yok"
 msgid "No external skills were found in this scope."
 msgstr "Bu kapsamda harici beceri bulunamadı."
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "No file changes in this prompt."
+msgstr "Bu istemde dosya değişikliği yok."
+
 #: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "No file checkpoint is stored for this message."
 msgstr "Bu mesaj için hiçbir dosya kontrol noktası saklanmadı."
@@ -8570,6 +8660,10 @@ msgstr "Henüz konuşma yok."
 #: src/renderer/components/providers/usageFormat.ts
 msgid "No windows reported"
 msgstr "Hiçbir pencere bildirilmedi"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "No worker roles yet."
+msgstr "Henüz çalışan rolü yok."
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunList.tsx
 msgid "No workflow runs found."
@@ -9047,6 +9141,10 @@ msgstr "Çaba seçiciyi aç"
 msgid "Open the model picker"
 msgstr "Model seçiciyi açın"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Open usage page"
+msgstr "Kullanım sayfasını aç"
+
 #: src/renderer/components/providers/opencode/manifest.ts
 msgid "OpenCode"
 msgstr "OpenCode"
@@ -9469,8 +9567,8 @@ msgid "Pinned"
 msgstr "Sabitlendi"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Pinned task routes"
-msgstr "Sabitlenmiş görev rotaları"
+#~ msgid "Pinned task routes"
+#~ msgstr "Sabitlenmiş görev rotaları"
 
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
@@ -9787,6 +9885,10 @@ msgstr "Önceki çalıştırmalar"
 #: src/renderer/commands/registry.ts
 msgid "Previous tab"
 msgstr "Önceki sekme"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Primary model"
+msgstr "Birincil model"
 
 #: src/mobile/views/MoreView.tsx
 msgid "Privacy Policy"
@@ -10277,6 +10379,7 @@ msgid "Ready. Turn this on to advertise the Tailscale HTTPS URL in new pairing c
 msgstr "Hazır. Yeni eşleştirme kodlarında Tailscale HTTPS URL'sini duyurmak için bunu açın."
 
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
 msgid "Reasoning"
 msgstr "Akıl yürütme"
 
@@ -10402,6 +10505,10 @@ msgstr "Yeniden yükle"
 #: src/renderer/commands/shortcutCatalog.ts
 msgid "Reload browser page"
 msgstr "Tarayıcı sayfasını yeniden yükle"
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Remaining limits"
+msgstr "Kalan kotalar"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -10583,6 +10690,11 @@ msgstr "Cursor SDK API anahtarını kaldır"
 msgid "Remove environment variable"
 msgstr "Ortam değişkenini kaldır"
 
+#. placeholder {0}: index + 1
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Remove fallback {0}"
+msgstr "Yedek model {0} kaldır"
+
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Remove from favorites"
 msgstr "Favorilerden kaldır"
@@ -10604,7 +10716,7 @@ msgstr "{0} için bellek girdisini kaldır"
 msgid "Remove model"
 msgstr "Modeli kaldır"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Remove pinned route for {tagLabel}"
 msgstr "{tagLabel} için sabitlenmiş rotayı kaldır"
 
@@ -10823,6 +10935,14 @@ msgstr "Kenar çubuğu buzlu cam efektini varsayılana sıfırla"
 msgid "Reset to default"
 msgstr "Varsayılana sıfırla"
 
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Resets: check provider website"
+msgstr "Sıfırlamalar: sağlayıcının sitesini kontrol edin"
+
+#: src/renderer/components/providers/UsageResetCredits.tsx
+msgid "Resets: no data"
+msgstr "Sıfırlamalar: veri yok"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserHost.tsx
 msgid "Resize browser drawer"
 msgstr "Tarayıcı çekmecesini yeniden boyutlandır"
@@ -10887,6 +11007,7 @@ msgid "Restart Poracode"
 msgstr "Poracode'u yeniden başlat"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "Geri yükle"
 
@@ -11083,6 +11204,14 @@ msgstr "Sağ panel"
 #: src/renderer/components/providers/ProviderUsageRail.tsx
 msgid "Right-click to switch ring"
 msgstr "Halkayı değiştirmek için sağ tıklayın"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Role instructions"
+msgstr "Rol talimatları"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Role name"
+msgstr "Rol adı"
 
 #: src/mobile/views/threadActionSurfaces.tsx
 #: src/mobile/views/threadContextMenus.tsx
@@ -11304,6 +11433,10 @@ msgstr "Görseli kaydet"
 #: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
 msgid "Save MCP servers"
 msgstr "MCP sunucularını kaydet"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Save role"
+msgstr "Rolü kaydet"
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Save shortcut"
@@ -12347,6 +12480,10 @@ msgstr "Hazırlanmış"
 msgid "Staged ({0})"
 msgstr "Hazırlanmış ({0})"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Stale data"
+msgstr "Güncel olmayan veriler"
+
 #: src/renderer/commands/registry.ts
 msgid "Star or unstar the current chat or model"
 msgstr "Mevcut sohbeti veya modeli favorilere ekleyin veya favorilerden kaldırın"
@@ -12564,6 +12701,10 @@ msgstr "Senkronizasyonu durdur"
 #: src/renderer/components/thread/ChatPane/parts/items/toolDisplay.ts
 msgid "Stop task"
 msgstr "Görevi durdur"
+
+#: src/renderer/actions/threadActions.ts
+msgid "Stop the agent before archiving this thread."
+msgstr "Bu konuşmayı arşivlemeden önce ajanı durdurun."
 
 #: src/renderer/actions/projectActions.ts
 #: src/renderer/i18n/sharedMessages.ts
@@ -12895,12 +13036,17 @@ msgid "Task output"
 msgstr "Görev çıkışı"
 
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Task tags"
 msgstr "Görev etiketleri"
 
 #: src/renderer/utils/projectIconColors.ts
 msgid "Teal"
 msgstr "Deniz mavisi"
+
+#: src/renderer/components/thread/ThreadDraftView.tsx
+msgid "Teamwork"
+msgstr "Ekip çalışması"
 
 #. placeholder {0}: selectedAgent?.label ?? targetProviderFallback
 #: src/renderer/components/thread/ContinueInProviderDialog.tsx
@@ -13293,6 +13439,10 @@ msgstr "Bu cihazda kullanılabilir kamera yok. Bunun yerine eşleştirmek için 
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "this environment"
 msgstr "bu ortam"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "This existing route retries after any failure. A retry may repeat completed work."
+msgstr "Bu mevcut kural, her hatadan sonra yeniden dener. Yeniden deneme, tamamlanmış işi tekrarlayabilir."
 
 #: src/mobile/views/MobileFileEditor.tsx
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPane/FileEditorPane.tsx
@@ -13956,7 +14106,7 @@ msgstr "{0} kimlik bilgileri kaldırılamıyor."
 msgid "Unable to remove memory entry."
 msgstr "Bellek girdisi kaldırılamıyor."
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unable to remove pinned route."
 msgstr "Sabitlenmiş rota kaldırılamadı."
 
@@ -13996,6 +14146,10 @@ msgstr "Claude {displayLabel} profili kaydedilemedi."
 #: src/renderer/components/composer/ImageLightboxActions.tsx
 msgid "Unable to save image."
 msgstr "Görsel kaydedilemedi."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+msgid "Unable to save role. Check for duplicate task tags and try again."
+msgstr "Rol kaydedilemedi. Yinelenen görev etiketlerini kontrol edip yeniden deneyin."
 
 #: src/renderer/utils/shellUtils.ts
 msgid "Unable to start {label}."
@@ -14098,6 +14252,10 @@ msgstr "Atanmamış"
 msgid "Unavailable"
 msgstr "Kullanılamıyor"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Unavailable model"
+msgstr "Model kullanılamıyor"
+
 #: src/renderer/components/plugins/PluginDetail.tsx
 #: src/renderer/components/plugins/PluginMarketplace.tsx
 msgid "Unavailable on this device"
@@ -14107,7 +14265,7 @@ msgstr "Bu cihazda kullanılamıyor"
 msgid "Unavailable project"
 msgstr "Kullanılamayan proje"
 
-#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unavailable provider"
 msgstr "Kullanılamayan sağlayıcı"
 
@@ -14465,7 +14623,6 @@ msgstr "URL gereklidir."
 #: src/mobile/views/DesktopWorkspacePanel.tsx
 #: src/mobile/WideShell.tsx
 #: src/renderer/components/layout/PanelDock/panelTabMeta.ts
-#: src/renderer/components/providers/ProviderUsageRail.tsx
 #: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 msgid "Usage"
@@ -14964,6 +15121,18 @@ msgstr "Chrome'da zaten açık olan sayfalar ve oturumlarla çalışın."
 #: src/renderer/components/thread/ChatPane/parts/MessageList.tsx
 msgid "Worked for {elapsed}"
 msgstr "{elapsed} boyunca çalıştı"
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Worker model pool"
+msgstr "Çalışan model havuzu"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
+msgid "Worker roles"
+msgstr "Çalışan rolleri"
+
+#: src/renderer/components/thread/ThreadDraftView.tsx
+msgid "Workers' changes are integrated automatically. Requires a local Git project and a chat agent with Crossagents enabled."
+msgstr "Çalışan ajanların değişiklikleri otomatik olarak birleştirilir. Yerel bir Git projesi ve Crossagents etkin bir sohbet ajanı gerektirir."
 
 #: src/renderer/components/thread/ChatPane/parts/items/toolDisplay.ts
 msgid "Workflow"

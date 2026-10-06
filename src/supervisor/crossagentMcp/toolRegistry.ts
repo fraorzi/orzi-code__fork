@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import {
   loadPluginCoreSkillPhrase,
   uniqueCoreSkillForBuiltInMcp,
@@ -73,11 +74,12 @@ const CROSSAGENTS_CORE_SKILL = uniqueCoreSkillForBuiltInMcp("crossagents");
 /** Base routing guidance always included in the MCP `initialize` instructions. */
 export const CROSSAGENT_MCP_INSTRUCTIONS_BASE = [
   "Use the Crossagents MCP server to delegate lightweight, ephemeral work to the other AI agents connected to this Poracode session.",
-  `Before the first spawn_agent call, ${loadPluginCoreSkillPhrase(CROSSAGENTS_CORE_SKILL)} — it is this plugin's core skill.`,
+  `If ${CROSSAGENTS_CORE_SKILL} is listed among your available skills, ${loadPluginCoreSkillPhrase(CROSSAGENTS_CORE_SKILL)} for additional guidance. Otherwise follow these server instructions directly. Crossagents works without that optional plugin skill; do not search for or install a missing skill.`,
   "Every tool named below belongs to this server. Hosts that namespace MCP tools expose them under this server's name (for example `crossagents__list_agents` or `mcp__crossagents__list_agents`), so resolve each bare name against your own tool list and call the crossagents entry — never the same bare name under another server such as `poracode`.",
-  "Delegate only once the user has explicitly asked you to involve another agent in this thread, for example via an @Crossagents mention or a direct request to delegate or get a second opinion. That ask authorizes delegation for the rest of the thread, so later turns may spawn as the work requires; until then, never spawn subagents on your own initiative.",
+  "Delegate only once the user has explicitly asked you to involve another agent in this thread, for example via an @Crossagents mention or a direct request to delegate or get a second opinion. Enabling Teamwork in the app also counts as this explicit request. That ask authorizes delegation for the rest of the thread, so later turns may spawn as the work requires; until then, never spawn subagents on your own initiative.",
   "Call list_agents when provider selection matters; call get_agent only when you need one provider's detailed models, reasoning options, Fast availability, or permissions preset.",
   "Classify every task with 1-5 concise lowercase tags and pass the same tags to list_agents and spawn_agent. Prefer this vocabulary when applicable: frontend, ui, design, backend, mobile, simulator, implementation, bugfix, review, testing, research, refactor, docs, devops, data. Crossagents learns tag-to-selection affinity from user-explicit selection choices without an extra model call.",
+  "Call list_routing_preferences to discover user-defined worker roles, their names, task tags and instructions. To use a role, include all of its tags in list_agents and spawn_agent. A matching role supplies model preferences and prepends its instructions to the worker prompt when that selection is used. Explicit selection fields still win; roles do not change permissions or authorize delegation by themselves.",
   "Explicit provider, model, reasoning, and Fast values always win. When the user does not specify them, omit those fields and Crossagents will resolve matching manual task routes first, then learned task tags, global explicit Crossagents usage, frequently used and favorite composer selections, then built-in order.",
   "When the user explicitly asks to always prefer a provider/model for a kind of task, call set_routing_preference with its tags and selection. This persistent manual override ranks before learned affinity. Use remove_routing_preference when the user asks to forget or reset it; do not create or remove persistent preferences without clear user intent.",
   "This server hosts one delegation lane: ephemeral subagent runs whose output streams into your own thread.",
@@ -656,6 +658,9 @@ function resolveSelectionArgs(
       model,
       ...(reasoning ? { reasoning } : {}),
       fast,
+      ...(primaryFromOverride && override.instructions && typeof args.prompt === "string"
+        ? { prompt: `Role instructions:\n${override.instructions}\n\nTask:\n${args.prompt}` }
+        : {}),
     },
     ...(inheritedFallbacks ? { inheritedFallbacks } : {}),
     ...(inheritedRetryMode ? { inheritedRetryMode } : {}),
@@ -834,8 +839,13 @@ async function setRoutingPreference(
 
   const selectionArgs = { ...args, tags, provider };
   resolveSelectionArgs(selectionArgs, await ctx.listSpawnableAgents(tags));
+  const existingRole = ctx
+    .listRoutingOverrides?.()
+    .find((entry) => normalizeCrossagentTags(entry.tags).join("\0") === tags.join("\0"));
   const override = {
     tags,
+    ...(existingRole?.name ? { name: existingRole.name } : {}),
+    ...(existingRole?.instructions ? { instructions: existingRole.instructions } : {}),
     agentKind: provider,
     ...(typeof args.model === "string" && args.model.length > 0 ? { modelId: args.model } : {}),
     ...(typeof args.reasoning === "string" && args.reasoning.length > 0

@@ -1,4 +1,8 @@
+<!-- Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06. -->
+
 # Poracode
+
+Personal fork: before continuing implementation, reviewing its status, or packaging this checkout, read [the handoff](docs/fork/HANDOFF.md). It identifies the current implementation, accepted user decisions, unfinished work, and local build/QA setup.
 
 Universal AI agent orchestrator — Electron desktop app managing Claude, Codex, and Gemini via real PTY sessions (terminal-native) and structured runtimes (native chat).
 

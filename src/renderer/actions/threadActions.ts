@@ -1,6 +1,10 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { msg } from "@lingui/core/macro";
+import { i18n } from "@/renderer/i18n/i18n";
 import { startTransition } from "react";
 import { toast } from "@heroui/react";
 import {
+  isThreadTurnActive,
   isProjectInWorkspace,
   isThreadInWorkspace,
   type Project,
@@ -418,6 +422,10 @@ export function sweepStaleThreads(): void {
 export function archiveThread(threadId: string): void {
   if (findExperimentByThreadId(threadId)) return;
   const thread = useAppStore.getState().threads.find((candidate) => candidate.id === threadId);
+  if (thread && isThreadTurnActive(thread.status)) {
+    toast.warning(i18n._(msg`Stop the agent before archiving this thread.`));
+    return;
+  }
   if (
     thread &&
     dispatchRemoteThreadMutation(

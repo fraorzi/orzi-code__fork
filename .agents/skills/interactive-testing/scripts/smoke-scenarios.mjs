@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 export const productionRoots = [
   "src/main/",
   "src/preload/",
@@ -10,6 +11,13 @@ export const productionRoots = [
 ];
 
 export const functionalAreas = [
+  {
+    id: "crossagent-roles",
+    title: "Worker roles, model pool, and persisted task routing",
+    patterns: [/crossagentRoles/i, /CrossagentRole/, /CrossagentRoutingSection/],
+    automated: ["baseline", "settings", "crossagent-roles"],
+    manual: [],
+  },
   {
     id: "live-voice",
     title: "Subscription live voice, microphone ownership, WebRTC, and transcripts",

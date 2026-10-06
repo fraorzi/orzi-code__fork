@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { describe, expect, it, vi } from "vitest";
 import type { AgentCapability, AgentKind } from "@/shared/contracts";
 import type { AgentAdapter } from "@/supervisor/agents/base";
@@ -153,6 +154,63 @@ function resultText(result: Awaited<ReturnType<typeof dispatchTool>>): string {
 }
 
 describe("persistent fallback chain routing", () => {
+  it("prepends matching role instructions and keeps the delegated task and fallback chain", async () => {
+    const role: CrossagentRoutingOverride = {
+      tags: ["review"],
+      name: "Reviewer",
+      instructions: "Report reproducible bugs with file paths.",
+      agentKind: "codex",
+      modelId: "gpt-5.5",
+      fallbacks: [{ agentKind: "claude", modelId: "sonnet" }],
+      updatedAt: 1,
+    };
+    const { ctx, spawned } = makeCtx(role);
+    await dispatchTool("spawn_agent", { tags: ["review"], prompt: "Review the changes" }, ctx);
+    expect(spawned[0]).toMatchObject({
+      prompt:
+        "Role instructions:\nReport reproducible bugs with file paths.\n\nTask:\nReview the changes",
+      fallbacks: [{ agent: "claude", model: "sonnet" }],
+    });
+  });
+  it("keeps role instructions out of an explicitly different selection", async () => {
+    const { ctx, spawned } = makeCtx({
+      tags: ["review"],
+      instructions: "Role-only instruction",
+      agentKind: "codex",
+      modelId: "gpt-5.5",
+      updatedAt: 1,
+    });
+    await dispatchTool(
+      "spawn_agent",
+      { tags: ["review"], provider: "claude", model: "sonnet", prompt: "Review" },
+      ctx,
+    );
+    expect(spawned[0]).toMatchObject({ agent: "claude", prompt: "Review" });
+  });
+  it("preserves role metadata when the agent updates its model preference", async () => {
+    const role: CrossagentRoutingOverride = {
+      tags: ["review"],
+      name: "Reviewer",
+      instructions: "Check behavior",
+      agentKind: "codex",
+      modelId: "gpt-5.5",
+      updatedAt: 1,
+    };
+    const { ctx, saved } = makeCtx(role);
+    saved.push(role);
+    const result = await dispatchTool(
+      "set_routing_preference",
+      { tags: ["review"], provider: "claude", model: "sonnet" },
+      ctx,
+    );
+    expect(result.isError).not.toBe(true);
+    expect(saved[0]).toMatchObject({
+      name: "Reviewer",
+      instructions: "Check behavior",
+      agentKind: "claude",
+      modelId: "sonnet",
+    });
+  });
   it("inherits the saved fallback chain when the primary is from the manual route", async () => {
     const override: CrossagentRoutingOverride = {
       tags: ["backend"],

@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { waitFor } from "@testing-library/react";
 import type { Project, RemoteThreadCommand, Thread, Workspace } from "@/shared/contracts";
@@ -43,7 +44,10 @@ const { deleteWorktreeGroup } = vi.hoisted(() => ({
 const { refreshServer, sendThreadCommand, toast } = vi.hoisted(() => ({
   refreshServer: vi.fn<(desktopId: string) => Promise<void>>(),
   sendThreadCommand: vi.fn<(desktopId: string, command: RemoteThreadCommand) => Promise<void>>(),
-  toast: { danger: vi.fn<(message: string) => void>() },
+  toast: {
+    danger: vi.fn<(message: string) => void>(),
+    warning: vi.fn<(message: string) => void>(),
+  },
 }));
 
 vi.mock("@heroui/react", () => ({ toast }));
@@ -524,6 +528,14 @@ describe("threadActions", () => {
     await Promise.resolve();
 
     expect(useAppStore.getState().threads[0]?.status).toBe("inactive");
+  });
+
+  it("does not archive or stop an agent in the middle of a turn", () => {
+    const thread = makeThread({ status: "working" });
+    useAppStore.setState((state) => ({ ...state, threads: [thread] }));
+    archiveThread(thread.id);
+    expect(useAppStore.getState().threads[0]?.archived).toBe(false);
+    expect(bridge.closeThread).not.toHaveBeenCalled();
   });
 
   it("applies a remote sidebar mutation only after the host accepts it", async () => {

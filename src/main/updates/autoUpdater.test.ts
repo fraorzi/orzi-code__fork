@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { UpdateStatus } from "@/shared/ipc";
 
@@ -37,6 +38,7 @@ const PERIODIC_CHECK_INTERVAL_MS = 60 * 60 * 1_000;
 describe("createAutoUpdaterController", () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.stubEnv("UPDATE_SERVER_URL", "https://updates.example.test/personal");
     vi.clearAllMocks();
     autoUpdaterMock.checkForUpdates.mockResolvedValue(undefined);
     autoUpdaterMock.downloadUpdate.mockResolvedValue(undefined);
@@ -44,6 +46,7 @@ describe("createAutoUpdaterController", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllEnvs();
   });
 
   it("runs the install hook before quitAndInstall", () => {
@@ -196,7 +199,8 @@ describe("createAutoUpdaterController", () => {
     warn.mockRestore();
   });
 
-  it("uses a localized message key when update checks are unavailable in development", async () => {
+  it("never checks upstream when no personal update feed is configured", async () => {
+    vi.stubEnv("UPDATE_SERVER_URL", "");
     const sendStatus = vi.fn<(status: UpdateStatus) => void>();
     const controller = createAutoUpdaterController(sendStatus, "stable", true);
 

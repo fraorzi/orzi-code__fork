@@ -1,3 +1,5 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { teamInstructions } from "@/supervisor/crossagentMcp/teamInstructions";
 import { randomUUID } from "node:crypto";
 import { setTimeout as sleep } from "node:timers/promises";
 import { spawn } from "node-pty";
@@ -187,7 +189,9 @@ export function applyAgentSettingsMcpFlags(
       browserMcp: agentSettings.browserMcp === true,
       chromeMcp: agentSettings.chromeMcp === true,
       computerUse: agentSettings.computerUse === true,
-      crossagentMcp: crossagentRoutingAvailable && agentSettings.crossagentMcp === true,
+      crossagentMcp:
+        crossagentRoutingAvailable &&
+        (config.teamMode === true || agentSettings.crossagentMcp === true),
     },
     disabledBuiltInMcpServerIds,
   );
@@ -570,9 +574,9 @@ export class SpawnPipeline {
     // message, so it reads as a note on the new provider's first turn.
     const transcriptHandoffLost = handsOverTranscript && !threadMentionToolsAvailable;
     const inlineInstructions =
-      inlineSkillInstructions && handoffInstruction
-        ? `${handoffInstruction}\n\n${inlineSkillInstructions}`
-        : (handoffInstruction ?? inlineSkillInstructions);
+      [handoffInstruction, inlineSkillInstructions, teamInstructions(optimisticLaunchConfig)]
+        .filter(Boolean)
+        .join("\n\n") || undefined;
     if (
       payload.segments?.some((segment) => segment.kind === "thread") &&
       !threadMentionToolsAvailable &&

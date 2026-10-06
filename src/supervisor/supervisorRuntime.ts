@@ -1,3 +1,5 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { TeamWorktreeService } from "./crossagentMcp/TeamWorktreeService";
 import { NativeMcpSetupCoordinator } from "./runtime/nativeMcpSetupCoordinator";
 import { existsSync, mkdirSync } from "node:fs";
 import { homedir } from "node:os";
@@ -178,7 +180,7 @@ export class SupervisorRuntime {
     const rawBaseDir = process.env.PORACODE_DATA_DIR?.trim();
     const envBaseDir =
       rawBaseDir && rawBaseDir !== "undefined" && isAbsolute(rawBaseDir) ? rawBaseDir : undefined;
-    const baseDir = envBaseDir ?? join(homedir(), ".poracode");
+    const baseDir = envBaseDir ?? join(homedir(), ".poracode-personal");
     this.baseDir = baseDir;
     this.mcpOAuthService = new McpOAuthService({ baseDir });
     this.mcpProbeService = new McpProbeService({
@@ -211,6 +213,7 @@ export class SupervisorRuntime {
       sharedSettingsCache: this.sharedSettingsCache,
       getAgentStatusService: () => this.agentStatusService,
       getActiveWslProjectDistros: () => this._projectWatcher?.getWslDistros() ?? [],
+      hasAgentSessions: () => this.sessions.size > 0,
       closeThreadsForAgentKind: (agentKind) => this.closeThreadsForAgentKind(agentKind),
     });
     this.agentRegistryService.refreshAgentRegistryAdapters();
@@ -352,6 +355,7 @@ export class SupervisorRuntime {
     // manager's host is the thread session manager (assigned just below — the
     // closures resolve it lazily at call time).
     this.subagentRunManager = new SubagentRunManager({
+      teamWorktrees: new TeamWorktreeService(join(baseDir, "team-worktrees")),
       adapters: this.adapters,
       // Validate spawn selections against the persisted status pipeline — the
       // same source list_agents/get_agent (and the composer) are served from —
@@ -427,6 +431,7 @@ export class SupervisorRuntime {
     });
 
     this.threadSessionManager = new ThreadSessionManager({
+      acquireAgentLaunch: () => this.agentRegistryService.updates.acquireLaunch(),
       emit,
       isDev: this.isDev,
       logsDir: this.logsDir,
@@ -556,6 +561,7 @@ export class SupervisorRuntime {
     void this.agentRegistryService.cacheLocalAcpIconsOnLaunch();
     void this.agentRegistryService.pruneAcpRegistryLeftoversOnLaunch();
     void this.agentRegistryService.repairAcpRegistryInstallLayoutsOnLaunch();
+    this.agentRegistryService.updates.start();
   }
 
   /**
@@ -1022,6 +1028,7 @@ export class SupervisorRuntime {
   }
 
   async disposeAsync(): Promise<void> {
+    this.agentRegistryService.updates.stop();
     this.disposeWindowsPowerShellPreference();
     this.disposeWslCredentialProjectScope();
     this.routingOverridePersistence.dispose();

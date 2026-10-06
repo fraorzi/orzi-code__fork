@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { startTransition } from "react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type { NewThreadMode } from "@/shared/contracts";
@@ -35,6 +36,8 @@ export function GeneralSettings() {
   const setEditorLspEnabled = useSharedSettings((state) => state.setEditorLspEnabled);
   // System sleep and tray behavior belong to the desktop OS; a remote session
   // can't affect them, so hide the rows there.
+  const automaticAgentUpdates = useSharedSettings((s) => s.automaticAgentUpdates);
+  const setAutomaticAgentUpdates = useSharedSettings((s) => s.setAutomaticAgentUpdates);
   const remote = isRemoteSession();
   const windows = !remote && isWindows();
 
@@ -49,6 +52,22 @@ export function GeneralSettings() {
   }));
   return (
     <SettingsPage title={t`General`}>
+      {!remote && (
+        <SettingRow
+          title={t`Automatic agent updates`}
+          description={
+            <Trans>
+              Install stable agent updates in the background after agent sessions close.
+            </Trans>
+          }
+        >
+          <ToggleSwitch
+            aria-label={t`Automatic agent updates`}
+            isSelected={automaticAgentUpdates}
+            onChange={setAutomaticAgentUpdates}
+          />
+        </SettingRow>
+      )}
       <SettingRow
         anchorId="general.language"
         title={t`Language`}

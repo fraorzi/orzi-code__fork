@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -5,6 +6,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { allUsageProviderDescriptors } from "@poracode/agents-usage";
 import type { AgentInstanceConfig } from "@/shared/contracts";
 import { decryptSecret, isEncryptedSecret } from "@/shared/secretStorage";
+import { saveCrossagentRole } from "@/shared/crossagentRoles";
 import {
   DEFAULT_USAGE_DISABLED_PROVIDER_IDS,
   DEFAULT_USAGE_ENABLED_PROVIDER_IDS,
@@ -40,6 +42,26 @@ afterEach(() => {
 });
 
 describe("sharedSettingsFile", () => {
+  it("persists named worker roles across reloads and stale renderer writes", () => {
+    const path = join(makeTempDir(), "settings.json");
+    const overrides = saveCrossagentRole([], {
+      override: {
+        tags: ["review"],
+        name: "Reviewer",
+        instructions: "Check behavior",
+        agentKind: "worker",
+        modelId: "strong",
+      },
+    });
+    writeSharedSettingsFile(path, {
+      ...defaultSharedSettings,
+      crossagentRoutingOverrides: overrides,
+    });
+    const reloaded = readSharedSettingsFile(path);
+    expect(reloaded.crossagentRoutingOverrides).toEqual(overrides);
+    writeSharedSettingsFile(path, mergeManagedSharedSettings(reloaded, defaultSharedSettings));
+    expect(readSharedSettingsFile(path).crossagentRoutingOverrides).toEqual(overrides);
+  });
   it("preserves supervisor-managed Crossagents routing data during renderer writes", () => {
     const onDisk: SharedSettings = {
       ...defaultSharedSettings,
@@ -80,6 +102,7 @@ describe("sharedSettingsFile", () => {
   it("writes and reads shared settings as readable JSON", () => {
     const settingsPath = join(makeTempDir(), "settings.json");
     writeSharedSettingsFile(settingsPath, {
+      automaticAgentUpdates: true,
       themeMode: "dark",
       themePreset: "default",
       locale: "system",
@@ -227,6 +250,7 @@ describe("sharedSettingsFile", () => {
 
     expect(readSharedSettingsFile(settingsPath)).toEqual({
       followUpBehavior: "steer",
+      automaticAgentUpdates: true,
       themeMode: "dark",
       themePreset: "default",
       locale: "system",
@@ -468,6 +492,7 @@ describe("sharedSettingsFile", () => {
     writeFileSync(
       settingsPath,
       JSON.stringify({
+        automaticAgentUpdates: true,
         themeMode: "dark",
         terminalPosition: "right",
         autoShowTerminalPanel: false,
@@ -482,6 +507,7 @@ describe("sharedSettingsFile", () => {
     );
 
     expect(readSharedSettingsFile(settingsPath)).toMatchObject({
+      automaticAgentUpdates: true,
       themeMode: "dark",
       terminalPosition: "right",
       autoShowTerminalPanel: false,
@@ -531,12 +557,14 @@ describe("sharedSettingsFile", () => {
     writeFileSync(
       settingsPath,
       JSON.stringify({
+        automaticAgentUpdates: true,
         themeMode: "dark",
       }),
       "utf8",
     );
 
     expect(readSharedSettingsFile(settingsPath)).toMatchObject({
+      automaticAgentUpdates: true,
       themeMode: "dark",
       collapseTerminalComposer: true,
       threadDocksPlacement: "right",

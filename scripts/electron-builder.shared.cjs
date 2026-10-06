@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 // Mirror of src/shared/channel.ts for use by scripts/build-desktop-artifact.mjs.
 // Keep field names identical to the TS module; src/shared/channel.config-parity.test.ts
 // asserts they don't drift.
@@ -19,15 +20,17 @@ function normalizeChannel(value) {
 }
 
 function productNameFor(channel) {
-  return channel === "nightly" ? "Poracode Nightly" : "Poracode";
+  return channel === "nightly" ? "Poracode Personal Nightly" : "Poracode Personal";
 }
 
 function appIdFor(channel) {
-  return channel === "nightly" ? "com.lightcode.app.nightly" : "com.lightcode.app";
+  return channel === "nightly"
+    ? "com.franciszek.poracode.personal.nightly"
+    : "com.franciszek.poracode.personal";
 }
 
 function userDataDirNameFor(channel) {
-  return channel === "nightly" ? ".poracode-nightly" : ".poracode";
+  return channel === "nightly" ? ".poracode-personal-nightly" : ".poracode-personal";
 }
 
 function updaterChannelFor(channel) {
@@ -35,20 +38,11 @@ function updaterChannelFor(channel) {
 }
 
 function artifactPrefixFor(channel) {
-  return channel === "nightly" ? "Poracode-Nightly" : "Poracode";
+  return channel === "nightly" ? "Poracode-Personal-Nightly" : "Poracode Personal";
 }
 
-/**
- * Squirrel.Mac cannot relaunch when an update changes the outer bundle and
- * executable name: it moves the old bundle away, then tries to spawn its
- * relaunch helper from the path it just removed. Keep updater ZIPs on the
- * pre-rebrand executable name so both Lightcode and already-migrated Poracode
- * installs update in place. DMGs remain fully Poracode-branded.
- */
-function macExecutableNameFor(channel, artifactKind) {
-  if (artifactKind === "updater") {
-    return channel === "nightly" ? "Lightcode Nightly" : "Lightcode";
-  }
+// Keep the same bundle name for installers and future personal updates.
+function macExecutableNameFor(channel, _artifactKind) {
   return productNameFor(channel);
 }
 

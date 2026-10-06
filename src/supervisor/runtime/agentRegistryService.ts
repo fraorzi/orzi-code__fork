@@ -1,3 +1,6 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { isNewerVersion } from "@/shared/agents/updateResolver";
+import { AgentUpdateCoordinator, type AgentUpdateTask } from "./agentUpdateCoordinator";
 import type {
   ManageAgentCredentialsPayload,
   ManageAgentCredentialsResult,
@@ -85,6 +88,7 @@ export interface AgentRegistryServiceDeps {
   getAgentStatusService: () => AgentStatusService;
   getActiveWslProjectDistros: () => string[];
   /** Stop every live thread hosting `agentKind`. */
+  hasAgentSessions?: () => boolean;
   closeThreadsForAgentKind: (agentKind: AgentKind) => Promise<void>;
 }
 
@@ -122,7 +126,72 @@ export class AgentRegistryService {
    */
   private readonly adapterInputKeys = new Map<AgentKind, string>();
 
-  constructor(private readonly deps: AgentRegistryServiceDeps) {}
+  readonly updates: AgentUpdateCoordinator;
+
+  constructor(private readonly deps: AgentRegistryServiceDeps) {
+    this.updates = new AgentUpdateCoordinator({
+      enabled: () => this.deps.sharedSettingsCache.read().automaticAgentUpdates,
+      hasSessions: () => this.deps.hasAgentSessions?.() ?? true,
+      tasks: () => this.automaticUpdateTasks(),
+      report: (id, result) => {
+        if (!result.ok) console.warn("[agent-update]", { id, ...result });
+        else console.info("[agent-update]", { id, ok: true });
+      },
+    });
+  }
+
+  private async automaticUpdateTasks(): Promise<AgentUpdateTask[]> {
+    const statuses = await this.agentStatusService.getAgentStatuses({ wslDistros: [] });
+    const seen = new Set<string>();
+    const tasks: AgentUpdateTask[] = statuses.windows.flatMap((status) => {
+      if (
+        !status.installed ||
+        !status.version ||
+        !status.executablePath ||
+        !(status.update ?? this.deps.adapters.get(status.kind)?.update)
+      )
+        return [];
+      const version = status.version;
+      if (seen.has(status.executablePath)) return [];
+      seen.add(status.executablePath);
+      return [
+        {
+          id: status.executablePath,
+          isOutdated: async () => {
+            const latest = await this.getLatestAgentVersion({ agentKind: status.kind });
+            if (!latest.version) throw new Error("Agent version source is unavailable.");
+            return isNewerVersion(latest.version, version);
+          },
+          update: () =>
+            this.updateAgentBinary({
+              agentKind: status.kind,
+              envKind: process.platform === "win32" ? "windows" : "posix",
+            }),
+        },
+      ];
+    });
+    const installed = readAcpRegistrySettings(this.deps.settingsPath).acpRegistryInstalledAgents;
+    const nativeRecords = Object.values(installed).filter(
+      (record) => !record.installations || record.installations.native,
+    );
+    if (nativeRecords.length > 0) {
+      const registry = await fetchAcpRegistry();
+      for (const record of nativeRecords) {
+        const current = record.installations?.native?.version ?? record.version;
+        const latest = registry.agents.find((agent) => agent.id === record.id)?.version;
+        if (!latest) continue;
+        tasks.push({
+          id: `acp:${record.id}`,
+          isOutdated: async () => isNewerVersion(latest, current),
+          update: async () => {
+            await this.updateAcpRegistryAgent({ agentId: record.id, target: { kind: "native" } });
+            return { ok: true };
+          },
+        });
+      }
+    }
+    return tasks;
+  }
 
   async manageAgentPlugins(payload: ManageAgentPluginsPayload): Promise<ManageAgentPluginsResult> {
     const adapter = this.deps.adapters.get(payload.agentKind);
@@ -434,14 +503,19 @@ export class AgentRegistryService {
       settingsPath: this.deps.settingsPath,
       iconsDir: this.deps.acpIconsDir,
     });
-    const autoUpdate = await autoUpdateAcpRegistryAgents({
-      registry,
-      baseDir: this.deps.baseDir,
-      settingsPath: this.deps.settingsPath,
-      iconsDir: this.deps.acpIconsDir,
-      firstClassAgents: this.firstClassRegistryAgents(),
-    });
-    if (autoUpdate.changed.length > 0) changed = true;
+    if (this.deps.sharedSettingsCache.read().automaticAgentUpdates) {
+      await this.updates.install(async () => {
+        const autoUpdate = await autoUpdateAcpRegistryAgents({
+          registry,
+          baseDir: this.deps.baseDir,
+          settingsPath: this.deps.settingsPath,
+          iconsDir: this.deps.acpIconsDir,
+          firstClassAgents: this.firstClassRegistryAgents(),
+        });
+        if (autoUpdate.changed.length > 0) changed = true;
+        return { ok: autoUpdate.failed.length === 0 };
+      });
+    }
     if (changed) await this.propagateAcpRegistryChange();
     return registry;
   }
@@ -484,6 +558,18 @@ export class AgentRegistryService {
   async updateAcpRegistryAgent(
     payload: UpdateAcpRegistryAgentPayload,
   ): Promise<AcpRegistryMutationResult> {
+    let response: AcpRegistryMutationResult | undefined;
+    const result = await this.updates.install(async () => {
+      response = await this.updateAcpRegistryAgentUnlocked(payload);
+      return { ok: true };
+    });
+    if (!result.ok || !response) throw new Error(result.output ?? "Agent update failed.");
+    return response;
+  }
+
+  private async updateAcpRegistryAgentUnlocked(
+    payload: UpdateAcpRegistryAgentPayload,
+  ): Promise<AcpRegistryMutationResult> {
     const installed = await updateAcpRegistryAgentFromRegistry({
       agentId: payload.agentId,
       baseDir: this.deps.baseDir,
@@ -497,7 +583,13 @@ export class AgentRegistryService {
     return { installed };
   }
 
-  async updateAgentBinary(payload: UpdateAgentBinaryPayload): Promise<UpdateAgentBinaryResult> {
+  updateAgentBinary(payload: UpdateAgentBinaryPayload): Promise<UpdateAgentBinaryResult> {
+    return this.updates.install(() => this.updateAgentBinaryUnlocked(payload));
+  }
+
+  private async updateAgentBinaryUnlocked(
+    payload: UpdateAgentBinaryPayload,
+  ): Promise<UpdateAgentBinaryResult> {
     const adapter = this.deps.adapters.get(payload.agentKind);
     if (!adapter) {
       return {

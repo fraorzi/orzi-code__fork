@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "@heroui/react";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -1647,13 +1648,13 @@ describe("ChatPane", () => {
     const thread = makeThread();
     const url = "https://tanstack.com/blog/tanstack-virtual-chat";
     seedUserMessage(thread.id, url);
-    const openExternal = vi
+    const openExternalNative = vi
       .fn<(href: string) => Promise<void>>()
       .mockRejectedValue(new Error("open failed"));
     Object.defineProperty(window, "poracode", {
       configurable: true,
       value: {
-        openExternal,
+        openExternalNative,
         setWindowChrome: vi.fn<() => Promise<void>>().mockResolvedValue(undefined),
       },
     });
@@ -1666,7 +1667,7 @@ describe("ChatPane", () => {
     await waitFor(() => {
       expect(toastDangerSpy).toHaveBeenCalledWith("open failed");
     });
-    expect(openExternal).toHaveBeenCalledWith(url);
+    expect(openExternalNative).toHaveBeenCalledWith(url);
   });
 
   it("updates user message collapse state when resize changes visual overflow", async () => {
@@ -2031,7 +2032,7 @@ describe("ChatPane", () => {
     expect(screen.queryByText("Worked for 0s")).not.toBeInTheDocument();
   });
 
-  it("waits for a base file checkpoint before finalizing a completed turn", async () => {
+  it("does not invent historical diffs by snapshotting files when a chat mounts", async () => {
     const thread = { ...makeThread(), status: "idle" as const };
     useAppStore.setState({ projects: [project] });
     seedUserMessage(thread.id, "Initial prompt", "user-1");
@@ -2059,14 +2060,7 @@ describe("ChatPane", () => {
       });
     });
 
-    await waitFor(() =>
-      expect(finalizeFileCheckpoint).toHaveBeenCalledWith({
-        threadId: thread.id,
-        checkpointItemId: "assistant-1",
-        baseCheckpointItemId: "user-1",
-        projectLocation: project.location,
-      }),
-    );
+    expect(finalizeFileCheckpoint).not.toHaveBeenCalled();
   });
 
   it("shows checkpoint buttons on later user messages and reverts to before that prompt", async () => {

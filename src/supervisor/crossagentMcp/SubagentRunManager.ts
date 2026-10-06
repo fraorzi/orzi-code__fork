@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { randomBytes } from "node:crypto";
 import { authoritativeAssistantText } from "@/shared/assistantMessageText";
 import type {
@@ -12,6 +13,7 @@ import type {
 import type { AgentAdapter, StructuredSessionHandle } from "@/supervisor/agents/base";
 import { ForwardedRuntimeItemTracker } from "./ForwardedRuntimeItemTracker";
 import { SubagentAttemptRunner, type AttemptExecutionState } from "./SubagentAttemptRunner";
+import type { TeamWorktreeService, TeamWorkspace, TeamIntegration } from "./TeamWorktreeService";
 import { SubagentSpawnError } from "./errors";
 import { prepareSubagentRun, type PreparedSubagentRun } from "./spawnPlan";
 import type {
@@ -62,6 +64,7 @@ function clipOutputTail(text: string, maxChars: number): string {
 export interface SubagentRunManagerDeps {
   adapters: Map<AgentKind, AgentAdapter>;
   host: SubagentRunHost;
+  teamWorktrees?: Pick<TeamWorktreeService, "create" | "integrate">;
   /**
    * Settings-filtered provider capabilities from the same status pipeline that
    * serves the roster. `null` explicitly denies a provider; `undefined` falls
@@ -87,6 +90,8 @@ interface CursorOutputEdit {
 interface RunRecord extends AttemptExecutionState {
   runId: string;
   createdAt: number;
+  workspace?: TeamWorkspace;
+  integration?: TeamIntegration;
   parentThreadId: string;
   childThreadId: string;
   label: string;
@@ -233,9 +238,20 @@ export class SubagentRunManager {
     if (requests.length === 0) throw new SubagentSpawnError("tasks must not be empty");
     const parent = this.requireParent(parentThreadId);
     const active = this.activeCountForParent(parentThreadId);
-    if (active + requests.length > MAX_CONCURRENT_CHILDREN_PER_PARENT) {
+    const limit = parent.config.teamMode ? 2 : MAX_CONCURRENT_CHILDREN_PER_PARENT;
+    if (
+      parent.config.teamMode &&
+      (!this.deps.teamWorktrees ||
+        parent.projectLocation.kind !== "posix" ||
+        parent.config.executionEnvironment)
+    ) {
       throw new SubagentSpawnError(
-        `Too many concurrent subagents (max ${MAX_CONCURRENT_CHILDREN_PER_PARENT}, ${active} already running).`,
+        "Teamwork requires a native POSIX Git project and a configured worktree service.",
+      );
+    }
+    if (active + requests.length > limit) {
+      throw new SubagentSpawnError(
+        `Too many concurrent subagents (max ${limit}, ${active} already running).`,
       );
     }
     const plans = requests.map((request) => prepareSubagentRun(this.deps, parent, request));
@@ -299,9 +315,48 @@ export class SubagentRunManager {
       payload: startPayload,
     });
 
-    void this.runAttempt(record, 0);
+    if (plan.teamMode) void this.prepareTeamRun(record);
+    else this.runAttempt(record, 0);
 
     return { runId };
+  }
+
+  private async prepareTeamRun(record: RunRecord): Promise<void> {
+    try {
+      const service = this.deps.teamWorktrees;
+      if (!service) throw new Error("Team worktree service is unavailable");
+      record.workspace = await service.create(record.runId, record.plan.projectLocation);
+      if (record.cancelRequested || record.settled) return;
+      record.plan.projectLocation = { kind: "posix", path: record.workspace.projectPath };
+      record.plan.prompt = [
+        "You are a delegated team worker in an isolated Git worktree. Work only in this worktree. Do not commit, push, reset HEAD or modify other worktrees. Your starting snapshot includes the leader's uncommitted work; change only your assigned scope. Dependencies and ignored files are not copied. Report changed files, checks and unresolved issues. The app automatically integrates your final working files when you complete successfully, without user approval. Do not merge them yourself.",
+        record.plan.prompt,
+      ].join("\n\n");
+      this.runAttempt(record, 0);
+    } catch (error) {
+      this.settle(record, "failed", error instanceof Error ? error.message : String(error));
+    }
+  }
+
+  private async integrateTeamRun(record: RunRecord): Promise<void> {
+    try {
+      await this.attemptRunner.teardown(record, { requireDispose: true });
+      if (record.cancelRequested || record.settled) return;
+      if (!record.workspace || !this.deps.teamWorktrees)
+        throw new Error("Team workspace is unavailable");
+      record.integration = await this.deps.teamWorktrees.integrate(
+        record.workspace,
+        () => record.cancelRequested || record.settled,
+      );
+      this.settle(record, "completed", undefined, { teardown: false });
+    } catch (error) {
+      record.integration = {
+        status: "needs_resolution",
+        files: [],
+        message: error instanceof Error ? error.message : String(error),
+      };
+      this.settle(record, "completed", undefined, { teardown: false });
+    }
   }
 
   /** Block until the run settles or the timeout elapses. */
@@ -407,10 +462,13 @@ export class SubagentRunManager {
 
   getCapacity(parentThreadId: string): { running: number; limit: number; available_slots: number } {
     const running = this.activeCountForParent(parentThreadId);
+    const limit = this.deps.host.getParentContext(parentThreadId)?.config.teamMode
+      ? 2
+      : MAX_CONCURRENT_CHILDREN_PER_PARENT;
     return {
       running,
-      limit: MAX_CONCURRENT_CHILDREN_PER_PARENT,
-      available_slots: MAX_CONCURRENT_CHILDREN_PER_PARENT - running,
+      limit,
+      available_slots: limit - running,
     };
   }
 
@@ -610,6 +668,10 @@ export class SubagentRunManager {
     return {
       status: record.status,
       output,
+      ...(record.workspace
+        ? { workspace: { path: record.workspace.root, patch_path: record.workspace.patchPath } }
+        : {}),
+      ...(record.integration ? { integration: record.integration } : {}),
       ...(incremental || !isCompleteTranscript ? { total_output_chars: total } : {}),
       ...(record.error ? { error: record.error } : {}),
       ...(record.plan.attempts.length > 1
@@ -970,6 +1032,10 @@ export class SubagentRunManager {
       return;
     }
 
+    if (status === "completed" && record.workspace) {
+      void this.integrateTeamRun(record);
+      return;
+    }
     this.settle(record, status, errorMessage);
   }
 
@@ -1022,7 +1088,12 @@ export class SubagentRunManager {
 
     if (options?.teardown !== false) void this.attemptRunner.teardown(record);
 
-    const text = errorMessage ? `${record.output}\n${errorMessage}`.trim() : record.output;
+    const integrationNote = record.integration
+      ? `\n\nTeam integration: ${JSON.stringify(record.integration)}\nWorkspace: ${record.workspace?.root}\nPatch: ${record.workspace?.patchPath}`
+      : "";
+    const text = errorMessage
+      ? `${record.output}\n${errorMessage}`.trim()
+      : record.output + integrationNote;
     if (errorMessage) {
       // Preserve the legacy failed-run output shape while also exposing the
       // structured error metadata added for retry safety.

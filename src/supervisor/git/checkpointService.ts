@@ -1,8 +1,11 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { fileCheckpointRecordSchema, fileCheckpointTurnSchema } from "@/shared/contracts";
 import { randomUUID } from "node:crypto";
 import { isAbsolute, join } from "node:path";
 import { rm } from "node:fs/promises";
 import type {
   FileCheckpointChangedFile,
+  GetFileCheckpointDiffPayload,
   FileCheckpointRecord,
   FileCheckpointTurn,
   ProjectLocation,
@@ -64,6 +67,11 @@ export class GitCheckpointService {
     checkpointItemId: string;
     projectLocation: ProjectLocation;
   }): Promise<FileCheckpointRecord> {
+    const existing = await this.readCheckpointMetadata(
+      input.projectLocation,
+      checkpointRef(input.threadId, input.checkpointItemId),
+    );
+    if (existing) return existing;
     return this.writeSnapshot(input.projectLocation, {
       threadId: input.threadId,
       checkpointItemId: input.checkpointItemId,
@@ -82,31 +90,48 @@ export class GitCheckpointService {
       checkpointItemId: input.baseCheckpointItemId,
     });
     const ref = checkpointRef(input.threadId, input.checkpointItemId);
-    const baseRef = base.ref;
-    await this.writeSnapshot(input.projectLocation, {
-      threadId: input.threadId,
-      checkpointItemId: input.checkpointItemId,
-      capturedAt: new Date().toISOString(),
-      baseCheckpointItemId: input.baseCheckpointItemId,
-      baseRef,
-      changedFiles: [],
-    });
-    const changedFiles = await changedFilesBetween(input.projectLocation, baseRef, ref);
-
-    const snapshot = await this.writeSnapshot(input.projectLocation, {
-      threadId: input.threadId,
-      checkpointItemId: input.checkpointItemId,
-      capturedAt: new Date().toISOString(),
-      baseCheckpointItemId: input.baseCheckpointItemId,
-      baseRef,
-      changedFiles,
-    });
-
-    return {
+    const existing = await this.readCheckpointMetadata(input.projectLocation, ref);
+    if (existing && "baseRef" in existing) return existing;
+    const snapshot =
+      existing ??
+      (await this.writeSnapshot(input.projectLocation, {
+        threadId: input.threadId,
+        checkpointItemId: input.checkpointItemId,
+        capturedAt: new Date().toISOString(),
+      }));
+    const changedFiles = await changedFilesBetween(input.projectLocation, base.ref, snapshot.ref);
+    const turn = {
       ...snapshot,
       baseCheckpointItemId: input.baseCheckpointItemId,
       baseRef: base.ref,
       changedFiles,
+    };
+    // Reuse the already captured tree. A second filesystem snapshot can include
+    // later edits and make the file list disagree with the stored diff.
+    await this.writeSnapshot(input.projectLocation, turn, snapshot.commit);
+    return turn;
+  }
+
+  async diff(input: GetFileCheckpointDiffPayload): Promise<{ diff: string }> {
+    const checkpoint = await this.readCheckpoint(input.projectLocation, input);
+    if (!("baseRef" in checkpoint)) throw new Error("No completed prompt snapshot is available.");
+    const file =
+      input.filePath === undefined
+        ? undefined
+        : checkpoint.changedFiles.find((entry) => entry.path === input.filePath);
+    if (input.filePath !== undefined && !file) throw new Error("File is not part of this prompt.");
+    return {
+      diff: await execGit(input.projectLocation, [
+        "--literal-pathspecs",
+        "diff",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--no-color",
+        checkpoint.baseRef,
+        checkpoint.ref,
+        "--",
+        ...(file ? [...(file.oldPath ? [file.oldPath] : []), file.path] : []),
+      ]),
     };
   }
 
@@ -156,7 +181,7 @@ export class GitCheckpointService {
   private async readCheckpoint(
     projectLocation: ProjectLocation,
     input: { threadId: string; checkpointItemId: string },
-  ): Promise<FileCheckpointRecord> {
+  ): Promise<CheckpointMetadata> {
     for (const root of [REF_ROOT, LEGACY_REF_ROOT]) {
       const ref = checkpointRef(input.threadId, input.checkpointItemId, root);
       const metadata = await this.readCheckpointMetadata(projectLocation, ref);
@@ -169,6 +194,7 @@ export class GitCheckpointService {
     projectLocation: ProjectLocation,
     metadata: Omit<FileCheckpointRecord, "ref" | "commit"> &
       Partial<Pick<FileCheckpointTurn, "baseCheckpointItemId" | "baseRef" | "changedFiles">>,
+    capturedTree?: string,
   ): Promise<FileCheckpointRecord> {
     const ref = checkpointRef(metadata.threadId, metadata.checkpointItemId);
     if (projectLocation.kind === "wsl") {
@@ -192,21 +218,25 @@ export class GitCheckpointService {
     const tempIndex = await createTempIndexPath(projectLocation);
     try {
       const env = { GIT_INDEX_FILE: tempIndex };
-      const baseTree = await resolveHeadTree(projectLocation);
+      const baseTree = capturedTree ?? (await resolveHeadTree(projectLocation));
       await execGit(projectLocation, ["read-tree", baseTree], { env });
-      await execGit(projectLocation, ["add", "-A", "--", "."], { env });
+      if (!capturedTree) await execGit(projectLocation, ["add", "-A", "--", "."], { env });
       const tree = (await execGit(projectLocation, ["write-tree"], { env })).trim();
-      const head = await resolveHeadCommit(projectLocation);
-      const commitInput = buildCheckpointCommitInput(tree, head, { ...metadata, ref });
-      const commit = (await commitCheckpointTree(projectLocation, commitInput, env)).trim();
-      await execGit(projectLocation, ["update-ref", ref, commit]);
-      return {
-        threadId: metadata.threadId,
-        checkpointItemId: metadata.checkpointItemId,
-        ref,
-        commit,
-        capturedAt: metadata.capturedAt,
-      };
+      const snapshotTree = capturedTree
+        ? (
+            await execGit(projectLocation, ["rev-parse", "--verify", `${capturedTree}^{tree}`])
+          ).trim()
+        : tree;
+      const record = { ...metadata, ref, commit: snapshotTree, storageVersion: 2 as const };
+      const metadataObject = (
+        await execGit(projectLocation, ["hash-object", "-w", "--stdin"], {
+          input: JSON.stringify(record),
+        })
+      ).trim();
+      await execGit(projectLocation, ["update-ref", "--stdin"], {
+        input: `update ${ref} ${snapshotTree}\nupdate ${ref.replace("/checkpoints/", "/checkpoint-metadata/")} ${metadataObject}\n`,
+      });
+      return record;
     } finally {
       await removeTempIndex(projectLocation, tempIndex);
     }
@@ -216,55 +246,31 @@ export class GitCheckpointService {
     projectLocation: ProjectLocation,
     ref: string,
   ): Promise<CheckpointMetadata | null> {
-    let commit: string;
     try {
-      commit = (
-        await execGit(projectLocation, ["rev-parse", "--verify", `${ref}^{commit}`])
-      ).trim();
+      const kind = (await execGit(projectLocation, ["cat-file", "-t", ref])).trim();
+      const object = (await execGit(projectLocation, ["rev-parse", "--verify", ref])).trim();
+      let body: string;
+      if (kind === "tree") {
+        body = await execGit(projectLocation, [
+          "cat-file",
+          "blob",
+          ref.replace("/checkpoints/", "/checkpoint-metadata/"),
+        ]);
+      } else if (kind === "commit") {
+        const message = await execGit(projectLocation, ["log", "-1", "--format=%B", ref]);
+        body =
+          message.split(/\r?\n/).find((line) => line.startsWith("{") && line.endsWith("}")) ?? "";
+      } else return null;
+      const parsed: unknown = JSON.parse(body);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+      const payload = { ...parsed, ref, commit: object };
+      const turn = fileCheckpointTurnSchema.safeParse(payload);
+      const record = turn.success ? turn.data : fileCheckpointRecordSchema.parse(payload);
+      if (kind === "tree" && record.storageVersion !== 2) return null;
+      return { ...record, ref, commit: object };
     } catch {
       return null;
     }
-    const body = await execGit(projectLocation, ["log", "-1", "--format=%B", ref]);
-    const jsonLine = body
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .find((line) => line.startsWith("{") && line.endsWith("}"));
-    if (!jsonLine) return null;
-    try {
-      const parsed = JSON.parse(jsonLine) as CheckpointMetadata;
-      return { ...parsed, ref, commit };
-    } catch {
-      return null;
-    }
-  }
-}
-
-/**
- * Run `commit-tree`, retrying once with a fallback identity when the repository
- * (and the user's global config) provides none. Without the retry every
- * checkpoint fails with "Author identity unknown" on a fresh machine.
- */
-async function commitCheckpointTree(
-  projectLocation: ProjectLocation,
-  commitInput: { args: string[]; input: string },
-  env: Record<string, string>,
-): Promise<string> {
-  // Force English error text so isMissingGitIdentityError() can match it
-  // regardless of the machine's system locale.
-  const identityCheckEnv = { ...env, LC_ALL: "C" };
-  try {
-    return await execGit(projectLocation, commitInput.args, {
-      env: identityCheckEnv,
-      input: commitInput.input,
-    });
-  } catch (error) {
-    if (!isMissingGitIdentityError(error) && !isMissingGitIdentityError((error as Error)?.cause)) {
-      throw error;
-    }
-    return await execGit(projectLocation, commitInput.args, {
-      env: { ...env, ...CHECKPOINT_FALLBACK_IDENT_ENV },
-      input: commitInput.input,
-    });
   }
 }
 

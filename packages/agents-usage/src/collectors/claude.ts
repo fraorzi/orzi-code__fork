@@ -1,3 +1,5 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
+import { parseClaudeResetCredits } from "./claudeResetCredits";
 import { DEFAULT_CLIENT_VERSIONS } from "../clientVersions";
 import { parseRetryAfter, toEpochMs } from "../formatters";
 import type { CollectOptions, HostPort, HttpClient, HttpResponse, OAuthToken } from "../host";
@@ -10,7 +12,8 @@ import type { UsageSnapshot, UsageWindow, UsageWindowId } from "../types";
  * uses. Utilization windows are reported directly by the API — never estimated.
  */
 
-export const CLAUDE_USAGE_ENDPOINT = "https://api.anthropic.com/api/oauth/usage";
+export const CLAUDE_USAGE_ENDPOINT =
+  "https://api.anthropic.com/api/oauth/usage?cedar_ember=1&at_wall=1";
 export const CLAUDE_OAUTH_BETA = "oauth-2025-04-20";
 /**
  * Fallback backoff when a 429 carries no (parseable) `Retry-After` header. The
@@ -183,6 +186,7 @@ export function parseClaudeUsage(
   return {
     providerId: "claude",
     status: "ok",
+    resetCredits: parseClaudeResetCredits(body, nowMs),
     windows,
     fetchedAt: nowMs,
     ...(meta.plan ? { plan: meta.plan } : {}),

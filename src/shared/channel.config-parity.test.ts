@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
 import {
@@ -44,9 +45,9 @@ describe("electron-builder.shared.cjs mirrors src/shared/channel.ts", () => {
   });
 
   it("keeps macOS updater ZIPs on the legacy technical executable name", () => {
-    expect(cjs.macExecutableNameFor("stable", "updater")).toBe("Lightcode");
-    expect(cjs.macExecutableNameFor("nightly", "updater")).toBe("Lightcode Nightly");
-    expect(cjs.macExecutableNameFor("stable", "branded")).toBe("Poracode");
-    expect(cjs.macExecutableNameFor("nightly", "branded")).toBe("Poracode Nightly");
+    expect(cjs.macExecutableNameFor("stable", "updater")).toBe("Poracode Personal");
+    expect(cjs.macExecutableNameFor("nightly", "updater")).toBe("Poracode Personal Nightly");
+    expect(cjs.macExecutableNameFor("stable", "branded")).toBe("Poracode Personal");
+    expect(cjs.macExecutableNameFor("nightly", "branded")).toBe("Poracode Personal Nightly");
   });
 });

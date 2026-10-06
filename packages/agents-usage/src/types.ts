@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { z } from "zod";
 
 /**
@@ -118,6 +119,27 @@ export const usageStatusSchema = z.enum([
 ]);
 export type UsageStatus = z.infer<typeof usageStatusSchema>;
 
+/** Read-only inventory of saved, one-time quota resets. Missing data is not zero. */
+export const usageResetCreditsSchema = z.discriminatedUnion("status", [
+  z.object({
+    status: z.literal("known"),
+    grants: z.array(
+      z.object({
+        id: z.string().min(1),
+        remaining: z.number().int().positive(),
+        expiresAt: z.number().int().nonnegative().optional(),
+        startsAt: z.number().int().nonnegative().optional(),
+      }),
+    ),
+  }),
+  z.object({
+    status: z.literal("unknown"),
+    reason: z.enum(["web-only", "unavailable"]),
+    manageUrl: z.string().url().optional(),
+  }),
+]);
+export type UsageResetCredits = z.infer<typeof usageResetCreditsSchema>;
+
 export const usageSnapshotSchema = z.object({
   providerId: z.string(),
   status: usageStatusSchema,
@@ -127,6 +149,7 @@ export const usageSnapshotSchema = z.object({
   cost: usageCostSchema.optional(),
   tokens: usageTokensSchema.optional(),
   credits: usageCreditsSchema.optional(),
+  resetCredits: usageResetCreditsSchema.optional(),
   /** Epoch milliseconds when this snapshot was produced. */
   fetchedAt: z.number().int().nonnegative(),
   /**

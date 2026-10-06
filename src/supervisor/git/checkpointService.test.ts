@@ -1,7 +1,7 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import type { ProjectLocation } from "@/shared/contracts";
@@ -29,15 +29,15 @@ afterEach(async () => {
 });
 
 function makeRepo(): { dir: string; location: ProjectLocation } {
-  const dir = mkdtempSync(join(tmpdir(), "poracode-checkpoints-"));
+  mkdirSync(join(process.cwd(), ".tmp"), { recursive: true });
+  const dir = mkdtempSync(join(process.cwd(), ".tmp/poracode-checkpoints-"));
   tempDirs.push(dir);
-  git(dir, "init");
+  git(dir, "clone", "--shared", "--quiet", process.cwd(), dir);
   git(dir, "config", "user.email", "test@example.com");
   git(dir, "config", "user.name", "Poracode Test");
   git(dir, "config", "core.autocrlf", "false");
   writeFileSync(join(dir, "README.md"), "before\n");
-  git(dir, "add", "README.md");
-  git(dir, "commit", "-m", "init");
+
   const location: ProjectLocation =
     process.platform === "win32" ? { kind: "windows", path: dir } : { kind: "posix", path: dir };
   return { dir, location };
@@ -91,9 +91,7 @@ describe.skipIf(!hasGit())("GitCheckpointService", () => {
 
     expect(after.baseRef).toBe(before.ref);
     expect(after.changedFiles.map((file) => file.path).sort()).toEqual(["README.md", "new.txt"]);
-    expect(git(dir, "log", "-1", "--format=%an <%ae>", before.ref).trim()).toBe(
-      "Poracode Test <test@example.com>",
-    );
+    expect(git(dir, "cat-file", "-t", before.ref).trim()).toBe("tree");
 
     await service.restore({
       threadId: "thread-1",
@@ -103,7 +101,7 @@ describe.skipIf(!hasGit())("GitCheckpointService", () => {
 
     expect(readFileSync(join(dir, "README.md"), "utf8")).toBe("before\n");
     expect(existsSync(join(dir, "new.txt"))).toBe(false);
-    expect(git(dir, "status", "--porcelain").trim()).toBe("");
+    expect(git(dir, "status", "--porcelain").trim()).toBe("M README.md");
 
     await service.restore({
       threadId: "thread-1",
@@ -138,15 +136,80 @@ describe.skipIf(!hasGit())("GitCheckpointService", () => {
         projectLocation: location,
       });
 
-      expect(git(dir, "log", "-1", "--format=%an <%ae>", checkpoint.ref).trim()).toBe(
-        "Poracode <checkpoints@poracode.local>",
-      );
+      expect(git(dir, "cat-file", "-t", checkpoint.ref).trim()).toBe("tree");
       await expect(
         service.list({ threadId: "thread-1", projectLocation: location }),
       ).resolves.toMatchObject({ checkpoints: [{ ref: checkpoint.ref }] });
     } finally {
       restoreEnv();
     }
+  }, 45_000);
+
+  it("freezes each prompt diff and excludes pre-existing changes and later prompts", async () => {
+    const { dir, location } = makeRepo();
+    const service = new GitCheckpointService();
+    const head = git(dir, "rev-parse", "HEAD");
+    await service.create({
+      threadId: "thread-1",
+      checkpointItemId: "user-1",
+      projectLocation: location,
+    });
+    writeFileSync(join(dir, "first.txt"), "first prompt\n");
+    await service.finalize({
+      threadId: "thread-1",
+      checkpointItemId: "assistant-1",
+      baseCheckpointItemId: "user-1",
+      projectLocation: location,
+    });
+    await service.create({
+      threadId: "thread-1",
+      checkpointItemId: "user-2",
+      projectLocation: location,
+    });
+    writeFileSync(join(dir, "second.txt"), "second prompt\n");
+    await service.finalize({
+      threadId: "thread-1",
+      checkpointItemId: "assistant-2",
+      baseCheckpointItemId: "user-2",
+      projectLocation: location,
+    });
+    const first = await service.diff({
+      threadId: "thread-1",
+      checkpointItemId: "assistant-1",
+      projectLocation: location,
+    });
+    expect(first.diff).toContain("first prompt");
+    expect(first.diff).not.toContain("README.md");
+    expect(first.diff).not.toContain("second.txt");
+    const second = await service.diff({
+      threadId: "thread-1",
+      checkpointItemId: "assistant-2",
+      projectLocation: location,
+    });
+    expect(second.diff).toContain("second prompt");
+    expect(second.diff).not.toContain("first.txt");
+    await service.finalize({
+      threadId: "thread-1",
+      checkpointItemId: "assistant-1",
+      baseCheckpointItemId: "user-1",
+      projectLocation: location,
+    });
+    expect(
+      await service.diff({
+        threadId: "thread-1",
+        checkpointItemId: "assistant-1",
+        projectLocation: location,
+      }),
+    ).toEqual(first);
+    expect(git(dir, "rev-parse", "HEAD")).toBe(head);
+    await expect(
+      service.diff({
+        threadId: "thread-1",
+        checkpointItemId: "assistant-1",
+        filePath: "README.md",
+        projectLocation: location,
+      }),
+    ).rejects.toThrow("File is not part");
   }, 45_000);
 
   it("reports a missing base checkpoint without surfacing raw git ref errors", async () => {
@@ -173,6 +236,13 @@ describe.skipIf(!hasGit())("GitCheckpointService", () => {
     });
     const legacyRef = checkpoint.ref.replace("refs/poracode/", "refs/lightcode/");
     git(dir, "update-ref", legacyRef, checkpoint.commit);
+    const metadataRef = checkpoint.ref.replace("/checkpoints/", "/checkpoint-metadata/");
+    git(
+      dir,
+      "update-ref",
+      metadataRef.replace("refs/poracode/", "refs/lightcode/"),
+      git(dir, "rev-parse", metadataRef).trim(),
+    );
     git(dir, "update-ref", "-d", checkpoint.ref);
 
     writeFileSync(join(dir, "README.md"), "after\n");

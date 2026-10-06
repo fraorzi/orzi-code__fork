@@ -1,3 +1,4 @@
+// Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { create } from "zustand";
 import { readBridge } from "../bridge";
 import {
@@ -58,6 +59,7 @@ const STORAGE_KEY = "poracode-shared-settings";
 
 interface SharedSettingsState extends SharedSettings {
   sharedSettingsHydrated: boolean;
+  setAutomaticAgentUpdates: (enabled: boolean) => void;
   setThemeMode: (mode: ThemeMode) => void;
   setThemePreset: (id: string) => void;
   setLocale: (locale: LocaleSetting) => void;
@@ -327,6 +329,10 @@ const initialSettings = loadFallbackSettings();
 export const useSharedSettings = create<SharedSettingsState>()((set, get) => ({
   ...initialSettings,
   sharedSettingsHydrated: initialLoadDone,
+  setAutomaticAgentUpdates: (automaticAgentUpdates) => {
+    set({ automaticAgentUpdates });
+    persistSettings(selectSharedSettings(get()));
+  },
   setThemeMode: (themeMode) => {
     set({ themeMode });
     persistSettings(selectSharedSettings(get()));
@@ -1059,6 +1065,7 @@ export const useSharedSettings = create<SharedSettingsState>()((set, get) => ({
 
 function selectSharedSettings(state: SharedSettingsState): SharedSettingsInput {
   return {
+    automaticAgentUpdates: state.automaticAgentUpdates,
     themeMode: state.themeMode,
     themePreset: state.themePreset,
     locale: state.locale,
