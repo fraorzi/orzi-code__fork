@@ -296,6 +296,7 @@ export function reorderVisibleThreadDocks(
 
 export const sharedSettingsSchema = z.object({
   automaticAgentUpdates: z.boolean().default(true),
+  automaticAgentUpdatesDisabled: z.array(z.string().min(1)).default([]),
   themeMode: themeModeSchema,
   /**
    * Selected app theme preset id (see `renderer/theme/themePresets`). The
@@ -720,6 +721,7 @@ export type SharedSettingsInput = Omit<
 
 export const defaultSharedSettings: SharedSettings = {
   automaticAgentUpdates: true,
+  automaticAgentUpdatesDisabled: [],
   themeMode: "dark",
   themePreset: "default",
   locale: "system",

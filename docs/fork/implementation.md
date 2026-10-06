@@ -2,6 +2,18 @@
 
 Data: 2026-10-06. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Figma i aktualizacje osobno dla agentów
+
+- W rzeczywistym chacie Codex odczytano wskazany przez użytkownika węzeł Figma `Usługi_1920`, 1920 x 9780. `get_metadata` i `get_screenshot` zakończyły się sukcesem. Zweryfikowano blok `image/png` w rzeczywistej odpowiedzi MCP i zapisano go jako obraz. Sam komunikat agenta nie był podstawą wyniku.
+- Codex korzysta z natywnego serwera `figma` skonfigurowanego w globalnym `config.toml` i jego istniejącego OAuth. W tej konfiguracji problem nie wystąpił. Osobna próba przez MCP zarządzany przez fork zwróciła `auth-required`, ponieważ fork nie ma własnej sesji OAuth tego serwera. Nie zmieniano poświadczeń ani pliku Figma.
+- Dowody: `/private/tmp/poracode-figma-smoke/artifacts/figma-report.json`, `figma-metadata.xml`, `figma-mcp-image.png` i `figma-live.png`. Konkretny plik i węzeł są w lokalnym raporcie.
+- Ustawienia każdego lokalnego agenta mają przełącznik automatycznych aktualizacji. Wspólne instalacje profili respektują ustawienie dostawcy, a oddzielne instancje ACP zachowują własne ustawienia. Globalne wyłączenie ma pierwszeństwo; ponowne włączenie zachowuje wybory poszczególnych agentów. Ręczna aktualizacja pozostaje dostępna.
+- Supervisor sprawdza preferencję przed odczytem wersji i przed rozpoczęciem aktualizacji. Dodatkowa ścieżka aktualizacji rejestru ACP sprawdza ją przed każdą instalacją i nie raportuje pominiętej instalacji jako wykonanej.
+- Granica zgodności: nowe `automaticAgentUpdatesDisabled` w `settings.json` i cache renderera ma domyślną pustą listę. Starsze dane są poprawne; test zaczyna od ustawień sprzed zmiany. Nie zmieniono schematu bazy, danych cache statusu, protokołów helperów ani pluginów, więc nie wymagają zmiany wersji.
+- Przeszły typecheck, oba etapy lintu, 119 testów ustawień i runtime w 6 zestawach oraz 77 testów widoku agenta i ustawień współdzielonych w 2 zestawach. Jeden wcześniejszy test pozostał pominięty. Lingui: 0 brakujących tłumaczeń we wszystkich 12 katalogach.
+- Powtarzalny smoke `scripts/smoke-agent-update-preferences.mjs` weryfikuje przełącznik przez rzeczywisty renderer, zapis i odczyt IPC, zachowanie wyboru innego agenta, ponowne otwarcie ustawień, ponowne włączenie oraz nadrzędność ustawienia globalnego. Test używa fikcyjnego dostawcy i nie aktualizuje rzeczywistych programów. Raport: `/private/tmp/poracode-agent-updates-smoke/artifacts/smoke-report.json`; 6 scenariuszy i 4 deterministyczne bramki przeszły, błędów renderera: 0.
+- Nowy build i DMG z tym ustawieniem są zainstalowane w `/Applications/Poracode Personal.app`. Po restarcie pakiet odczytał zapisaną preferencję Codex; włączenie i ponowne wyłączenie przez rzeczywisty przełącznik zmieniło `settings.json` zgodnie z UI. Globalny automat pozostał wyłączony w profilu QA. W tej samej zainstalowanej aplikacji ponowiono odczyt Figma, otrzymano kolejny blok PNG i odpowiedź `FIGMA_INSTALLED_OK`. Dowody: `/private/tmp/poracode-figma-smoke/artifacts/agent-updates-installed.png`, `figma-installed.png` i `figma-installed-report.json`. Poprzedni pakiet zachowano w `.tmp/previous-install/agent-updates/Poracode Personal.app`.
+
 ## Edytor ról i puli modeli - bieżący kod
 
 Zmiana z 2026-10-06 jest sprawdzona w izolowanej aplikacji deweloperskiej oraz przepakowana do `/Applications/Poracode Personal.app` i `release/Poracode Personal-1.8.1-arm64.dmg`.
@@ -108,9 +120,9 @@ Zmiana z 2026-10-06 jest sprawdzona w izolowanej aplikacji deweloperskiej oraz p
 
 ## Pozostały zakres i ograniczenia
 
-- Figma: nadal potrzebny jest konkretny plik/węzeł do porównania z działającą aplikacją Codex. Nie oznaczono problemu jako naprawionego i nie zmieniono autoryzacji produkcyjnego wpisu MCP.
+- Figma: na podanym przykładzie działa natywne połączenie Codex. Połączenie zarządzane przez aplikację dla pozostałych dostawców nadal wymaga własnego OAuth.
 - Nie wykonano rzeczywistej aktualizacji zainstalowanych CLI podczas testów. Harmonogram, koordynacja i obsługa błędów mają testy; próby instalacji w profilu testowym były wyłączone.
-- Ustawienia automatycznych aktualizacji mają jeden globalny przełącznik. Osobne włączanie dla każdego agenta i przypinanie wersji opisane w planie nie są jeszcze wdrożone.
+- Osobne włączanie automatycznych aktualizacji dla każdego agenta jest dodane. Przypinanie konkretnej wersji z planu nie jest jeszcze wdrożone.
 - Aktualizatory zewnętrznych instalacji nadal zależą od uprawnień i zachowania instalatora producenta. Nie wdrożono uniwersalnego rollbacku programów ani osobnego magazynu ich wersji.
 - Koordynator nie stanowi blokady instalatorów uruchomionych poza forkiem. Nie należy traktować go jako ochrony wszystkich procesów agentów z innych aplikacji.
 - Nie przeprowadzono pełnych sesji generowania dla wszystkich dostawców ani testu zgodności każdej nowej wersji agenta ze wszystkimi funkcjami adaptera.

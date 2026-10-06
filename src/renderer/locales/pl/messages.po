@@ -1773,6 +1773,7 @@ msgstr "Automatycznie"
 #~ msgstr "Automatycznie ({0})"
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
 msgid "Automatic agent updates"
 msgstr "Automatyczne aktualizacje agentów"
 
@@ -4922,6 +4923,10 @@ msgstr "Włącz poziom {tierLabel}"
 msgid "Enable {tool}"
 msgstr "Włącz {tool}"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
+msgid "Enable automatic agent updates in General settings first."
+msgstr "Najpierw włącz automatyczne aktualizacje agentów w ustawieniach ogólnych."
+
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 msgid "Enable language server support for type checking, completions, and diagnostics. Requires a language server installed."
@@ -6675,6 +6680,10 @@ msgstr "Zainstaluj pakiet, aby dodać jego klucz API."
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "Zainstaluj aktualizację"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
+msgid "Install updates for this agent automatically. Applies to all of its profiles and runtimes."
+msgstr "Automatycznie instaluj aktualizacje tego agenta. Dotyczy wszystkich jego profili i środowisk wykonawczych."
 
 #. placeholder {0}: updateStatus.version
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostUpdateControl.tsx

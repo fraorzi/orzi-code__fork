@@ -1773,6 +1773,7 @@ msgstr "自动"
 #~ msgstr "自动（{0}）"
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
 msgid "Automatic agent updates"
 msgstr "自动更新代理"
 
@@ -4922,6 +4923,10 @@ msgstr "启用{tierLabel}级别"
 msgid "Enable {tool}"
 msgstr "启用 {tool}"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
+msgid "Enable automatic agent updates in General settings first."
+msgstr "请先在常规设置中启用代理自动更新。"
+
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 msgid "Enable language server support for type checking, completions, and diagnostics. Requires a language server installed."
@@ -6675,6 +6680,10 @@ msgstr "安装该包后即可添加其 API 密钥。"
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "安装更新"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
+msgid "Install updates for this agent automatically. Applies to all of its profiles and runtimes."
+msgstr "自动安装此代理的更新。适用于其所有配置文件和运行环境。"
 
 #. placeholder {0}: updateStatus.version
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostUpdateControl.tsx

@@ -17,6 +17,9 @@ const statusesState = {
 };
 
 const sharedSettingsState = {
+  automaticAgentUpdates: true,
+  automaticAgentUpdatesDisabled: [] as string[],
+  setAgentAutomaticUpdates: vi.fn<(agentKind: string, enabled: boolean) => void>(),
   disabledAgents: [] as string[],
   hiddenModels: {} as Record<string, string[]>,
   agentSettings: {} as Record<string, Record<string, unknown>>,
@@ -478,6 +481,9 @@ describe("SingleAgentSettings", () => {
     statusesState.wslAgentStatuses = [];
     appState.projects = [];
     sharedSettingsState.disabledAgents = [];
+    sharedSettingsState.automaticAgentUpdates = true;
+    sharedSettingsState.automaticAgentUpdatesDisabled = [];
+    sharedSettingsState.setAgentAutomaticUpdates.mockReset();
     sharedSettingsState.hiddenModels = {};
     sharedSettingsState.agentSettings = {};
     sharedSettingsState.agentInstances = {};
@@ -509,6 +515,26 @@ describe("SingleAgentSettings", () => {
   const selectMachine = (machineId: string) => {
     act(() => useMachineSelectionStore.getState().setSelectedMachine(machineId));
   };
+
+  it("offers an independent automatic-update switch on an agent's page", () => {
+    statusesState.agentStatuses = [makeStatus("codex")];
+    render(<SingleAgentSettings agentKind="codex" />);
+    fireEvent.click(screen.getByRole("switch", { name: "Automatic agent updates" }));
+    expect(sharedSettingsState.setAgentAutomaticUpdates).toHaveBeenCalledExactlyOnceWith(
+      "codex",
+      false,
+    );
+  });
+
+  it("disables the per-agent switch when automatic updates are globally off", () => {
+    statusesState.agentStatuses = [makeStatus("codex")];
+    sharedSettingsState.automaticAgentUpdates = false;
+    render(<SingleAgentSettings agentKind="codex" />);
+    expect(screen.getByRole("switch", { name: "Automatic agent updates" })).toBeDisabled();
+    expect(
+      screen.getByText("Enable automatic agent updates in General settings first."),
+    ).toBeVisible();
+  });
 
   it("renders identity metadata as a single compact summary line", () => {
     statusesState.agentStatuses = [

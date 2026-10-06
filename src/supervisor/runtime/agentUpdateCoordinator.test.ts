@@ -5,19 +5,42 @@ import { normalizeSharedSettings } from "@/shared/settings";
 function fixture() {
   const update = vi.fn<() => Promise<{ ok: boolean }>>(async () => ({ ok: true }));
   const outdated = vi.fn<() => Promise<boolean>>(async () => true);
+  const enabled = vi.fn<() => boolean>(() => true);
   const deps = {
     enabled: vi.fn<() => boolean>(() => true),
     hasSessions: vi.fn<() => boolean>(() => false),
     tasks: async () => [
-      { id: "agent", isOutdated: outdated, update: () => coordinator.install(update) },
+      { id: "agent", enabled, isOutdated: outdated, update: () => coordinator.install(update) },
     ],
     report: vi.fn<(id: string, result: { ok: boolean }) => void>(),
   };
   const coordinator = new AgentUpdateCoordinator(deps);
-  return { coordinator, deps, update, outdated };
+  return { coordinator, deps, update, outdated, enabled };
 }
 
 describe("automatic agent updates", () => {
+  it("skips an opted-out agent and checks it immediately after opting back in", async () => {
+    const { coordinator, enabled, update, outdated } = fixture();
+    enabled.mockReturnValue(false);
+    await coordinator.sweep(0);
+    expect(outdated).not.toHaveBeenCalled();
+    expect(update).not.toHaveBeenCalled();
+    enabled.mockReturnValue(true);
+    await coordinator.sweep(60_000);
+    expect(update).toHaveBeenCalledOnce();
+  });
+
+  it("honors opt-out while the version check is still in flight", async () => {
+    const { coordinator, enabled, update, outdated } = fixture();
+    const versionCheck = Promise.withResolvers<boolean>();
+    outdated.mockReturnValue(versionCheck.promise);
+    const sweep = coordinator.sweep(0);
+    await Promise.resolve();
+    enabled.mockReturnValue(false);
+    versionCheck.resolve(true);
+    await sweep;
+    expect(update).not.toHaveBeenCalled();
+  });
   it("defaults old settings to automatic updates and preserves explicit opt-out", () => {
     expect(normalizeSharedSettings({}).automaticAgentUpdates).toBe(true);
     expect(normalizeSharedSettings({ automaticAgentUpdates: false }).automaticAgentUpdates).toBe(

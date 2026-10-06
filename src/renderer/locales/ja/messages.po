@@ -1772,6 +1772,7 @@ msgstr "自動"
 #~ msgstr "自動 ({0})"
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
 msgid "Automatic agent updates"
 msgstr "エージェントの自動更新"
 
@@ -4921,6 +4922,10 @@ msgstr "{tierLabel}の推論レベルを有効化"
 msgid "Enable {tool}"
 msgstr "{tool} を有効にする"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
+msgid "Enable automatic agent updates in General settings first."
+msgstr "まず一般設定でエージェントの自動更新を有効にしてください。"
+
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 msgid "Enable language server support for type checking, completions, and diagnostics. Requires a language server installed."
@@ -6674,6 +6679,10 @@ msgstr "パッケージをインストールしてAPIキーを追加してくだ
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "アップデートをインストールする"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
+msgid "Install updates for this agent automatically. Applies to all of its profiles and runtimes."
+msgstr "このエージェントの更新を自動的にインストールします。すべてのプロファイルと実行環境に適用されます。"
 
 #. placeholder {0}: updateStatus.version
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostUpdateControl.tsx

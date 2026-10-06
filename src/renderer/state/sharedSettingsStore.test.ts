@@ -14,6 +14,8 @@ describe("sharedSettingsStore", () => {
     localStorage.clear();
     seedBuiltInPlugins();
     useSharedSettings.setState({
+      automaticAgentUpdates: true,
+      automaticAgentUpdatesDisabled: [],
       themeMode: "dark",
       staleThreadUnloadMinutes: 20,
       followUpBehavior: "steer",
@@ -47,6 +49,22 @@ describe("sharedSettingsStore", () => {
 
   it("defaults theme to dark", () => {
     expect(useSharedSettings.getState().themeMode).toBe("dark");
+  });
+
+  it("persists provider-wide update opt-outs and preserves other providers", () => {
+    const store = useSharedSettings.getState();
+    store.setAgentAutomaticUpdates("claude:work", false);
+    store.setAgentAutomaticUpdates("acp-generic:one", false);
+    store.setAgentAutomaticUpdates("claude:personal", false);
+    expect(useSharedSettings.getState().automaticAgentUpdatesDisabled).toEqual([
+      "acp-generic:one",
+      "claude",
+    ]);
+    expect(JSON.parse(localStorage.getItem("poracode-shared-settings") ?? "null")).toMatchObject({
+      automaticAgentUpdatesDisabled: ["acp-generic:one", "claude"],
+    });
+    store.setAgentAutomaticUpdates("claude", true);
+    expect(useSharedSettings.getState().automaticAgentUpdatesDisabled).toEqual(["acp-generic:one"]);
   });
 
   it("switches theme mode", () => {

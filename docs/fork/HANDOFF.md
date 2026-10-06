@@ -40,13 +40,19 @@ Ostatnia kontrola rzeczywistej aplikacji potwierdziła:
 
 Dowody i logi znajdują się w ignorowanym `.tmp/installed-smoke/` oraz `.tmp/final-*.log`. Szczegóły i nazwy plików podaje stan implementacji.
 
+## Figma i ustawienia aktualizacji - 2026-10-06
+
+Użytkownik podał plik i węzeł do porównania Figma. Rzeczywisty test chatu Codex w forku przeszedł: `get_metadata` i `get_screenshot` odczytały wskazany węzeł, a odpowiedź MCP zawierała blok `image/png`. W aktualnej konfiguracji wcześniejszy problem nie wystąpił. Działa natywne połączenie Figma z globalnego Codex, uwierzytelnione przez OAuth. Osobny, zarządzany przez aplikację MCP nie ma własnego OAuth i w próbie połączenia zwraca `auth-required`; nie jest to ta sama konfiguracja. Metadane testu i obraz są w `/private/tmp/poracode-figma-smoke/artifacts/figma-report.json` oraz `figma-mcp-image.png`. Nie modyfikowano projektu Figma ani produkcyjnych poświadczeń.
+
+Dodano osobne ustawienie automatycznych aktualizacji na stronie każdego agenta. Wyłączenie jest wspólne dla profili danego dostawcy, ale niezależne dla osobnych serwerów ACP. Globalny przełącznik nadal ma pierwszeństwo. Zmiana jest w zainstalowanej aplikacji i DMG; kontrola odczytu po restarcie oraz rzeczywistego przełącznika przeszła. Szczegóły testów są w [stanie implementacji](implementation.md).
+
 ## Dalszy zakres
 
-- Figma MCP: nadal potrzebny konkretny plik lub węzeł, który działa w aplikacji Codex, a nie działa w forku. Porównaj konfigurację, autoryzację i rzeczywiste odpowiedzi narzędzi. Nie potwierdzono jeszcze przyczyny ani naprawy.
+- Figma działa w chacie Codex na podanym przykładzie. Współdzielenie połączenia zarządzanego przez aplikację z pozostałymi dostawcami wymaga osobnego OAuth. Nie kopiuj tokenów z Codex do forka.
 - Nazwane role i edytor puli modeli są wdrożone, sprawdzone także z rzeczywistymi modelami i przepakowane do zainstalowanej aplikacji. Szczegóły, testy i pozostały zakres podaje początek stanu implementacji.
 - Dalsze pomysły oh-my-pi są opisane w propozycji ról. Nie wszystkie zostały wybrane do implementacji.
 - Import historii, kanał publikacji aktualizacji samego forka, porządki w zachowanych worktree oraz odporność zespołu na restart pozostają do zrobienia. Pełne ograniczenia aktualizatorów i wspieranych platform są w stanie implementacji.
-- Aktualizacje agentów mają obecnie jeden globalny przełącznik. Osobne ustawienia dla dostawcy, przypięcie wersji i rollback z planu nie są wdrożone. Brakuje także pełnej kontroli rzeczywistych aktualizacji oraz sesji Gemini/Grok na subskrypcjach.
+- Osobne ustawienia automatycznych aktualizacji są dodane. Przypięcie konkretnej wersji i rollback z planu nie są wdrożone. Brakuje pełnej kontroli rzeczywistych aktualizacji oraz sesji Gemini/Grok na subskrypcjach. Użytkownik otrzymał pytania o dostęp do Groka i o import całej historii lub wybranych projektów; uwzględnij jego odpowiedź.
 
 ## Miejsca w kodzie
 

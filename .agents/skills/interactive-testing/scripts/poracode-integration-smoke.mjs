@@ -17,6 +17,7 @@ import {
 import { inspectCdpWindowTargets } from "./poracode-cdp-target.mjs";
 import { resolveDebugConnection } from "./poracode-debug-session.mjs";
 import { crossagentRolesScenario } from "../../../../scripts/smoke-crossagent-roles.mjs";
+import { agentUpdatePreferencesScenario } from "../../../../scripts/smoke-agent-update-preferences.mjs";
 import { mockLiveVoiceGate } from "./smoke-live-voice.mjs";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
@@ -213,6 +214,18 @@ async function runSmoke(plan) {
     if (plan.automated.includes("crossagent-roles")) {
       await runScenario(report, "crossagent-roles", () =>
         crossagentRolesScenario({
+          client,
+          evaluate,
+          bridgeInvoke,
+          waitForValue,
+          screenshot,
+          outDir,
+        }),
+      );
+    }
+    if (plan.automated.includes("agent-update-preferences")) {
+      await runScenario(report, "agent-update-preferences", () =>
+        agentUpdatePreferencesScenario({
           client,
           evaluate,
           bridgeInvoke,

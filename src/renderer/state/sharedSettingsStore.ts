@@ -40,6 +40,7 @@ import type {
   Workspace,
 } from "@/shared/contracts";
 import { nextWorkspaceIconId } from "@/shared/contracts";
+import { agentUpdateOwner } from "@/shared/agentUpdateSettings";
 import {
   installPlugin as addInstalledPlugin,
   setInstalledPluginEnabled as updateInstalledPluginEnabled,
@@ -60,6 +61,7 @@ const STORAGE_KEY = "poracode-shared-settings";
 interface SharedSettingsState extends SharedSettings {
   sharedSettingsHydrated: boolean;
   setAutomaticAgentUpdates: (enabled: boolean) => void;
+  setAgentAutomaticUpdates: (agentKind: string, enabled: boolean) => void;
   setThemeMode: (mode: ThemeMode) => void;
   setThemePreset: (id: string) => void;
   setLocale: (locale: LocaleSetting) => void;
@@ -331,6 +333,12 @@ export const useSharedSettings = create<SharedSettingsState>()((set, get) => ({
   sharedSettingsHydrated: initialLoadDone,
   setAutomaticAgentUpdates: (automaticAgentUpdates) => {
     set({ automaticAgentUpdates });
+    persistSettings(selectSharedSettings(get()));
+  },
+  setAgentAutomaticUpdates: (agentKind, enabled) => {
+    const kind = agentUpdateOwner(agentKind);
+    const disabled = get().automaticAgentUpdatesDisabled.filter((entry) => entry !== kind);
+    set({ automaticAgentUpdatesDisabled: enabled ? disabled : [...disabled, kind] });
     persistSettings(selectSharedSettings(get()));
   },
   setThemeMode: (themeMode) => {
@@ -1066,6 +1074,7 @@ export const useSharedSettings = create<SharedSettingsState>()((set, get) => ({
 function selectSharedSettings(state: SharedSettingsState): SharedSettingsInput {
   return {
     automaticAgentUpdates: state.automaticAgentUpdates,
+    automaticAgentUpdatesDisabled: state.automaticAgentUpdatesDisabled,
     themeMode: state.themeMode,
     themePreset: state.themePreset,
     locale: state.locale,

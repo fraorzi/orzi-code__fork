@@ -1130,7 +1130,7 @@ describe("ACP registry installs", () => {
     ).rejects.toThrow(/not installed/i);
   });
 
-  it("auto-updates installed agents whose registry version differs", async () => {
+  it("honors opt-out before installing and auto-updates after it is re-enabled", async () => {
     const dir = mkdtempSync(join(tmpdir(), "poracode-acp-registry-"));
     const settingsPath = join(dir, "settings.json");
     writeFileSync(
@@ -1176,6 +1176,31 @@ describe("ACP registry installs", () => {
         },
       ],
     };
+
+    const optedOut = await autoUpdateAcpRegistryAgents({
+      registry,
+      baseDir: dir,
+      settingsPath,
+      iconsDir: join(dir, "acp-icons"),
+      canUpdate: () => false,
+    });
+    expect(optedOut).toEqual({ updated: [], changed: [], failed: [] });
+    expect(
+      readAcpRegistrySettings(settingsPath).acpRegistryInstalledAgents["codex-acp"]?.version,
+    ).toBe("1.0.0");
+
+    let checks = 0;
+    const disabledDuringSweep = await autoUpdateAcpRegistryAgents({
+      registry,
+      baseDir: dir,
+      settingsPath,
+      iconsDir: join(dir, "acp-icons"),
+      canUpdate: () => checks++ === 0,
+    });
+    expect(disabledDuringSweep).toEqual({ updated: [], changed: [], failed: [] });
+    expect(
+      readAcpRegistrySettings(settingsPath).acpRegistryInstalledAgents["codex-acp"]?.version,
+    ).toBe("1.0.0");
 
     const result = await autoUpdateAcpRegistryAgents({
       registry,

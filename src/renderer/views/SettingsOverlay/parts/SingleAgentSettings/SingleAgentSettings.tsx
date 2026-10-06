@@ -54,6 +54,7 @@ import {
 } from "../nativeAgentRuntimes";
 import { SAVED_CREDENTIAL_MASK } from "../secretMask";
 import { AgentHeader } from "./parts/AgentHeader";
+import { AgentAutomaticUpdates } from "./parts/AgentAutomaticUpdates";
 import { AgentSettingRow } from "./parts/AgentSettingRow";
 import { ModelVisibilityDropdown } from "./parts/ModelVisibilityDropdown";
 import { modelSurfaceLabel } from "./parts/modelSurfaceLabel";
@@ -968,6 +969,7 @@ export function SingleAgentSettings(props: {
       </div>
 
       <div className="space-y-4">
+        {!isRemoteMachine && <AgentAutomaticUpdates agentKind={props.agentKind} />}
         {providerEntry?.settingsPanel && !isRemoteMachine ? (
           <providerEntry.settingsPanel
             agentKind={props.agentKind}

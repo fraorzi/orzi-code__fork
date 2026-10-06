@@ -5,6 +5,7 @@ const RETRY_INTERVAL_MS = 15 * 60 * 1000;
 
 export interface AgentUpdateTask {
   id: string;
+  enabled(): boolean;
   isOutdated(): Promise<boolean>;
   update(): Promise<UpdateAgentBinaryResult>;
 }
@@ -74,6 +75,7 @@ export class AgentUpdateCoordinator {
     try {
       for (const task of await this.deps.tasks()) {
         if (this.stopped || !this.deps.enabled()) break;
+        if (!task.enabled()) continue;
         if (now < (this.nextCheck.get(task.id) ?? 0)) continue;
         // Leave the task due when busy; the next minute retries without a dialog.
         if (this.mutation || this.launches > 0 || this.deps.hasSessions()) continue;
@@ -83,6 +85,7 @@ export class AgentUpdateCoordinator {
             continue;
           }
           if (this.stopped || !this.deps.enabled()) break;
+          if (!task.enabled()) continue;
           if (this.mutation || this.launches > 0 || this.deps.hasSessions()) continue;
           const result = await task.update();
           this.nextCheck.set(task.id, now + (result.ok ? CHECK_INTERVAL_MS : RETRY_INTERVAL_MS));

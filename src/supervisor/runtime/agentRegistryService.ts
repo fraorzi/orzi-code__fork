@@ -1,5 +1,6 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { isNewerVersion } from "@/shared/agents/updateResolver";
+import { allowsAutomaticAgentUpdate } from "@/shared/agentUpdateSettings";
 import { AgentUpdateCoordinator, type AgentUpdateTask } from "./agentUpdateCoordinator";
 import type {
   ManageAgentCredentialsPayload,
@@ -157,6 +158,8 @@ export class AgentRegistryService {
       return [
         {
           id: status.executablePath,
+          enabled: () =>
+            allowsAutomaticAgentUpdate(this.deps.sharedSettingsCache.read(), status.kind),
           isOutdated: async () => {
             const latest = await this.getLatestAgentVersion({ agentKind: status.kind });
             if (!latest.version) throw new Error("Agent version source is unavailable.");
@@ -182,6 +185,11 @@ export class AgentRegistryService {
         if (!latest) continue;
         tasks.push({
           id: `acp:${record.id}`,
+          enabled: () =>
+            allowsAutomaticAgentUpdate(
+              this.deps.sharedSettingsCache.read(),
+              this.adapterKindForRegistryId(record.id),
+            ),
           isOutdated: async () => isNewerVersion(latest, current),
           update: async () => {
             await this.updateAcpRegistryAgent({ agentId: record.id, target: { kind: "native" } });
@@ -511,6 +519,11 @@ export class AgentRegistryService {
           settingsPath: this.deps.settingsPath,
           iconsDir: this.deps.acpIconsDir,
           firstClassAgents: this.firstClassRegistryAgents(),
+          canUpdate: (agentId) =>
+            allowsAutomaticAgentUpdate(
+              this.deps.sharedSettingsCache.read(),
+              this.adapterKindForRegistryId(agentId),
+            ),
         });
         if (autoUpdate.changed.length > 0) changed = true;
         return { ok: autoUpdate.failed.length === 0 };

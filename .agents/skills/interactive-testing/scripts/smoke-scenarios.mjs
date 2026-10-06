@@ -122,6 +122,13 @@ export const functionalAreas = [
     manual: [],
   },
   {
+    id: "agent-update-preferences",
+    title: "Per-agent automatic updates and installation coordination",
+    patterns: [/agentUpdate(?:Settings|Coordinator)/, /AgentAutomaticUpdates/],
+    automated: ["baseline", "settings", "agent-update-preferences"],
+    manual: ["changed-surface", "ipc-roundtrip"],
+  },
+  {
     id: "plugins-marketplace",
     title: "Plugin marketplace, installation, and bundled MCP and skill contributions",
     patterns: [

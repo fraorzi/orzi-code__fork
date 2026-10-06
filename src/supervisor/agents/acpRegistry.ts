@@ -881,6 +881,8 @@ export async function autoUpdateAcpRegistryAgents(input: {
   settingsPath: string;
   iconsDir: string;
   firstClassAgents?: Readonly<Record<string, AgentKind>>;
+  /** Rechecked before each install so user opt-out also stops a running sweep. */
+  canUpdate?: (agentId: string) => boolean;
 }): Promise<{
   updated: string[];
   changed: string[];
@@ -892,6 +894,7 @@ export async function autoUpdateAcpRegistryAgents(input: {
   const changed: string[] = [];
   const failed: { id: string; error: string }[] = [];
   for (const [id, record] of Object.entries(settings.acpRegistryInstalledAgents)) {
+    if (input.canUpdate && !input.canUpdate(id)) continue;
     if (record.installKind === "first-class" || input.firstClassAgents?.[id]) continue;
     const agent = agentsById.get(id);
     if (!agent) continue;
@@ -931,6 +934,7 @@ export async function autoUpdateAcpRegistryAgents(input: {
     let failedUpdate = false;
     let changedInstall = false;
     for (const { target } of targetsToUpdate) {
+      if (input.canUpdate && !input.canUpdate(id)) break;
       try {
         await installAcpRegistryAgent({
           agentId: id,
@@ -947,7 +951,7 @@ export async function autoUpdateAcpRegistryAgents(input: {
       }
     }
     if (changedInstall) changed.push(id);
-    if (!failedUpdate) updated.push(id);
+    if (changedInstall && !failedUpdate) updated.push(id);
   }
   return { updated, changed, failed };
 }

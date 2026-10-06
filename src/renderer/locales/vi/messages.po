@@ -1773,6 +1773,7 @@ msgstr "Tự động"
 #~ msgstr "Tự động ({0})"
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
 msgid "Automatic agent updates"
 msgstr "Tự động cập nhật tác nhân"
 
@@ -4922,6 +4923,10 @@ msgstr "Bật mức nỗ lực {tierLabel}"
 msgid "Enable {tool}"
 msgstr "Bật {tool}"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
+msgid "Enable automatic agent updates in General settings first."
+msgstr "Trước tiên, hãy bật cập nhật tác nhân tự động trong cài đặt chung."
+
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 msgid "Enable language server support for type checking, completions, and diagnostics. Requires a language server installed."
@@ -6675,6 +6680,10 @@ msgstr "Cài đặt gói để thêm khóa API của nó."
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "Cài đặt bản cập nhật"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
+msgid "Install updates for this agent automatically. Applies to all of its profiles and runtimes."
+msgstr "Tự động cài đặt bản cập nhật cho tác nhân này. Áp dụng cho tất cả hồ sơ và môi trường chạy của tác nhân."
 
 #. placeholder {0}: updateStatus.version
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostUpdateControl.tsx

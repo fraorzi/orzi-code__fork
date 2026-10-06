@@ -103,6 +103,7 @@ describe("sharedSettingsFile", () => {
     const settingsPath = join(makeTempDir(), "settings.json");
     writeSharedSettingsFile(settingsPath, {
       automaticAgentUpdates: true,
+      automaticAgentUpdatesDisabled: [],
       themeMode: "dark",
       themePreset: "default",
       locale: "system",
@@ -251,6 +252,7 @@ describe("sharedSettingsFile", () => {
     expect(readSharedSettingsFile(settingsPath)).toEqual({
       followUpBehavior: "steer",
       automaticAgentUpdates: true,
+      automaticAgentUpdatesDisabled: [],
       themeMode: "dark",
       themePreset: "default",
       locale: "system",

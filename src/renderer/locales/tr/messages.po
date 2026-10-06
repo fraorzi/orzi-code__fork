@@ -1773,6 +1773,7 @@ msgstr "Otomatik"
 #~ msgstr "Otomatik ({0})"
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
 msgid "Automatic agent updates"
 msgstr "Otomatik ajan güncellemeleri"
 
@@ -4922,6 +4923,10 @@ msgstr "{tierLabel} efor düzeyini etkinleştir"
 msgid "Enable {tool}"
 msgstr "{tool} aracını etkinleştir"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
+msgid "Enable automatic agent updates in General settings first."
+msgstr "Önce Genel ayarlarda otomatik ajan güncellemelerini etkinleştirin."
+
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 msgid "Enable language server support for type checking, completions, and diagnostics. Requires a language server installed."
@@ -6675,6 +6680,10 @@ msgstr "API anahtarını eklemek için paketi yükleyin."
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "Güncellemeyi yükle"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentAutomaticUpdates.tsx
+msgid "Install updates for this agent automatically. Applies to all of its profiles and runtimes."
+msgstr "Bu ajan için güncellemeleri otomatik olarak yükleyin. Tüm profilleri ve çalışma ortamları için geçerlidir."
 
 #. placeholder {0}: updateStatus.version
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostUpdateControl.tsx
