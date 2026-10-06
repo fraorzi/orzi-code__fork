@@ -4,7 +4,7 @@ Data: 2026-10-06. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
 ## Edytor ról i puli modeli - bieżący kod
 
-Zmiana z 2026-10-06 jest sprawdzona w izolowanej aplikacji deweloperskiej. Nie została jeszcze dodana do `/Applications/Poracode Personal.app` ani do istniejącego DMG.
+Zmiana z 2026-10-06 jest sprawdzona w izolowanej aplikacji deweloperskiej oraz przepakowana do `/Applications/Poracode Personal.app` i `release/Poracode Personal-1.8.1-arm64.dmg`.
 
 - Wejście: Ustawienia > Serwery MCP > Crossagents > ustawienia routingu.
 - Pula modeli korzysta z dotychczasowego filtra Crossagents. Wykluczeni dostawcy i modele nie pojawiają się jako dostępne wybory roli, a niedostępny model podstawowy lub zapasowy blokuje zapis edytora.
@@ -17,7 +17,18 @@ Zmiana z 2026-10-06 jest sprawdzona w izolowanej aplikacji deweloperskiej. Nie z
 - Sprawdzono 160 testów w 6 zestawach, typecheck, oba etapy lintu na zmienionych plikach i brak brakujących tłumaczeń w 12 katalogach.
 - Powtarzalny test Electron: `scripts/smoke-crossagent-roles.mjs`, wywoływany przez istniejący runner. Weryfikuje rzeczywisty IPC zapis/odczyt, ochronę przed starym zapisem ustawień, kolizje, zmianę tagów, usuwanie i otwarcie edytora z niedostępną konfiguracją. Używa izolowanego profilu, bez uruchamiania płatnej tury dostawcy.
 - Raport i zrzut: `/private/tmp/poracode-roles-smoke/roles-20261006/artifacts/smoke-report.json` oraz `smoke-worker-role-editor.png`. Skrypt sprawdza też ustawienia, wyszukiwanie wątków, geometrię kontrolek i 9 deterministycznych bramek. Liczba błędów renderera: 0.
-- Testy z rzeczywistymi modelami dla nazwanych ról i nowe pakowanie pozostają do wykonania. Wcześniejszy test rzeczywistych dostawców dotyczy pracy zespołowej opisanej niżej.
+- Test rzeczywistych modeli: Codex `gpt-6.1-sol` wybrał po tagu zapisaną rolę Claude Haiku bez jawnego wskazania dostawcy/modelu. Wykonawca otrzymał instrukcje roli, utworzył `role-proof.txt`, a integracja zwróciła `applied`. Plik w projekcie głównym zawierał dokładnie `ROLE_INSTRUCTIONS_OK` z końcowym znakiem nowej linii. Główny agent zakończył odpowiedzią `ROLE_LIVE_OK`. Edytor odczytał zapisane instrukcje i model Haiku.
+- Ponownie przeszły typecheck, 136 testów w 6 zestawach dotyczących ról i 75 testów routingu/integracji worktree w 3 zestawach. Kontrola renderera: 0 błędów. Build, pakowanie i `codesign --verify --deep --strict` zainstalowanego pakietu przeszły. Poprzedni pakiet zachowano w `.tmp/previous-install/Poracode Personal.app`.
+- Dowody: `/private/tmp/poracode-sol61-smoke/artifacts/role-live-items.json`, `role-live.png`, `role-editor-live.png` i `smoke-report.json`. Test używał oddzielnego profilu oraz jednorazowego projektu.
+- Kontrola zainstalowanego pakietu po pełnym restarcie: odtworzono historię testowego wątku, Codex 6.1 sol odpowiedział `SOL61_INSTALLED_OK`, a edytor poprawnie odczytał nazwę, Haiku i instrukcje zapisanej roli. Zrzuty: `sol61-installed.png` i `role-editor-installed.png` w tym samym katalogu dowodów. Pakiet uruchomiono przez Launch Services w tle, bez serwera deweloperskiego.
+
+## Codex 6.1 sol i błąd 400
+
+- Na koncie ChatGPT Plus `gpt-6.1-sol` działa przez Codex CLI 0.160.1. Rzeczywisty chat forka potwierdził pierwszą odpowiedź, follow-up oraz zamknięcie i wznowienie procesu z tym samym identyfikatorem sesji. Ustawienia: `high`, `400k`, Fast włączony.
+- Oryginalny `/Applications/Poracode.app` nadal miał uruchomiony proces Codex 0.158.0, chociaż symlink CLI na dysku wskazywał już 0.160.1. Potwierdzono stary proces przez ścieżkę jego działającego `codex-code-mode-host`.
+- Porównanie w osobnych procesach app-server, na tym samym koncie, z `high` i Fast: 0.158.0 zwraca HTTP 400 z komunikatem `The 'gpt-6.1-sol' model is not supported when using Codex with a ChatGPT account.`, a 0.160.1 kończy turę poprawnie. Nie było potrzeby zmieniać identyfikatora modelu ani używać płatnego klucza API.
+- Aktualizacja pliku CLI nie zastępuje już uruchomionego procesu. Pełne zamknięcie i ponowne uruchomienie oryginalnego PoraCode powinno uruchomić nowe CLI. Oryginalna aplikacja i jej wątki nie były zatrzymywane ani modyfikowane podczas testu.
+- Dowody: `/private/tmp/poracode-sol61-smoke/artifacts/codex-0.158.0-turn.json`, `codex-0.160.1-turn.json` i `sol61-resume.png`. Historyczny zapis błędu użytkownika miał tę samą treść.
 
 ## Dostępna aplikacja
 
@@ -99,11 +110,12 @@ Zmiana z 2026-10-06 jest sprawdzona w izolowanej aplikacji deweloperskiej. Nie z
 
 - Figma: nadal potrzebny jest konkretny plik/węzeł do porównania z działającą aplikacją Codex. Nie oznaczono problemu jako naprawionego i nie zmieniono autoryzacji produkcyjnego wpisu MCP.
 - Nie wykonano rzeczywistej aktualizacji zainstalowanych CLI podczas testów. Harmonogram, koordynacja i obsługa błędów mają testy; próby instalacji w profilu testowym były wyłączone.
+- Ustawienia automatycznych aktualizacji mają jeden globalny przełącznik. Osobne włączanie dla każdego agenta i przypinanie wersji opisane w planie nie są jeszcze wdrożone.
 - Aktualizatory zewnętrznych instalacji nadal zależą od uprawnień i zachowania instalatora producenta. Nie wdrożono uniwersalnego rollbacku programów ani osobnego magazynu ich wersji.
 - Koordynator nie stanowi blokady instalatorów uruchomionych poza forkiem. Nie należy traktować go jako ochrony wszystkich procesów agentów z innych aplikacji.
 - Nie przeprowadzono pełnych sesji generowania dla wszystkich dostawców ani testu zgodności każdej nowej wersji agenta ze wszystkimi funkcjami adaptera.
 - Brak pełnego importu historii oraz nowego brandingu graficznego. Dalszy kierunek wizualny pozostaje otwarty.
-- Edytor nazwanych ról i puli modeli jest dodany w bieżącym kodzie, ale jeszcze nie w zainstalowanym pakiecie. Stan i ograniczenia w pierwszej sekcji tego dokumentu.
+- Edytor nazwanych ról i puli modeli jest w zainstalowanym pakiecie. Sprawdzono jedną rzeczywistą rolę Haiku sterowaną przez Codex 6.1 sol; nie jest to test wszystkich dostawców ani wszystkich wariantów modeli zapasowych.
 
 ## Odtworzenie buildu
 

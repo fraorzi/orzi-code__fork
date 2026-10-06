@@ -16,11 +16,13 @@ Stan na 2026-10-06. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Wybrany mocny agent sam implementuje i deleguje niezależne proste lub trudne zadania modelom różnych dostawców. Oddzielne konteksty są równie ważne jak dobór mocy modelu.
 - Integracja zmian wykonawców jest automatyczna. Użytkownik wyraźnie wykluczył zatwierdzanie każdego scalenia. Nie należy ponownie otwierać tej decyzji.
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
-- Commity i push wymagają polecenia użytkownika. Polecenie z 2026-10-06 upoważnia do publikacji bieżącego kodu w podanym repozytorium. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
+- Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
 
 ## Aktualizacja z 2026-10-06
 
-Dodano edytor ról i puli modeli w ustawieniach Crossagents. Przeczytaj pierwszą sekcję [stanu implementacji](implementation.md): bieżący kod ma więcej funkcji niż zainstalowany pakiet. Sesja QA ról została zamknięta po testach. Użytkownik zatwierdził zapis bieżącego kodu w repozytorium `fraorzi/orzi-code__fork` i zmianę nazwy folderu na `orzi-code__fork`.
+Dodano edytor ról i puli modeli w ustawieniach Crossagents. Jest już w zainstalowanym pakiecie i DMG. Rzeczywisty test Codex 6.1 sol -> zapisana rola Claude Haiku potwierdził przekazanie instrukcji i automatyczną integrację. Szczegóły i dowody są na początku [stanu implementacji](implementation.md). Użytkownik zatwierdził zapis wcześniejszego kodu w repozytorium `fraorzi/orzi-code__fork` i zmianę nazwy folderu na `orzi-code__fork`.
+
+Sprawdzono również zgłoszony HTTP 400 dla 6.1 sol. Oryginalny PoraCode nadal używał uruchomionego Codex 0.158.0 mimo aktualizacji symlinka do 0.160.1. Porównanie osobnych procesów odtworzyło błąd na 0.158.0 i poprawną odpowiedź na 0.160.1 z tym samym kontem ChatGPT Plus, `high` i Fast. W forku przeszły pierwsza tura, follow-up i wznowienie. Pełny restart oryginalnego PoraCode powinien uruchomić nowe CLI; nie zatrzymywano tej aplikacji ani jej wątków.
 
 Sprawdzenie licencji źródeł i zależności opisuje [research](research.md#publiczne-repozytorium-i-licencje). Sam PoraCode pozwala na publiczny fork pod warunkami Apache-2.0. Nie utożsamiać tego z pełnym audytem dystrybucji DMG. Do źródeł dołączono OFL fontów Geist.
 
@@ -28,7 +30,7 @@ Sprawdzenie licencji źródeł i zależności opisuje [research](research.md#pub
 
 Zainstalowany końcowy pakiet: `/Applications/Poracode Personal.app`. DMG jest w `release/`. Aplikacja ma osobny profil `~/.poracode-personal`; historia oryginalnego PoraCode nie została zaimportowana.
 
-Nie ma uruchomionego przez poprzedniego agenta zadania implementacyjnego ani modelowego testu do wznowienia. Testowy fork został zamknięty. Build, typecheck, lint, testy opisane w stanie implementacji i kontrola zainstalowanego pakietu przeszły. Nie uruchomiono całego test suite repozytorium.
+Nie ma modelowego zadania implementacyjnego do wznowienia. Sesje QA są zamykane po kontroli pakietu. Nowe dowody testu ról i Codex 6.1 sol są w `/private/tmp/poracode-sol61-smoke/`; poprzednie dowody pozostają w `.tmp/installed-smoke/`. Build, typecheck, lint, testy opisane w stanie implementacji i kontrola zainstalowanego pakietu przeszły. Nie uruchomiono całego test suite repozytorium.
 
 Ostatnia kontrola rzeczywistej aplikacji potwierdziła:
 
@@ -41,9 +43,10 @@ Dowody i logi znajdują się w ignorowanym `.tmp/installed-smoke/` oraz `.tmp/fi
 ## Dalszy zakres
 
 - Figma MCP: nadal potrzebny konkretny plik lub węzeł, który działa w aplikacji Codex, a nie działa w forku. Porównaj konfigurację, autoryzację i rzeczywiste odpowiedzi narzędzi. Nie potwierdzono jeszcze przyczyny ani naprawy.
-- Nazwane role i edytor puli modeli są wdrożone w bieżącym kodzie i sprawdzone w izolowanym Electronie. Jeszcze nie przepakowano zainstalowanej aplikacji. Szczegóły, testy i pozostały zakres podaje początek stanu implementacji.
+- Nazwane role i edytor puli modeli są wdrożone, sprawdzone także z rzeczywistymi modelami i przepakowane do zainstalowanej aplikacji. Szczegóły, testy i pozostały zakres podaje początek stanu implementacji.
 - Dalsze pomysły oh-my-pi są opisane w propozycji ról. Nie wszystkie zostały wybrane do implementacji.
 - Import historii, kanał publikacji aktualizacji samego forka, porządki w zachowanych worktree oraz odporność zespołu na restart pozostają do zrobienia. Pełne ograniczenia aktualizatorów i wspieranych platform są w stanie implementacji.
+- Aktualizacje agentów mają obecnie jeden globalny przełącznik. Osobne ustawienia dla dostawcy, przypięcie wersji i rollback z planu nie są wdrożone. Brakuje także pełnej kontroli rzeczywistych aktualizacji oraz sesji Gemini/Grok na subskrypcjach.
 
 ## Miejsca w kodzie
 

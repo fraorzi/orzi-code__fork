@@ -57,7 +57,7 @@ Wykonawca zaczyna od migawki bieżących plików projektu, także zmian niezapis
 
 Gdy Git nie może zastosować całej poprawki, projekt nie dostaje częściowego wyniku. Główny agent otrzymuje katalog wykonawcy, poprawkę i komunikat błędu. Sam rozwiązuje konflikt, zachowując równoległe zmiany. Nieudane i anulowane zadania nie są automatycznie integrowane. Katalogi wykonawców pozostają do odzyskania pracy.
 
-Commity, push i publikacja nadal wymagają osobnego polecenia użytkownika. Pierwsza wersja obsługuje lokalne projekty Git z istniejącym HEAD, bez submodułów. Katalog roboczy izoluje zmiany, ale nie jest sandboxem uprawnień.
+Zasady commitów, push i publikacji określają aktualne [ustalenia użytkownika](HANDOFF.md#ustalenia-użytkownika). Pierwsza wersja obsługuje lokalne projekty Git z istniejącym HEAD, bez submodułów. Katalog roboczy izoluje zmiany, ale nie jest sandboxem uprawnień.
 
 Nazwane profile ról i wygodniejsza edycja puli modeli mogą rozszerzyć obecne reguły Crossagents. Nie są wymagane do zwykłego ręcznego wyboru modelu ani do delegowania według dostępnych modeli i reguł routingu.
 
