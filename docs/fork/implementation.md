@@ -2,6 +2,19 @@
 
 Data: 2026-10-06. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Import rzeczywistej historii i trwałe archiwum
+
+- Na polecenie użytkownika zaimportowano całą bazę historii z `~/.poracode` do `~/.poracode-personal`: 22 projekty użytkownika i Stronę główną, 216 wątków, w tym 210 archiwalnych, 28 755 elementów historii, 1121 zakończonych tur, notatki i 16 plików załączników. Jest to jednorazowa kopia, bez późniejszej synchronizacji dwóch aplikacji.
+- Źródłową bazę otwarto tylko do odczytu i wykonano spójny snapshot przez SQLite online backup API, uwzględniający WAL działającej aplikacji. Źródła i oryginalnej aplikacji nie zatrzymywano ani nie modyfikowano. Poprzedni profil forka zachowano w `~/.poracode-personal.before-history-import-20261006`; snapshot sprzed migracji jest w `.tmp/history-import-20261006-restored/source.sqlite`.
+- Zachowano identyfikatory, tytuły, ścieżki projektów, archiwizację, treść rozmów i referencje sesji dostawców. Przeniesiono 15 segmentów załączników i ich adresy `poracode-local://` na katalog forka; wszystkie 16 plików zweryfikowano przez SHA-256. Globalne ustawienia, klucze, tokeny i profil przeglądarki starej aplikacji nie były kopiowane.
+- Importowane wątki ustawiono jako nieaktywne, a widok początkowy jako Stronę główną. Kopia historii nie przejmuje procesów działających w oryginale. Nie wysyłano promptów do zaimportowanych sesji. Kontynuowanie tego samego wątku równocześnie w obu aplikacjach nie było testowane.
+- Kontrola pierwszego uruchomienia wykryła odziedziczone kasowanie archiwum po 30 dniach: usunęło 68 wątków wyłącznie w kopii importowanej. Usunięto tę operację oraz nieużywaną akcję purge. Pełny import odtworzono ze spójnego snapshotu i ponownie sprawdzono. Archiwum pozostaje zapisane do jawnego usunięcia przez użytkownika.
+- Granice zgodności: zachowano format danych. Istniejąca migracja SQLite 41 -> 42 przeszła bez zmiany identyfikatorów projektów i wątków. Usunięcie automatycznej operacji purge nie zmienia schematu bazy, wersji magazynu renderera ani protokołu i nie wymaga ich podbijania. Test regresyjny rozpoczyna od wątku archiwalnego z 2020 roku i wykonuje dwa cykle startu.
+- Przeszło 41 testów hydratacji i aplikacji, typecheck, oba etapy lintu i format. Smoke w izolowanym profilu mock: 4 scenariusze oraz 4 bramki deterministyczne, 0 błędów renderera. Raport: `/private/tmp/poracode-history-import-mock/artifacts/smoke-report.json`.
+- Zainstalowany pakiet porównał przez rzeczywisty IPC wszystkie 23 identyfikatory projektów, 216 identyfikatorów wątków, 210 identyfikatorów archiwum i cztery próbki historii ze snapshotem. Obraz z przeniesionego załącznika został odczytany i zdekodowany jako 349 x 183. Po pełnym zamknięciu i ponownym uruchomieniu wszystkie kontrole przeszły ponownie. Integralność bazy: `ok`, liczba elementów historii nadal 28 755. Dowody: `/private/tmp/poracode-history-import/first-start-verification.json`, `restart-verification.json` i `imported-projects.png`; raport transferu w `.tmp/history-import-20261006-restored/report.json`.
+- Build i DMG z zachowaniem archiwum przeszły. Nowy pakiet jest w `/Applications/Poracode Personal.app`; poprzedni pakiet w `.tmp/previous-install/history-import/Poracode Personal.app`. Weryfikacja podpisu przeszła. Import nie jest jeszcze osobnym ekranem ani importerem scalającym dwie używane bazy.
+- Katalog `/Users/franciszek/WebstormProjects/mail-studio` nie istnieje już w źródle. Projekt i jego historia zostały zachowane; uruchomienie nowej pracy wymaga wskazania istniejącego katalogu.
+
 ## Domyślna kolejka wiadomości
 
 - Wykorzystano istniejącą kolejkę supervisora i zmieniono domyślne zachowanie z `steer` na `queue`. Wiadomości wysyłane w trakcie pracy są widoczne nad polem wpisywania i automatycznie trafiają do tego samego wątku po zakończeniu bieżącej tury. Nie przerywają aktywnej pracy.
@@ -61,7 +74,7 @@ Zmiana z 2026-10-06 jest sprawdzona w izolowanej aplikacji deweloperskiej oraz p
 - Instalator: `release/Poracode Personal-1.8.1-arm64.dmg`.
 - Wersja dla Apple Silicon. Do uruchomienia aplikacji nie potrzeba terminala, skryptu, serwera deweloperskiego ani checkoutu.
 - Osobny identyfikator `com.franciszek.poracode.personal`, dane w `~/.poracode-personal`, osobny profil Electron i tożsamość magazynu systemowego.
-- Brak automatycznego importu bazy starej aplikacji. Własne projekty można dodać z GUI. Migracja dotychczasowej historii nie jest jeszcze przygotowana.
+- Historia użytkownika została jednorazowo zaimportowana i sprawdzona po restarcie. Brak osobnego ekranu importu i synchronizacji ze starą aplikacją.
 - Aktualizacje samej aplikacji nie korzystają z repozytorium upstreamu. Osobny kanał publikacji forka nie został skonfigurowany.
 - Pakiet podpisany lokalnie ad hoc, bez notaryzacji Apple. Zweryfikowano podpis zainstalowanej aplikacji przez `codesign --verify --deep --strict`.
 
@@ -139,7 +152,7 @@ Zmiana z 2026-10-06 jest sprawdzona w izolowanej aplikacji deweloperskiej oraz p
 - Aktualizatory zewnętrznych instalacji nadal zależą od uprawnień i zachowania instalatora producenta. Nie wdrożono uniwersalnego rollbacku programów ani osobnego magazynu ich wersji.
 - Koordynator nie stanowi blokady instalatorów uruchomionych poza forkiem. Nie należy traktować go jako ochrony wszystkich procesów agentów z innych aplikacji.
 - Nie przeprowadzono pełnych sesji generowania dla wszystkich dostawców ani testu zgodności każdej nowej wersji agenta ze wszystkimi funkcjami adaptera.
-- Brak pełnego importu historii oraz nowego brandingu graficznego. Dalszy kierunek wizualny pozostaje otwarty.
+- Historia użytkownika jest zaimportowana. Brak nowego brandingu graficznego; dalszy kierunek wizualny pozostaje otwarty.
 - Edytor nazwanych ról i puli modeli jest w zainstalowanym pakiecie. Sprawdzono jedną rzeczywistą rolę Haiku sterowaną przez Codex 6.1 sol; nie jest to test wszystkich dostawców ani wszystkich wariantów modeli zapasowych.
 
 ## Odtworzenie buildu

@@ -134,6 +134,27 @@ describe("useAppHydration experiments", () => {
     mocks.hydrateThreadRuntimeItems.mockResolvedValue(undefined);
   });
 
+  it("preserves old archived threads across repeated startup hydration", async () => {
+    const archived = {
+      ...thread("imported-archive"),
+      status: "inactive",
+      attention: "none",
+      archived: true,
+      archivedAt: "2020-01-01T00:00:00.000Z",
+      updatedAt: "2020-01-01T00:00:00.000Z",
+    } satisfies Thread;
+    useAppStore.setState({ threads: [archived] });
+    useExperimentStore.setState({ experiments: {} });
+    mocks.bridge.getThreadSnapshots.mockResolvedValue([]);
+
+    for (let startup = 0; startup < 2; startup++) {
+      const { result, unmount } = renderHook(() => useAppHydration());
+      await waitFor(() => expect(result.current.runtimeSnapshotsReady).toBe(true));
+      expect(useAppStore.getState().threads).toEqual([archived]);
+      unmount();
+    }
+  });
+
   it("flips storeHydrated to true when hydration finishes after mount", async () => {
     vi.mocked(useAppStore.persist.hasHydrated).mockReturnValue(false);
     vi.mocked(useExperimentStore.persist.hasHydrated).mockReturnValue(false);

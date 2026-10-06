@@ -28,7 +28,7 @@ Sprawdzenie licencji źródeł i zależności opisuje [research](research.md#pub
 
 ## Punkt zakończenia pracy
 
-Zainstalowany końcowy pakiet: `/Applications/Poracode Personal.app`. DMG jest w `release/`. Aplikacja ma osobny profil `~/.poracode-personal`; historia oryginalnego PoraCode nie została zaimportowana.
+Zainstalowany końcowy pakiet: `/Applications/Poracode Personal.app`. DMG jest w `release/`. Aplikacja ma osobny profil `~/.poracode-personal`. Na polecenie użytkownika zaimportowano całą historię: 22 projekty i Stronę główną, 216 wątków, w tym 210 archiwalnych, oraz 16 plików załączników. Import sprawdzono w rzeczywistym pakiecie przed i po restarcie. Jest jednorazowy, bez synchronizacji późniejszych zmian starej aplikacji. Szczegóły są na początku stanu implementacji.
 
 Nie ma modelowego zadania implementacyjnego do wznowienia. Sesje QA są zamykane po kontroli pakietu. Nowe dowody testu ról i Codex 6.1 sol są w `/private/tmp/poracode-sol61-smoke/`; poprzednie dowody pozostają w `.tmp/installed-smoke/`. Build, typecheck, lint, testy opisane w stanie implementacji i kontrola zainstalowanego pakietu przeszły. Nie uruchomiono całego test suite repozytorium.
 
@@ -52,8 +52,8 @@ Dodano osobne ustawienie automatycznych aktualizacji na stronie każdego agenta.
 - Figma działa w chacie Codex na podanym przykładzie. Współdzielenie połączenia zarządzanego przez aplikację z pozostałymi dostawcami wymaga osobnego OAuth. Nie kopiuj tokenów z Codex do forka.
 - Nazwane role i edytor puli modeli są wdrożone, sprawdzone także z rzeczywistymi modelami i przepakowane do zainstalowanej aplikacji. Szczegóły, testy i pozostały zakres podaje początek stanu implementacji.
 - Dalsze pomysły oh-my-pi są opisane w propozycji ról. Nie wszystkie zostały wybrane do implementacji.
-- Import historii, kanał publikacji aktualizacji samego forka, porządki w zachowanych worktree oraz odporność zespołu na restart pozostają do zrobienia. Pełne ograniczenia aktualizatorów i wspieranych platform są w stanie implementacji.
-- Osobne ustawienia automatycznych aktualizacji są dodane. Przypięcie konkretnej wersji i rollback z planu nie są wdrożone. Brakuje pełnej kontroli rzeczywistych aktualizacji oraz sesji Gemini/Grok na subskrypcjach. Użytkownik otrzymał pytania o dostęp do Groka i o import całej historii lub wybranych projektów; uwzględnij jego odpowiedź.
+- Import historii użytkownika jest wykonany. Wykryte przy imporcie automatyczne kasowanie archiwum po 30 dniach zostało usunięte; pełną historię odtworzono ze snapshotu i sprawdzono po restarcie. Nie przywracaj tego kasowania. Brakuje ekranu importu/scalania, kanału publikacji aktualizacji samego forka, porządków w zachowanych worktree oraz odporności zespołu i kolejki na restart. Pełne ograniczenia aktualizatorów i wspieranych platform są w stanie implementacji.
+- Osobne ustawienia automatycznych aktualizacji są dodane. Przypięcie konkretnej wersji i rollback z planu nie są wdrożone. Brakuje pełnej kontroli rzeczywistych aktualizacji oraz sesji Gemini/Grok na subskrypcjach. Użytkownik otrzymał pytanie o dostęp do Groka; import całej historii został już zlecony i wykonany.
 
 ## Miejsca w kodzie
 

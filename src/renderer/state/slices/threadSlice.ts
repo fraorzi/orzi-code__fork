@@ -151,7 +151,6 @@ export interface ThreadSlice {
   unmarkThreadDone: (threadId: string) => void;
   starThread: (threadId: string) => void;
   unstarThread: (threadId: string) => void;
-  purgeStaleArchivedThreads: (maxAgeDays: number) => void;
   archiveOldDoneThreads: (maxAgeDays: number) => void;
   markThreadExited: (threadId: string) => void;
   touchThread: (threadId: string) => void;
@@ -801,15 +800,6 @@ export const createThreadSlice: SliceCreator<ThreadSlice> = (set) => ({
       return {
         threads: state.threads.map((t) => (t.id === threadId ? { ...t, starred: false } : t)),
       };
-    }),
-  purgeStaleArchivedThreads: (maxAgeDays) =>
-    set((state) => {
-      const cutoff = Date.now() - maxAgeDays * 24 * 60 * 60 * 1000;
-      const nextThreads = state.threads.filter(
-        (t) => !t.archived || new Date(t.archivedAt ?? t.updatedAt).getTime() > cutoff,
-      );
-      if (nextThreads.length === state.threads.length) return {};
-      return { threads: nextThreads };
     }),
   archiveOldDoneThreads: (maxAgeDays) =>
     set((state) => {

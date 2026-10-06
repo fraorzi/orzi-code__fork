@@ -59,7 +59,6 @@ function getExperimentStoreHydrationSnapshot(): boolean {
 export function useAppHydration(options: { runtimeOwner?: boolean } = {}) {
   const runtimeOwner = options.runtimeOwner ?? true;
   const markThreadsInactiveOnLaunch = useAppStore((state) => state.markThreadsInactiveOnLaunch);
-  const purgeStaleArchivedThreads = useAppStore((state) => state.purgeStaleArchivedThreads);
   const archiveOldDoneThreads = useAppStore((state) => state.archiveOldDoneThreads);
   const reconcileRuntimeSnapshots = useAppStore((state) => state.reconcileRuntimeSnapshots);
   const updateThreadRuntime = useAppStore((state) => state.updateThreadRuntime);
@@ -134,7 +133,6 @@ export function useAppHydration(options: { runtimeOwner?: boolean } = {}) {
 
       startTransition(() => {
         markThreadsInactiveOnLaunch();
-        purgeStaleArchivedThreads(30);
       });
 
       // A user can create a thread while this request is in flight. Scope the
@@ -242,7 +240,6 @@ export function useAppHydration(options: { runtimeOwner?: boolean } = {}) {
   }, [
     loadT0,
     markThreadsInactiveOnLaunch,
-    purgeStaleArchivedThreads,
     archiveOldDoneThreads,
     reconcileRuntimeSnapshots,
     updateThreadRuntime,
