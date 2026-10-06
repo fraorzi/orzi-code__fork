@@ -146,7 +146,7 @@ describe("remote settings", () => {
     const legacySettings = { ...defaultSharedSettings } as Record<string, unknown>;
     delete legacySettings.followUpBehavior;
 
-    expect(pickRemoteSettings(legacySettings).followUpBehavior).toBe("steer");
+    expect(pickRemoteSettings(legacySettings).followUpBehavior).toBe("queue");
     expect(REMOTE_SETTINGS_KEYS).toContain("followUpBehavior");
     expect(remoteSettingsPatchSchema.parse({ titleGenProvider: "claude" })).toEqual({
       titleGenProvider: "claude",

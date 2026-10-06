@@ -48,6 +48,7 @@ Dodano osobne ustawienie automatycznych aktualizacji na stronie każdego agenta.
 
 ## Dalszy zakres
 
+- Domyślne wysyłanie podczas pracy chatu używa teraz widocznej kolejki. Rzeczywisty Codex odebrał dwie wiadomości po zakończeniu bieżącej tury, w kolejności i z zachowaniem kontekstu. Pakiet i DMG zostały zaktualizowane. Szczegóły oraz ograniczenie kolejki do pamięci supervisora są na początku stanu implementacji.
 - Figma działa w chacie Codex na podanym przykładzie. Współdzielenie połączenia zarządzanego przez aplikację z pozostałymi dostawcami wymaga osobnego OAuth. Nie kopiuj tokenów z Codex do forka.
 - Nazwane role i edytor puli modeli są wdrożone, sprawdzone także z rzeczywistymi modelami i przepakowane do zainstalowanej aplikacji. Szczegóły, testy i pozostały zakres podaje początek stanu implementacji.
 - Dalsze pomysły oh-my-pi są opisane w propozycji ról. Nie wszystkie zostały wybrane do implementacji.

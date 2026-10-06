@@ -99,7 +99,7 @@ describe("RemoteDesktopClient", () => {
         }),
     );
 
-    await expect(client.settings()).resolves.toMatchObject({ followUpBehavior: "steer" });
+    await expect(client.settings()).resolves.toMatchObject({ followUpBehavior: "queue" });
   });
 
   it("reports successful and failed requests through the client lifecycle hooks", async () => {

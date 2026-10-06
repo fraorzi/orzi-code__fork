@@ -2,6 +2,19 @@
 
 Data: 2026-10-06. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Domyślna kolejka wiadomości
+
+- Wykorzystano istniejącą kolejkę supervisora i zmieniono domyślne zachowanie z `steer` na `queue`. Wiadomości wysyłane w trakcie pracy są widoczne nad polem wpisywania i automatycznie trafiają do tego samego wątku po zakończeniu bieżącej tury. Nie przerywają aktywnej pracy.
+- Podgląd pozwala edytować, usuwać i przestawiać wiadomości. Cmd+Enter na macOS uruchamia działanie przeciwne do ustawionego domyślnie, czyli przy kolejce przekazuje pilną instrukcję przez `steer`.
+- Granica zgodności: format ustawień i protokół zdalny pozostają poprawne. Starsze dane bez pola otrzymują `queue`, a jawne `steer` jest zachowane. Zdalny parser korzysta teraz z tego samego domyślnego ustawienia co desktop. Testy obejmują starsze lokalne ustawienia i odpowiedzi hosta v9. Nie zmieniono wersji bazy, cache ani protokołu.
+- Kolejka dotyczy chatu. Jest przechowywana w pamięci supervisora; nie należy traktować nieprzekazanych wiadomości jako zapisanych na pełny restart aplikacji.
+- Przeszło 220 testów w 13 zestawach, typecheck, oba etapy lintu i formatowanie zmienionych plików. Poprawiono brakującą migawkę MCP w istniejącym fixture testowym kolejki. Nie dodawano tekstów renderera, więc nie powstały nowe wpisy tłumaczeń.
+- Rzeczywisty test Codex 6.1 Sol: podczas `sleep 120` dodano dwie wiadomości przez kontrolki chatu. UI i supervisor pokazały obie w kolejności. Agent zakończył oryginalną turę i automatycznie odpowiedział `QUEUE_SECOND_APRICOT`, potem `QUEUE_THIRD_OK`; zachował słowo z wcześniejszego promptu. Końcowy stan to `idle` i pusta kolejka. Nie zmieniono plików projektu.
+- Dowody: `/private/tmp/poracode-queue-live2/artifacts/queue-verification.json`, `queue-result.json`, `queue-visible.png` i `queue-completed.png`. Test Claude dla tej zmiany był deterministyczny, nie na żywym koncie.
+- Smoke w osobnym profilu mock: 6 scenariuszy i 4 bramki deterministyczne przeszły; błędów renderera: 0. Raport: `/private/tmp/poracode-queue-mock/artifacts/smoke-report.json`. Wcześniejszy ogólny przebieg real przerwał kontrolę ustawień przez polską nazwę kontrolki skilla; nie jest raportowany jako PASS. Test rzeczywistej kolejki ma osobny wynik PASS.
+- Build renderera, Electron, DMG i weryfikacja podpisu przeszły. Nowy pakiet zainstalowano w `/Applications/Poracode Personal.app`, a poprzedni zachowano w `.tmp/previous-install/follow-up-queue/Poracode Personal.app`. DMG: `release/Poracode Personal-1.8.1-arm64.dmg`.
+- Zainstalowany pakiet uruchomiony przez Launch Services bez dev servera, w osobnym profilu QA, odczytał przez IPC `followUpBehavior: "queue"` i zamontował interfejs. Dowody: `/private/tmp/poracode-queue-installed/installed-check.json` i `installed.png`.
+
 ## Figma i aktualizacje osobno dla agentów
 
 - W rzeczywistym chacie Codex odczytano wskazany przez użytkownika węzeł Figma `Usługi_1920`, 1920 x 9780. `get_metadata` i `get_screenshot` zakończyły się sukcesem. Zweryfikowano blok `image/png` w rzeczywistej odpowiedzi MCP i zapisano go jako obraz. Sam komunikat agenta nie był podstawą wyniku.

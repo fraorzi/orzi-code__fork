@@ -51,13 +51,14 @@ describe("shared settings defaults", () => {
       guiChatFontSize: 14,
     });
 
-    expect(defaultSharedSettings.followUpBehavior).toBe("steer");
+    expect(defaultSharedSettings.followUpBehavior).toBe("queue");
     expect(normalized).toMatchObject({
-      followUpBehavior: "steer",
+      followUpBehavior: "queue",
       threadRemoveAction: "delete",
       guiChatFontSize: 14,
     });
-    expect(normalizeSharedSettings({ followUpBehavior: "invalid" }).followUpBehavior).toBe("steer");
+    expect(normalizeSharedSettings({ followUpBehavior: "invalid" }).followUpBehavior).toBe("queue");
+    expect(normalizeSharedSettings({ followUpBehavior: "steer" }).followUpBehavior).toBe("steer");
   });
 
   it("preserves global provider and model effort/Fast preferences", () => {

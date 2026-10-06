@@ -15,7 +15,7 @@ import {
 } from "../contracts";
 import { persistedCompletedTurnSchema, persistedRuntimeItemSchema } from "../ipc/schemas";
 import { gitStateInterestSchema, gitStatePatchSchema, gitStateSnapshotSchema } from "../gitState";
-import { sharedSettingsSchema } from "../settings";
+import { defaultSharedSettings, sharedSettingsSchema } from "../settings";
 
 // v9 carries the selected execution environment in thread snapshots and
 // mutation payloads. Older clients would silently drop a pinned WSL distro.
@@ -675,7 +675,9 @@ export const remoteSettingsSchema = sharedSettingsSchema
   })
   .extend({
     agentSettings: remoteAgentSettingsSchema,
-    followUpBehavior: sharedSettingsSchema.shape.followUpBehavior.optional().default("steer"),
+    followUpBehavior: sharedSettingsSchema.shape.followUpBehavior
+      .optional()
+      .default(defaultSharedSettings.followUpBehavior),
   });
 export type RemoteSettings = z.infer<typeof remoteSettingsSchema>;
 

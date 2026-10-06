@@ -36,6 +36,7 @@ export function createFollowUpQueueHarness() {
     adapter,
     projectLocation: { kind: "windows", path: "C:\\queue-fixture" },
     config: { model: "initial" },
+    mcpLaunchSnapshot: { mcpServers: [], disabledBuiltInMcpServerIds: [] },
     status: "idle",
     attention: "none",
     presentationMode: "gui",
