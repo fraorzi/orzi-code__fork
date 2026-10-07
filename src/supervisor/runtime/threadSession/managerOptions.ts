@@ -20,6 +20,8 @@ export interface ThreadSessionManagerOptions {
   emit(event: SupervisorEvent): void;
   isDev: boolean;
   logsDir: string;
+  /** Stable profile directory for follow-ups that must survive supervisor restarts. */
+  followUpQueueDir?: string;
   settingsPath: string;
   readDisableCliHookPlugin(): boolean;
   adapters: Map<AgentKind, AgentAdapter>;

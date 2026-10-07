@@ -1,6 +1,6 @@
 # Przekazanie osobistego forka PoraCode
 
-Stan na 2026-10-06. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
+Stan na 2026-10-07. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
 
 ## Zacznij tutaj
 
@@ -17,6 +17,12 @@ Stan na 2026-10-06. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Integracja zmian wykonawców jest automatyczna. Użytkownik wyraźnie wykluczył zatwierdzanie każdego scalenia. Nie należy ponownie otwierać tej decyzji.
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
+
+## Aktualizacja z 2026-10-07
+
+Kolejka follow-upów jest zapisywana atomowo w profilu supervisora i odzyskiwana po restarcie jako wstrzymana. Rzeczywisty pakiet z Codex 0.160.1 zachował dwie wiadomości po SIGKILL aplikacji, a kliknięcie wznowienia przekazało obie w kolejności, bez duplikatów. Nowa aplikacja jest w `/Applications/Poracode Personal.app`, poprzednia w `.tmp/previous-install/queue-persistence/Poracode Personal.app`. Szczegóły, testy i granicę ponownego dostarczenia opisuje początek [stanu implementacji](implementation.md).
+
+Na polecenie użytkownika poprawiono tożsamość Git: GitHub używa prywatnego e-maila, Bitbucket firmowego. Reguły `includeIf` wybierają ją według URL remote, a repozytorium ma dodatkowe lokalne ustawienie prywatnej tożsamości. Przepisano autora i commitera w pięciu opublikowanych commitach oraz jedenastu lokalnych checkpointach; drzewa plików i upstream pozostały identyczne. Zdalne `origin/main` i lokalne reflogi zostały sprawdzone. SSH uwierzytelnia GitHub jako `fraorzi`.
 
 ## Aktualizacja z 2026-10-06
 
@@ -48,11 +54,11 @@ Dodano osobne ustawienie automatycznych aktualizacji na stronie każdego agenta.
 
 ## Dalszy zakres
 
-- Domyślne wysyłanie podczas pracy chatu używa teraz widocznej kolejki. Rzeczywisty Codex odebrał dwie wiadomości po zakończeniu bieżącej tury, w kolejności i z zachowaniem kontekstu. Pakiet i DMG zostały zaktualizowane. Szczegóły oraz ograniczenie kolejki do pamięci supervisora są na początku stanu implementacji.
+- Domyślne wysyłanie podczas pracy chatu używa widocznej, trwałej kolejki. Odzyskiwanie po awarii i wznowienie sprawdzono na rzeczywistym Codex. Szczegóły i granica ponownego dostarczenia są na początku stanu implementacji.
 - Figma działa w chacie Codex na podanym przykładzie. Współdzielenie połączenia zarządzanego przez aplikację z pozostałymi dostawcami wymaga osobnego OAuth. Nie kopiuj tokenów z Codex do forka.
 - Nazwane role i edytor puli modeli są wdrożone, sprawdzone także z rzeczywistymi modelami i przepakowane do zainstalowanej aplikacji. Szczegóły, testy i pozostały zakres podaje początek stanu implementacji.
 - Dalsze pomysły oh-my-pi są opisane w propozycji ról. Nie wszystkie zostały wybrane do implementacji.
-- Import historii użytkownika jest wykonany. Wykryte przy imporcie automatyczne kasowanie archiwum po 30 dniach zostało usunięte; pełną historię odtworzono ze snapshotu i sprawdzono po restarcie. Nie przywracaj tego kasowania. Brakuje ekranu importu/scalania, kanału publikacji aktualizacji samego forka, porządków w zachowanych worktree oraz odporności zespołu i kolejki na restart. Pełne ograniczenia aktualizatorów i wspieranych platform są w stanie implementacji.
+- Import historii użytkownika jest wykonany. Wykryte przy imporcie automatyczne kasowanie archiwum po 30 dniach zostało usunięte; pełną historię odtworzono ze snapshotu i sprawdzono po restarcie. Nie przywracaj tego kasowania. Brakuje ekranu importu/scalania, kanału publikacji aktualizacji samego forka, porządków w zachowanych worktree oraz odporności zespołu na restart. Pełne ograniczenia aktualizatorów i wspieranych platform są w stanie implementacji.
 - Osobne ustawienia automatycznych aktualizacji są dodane. Przypięcie konkretnej wersji i rollback z planu nie są wdrożone. Brakuje pełnej kontroli rzeczywistych aktualizacji oraz sesji Gemini/Grok na subskrypcjach. Użytkownik otrzymał pytanie o dostęp do Groka; import całej historii został już zlecony i wykonany.
 
 ## Miejsca w kodzie

@@ -14156,6 +14156,10 @@ msgstr "Nie można zapisać profilu Claude {displayLabel}."
 msgid "Unable to save image."
 msgstr "Nie można zapisać obrazu."
 
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Unable to save queued follow-ups. Check disk access and try again."
+msgstr "Nie można zapisać wiadomości w kolejce. Sprawdź dostęp do dysku i spróbuj ponownie."
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Unable to save role. Check for duplicate task tags and try again."
 msgstr "Nie można zapisać roli. Sprawdź, czy tagi zadań się nie powtarzają, i spróbuj ponownie."

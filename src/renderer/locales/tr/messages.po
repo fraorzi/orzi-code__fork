@@ -14156,6 +14156,10 @@ msgstr "Claude {displayLabel} profili kaydedilemedi."
 msgid "Unable to save image."
 msgstr "Görsel kaydedilemedi."
 
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Unable to save queued follow-ups. Check disk access and try again."
+msgstr "Kuyruktaki mesajlar kaydedilemiyor. Disk erişimini kontrol edip tekrar deneyin."
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Unable to save role. Check for duplicate task tags and try again."
 msgstr "Rol kaydedilemedi. Yinelenen görev etiketlerini kontrol edip yeniden deneyin."

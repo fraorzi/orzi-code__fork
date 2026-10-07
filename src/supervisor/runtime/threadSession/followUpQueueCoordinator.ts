@@ -23,6 +23,7 @@ import {
 } from "./followUpQueueState";
 import type { QueuedStructuredTurn, SessionRuntime } from "../sessionTypes";
 import type { SteerSubmissionOptions } from "./steerCoordinator";
+import type { FollowUpQueueStore } from "./followUpQueueStore";
 
 function createAdmissionBarrier(): {
   promise: Promise<void>;
@@ -36,6 +37,7 @@ function createAdmissionBarrier(): {
 }
 
 export interface FollowUpQueueCoordinatorContext {
+  store?: FollowUpQueueStore;
   emit(event: SupervisorEvent): void;
   sessions: Map<string, SessionRuntime>;
   waitForPendingStart(threadId: string): Promise<void>;
@@ -67,9 +69,14 @@ export class FollowUpQueueCoordinator {
   private readonly directInput: FollowUpQueueDirectInput;
   private readonly pausedThreads = new Set<string>();
   private readonly mutationTails = new Map<string, Promise<void>>();
+  private readonly storageFailures = new Map<string, unknown>();
   private disposed = false;
 
   constructor(private readonly ctx: FollowUpQueueCoordinatorContext) {
+    for (const queue of ctx.store?.load() ?? []) {
+      this.pausedThreads.add(queue.threadId);
+      this.createRecord(queue.threadId).items.push(...queue.items);
+    }
     this.directInput = new FollowUpQueueDirectInput({
       lifecycleFor: (session) => this.lifecycleFor(session),
       onChange: (threadId) => {
@@ -88,6 +95,7 @@ export class FollowUpQueueCoordinator {
         if (record?.active?.dispatched) {
           this.resolveAdmission(record.active);
           delete record.active;
+          this.emitQueueState(session.threadId);
         }
       },
     });
@@ -278,6 +286,7 @@ export class FollowUpQueueCoordinator {
     if (active.admitted || active.session.status === "working") {
       active.admitted = true;
       this.resolveAdmission(active);
+      this.emitQueueState(threadId);
       return;
     }
     await active.admission.promise;
@@ -456,6 +465,7 @@ export class FollowUpQueueCoordinator {
         // signal for providers that emit both edges.
         active.admitted = true;
         this.resolveAdmission(active);
+        this.emitQueueState(session.threadId);
       }
       return;
     }
@@ -503,6 +513,7 @@ export class FollowUpQueueCoordinator {
       // a whole-turn or active-turn signal.
       active.admitted = true;
       this.resolveAdmission(active);
+      this.emitQueueState(session.threadId);
     }
     if (status === "error") {
       this.pauseForFailure(session.threadId, record, lifecycle);
@@ -520,6 +531,7 @@ export class FollowUpQueueCoordinator {
     this.directInput.dispose();
     this.pausedThreads.clear();
     this.mutationTails.clear();
+    this.storageFailures.clear();
   }
 
   private assertQueueSession(
@@ -721,6 +733,12 @@ export class FollowUpQueueCoordinator {
     active.dispatched = true;
     active.admission = createAdmissionBarrier();
     this.emitQueueState(record.threadId);
+    if (record.paused) {
+      this.resolveAdmission(active);
+      this.restoreActive(record, active, true);
+      this.emitQueueState(record.threadId);
+      return;
+    }
     try {
       const turn: QueuedStructuredTurn = {
         ...prepared,
@@ -848,7 +866,13 @@ export class FollowUpQueueCoordinator {
 
   private async mutate<T>(threadId: string, operation: () => Promise<T> | T): Promise<T> {
     const previous = this.mutationTails.get(threadId) ?? Promise.resolve();
-    const run = previous.then(operation);
+    const run = previous.then(async () => {
+      const result = await operation();
+      if (this.storageFailures.has(threadId)) {
+        throw new Error(msg("supervisor.followUpQueue.storageUnavailable"));
+      }
+      return result;
+    });
     const tail = run.then(
       () => undefined,
       () => undefined,
@@ -863,6 +887,15 @@ export class FollowUpQueueCoordinator {
 
   private emitQueueState(threadId: string): void {
     const record = this.records.get(threadId);
+    try {
+      this.ctx.store?.save(threadId, record);
+      this.storageFailures.delete(threadId);
+    } catch (error) {
+      this.storageFailures.set(threadId, error);
+      this.pausedThreads.add(threadId);
+      if (record) record.paused = true;
+      console.error("[supervisor] unable to save follow-up queue", { threadId, error });
+    }
     const queue: ThreadFollowUpQueueState | null =
       record && record.items.length > 0
         ? { items: record.items.map(pendingState), paused: record.paused }

@@ -1,6 +1,18 @@
 # Stan implementacji
 
-Data: 2026-10-06. Lokalna wersja testowa na bazie PoraCode 1.8.1.
+Data: 2026-10-07. Lokalna wersja testowa na bazie PoraCode 1.8.1.
+
+## Trwała kolejka i odzyskiwanie po awarii - 2026-10-07
+
+- Follow-upy są zapisywane synchronicznie i atomowo przed potwierdzeniem przyjęcia. Pliki profilu `follow-up-queues/<sha256-thread-id>.json` mają wersję 1 i uprawnienia 0600. Zapis obejmuje surowy prompt, segmenty/załączniki, konfigurację modelu, kolejność, czas i stabilny identyfikator wiadomości; przygotowane prompty i stan procesu pozostają w pamięci.
+- Po restarcie kolejka jest dostępna przez istniejący IPC i wraca jako wstrzymana. Otwarcie historii uruchamia istniejącą ścieżkę wznowienia sesji; użytkownik przekazuje kolejkę przyciskiem wznowienia. Edycje, zmiany kolejności i usunięcia są trwałe. Błąd zapisu wstrzymuje dostarczanie i zgłasza przetłumaczony komunikat. Nieczytelny plik lub nieznana wersja pozostają na dysku i są chronione przed nadpisaniem.
+- Wpis opuszcza trwałą kolejkę po kanonicznym `turn.started` lub statusie `working`. Awaria przed admission przywraca także wpis wysłany do procesu, z tym samym `userMessageItemId`. To nie daje gwarancji exactly-once, gdy dostawca odebrał prompt, ale aplikacja nie dostała jeszcze potwierdzenia; dlatego odzyskane wiadomości wymagają ręcznego wznowienia. Już przyjęta tura nie jest automatycznie ponawiana.
+- Audyt zgodności: to nowy magazyn supervisora, starsza instalacja bez katalogu startuje z pustą kolejką. Nie zmienia się format SQLite, ustawień ani protokół IPC/remote. Renderer nadal ma tylko nietrwały cache, a wiadomości z projektów zdalnych zapisuje supervisor ich hosta. Regresje obejmują profil poprzedniej wersji, przyszłą wersję pliku i uszkodzony JSON.
+- Przeszło 109 testów w 10 zestawach, pełny typecheck, oba etapy lintu zmienionych plików, formatowanie i ekstrakcja i18n z 0 braków we wszystkich 12 językach. Testy korzystają z rzeczywistych plików i obejmują restart managera, admission, retry, błędy dysku i ochronę uszkodzonych danych. Nie uruchomiono całego test suite repozytorium.
+- Smoke mock w rzeczywistym Electron: 6 scenariuszy i 5 bramek przeszły, błędy renderera/runtime: 0. Raport: `/private/tmp/poracode-queue-persistence-mock/artifacts/smoke-report.json`. Mock potwierdza lokalne integracje, a nie sesje wszystkich dostawców.
+- Test rzeczywistego pakietu na subskrypcji Codex 0.160.1 / 6.1 Sol: podczas `sleep 150` dodano dwie wiadomości, odczytano je z dysku i zabito wyłącznie proces QA przez SIGKILL. Nowy proces odzyskał obie jako wstrzymane. Po kliknięciu `Resume queued follow-ups` odpowiedzi `QUEUE_RECOVERY_APRICOT` i `QUEUE_RECOVERY_SECOND` zakończyły się w tej kolejności. Kanoniczna historia zachowała identyfikatory i nie miała duplikatów. Stan końcowy: `idle`, kolejka pusta. Dowody i zrzuty w `/private/tmp/poracode-queue-persistence-live/artifacts/`, raport `recovery-verification.json`.
+- Restart QA został przejściowo zatrzymany w systemowym odczycie pęku kluczy (`SecItemCopyMatching`), potwierdzonym próbką stosu procesu. Test ukończono po wznowieniu startu. Nie przypisuje się tego opóźnienia zapisowi kolejki.
+- Build, DMG i kontrola podpisu przeszły. Sprawdzony pakiet jest w `/Applications/Poracode Personal.app`; poprzedni zachowano w `.tmp/previous-install/queue-persistence/Poracode Personal.app`. Zainstalowany fork był zamknięty podczas podmiany; nie zatrzymywano aplikacji użytkownika ani nie modyfikowano jego profilu.
 
 ## Import rzeczywistej historii i trwałe archiwum
 
@@ -20,7 +32,7 @@ Data: 2026-10-06. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 - Wykorzystano istniejącą kolejkę supervisora i zmieniono domyślne zachowanie z `steer` na `queue`. Wiadomości wysyłane w trakcie pracy są widoczne nad polem wpisywania i automatycznie trafiają do tego samego wątku po zakończeniu bieżącej tury. Nie przerywają aktywnej pracy.
 - Podgląd pozwala edytować, usuwać i przestawiać wiadomości. Cmd+Enter na macOS uruchamia działanie przeciwne do ustawionego domyślnie, czyli przy kolejce przekazuje pilną instrukcję przez `steer`.
 - Granica zgodności: format ustawień i protokół zdalny pozostają poprawne. Starsze dane bez pola otrzymują `queue`, a jawne `steer` jest zachowane. Zdalny parser korzysta teraz z tego samego domyślnego ustawienia co desktop. Testy obejmują starsze lokalne ustawienia i odpowiedzi hosta v9. Nie zmieniono wersji bazy, cache ani protokołu.
-- Kolejka dotyczy chatu. Jest przechowywana w pamięci supervisora; nie należy traktować nieprzekazanych wiadomości jako zapisanych na pełny restart aplikacji.
+- Kolejka dotyczy chatu. Od 2026-10-07 ma trwały zapis i odzyskiwanie opisane w sekcji powyżej; pierwotna wersja z 2026-10-06 przechowywała ją tylko w pamięci supervisora.
 - Przeszło 220 testów w 13 zestawach, typecheck, oba etapy lintu i formatowanie zmienionych plików. Poprawiono brakującą migawkę MCP w istniejącym fixture testowym kolejki. Nie dodawano tekstów renderera, więc nie powstały nowe wpisy tłumaczeń.
 - Rzeczywisty test Codex 6.1 Sol: podczas `sleep 120` dodano dwie wiadomości przez kontrolki chatu. UI i supervisor pokazały obie w kolejności. Agent zakończył oryginalną turę i automatycznie odpowiedział `QUEUE_SECOND_APRICOT`, potem `QUEUE_THIRD_OK`; zachował słowo z wcześniejszego promptu. Końcowy stan to `idle` i pusta kolejka. Nie zmieniono plików projektu.
 - Dowody: `/private/tmp/poracode-queue-live2/artifacts/queue-verification.json`, `queue-result.json`, `queue-visible.png` i `queue-completed.png`. Test Claude dla tej zmiany był deterministyczny, nie na żywym koncie.

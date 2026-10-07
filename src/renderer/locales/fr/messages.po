@@ -14155,6 +14155,10 @@ msgstr "Impossible d'enregistrer le profil Claude {displayLabel}."
 msgid "Unable to save image."
 msgstr "Impossible d’enregistrer l’image."
 
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Unable to save queued follow-ups. Check disk access and try again."
+msgstr "Impossible d'enregistrer les messages en attente. Vérifiez l'accès au disque et réessayez."
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Unable to save role. Check for duplicate task tags and try again."
 msgstr "Impossible d’enregistrer le rôle. Vérifiez les tags de tâche en double et réessayez."

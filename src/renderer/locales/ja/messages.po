@@ -14154,6 +14154,10 @@ msgstr "Claudeの{displayLabel}プロファイルを保存できません。"
 msgid "Unable to save image."
 msgstr "画像を保存できませんでした。"
 
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Unable to save queued follow-ups. Check disk access and try again."
+msgstr "キュー内のメッセージを保存できません。ディスクへのアクセスを確認して、もう一度お試しください。"
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Unable to save role. Check for duplicate task tags and try again."
 msgstr "ロールを保存できません。タスクタグの重複を確認して、もう一度お試しください。"

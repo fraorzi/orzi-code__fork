@@ -14155,6 +14155,10 @@ msgstr "无法保存Claude {displayLabel}配置。"
 msgid "Unable to save image."
 msgstr "无法保存图像。"
 
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Unable to save queued follow-ups. Check disk access and try again."
+msgstr "无法保存排队的消息。请检查磁盘访问权限并重试。"
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Unable to save role. Check for duplicate task tags and try again."
 msgstr "无法保存角色。请检查是否存在重复的任务标签，然后重试。"

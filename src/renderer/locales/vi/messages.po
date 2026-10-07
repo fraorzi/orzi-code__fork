@@ -14156,6 +14156,10 @@ msgstr "Không thể lưu hồ sơ Claude {displayLabel}."
 msgid "Unable to save image."
 msgstr "Không thể lưu hình ảnh."
 
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Unable to save queued follow-ups. Check disk access and try again."
+msgstr "Không thể lưu các tin nhắn trong hàng đợi. Hãy kiểm tra quyền truy cập ổ đĩa và thử lại."
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Unable to save role. Check for duplicate task tags and try again."
 msgstr "Không thể lưu vai trò. Kiểm tra các thẻ nhiệm vụ trùng lặp rồi thử lại."

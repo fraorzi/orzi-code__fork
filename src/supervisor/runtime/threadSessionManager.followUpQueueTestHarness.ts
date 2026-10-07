@@ -4,7 +4,7 @@ import type { SessionRuntime } from "./sessionTypes";
 import type { SupervisorEvent } from "@/shared/ipc";
 import { ThreadSessionManager } from "./threadSessionManager";
 
-export function createFollowUpQueueHarness() {
+export function createFollowUpQueueHarness(followUpQueueDir?: string) {
   const emit = vi.fn<(event: SupervisorEvent) => void>();
   const adapter = {
     kind: "test-agent",
@@ -15,6 +15,7 @@ export function createFollowUpQueueHarness() {
     emit,
     isDev: false,
     logsDir: "tmp/queue-tests/logs",
+    ...(followUpQueueDir ? { followUpQueueDir } : {}),
     settingsPath: "tmp/queue-tests/settings.json",
     readDisableCliHookPlugin: () => false,
     adapters: new Map([[adapter.kind, adapter]]),

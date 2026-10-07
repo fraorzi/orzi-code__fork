@@ -79,6 +79,7 @@ import { InvalidSessionRecoveryCoordinator } from "./threadSession/invalidSessio
 import { StructuredInterruptWatchdog } from "./threadSession/structuredInterruptWatchdog";
 import { SteerCoordinator, type SteerSubmissionOptions } from "./threadSession/steerCoordinator";
 import { FollowUpQueueCoordinator } from "./threadSession/followUpQueueCoordinator";
+import { FollowUpQueueStore } from "./threadSession/followUpQueueStore";
 import { buildShellCommand } from "./threadSession/shellCommand";
 import {
   SpawnPipeline,
@@ -161,6 +162,9 @@ export class ThreadSessionManager {
       failStructuredSession: (session, error) => this.failStructuredSession(session, error),
     });
     this.followUpQueue = new FollowUpQueueCoordinator({
+      ...(options.followUpQueueDir
+        ? { store: new FollowUpQueueStore(options.followUpQueueDir) }
+        : {}),
       emit: options.emit,
       sessions: this.sessions,
       waitForPendingStart: (threadId) => this.waitForPendingStart(threadId),

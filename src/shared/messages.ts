@@ -140,6 +140,8 @@ const messages = {
   "supervisor.followUpQueue.itemNotFound": "Queued follow-up not found: {id}.",
   "supervisor.followUpQueue.itemChanged": "This queued follow-up changed. Reopen it before saving.",
   "supervisor.followUpQueue.itemInFlight": "This queued follow-up is already being sent.",
+  "supervisor.followUpQueue.storageUnavailable":
+    "Unable to save queued follow-ups. Check disk access and try again.",
   "supervisor.steer.cleared": "Steer was cancelled before the message was sent.",
   "supervisor.steer.replaced": "Steer was replaced by a newer message.",
   "supervisor.steer.notAdmitted": "The replacement message could not be sent.",
@@ -302,6 +304,10 @@ const errorPatterns: Array<{
   {
     test: /^This queued follow-up is already being sent\.$/,
     key: "supervisor.followUpQueue.itemInFlight",
+  },
+  {
+    test: /^Unable to save queued follow-ups\. Check disk access and try again\.$/,
+    key: "supervisor.followUpQueue.storageUnavailable",
   },
   {
     test: acpAuthenticationUnverifiedPattern,

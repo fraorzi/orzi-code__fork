@@ -435,6 +435,7 @@ export class SupervisorRuntime {
       emit,
       isDev: this.isDev,
       logsDir: this.logsDir,
+      followUpQueueDir: join(this.baseDir, "follow-up-queues"),
       settingsPath: this.settingsPath,
       readDisableCliHookPlugin: () => this.sharedSettingsCache.read().disableCliHookPlugin,
       adapters: this.adapters,

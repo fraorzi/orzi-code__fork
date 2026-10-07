@@ -36,6 +36,9 @@ const SHARED_MESSAGE_DESCRIPTORS: Record<MessageKey, MessageDescriptor> = {
   "supervisor.followUpQueue.itemInFlight": msg({
     message: "This queued follow-up is already being sent.",
   }),
+  "supervisor.followUpQueue.storageUnavailable": msg({
+    message: "Unable to save queued follow-ups. Check disk access and try again.",
+  }),
   "supervisor.steer.cleared": msg({ message: "Steer was cancelled before the message was sent." }),
   "supervisor.steer.replaced": msg({ message: "Steer was replaced by a newer message." }),
   "supervisor.steer.notAdmitted": msg({ message: "The replacement message could not be sent." }),

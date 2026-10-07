@@ -14156,6 +14156,10 @@ msgstr "Не удалось сохранить профиль Claude {displayLab
 msgid "Unable to save image."
 msgstr "Не удалось сохранить изображение."
 
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Unable to save queued follow-ups. Check disk access and try again."
+msgstr "Не удалось сохранить сообщения в очереди. Проверьте доступ к диску и повторите попытку."
+
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Unable to save role. Check for duplicate task tags and try again."
 msgstr "Не удалось сохранить роль. Проверьте, нет ли дубликатов тегов задач, и попробуйте снова."
