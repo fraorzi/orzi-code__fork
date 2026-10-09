@@ -1689,7 +1689,7 @@ async function runMockGate(client, gate, fixture) {
     }
     case "provider-skill-delivery": {
       const expected = {
-        claude: "prompt",
+        claude: "slash",
         codex: "dollar",
         gemini: "prompt",
         opencode: "prompt",

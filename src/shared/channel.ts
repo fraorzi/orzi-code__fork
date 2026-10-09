@@ -14,6 +14,11 @@ export function resolvePoracodeChannel(): PoracodeChannel {
 }
 
 export function productNameFor(channel: PoracodeChannel): string {
+  return channel === "nightly" ? "Orzi Code Nightly" : "Orzi Code";
+}
+
+/** Persistent Electron identity: macOS derives the safeStorage Keychain service from this name. */
+export function electronAppNameFor(channel: PoracodeChannel): string {
   return channel === "nightly" ? "Poracode Personal Nightly" : "Poracode Personal";
 }
 
@@ -33,5 +38,5 @@ export function updaterChannelFor(channel: PoracodeChannel): string | undefined 
 }
 
 export function artifactPrefixFor(channel: PoracodeChannel): string {
-  return channel === "nightly" ? "Poracode-Personal-Nightly" : "Poracode Personal";
+  return channel === "nightly" ? "Orzi-Code-Nightly" : "Orzi-Code";
 }

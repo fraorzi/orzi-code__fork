@@ -78,7 +78,7 @@ import {
   upsertCrossagentRoutingOverride,
 } from "@/shared/crossagentRanking";
 import { getAppName } from "@/shared/appName";
-import { productNameFor, resolvePoracodeChannel } from "@/shared/channel";
+import { electronAppNameFor, resolvePoracodeChannel } from "@/shared/channel";
 import {
   IPC_EVENT_CHANNELS,
   IPC_WINDOW_CHANNELS,
@@ -127,8 +127,8 @@ const isDev = Boolean(process.env.VITE_DEV_SERVER_URL);
 const channel = resolvePoracodeChannel();
 const baseDirOverride = process.env.PORACODE_BASE_DIR;
 const legacyBaseDirOverride = process.env.LIGHTCODE_BASE_DIR?.trim() || undefined;
-app.setName(productNameFor(channel));
-app.setPath("userData", join(app.getPath("appData"), productNameFor(channel)));
+app.setName(electronAppNameFor(channel));
+app.setPath("userData", join(app.getPath("appData"), electronAppNameFor(channel)));
 const defaultElectronUserDataDir = app.getPath("userData");
 const legacyElectronUserDataDir = legacyBaseDirOverride
   ? join(legacyBaseDirOverride, "userData")

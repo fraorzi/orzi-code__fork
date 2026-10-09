@@ -15,6 +15,8 @@
  */
 
 import { buildVariant, type ThemeSpec, type ThemeVariantVars } from "./themeTokens";
+import { msg } from "@lingui/core/macro";
+import { i18n } from "@/renderer/i18n/i18n";
 
 export interface AppThemeSpec {
   id: string;
@@ -38,28 +40,28 @@ export const THEME_SPECS: AppThemeSpec[] = [
   // overrides so styles.css stays the source of truth (see applyAppTheme).
   {
     id: DEFAULT_THEME_ID,
-    label: "Poracode",
+    label: i18n._(msg`Orzi Code`),
     // sRGB hex of the styles.css oklch values (anchors must be hex so muted can
     // be contrast-derived). Preview-only — runtime clears overrides for default.
     light: {
-      bg: "#f1f1f4",
-      surface: "#fafafb",
-      fg: "#18181b",
-      accent: "#5f6cd9",
+      bg: "#f5f5f5",
+      surface: "#ffffff",
+      fg: "#252525",
+      accent: "#252525",
       accentFg: "#ffffff",
-      border: "#cacace",
-      sidebar: "#ececef",
-      content: "#f6f6f9",
+      border: "#cccccc",
+      sidebar: "#eeeeee",
+      content: "#fafafa",
     },
     dark: {
-      bg: "#070709",
-      surface: "#0e0e14",
-      fg: "#fafafa",
-      accent: "#8892ef",
-      accentFg: "#0a0a12",
-      border: "#24242e",
-      sidebar: "#0e0e14",
-      content: "#0b0b11",
+      bg: "#191919",
+      surface: "#232323",
+      fg: "#d4d4d4",
+      accent: "#e6e6e6",
+      accentFg: "#191919",
+      border: "#3d3d3d",
+      sidebar: "#232323",
+      content: "#191919",
     },
   },
 
@@ -67,7 +69,7 @@ export const THEME_SPECS: AppThemeSpec[] = [
   // blue accent), preserved as a selectable theme so the old style isn't lost.
   {
     id: "poracode-legacy",
-    label: "Poracode Legacy",
+    label: i18n._(msg`Orzi Code Legacy`),
     light: {
       bg: "#f1f1f4",
       surface: "#fafafb",

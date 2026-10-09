@@ -246,7 +246,7 @@ function SshPairingForm(props: {
     <div className="m-form">
       <p className="m-card__hint">
         <Trans>
-          Poracode will install or reuse its server on the SSH host and keep credentials in this
+          Orzi Code will install or reuse its server on the SSH host and keep credentials in this
           device's secure storage.
         </Trans>
       </p>
@@ -448,8 +448,8 @@ export function DesktopsView(props: DesktopsViewProps) {
     <div className="m-form">
       <p className="m-card__hint">
         <Trans>
-          Open Settings → Remote Access in Poracode on your desktop, then scan the QR code from here
-          — or enter the endpoint and pairing token manually.
+          Open Settings → Remote Access in Orzi Code on your desktop, then scan the QR code from
+          here — or enter the endpoint and pairing token manually.
         </Trans>
       </p>
       {showPairingHint ? (

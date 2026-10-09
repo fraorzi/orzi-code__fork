@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import { msg } from "@lingui/core/macro";
-import { useLingui } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import type { ProfileCoreStats, ProfileStatsWindow, ProfileTokenStats } from "@/shared/contracts";
 import { ProviderIcon } from "@/renderer/components/providers/ProviderIcon";
 import type { TranslateFn } from "@/renderer/i18n/i18n";
@@ -82,7 +82,7 @@ export const ShareCard = forwardRef<
       </div>
 
       <div className="flex items-center justify-center pt-1 text-[11px] font-medium uppercase tracking-[0.18em] text-muted/60">
-        Poracode
+        <Trans>Orzi Code</Trans>
       </div>
     </div>
   );

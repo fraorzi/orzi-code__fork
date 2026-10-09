@@ -143,7 +143,7 @@ export function SshConnectionForm({
 
       <p className="text-xs leading-5 text-muted">
         <Trans>
-          Poracode and your agents run on the remote machine. SSH is used only to start the remote
+          Orzi Code and your agents run on the remote machine. SSH is used only to start the remote
           environment and secure its local tunnel.
         </Trans>
       </p>

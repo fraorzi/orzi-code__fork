@@ -419,8 +419,8 @@ msgid "{0}mo ago"
 msgstr "hace {0} m"
 
 #: src/renderer/i18n/sharedMessages.ts
-msgid "{agent} reported authentication success, but Poracode could not verify it. Configure {agent} directly, then try again."
-msgstr "{agent} informó que la autenticación se realizó correctamente, pero Poracode no pudo verificarla. Configura {agent} directamente y vuelve a intentarlo."
+msgid "{agent} reported authentication success, but Orzi Code could not verify it. Configure {agent} directly, then try again."
+msgstr "{agent} informó que la autenticación se realizó correctamente, pero Orzi Code no pudo verificarla. Configura {agent} directamente y vuelve a intentarlo."
 
 #: src/renderer/views/SettingsOverlay/parts/AcpRegistrySettings.tsx
 msgid "{agentLabel} install targets"
@@ -775,8 +775,8 @@ msgid "A server could not be started and was skipped."
 msgstr "No se pudo iniciar un servidor y se omitió."
 
 #: src/renderer/components/plugins/pluginCopy.ts
-msgid "A server has a name Poracode cannot use."
-msgstr "Un servidor tiene un nombre que Poracode no puede usar."
+msgid "A server has a name Orzi Code cannot use."
+msgstr "Un servidor tiene un nombre que Orzi Code no puede usar."
 
 #: src/renderer/components/plugins/pluginCopy.ts
 msgid "A server is not configured correctly and was skipped."
@@ -1813,8 +1813,8 @@ msgid "Automation is paused: the configured helper agent is unavailable. Check t
 msgstr "La automatización está en pausa: el agente auxiliar configurado no está disponible. Comprueba la conexión del agente y la configuración del agente auxiliar."
 
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/PrWatchControls.tsx
-msgid "Automation is paused: this PR's branch could not be checked out. Poracode keeps retrying automatically."
-msgstr "La automatización está en pausa: no se pudo extraer la rama de este PR. Poracode sigue reintentando automáticamente."
+msgid "Automation is paused: this PR's branch could not be checked out. Orzi Code keeps retrying automatically."
+msgstr "La automatización está en pausa: no se pudo extraer la rama de este PR. Orzi Code sigue reintentando automáticamente."
 
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/PrWatchControls.tsx
 #~ msgid "Automation is paused: this PR's branch could not be checked out. Re-select a mode to retry."
@@ -2080,8 +2080,8 @@ msgid "Browse your GitHub repositories or paste a clone URL."
 msgstr "Explora tus repositorios de GitHub o pega una URL de clonación."
 
 #: src/renderer/components/plugins/pluginCopy.ts
-msgid "Browse, inspect, and test websites in Poracode's isolated in-app browser."
-msgstr "Navega, inspecciona y prueba sitios web en el navegador aislado integrado de Poracode."
+msgid "Browse, inspect, and test websites in Orzi Code's isolated in-app browser."
+msgstr "Navega, inspecciona y prueba sitios web en el navegador aislado integrado de Orzi Code."
 
 #: src/mobile/chrome.ts
 #: src/mobile/NarrowShell.tsx
@@ -2176,16 +2176,16 @@ msgid "Built-in order"
 msgstr "Orden integrado"
 
 #: src/renderer/components/mcp/McpServersManager.tsx
-msgid "Built-in servers are managed by Poracode. They can be disabled globally but cannot be edited or removed."
-msgstr "Poracode administra los servidores integrados. Se pueden deshabilitar globalmente, pero no se pueden editar ni eliminar."
+msgid "Built-in servers are managed by Orzi Code. They can be disabled globally but cannot be edited or removed."
+msgstr "Orzi Code administra los servidores integrados. Se pueden deshabilitar globalmente, pero no se pueden editar ni eliminar."
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Built-in shortcut — can't be changed"
 msgstr "Atajo integrado: no se puede cambiar"
 
 #: src/renderer/components/plugins/PluginMarketplace.tsx
-msgid "Bundles of skills and MCP servers that work across every supported agent. Poracode loads any package built for the Agent Plugins specification."
-msgstr "Paquetes de skills y servidores MCP que funcionan con todos los agentes compatibles. Poracode carga cualquier paquete creado según la especificación Agent Plugins."
+msgid "Bundles of skills and MCP servers that work across every supported agent. Orzi Code loads any package built for the Agent Plugins specification."
+msgstr "Paquetes de skills y servidores MCP que funcionan con todos los agentes compatibles. Orzi Code carga cualquier paquete creado según la especificación Agent Plugins."
 
 #: src/renderer/utils/projectIcons.ts
 msgid "Business & finance"
@@ -2560,8 +2560,8 @@ msgstr "Elegir base de datos del historial"
 
 #: src/renderer/views/SettingsOverlay/parts/GitSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-msgid "Choose how Poracode performs manual merges and automatic PR merges."
-msgstr "Elige cómo realiza Poracode las fusiones manuales y automáticas de PR."
+msgid "Choose how Orzi Code performs manual merges and automatic PR merges."
+msgstr "Elige cómo realiza Orzi Code las fusiones manuales y automáticas de PR."
 
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 #~ msgid "Choose how to sign in for {env}."
@@ -2576,8 +2576,8 @@ msgid "Choose import destination"
 msgstr "Elegir destino de importación"
 
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
-msgid "Choose shells for the Terminal panel and Poracode's internal commands."
-msgstr "Elige los shells del panel de terminal y de los comandos internos de Poracode."
+msgid "Choose shells for the Terminal panel and Orzi Code's internal commands."
+msgstr "Elige los shells del panel de terminal y de los comandos internos de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/SshConnectionForm.tsx
 msgid "Choose SSH identity file"
@@ -2585,8 +2585,8 @@ msgstr "Elegir archivo de identidad SSH"
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-msgid "Choose the display language for Poracode's interface."
-msgstr "Elige el idioma de visualización de la interfaz de Poracode."
+msgid "Choose the display language for Orzi Code's interface."
+msgstr "Elige el idioma de visualización de la interfaz de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
 msgid "Choose the providers and models available for delegation. This pool also applies to roles and their fallback models."
@@ -2606,8 +2606,8 @@ msgstr "Elige el hilo al que adjuntar"
 
 #: src/renderer/views/SettingsOverlay/parts/GitSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-msgid "Choose what Poracode does for new pull requests: nothing, fix merge blockers, or fix and merge."
-msgstr "Elige qué hace Poracode con las nuevas solicitudes de cambios: nada, corregir los bloqueos de fusión o corregirlos y fusionar."
+msgid "Choose what Orzi Code does for new pull requests: nothing, fix merge blockers, or fix and merge."
+msgstr "Elige qué hace Orzi Code con las nuevas solicitudes de cambios: nada, corregir los bloqueos de fusión o corregirlos y fusionar."
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -2620,8 +2620,8 @@ msgstr "Elige si los mensajes de chat enviados mientras un agente está trabajan
 
 #: src/renderer/views/SettingsOverlay/parts/BrowserSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-msgid "Choose whether links from Poracode and browser popups stay in Poracode or open externally."
-msgstr "Elige si los enlaces de Poracode y las ventanas emergentes del navegador permanecen en Poracode o se abren de forma externa."
+msgid "Choose whether links from Orzi Code and browser popups stay in Orzi Code or open externally."
+msgstr "Elige si los enlaces de Orzi Code y las ventanas emergentes del navegador permanecen en Orzi Code o se abren de forma externa."
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -3305,8 +3305,8 @@ msgid "Config directory"
 msgstr "Directorio de configuración"
 
 #: src/renderer/components/mcp/McpServerEditor.tsx
-msgid "Configure the server Poracode will add when supported agents start."
-msgstr "Configura el servidor que Poracode añadirá cuando se inicien agentes compatibles."
+msgid "Configure the server Orzi Code will add when supported agents start."
+msgstr "Configura el servidor que Orzi Code añadirá cuando se inicien agentes compatibles."
 
 #: src/renderer/components/providers/opencode2/OpenCode2PluginCards.tsx
 msgid "Configured"
@@ -3365,16 +3365,16 @@ msgid "Connect desktop"
 msgstr "Conectar escritorio"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
-msgid "Connect directly, through a relay, or over SSH. Every transport uses the same Poracode remote protocol, projects, threads, and agent runtimes."
-msgstr "Conéctate directamente, mediante un relé o por SSH. Todos los transportes usan el mismo protocolo remoto de Poracode, los mismos proyectos, hilos y entornos de ejecución de agentes."
+msgid "Connect directly, through a relay, or over SSH. Every transport uses the same Orzi Code remote protocol, projects, threads, and agent runtimes."
+msgstr "Conéctate directamente, mediante un relé o por SSH. Todos los transportes usan el mismo protocolo remoto de Orzi Code, los mismos proyectos, hilos y entornos de ejecución de agentes."
+
+#: src/mobile/setupEmptyState.tsx
+msgid "Connect Orzi Code on your desktop before starting a thread."
+msgstr "Conecta Orzi Code en tu escritorio antes de iniciar un hilo."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 msgid "Connect over SSH"
 msgstr "Conectar por SSH"
-
-#: src/mobile/setupEmptyState.tsx
-msgid "Connect Poracode on your desktop before starting a thread."
-msgstr "Conecta Poracode en tu escritorio antes de iniciar un hilo."
 
 #: src/renderer/views/SettingsOverlay/parts/OpenCode2ProviderSettings.tsx
 msgid "Connect the AI providers OpenCode 2 can use and sign out of them here."
@@ -3385,8 +3385,8 @@ msgid "Connect the AI providers OpenCode can use and sign out of them here."
 msgstr "Conecta los proveedores de IA que OpenCode puede usar y cierra sesión en ellos aquí."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
-#~ msgid "Connect to another Poracode desktop or a headless server to browse and manage its projects from here. Get its endpoint and pairing token from Settings → Remote Access on that machine."
-#~ msgstr "Conéctate a otro escritorio de Poracode o a un servidor headless para explorar y gestionar sus proyectos desde aquí. Consigue su endpoint y token de emparejamiento en Ajustes → Acceso remoto en esa máquina."
+#~ msgid "Connect to another Orzi Code desktop or a headless server to browse and manage its projects from here. Get its endpoint and pairing token from Settings → Remote Access on that machine."
+#~ msgstr "Conéctate a otro escritorio de Orzi Code o a un servidor headless para explorar y gestionar sus proyectos desde aquí. Consigue su endpoint y token de emparejamiento en Ajustes → Acceso remoto en esa máquina."
 
 #: src/renderer/components/mcp/McpServersManager.tsx
 #: src/renderer/components/plugins/PluginDetail.tsx
@@ -3572,8 +3572,8 @@ msgid "Copy {0} device code {1}"
 msgstr "Copiar el código de dispositivo de {0} {1}"
 
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
-msgid "Copy all Lightcode data into Poracode. Poracode restarts and keeps a complete backup of its current data."
-msgstr "Copia todos los datos de Lightcode en Poracode. Poracode se reiniciará y conservará una copia de seguridad completa de sus datos actuales."
+msgid "Copy all Lightcode data into Orzi Code. Orzi Code restarts and keeps a complete backup of its current data."
+msgstr "Copia todos los datos de Lightcode en Orzi Code. Orzi Code se reiniciará y conservará una copia de seguridad completa de sus datos actuales."
 
 #: src/renderer/components/thread/ChatPane/parts/items/ItemMarkdownInner.tsx
 msgid "Copy code"
@@ -4598,8 +4598,8 @@ msgid "Disabled server or unsupported native options"
 msgstr "Servidor desactivado u opciones nativas no compatibles"
 
 #: src/renderer/components/skills/SkillsManager.tsx
-msgid "Disabling a skill moves it out of active skill folders and removes Poracode-managed provider copies. Its files are preserved so you can enable it again."
-msgstr "Al desactivar una skill, se mueve fuera de las carpetas de skills activas y se eliminan las copias de proveedores administradas por Poracode. Sus archivos se conservan para que puedas volver a activarla."
+msgid "Disabling a skill moves it out of active skill folders and removes Orzi Code-managed provider copies. Its files are preserved so you can enable it again."
+msgstr "Al desactivar una skill, se mueve fuera de las carpetas de skills activas y se eliminan las copias de proveedores administradas por Orzi Code. Sus archivos se conservan para que puedas volver a activarla."
 
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
 msgid "Discard"
@@ -5653,76 +5653,76 @@ msgid "Finished · Waiting for your input"
 msgstr "Finalizado · Esperando tu entrada"
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-#~ msgid "First-class Antigravity CLI integration using Poracode's native runtime."
-#~ msgstr "Integración de primera clase de Antigravity CLI usando el runtime nativo de Poracode."
+#~ msgid "First-class Antigravity CLI integration using Orzi Code's native runtime."
+#~ msgstr "Integración de primera clase de Antigravity CLI usando el runtime nativo de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
 msgid "First-class Antigravity integration using the agy terminal CLI and Google's official ACP Chat runtime."
 msgstr "Integración de primera clase de Antigravity mediante la CLI de terminal agy y el runtime oficial de ACP Chat de Google."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class Claude Code integration using Poracode's native SDK runtime."
-msgstr "Integración de primera clase de Claude Code usando el runtime nativo del SDK de Poracode."
+msgid "First-class Claude Code integration using Orzi Code's native SDK runtime."
+msgstr "Integración de primera clase de Claude Code usando el runtime nativo del SDK de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class Codex CLI integration using Poracode's native app-server runtime."
-msgstr "Integración de primera clase de Codex CLI usando el runtime nativo de app-server de Poracode."
+msgid "First-class Codex CLI integration using Orzi Code's native app-server runtime."
+msgstr "Integración de primera clase de Codex CLI usando el runtime nativo de app-server de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class Command Code CLI integration using Poracode's native runtime."
-msgstr "Integración de primera clase de Command Code CLI usando el runtime nativo de Poracode."
+msgid "First-class Command Code CLI integration using Orzi Code's native runtime."
+msgstr "Integración de primera clase de Command Code CLI usando el runtime nativo de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-#~ msgid "First-class Cursor Agent integration using Poracode's native runtime."
-#~ msgstr "Integración de primera clase de Cursor Agent usando el runtime nativo de Poracode."
+#~ msgid "First-class Cursor Agent integration using Orzi Code's native runtime."
+#~ msgstr "Integración de primera clase de Cursor Agent usando el runtime nativo de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
 msgid "First-class Cursor integration using ACP or the public SDK runtime."
 msgstr "Integración completa con Cursor mediante ACP o el entorno de ejecución público del SDK."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class Factory Droid integration using Poracode's ACP runtime."
-msgstr "Integración de primera clase con Factory Droid mediante el entorno de ejecución ACP de Poracode."
+msgid "First-class Factory Droid integration using Orzi Code's ACP runtime."
+msgstr "Integración de primera clase con Factory Droid mediante el entorno de ejecución ACP de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class Gemini CLI integration using Poracode's native runtime."
-msgstr "Integración de primera clase de Gemini CLI usando el runtime nativo de Poracode."
+msgid "First-class Gemini CLI integration using Orzi Code's native runtime."
+msgstr "Integración de primera clase de Gemini CLI usando el runtime nativo de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class GitHub Copilot CLI integration using Poracode's native runtime."
-msgstr "Integración de primera clase de GitHub Copilot CLI usando el runtime nativo de Poracode."
+msgid "First-class GitHub Copilot CLI integration using Orzi Code's native runtime."
+msgstr "Integración de primera clase de GitHub Copilot CLI usando el runtime nativo de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class Grok Build CLI integration using Poracode's native runtime."
-msgstr "Integración de primera clase de Grok Build CLI usando el runtime nativo de Poracode."
+msgid "First-class Grok Build CLI integration using Orzi Code's native runtime."
+msgstr "Integración de primera clase de Grok Build CLI usando el runtime nativo de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class Kimi Code CLI integration using Poracode's native runtime."
-msgstr "Integración de primera clase de Kimi Code CLI usando el runtime nativo de Poracode."
+msgid "First-class Kimi Code CLI integration using Orzi Code's native runtime."
+msgstr "Integración de primera clase de Kimi Code CLI usando el runtime nativo de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-#~ msgid "First-class Muse Code CLI integration using Poracode's native terminal runtime."
-#~ msgstr "Integración de primera clase de Muse Code CLI usando el runtime de terminal nativo de Poracode."
+#~ msgid "First-class Muse Code CLI integration using Orzi Code's native terminal runtime."
+#~ msgstr "Integración de primera clase de Muse Code CLI usando el runtime de terminal nativo de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class Muse Code integration using Poracode's native terminal and GUI runtimes."
-msgstr "Integración de primera clase de Muse Code mediante los entornos nativos de terminal y GUI de Poracode."
+msgid "First-class Muse Code integration using Orzi Code's native terminal and GUI runtimes."
+msgstr "Integración de primera clase de Muse Code mediante los entornos nativos de terminal y GUI de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class OpenCode integration using Poracode's native SDK runtime."
-msgstr "Integración de primera clase de OpenCode usando el runtime nativo del SDK de Poracode."
+msgid "First-class OpenCode integration using Orzi Code's native SDK runtime."
+msgstr "Integración de primera clase de OpenCode usando el runtime nativo del SDK de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
 msgid "First-class Pi integration using a real terminal and Pi's native SDK runtime."
 msgstr "Integración Pi de primera clase con un terminal real y el entorno de ejecución SDK nativo de Pi."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class Qoder CLI integration using Poracode's native terminal and ACP runtimes."
-msgstr "Integración de primera clase con Qoder CLI mediante los entornos de ejecución nativos de terminal y ACP de Poracode."
+msgid "First-class Qoder CLI integration using Orzi Code's native terminal and ACP runtimes."
+msgstr "Integración de primera clase con Qoder CLI mediante los entornos de ejecución nativos de terminal y ACP de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/agentRegistryNative.ts
-msgid "First-class Qwen Code integration using Poracode's native terminal and ACP runtimes."
-msgstr "Integración de primera clase con Qwen Code mediante los entornos de ejecución nativos de terminal y ACP de Poracode."
+msgid "First-class Qwen Code integration using Orzi Code's native terminal and ACP runtimes."
+msgstr "Integración de primera clase con Qwen Code mediante los entornos de ejecución nativos de terminal y ACP de Orzi Code."
 
 #: src/renderer/components/pdf/PdfViewer.tsx
 #~ msgid "Fit width"
@@ -6197,8 +6197,8 @@ msgid "Headers"
 msgstr "Encabezados"
 
 #: src/renderer/views/SchedulesView/SchedulesView.tsx
-msgid "Help me create a schedule. Ask for any missing details, then use the Poracode schedule controls to create it for me."
-msgstr "Ayúdame a crear una programación. Pregunta por los detalles que falten y usa los controles de programación de Poracode para crearla."
+msgid "Help me create a schedule. Ask for any missing details, then use the Orzi Code schedule controls to create it for me."
+msgstr "Ayúdame a crear una programación. Pregunta por los detalles que falten y usa los controles de programación de Orzi Code para crearla."
 
 #: src/renderer/views/ProjectSettingsOverlay/parts/ProjectIconSources.tsx
 msgid "Hex color"
@@ -6880,8 +6880,8 @@ msgstr "Mantén un solo orden de proveedores en todas partes. Desactívalo para 
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-msgid "Keep Poracode in the system tray when it launches at startup."
-msgstr "Mantener Poracode en la bandeja del sistema cuando se inicie automáticamente."
+msgid "Keep Orzi Code in the system tray when it launches at startup."
+msgstr "Mantener Orzi Code en la bandeja del sistema cuando se inicie automáticamente."
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -6920,8 +6920,8 @@ msgid "Kimi Code"
 msgstr "Kimi Code"
 
 #: src/renderer/i18n/sharedMessages.ts
-msgid "Kimi Code could not update its credentials because another process is using the credential file. Close other Poracode or Kimi Code processes, then retry."
-msgstr "Kimi Code no pudo actualizar sus credenciales porque otro proceso está usando el archivo de credenciales. Cierra otros procesos de Poracode o Kimi Code y vuelve a intentarlo."
+msgid "Kimi Code could not update its credentials because another process is using the credential file. Close other Orzi Code or Kimi Code processes, then retry."
+msgstr "Kimi Code no pudo actualizar sus credenciales porque otro proceso está usando el archivo de credenciales. Cierra otros procesos de Orzi Code o Kimi Code y vuelve a intentarlo."
 
 #: src/renderer/i18n/sharedMessages.ts
 msgid "Kimi Code ended the turn without returning a response. Restart the thread and try again."
@@ -6958,8 +6958,8 @@ msgstr "Iniciar al arrancar"
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-msgid "Launch Poracode automatically when you sign in to Windows."
-msgstr "Iniciar Poracode automáticamente al iniciar sesión en Windows."
+msgid "Launch Orzi Code automatically when you sign in to Windows."
+msgstr "Iniciar Orzi Code automáticamente al iniciar sesión en Windows."
 
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
 msgid "Launch thread"
@@ -7335,12 +7335,12 @@ msgstr "Administra skills compartidas en ámbitos globales y de proyecto."
 
 #: src/renderer/views/SettingsOverlay/parts/McpServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-msgid "Manage the MCP server configurations Poracode adds when starting supported agents. Workspace servers can be configured in each project's settings."
-msgstr "Administra las configuraciones de servidores MCP que Poracode añade al iniciar agentes compatibles. Los servidores del espacio de trabajo se pueden configurar en los ajustes de cada proyecto."
+msgid "Manage the MCP server configurations Orzi Code adds when starting supported agents. Workspace servers can be configured in each project's settings."
+msgstr "Administra las configuraciones de servidores MCP que Orzi Code añade al iniciar agentes compatibles. Los servidores del espacio de trabajo se pueden configurar en los ajustes de cada proyecto."
 
 #: src/renderer/views/SettingsOverlay/parts/SkillsSettings.tsx
-#~ msgid "Manage the skills Poracode makes available to supported agents. Project skills can be managed in each project's settings."
-#~ msgstr "Gestiona los skills que Poracode pone a disposición de los agentes compatibles. Los skills de proyecto se pueden gestionar en la configuración de cada proyecto."
+#~ msgid "Manage the skills Orzi Code makes available to supported agents. Project skills can be managed in each project's settings."
+#~ msgstr "Gestiona los skills que Orzi Code pone a disposición de los agentes compatibles. Los skills de proyecto se pueden gestionar en la configuración de cada proyecto."
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarWorkspaceSwitcher.tsx
 #~ msgid "Manage workspaces"
@@ -7360,8 +7360,8 @@ msgid "Managed by {pluginName}"
 msgstr "Gestionado por {pluginName}"
 
 #: src/renderer/components/mcp/McpExternalImportModal.tsx
-msgid "Managed by Poracode"
-msgstr "Gestionado por Poracode"
+msgid "Managed by Orzi Code"
+msgstr "Gestionado por Orzi Code"
 
 #: src/renderer/components/skills/SkillsManager.tsx
 msgid "Managed by provider"
@@ -9199,12 +9199,12 @@ msgid "Open Settings"
 msgstr "Abrir ajustes"
 
 #: src/mobile/views/DesktopsView.tsx
-#~ msgid "Open Settings → Remote Access in Poracode on this computer, then paste its pairing token here."
-#~ msgstr "Abre Configuración → Acceso remoto en Poracode en este equipo y pega aquí el token de emparejamiento."
+#~ msgid "Open Settings → Remote Access in Orzi Code on this computer, then paste its pairing token here."
+#~ msgstr "Abre Configuración → Acceso remoto en Orzi Code en este equipo y pega aquí el token de emparejamiento."
 
 #: src/mobile/views/DesktopsView.tsx
-msgid "Open Settings → Remote Access in Poracode on your desktop, then scan the QR code from here — or enter the endpoint and pairing token manually."
-msgstr "Abre Ajustes → Acceso remoto en Poracode en tu escritorio y luego escanea el código QR desde aquí, o introduce el endpoint y el token de emparejamiento manualmente."
+msgid "Open Settings → Remote Access in Orzi Code on your desktop, then scan the QR code from here — or enter the endpoint and pairing token manually."
+msgstr "Abre Ajustes → Acceso remoto en Orzi Code en tu escritorio y luego escanea el código QR desde aquí, o introduce el endpoint y el token de emparejamiento manualmente."
 
 #. placeholder {0}: display.title
 #: src/renderer/components/thread/ChatPane/parts/items/SubAgentToolCall.tsx
@@ -9285,8 +9285,8 @@ msgid "OpenSSH private key"
 msgstr "Clave privada OpenSSH"
 
 #: src/renderer/components/plugins/pluginCopy.ts
-msgid "Operate desktop apps through Poracode's desktop-control tools."
-msgstr "Opera aplicaciones de escritorio con las herramientas de control de Poracode."
+msgid "Operate desktop apps through Orzi Code's desktop-control tools."
+msgstr "Opera aplicaciones de escritorio con las herramientas de control de Orzi Code."
 
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Optional"
@@ -9322,6 +9322,79 @@ msgstr "O escribe una respuesta personalizada"
 #: src/renderer/utils/projectIconColors.ts
 msgid "Orange"
 msgstr "Naranja"
+
+#: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
+msgid "Original project"
+msgstr "Proyecto original"
+
+#: src/renderer/components/common/BrandWordmark.tsx
+#: src/renderer/components/mcp/McpServersManager.tsx
+#: src/renderer/components/plugins/pluginCopy.ts
+#: src/renderer/components/thread/ContinueInProviderDialog.tsx
+#: src/renderer/components/thread/ThreadComposerSection.tsx
+#: src/renderer/components/thread/ThreadDraftComposerArea.tsx
+#: src/renderer/theme/themePresets.ts
+#: src/renderer/views/ProfileOverlay/parts/ShareCard.tsx
+msgid "Orzi Code"
+msgstr "Orzi Code"
+
+#: src/renderer/views/SettingsOverlay/parts/SshConnectionForm.tsx
+msgid "Orzi Code and your agents run on the remote machine. SSH is used only to start the remote environment and secure its local tunnel."
+msgstr "Orzi Code y tus agentes se ejecutan en la máquina remota. SSH solo se usa para iniciar el entorno remoto y proteger su túnel local."
+
+#: src/renderer/components/plugins/pluginCopy.ts
+msgid "Orzi Code could not create this plugin's data folder."
+msgstr "Orzi Code no pudo crear la carpeta de datos de este plugin."
+
+#: src/renderer/state/remoteServersStore.ts
+msgid "Orzi Code Desktop"
+msgstr "Orzi Code Desktop"
+
+#: src/renderer/components/skills/SkillMarketplaceModal.tsx
+#~ msgid "Orzi Code does not store marketplace credentials in plain settings. Open the catalog to browse its security-scanned skills."
+#~ msgstr "Orzi Code no guarda las credenciales del marketplace como texto sin cifrar en los ajustes. Abre el catálogo para explorar sus skills analizadas por seguridad."
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Orzi Code Helper failed to start. Check that Node 24.10 or newer and npm are installed on the remote machine."
+msgstr "Orzi Code Helper no pudo iniciarse. Comprueba que Node 24.10 o posterior y npm estén instalados en la máquina remota."
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Orzi Code Helper is not ready yet (HTTP {status})."
+msgstr "Orzi Code Helper aún no está listo (HTTP {status})."
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Orzi Code Helper returned an invalid response."
+msgstr "Orzi Code Helper devolvió una respuesta no válida."
+
+#: src/renderer/theme/themePresets.ts
+msgid "Orzi Code Legacy"
+msgstr "Orzi Code Legacy"
+
+#: src/renderer/components/startup/StartupRecoveryScreen.tsx
+msgid "Orzi Code may be waiting on saved data or a background service. You can keep waiting, restart, or install an available update."
+msgstr "Es posible que Orzi Code esté esperando datos guardados o un servicio en segundo plano. Puedes seguir esperando, reiniciar o instalar una actualización disponible."
+
+#: src/renderer/components/skills/SkillImportModal.tsx
+#: src/renderer/components/skills/SkillMarketplaceModal.tsx
+#: src/renderer/components/skills/SkillsManager.tsx
+msgid "Orzi Code only"
+msgstr "Solo Orzi Code"
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Orzi Code SSH runtime manifest is missing or invalid: {path}"
+msgstr "Falta el manifiesto de tiempo de ejecución SSH de Orzi Code o no es válido: {path}"
+
+#: src/mobile/views/DesktopsView.tsx
+msgid "Orzi Code will install or reuse its server on the SSH host and keep credentials in this device's secure storage."
+msgstr "Orzi Code instalará o reutilizará su servidor en el host SSH y guardará las credenciales en el almacenamiento seguro de este dispositivo."
+
+#: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
+msgid "Orzi Code will restart, back up its current data, and replace it with a complete copy of your Lightcode data."
+msgstr "Orzi Code se reiniciará, hará una copia de seguridad de sus datos actuales y los reemplazará por una copia completa de tus datos de Lightcode."
+
+#: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
+msgid "Orzi Code's built-in browser tools."
+msgstr "Las herramientas de navegador integradas de Orzi Code."
 
 #: src/renderer/components/thread/ThreadRuntimeRequestPanel/StructuredCustomValues.tsx
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
@@ -9414,8 +9487,8 @@ msgid "Pair again"
 msgstr "Emparejar de nuevo"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
-msgid "Pair with Poracode"
-msgstr "Emparejar con Poracode"
+msgid "Pair with Orzi Code"
+msgstr "Emparejar con Orzi Code"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Paired devices"
@@ -9748,66 +9821,8 @@ msgstr "Apunta este perfil a un proveedor distinto de Anthropic (z.ai, …) con 
 
 #: src/renderer/views/SettingsOverlay/parts/AppearanceSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-msgid "Popular editor themes adapted to Poracode. Each follows the light or dark mode above."
-msgstr "Temas populares de editores adaptados a Poracode. Cada uno sigue el modo claro u oscuro de arriba."
-
-#: src/renderer/components/mcp/McpServersManager.tsx
-#: src/renderer/components/plugins/pluginCopy.ts
-#: src/renderer/components/thread/ContinueInProviderDialog.tsx
-#: src/renderer/components/thread/ThreadComposerSection.tsx
-#: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Poracode"
-msgstr "Poracode"
-
-#: src/renderer/views/SettingsOverlay/parts/SshConnectionForm.tsx
-msgid "Poracode and your agents run on the remote machine. SSH is used only to start the remote environment and secure its local tunnel."
-msgstr "Poracode y tus agentes se ejecutan en la máquina remota. SSH solo se usa para iniciar el entorno remoto y proteger su túnel local."
-
-#: src/renderer/components/plugins/pluginCopy.ts
-msgid "Poracode could not create this plugin's data folder."
-msgstr "Poracode no pudo crear la carpeta de datos de este plugin."
-
-#: src/renderer/components/skills/SkillMarketplaceModal.tsx
-#~ msgid "Poracode does not store marketplace credentials in plain settings. Open the catalog to browse its security-scanned skills."
-#~ msgstr "Poracode no guarda las credenciales del marketplace como texto sin cifrar en los ajustes. Abre el catálogo para explorar sus skills analizadas por seguridad."
-
-#: src/renderer/i18n/sharedMessages.ts
-msgid "Poracode Helper failed to start. Check that Node 24.10 or newer and npm are installed on the remote machine."
-msgstr "Poracode Helper no pudo iniciarse. Comprueba que Node 24.10 o posterior y npm estén instalados en la máquina remota."
-
-#: src/renderer/i18n/sharedMessages.ts
-msgid "Poracode Helper is not ready yet (HTTP {status})."
-msgstr "Poracode Helper aún no está listo (HTTP {status})."
-
-#: src/renderer/i18n/sharedMessages.ts
-msgid "Poracode Helper returned an invalid response."
-msgstr "Poracode Helper devolvió una respuesta no válida."
-
-#: src/renderer/components/startup/StartupRecoveryScreen.tsx
-msgid "Poracode may be waiting on saved data or a background service. You can keep waiting, restart, or install an available update."
-msgstr "Es posible que Poracode esté esperando datos guardados o un servicio en segundo plano. Puedes seguir esperando, reiniciar o instalar una actualización disponible."
-
-#: src/renderer/components/skills/SkillImportModal.tsx
-#: src/renderer/components/skills/SkillMarketplaceModal.tsx
-#: src/renderer/components/skills/SkillsManager.tsx
-msgid "Poracode only"
-msgstr "Solo Poracode"
-
-#: src/renderer/i18n/sharedMessages.ts
-msgid "Poracode SSH runtime manifest is missing or invalid: {path}"
-msgstr "Falta el manifiesto de tiempo de ejecución SSH de Poracode o no es válido: {path}"
-
-#: src/mobile/views/DesktopsView.tsx
-msgid "Poracode will install or reuse its server on the SSH host and keep credentials in this device's secure storage."
-msgstr "Poracode instalará o reutilizará su servidor en el host SSH y guardará las credenciales en el almacenamiento seguro de este dispositivo."
-
-#: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
-msgid "Poracode will restart, back up its current data, and replace it with a complete copy of your Lightcode data."
-msgstr "Poracode se reiniciará, hará una copia de seguridad de sus datos actuales y los reemplazará por una copia completa de tus datos de Lightcode."
-
-#: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
-msgid "Poracode's built-in browser tools."
-msgstr "Las herramientas de navegador integradas de Poracode."
+msgid "Popular editor themes adapted to Orzi Code. Each follows the light or dark mode above."
+msgstr "Temas populares de editores adaptados a Orzi Code. Cada uno sigue el modo claro u oscuro de arriba."
 
 #: src/renderer/components/thread/MoveThreadToWorktreeDialog.tsx
 #~ msgid "poracode/my-branch"
@@ -10157,8 +10172,8 @@ msgid "Proposed plan"
 msgstr "Plan propuesto"
 
 #: src/renderer/components/mcp/McpServersManager.tsx
-msgid "Provided and managed by Poracode for supported agents."
-msgstr "Poracode lo proporciona y administra para los agentes compatibles."
+msgid "Provided and managed by Orzi Code for supported agents."
+msgstr "Orzi Code lo proporciona y administra para los agentes compatibles."
 
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/authHelpers.ts
 msgid "provider"
@@ -10230,8 +10245,8 @@ msgid "Pull ↓{behind}"
 msgstr "Pull ↓{behind}"
 
 #: src/renderer/i18n/sharedMessages.ts
-msgid "Pull did not complete. Your local changes remain in a Poracode stash."
-msgstr "El pull no se completó. Tus cambios locales permanecen en un stash de Poracode."
+msgid "Pull did not complete. Your local changes remain in an Orzi Code stash."
+msgstr "El pull no se completó. Tus cambios locales permanecen en un stash de Orzi Code."
 
 #: src/renderer/i18n/sharedMessages.ts
 msgid "Pull failed: {detail}"
@@ -10439,8 +10454,8 @@ msgid "Re-run failed jobs"
 msgstr "Volver a ejecutar los trabajos fallidos"
 
 #: src/renderer/components/plugins/pluginCopy.ts
-msgid "Read and drive Poracode itself: threads, terminal panes, git, pull requests, and schedules."
-msgstr "Lee y controla el propio Poracode: hilos, paneles de terminal, git, pull requests y programaciones."
+msgid "Read and drive Orzi Code itself: threads, terminal panes, git, pull requests, and schedules."
+msgstr "Lee y controla el propio Orzi Code: hilos, paneles de terminal, git, pull requests y programaciones."
 
 #: src/renderer/components/plugins/pluginCopy.ts
 msgid "Read the Terminal panel attached to this worktree and report the evidence."
@@ -10881,8 +10896,8 @@ msgid "Removing {profileName} deletes its saved API key. Threads that use this p
 msgstr "Al eliminar {profileName} se borra su clave de API guardada. Los hilos que usan este perfil ya no encontrarán su agente."
 
 #: src/renderer/views/SettingsOverlay/parts/ClaudeProfileSettings.tsx
-msgid "Removing {profileName} drops its Poracode settings — env vars, models, and effort. Its config directory and the Claude credentials inside it stay on disk."
-msgstr "Al eliminar {profileName} se descartan sus ajustes de Poracode: variables de entorno, modelos y esfuerzo. Su directorio de configuración y las credenciales de Claude que contiene permanecen en el disco."
+msgid "Removing {profileName} drops its Orzi Code settings — env vars, models, and effort. Its config directory and the Claude credentials inside it stay on disk."
+msgstr "Al eliminar {profileName} se descartan sus ajustes de Orzi Code: variables de entorno, modelos y esfuerzo. Su directorio de configuración y las credenciales de Claude que contiene permanecen en el disco."
 
 #: src/mobile/ThreadTitleRow.tsx
 #: src/mobile/TodoActionsSheet.tsx
@@ -11105,8 +11120,8 @@ msgid "Resolves merge conflicts during rebase or merge."
 msgstr "Resuelve conflictos de fusión durante el rebase o la fusión."
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
-msgid "Restart Poracode"
-msgstr "Reiniciar Poracode"
+msgid "Restart Orzi Code"
+msgstr "Reiniciar Orzi Code"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
@@ -11402,8 +11417,8 @@ msgstr "Ejecuta un prompt con varios agentes y luego compara su trabajo."
 #~ msgstr "Ejecuta tareas independientes en este dispositivo sin un proyecto."
 
 #: src/renderer/views/SchedulesView/SchedulesView.tsx
-msgid "Run standalone tasks on this device. Schedules run while the device is awake and Poracode is open."
-msgstr "Ejecuta tareas independientes en este dispositivo. Las programaciones se ejecutan mientras el dispositivo está activo y Poracode está abierto."
+msgid "Run standalone tasks on this device. Schedules run while the device is awake and Orzi Code is open."
+msgstr "Ejecuta tareas independientes en este dispositivo. Las programaciones se ejecutan mientras el dispositivo está activo y Orzi Code está abierto."
 
 #: src/renderer/commands/registry.ts
 msgid "Run Terminal Command"
@@ -11609,8 +11624,8 @@ msgid "Scheduled tasks on this desktop"
 msgstr "Tareas programadas en este escritorio"
 
 #: src/renderer/views/SchedulesView/SchedulesView.tsx
-#~ msgid "Scheduled tasks run only while this device is awake and Poracode is open."
-#~ msgstr "Las tareas programadas solo se ejecutan mientras este dispositivo está activo y Poracode está abierto."
+#~ msgid "Scheduled tasks run only while this device is awake and Orzi Code is open."
+#~ msgstr "Las tareas programadas solo se ejecutan mientras este dispositivo está activo y Orzi Code está abierto."
 
 #: src/mobile/settingsSections.ts
 #: src/renderer/views/MainView/parts/Sidebar/parts/sidebarShortcuts.tsx
@@ -11968,8 +11983,8 @@ msgid "Server {target} could not be started and was skipped."
 msgstr "No se pudo iniciar el servidor {target} y se omitió."
 
 #: src/renderer/components/plugins/pluginCopy.ts
-msgid "Server {target} has a name Poracode cannot use."
-msgstr "El servidor {target} tiene un nombre que Poracode no puede usar."
+msgid "Server {target} has a name Orzi Code cannot use."
+msgstr "El servidor {target} tiene un nombre que Orzi Code no puede usar."
 
 #: src/renderer/components/plugins/pluginCopy.ts
 msgid "Server {target} is not configured correctly and was skipped."
@@ -11980,8 +11995,8 @@ msgid "Server {target} runs on this computer and is unavailable for WSL projects
 msgstr "El servidor {target} se ejecuta en este equipo y no está disponible para proyectos WSL."
 
 #: src/renderer/components/plugins/PluginDetail.tsx
-msgid "Servers this plugin declares in mcp.json. Poracode passes them to every supported agent."
-msgstr "Servidores que este plugin declara en mcp.json. Poracode los pasa a todos los agentes compatibles."
+msgid "Servers this plugin declares in mcp.json. Orzi Code passes them to every supported agent."
+msgstr "Servidores que este plugin declara en mcp.json. Orzi Code los pasa a todos los agentes compatibles."
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 msgid "Set group color"
@@ -13109,8 +13124,8 @@ msgstr "Toca + para agregar una carpeta o clonar un repositorio en tu escritorio
 #~ msgstr "Toca + para emparejar directamente o conectarte a una máquina remota mediante SSH."
 
 #: src/mobile/views/DesktopsView.tsx
-#~ msgid "Tap + to pair with Poracode on your desktop."
-#~ msgstr "Toca + para emparejar con Poracode en tu escritorio."
+#~ msgid "Tap + to pair with Orzi Code on your desktop."
+#~ msgstr "Toca + para emparejar con Orzi Code en tu escritorio."
 
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/CreatePrModal.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/PrSection.tsx
@@ -13244,8 +13259,8 @@ msgid "That pairing code is no longer valid. Open Settings → Remote Access on 
 msgstr "Ese código de emparejamiento ya no es válido. Abre Ajustes → Acceso remoto en el escritorio, pulsa «Nuevo código» y vuelve a emparejar."
 
 #: src/mobile/routeComponents.tsx
-msgid "That QR code isn't a Poracode pairing link."
-msgstr "Ese código QR no es un enlace de emparejamiento de Poracode."
+msgid "That QR code isn't an Orzi Code pairing link."
+msgstr "Ese código QR no es un enlace de emparejamiento de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "That remote session was already gone."
@@ -13347,8 +13362,8 @@ msgid "The normal app shell could not render. The diagnostics below are shown be
 msgstr "El shell normal de la app no se pudo renderizar. Los diagnósticos siguientes se muestran antes de recargar para que se pueda investigar la falla."
 
 #: src/mobile/useRemoteDesktop.ts
-msgid "The remote Poracode server returned no pairing credential."
-msgstr "El servidor remoto de Poracode no devolvió ninguna credencial de emparejamiento."
+msgid "The remote Orzi Code server returned no pairing credential."
+msgstr "El servidor remoto de Orzi Code no devolvió ninguna credencial de emparejamiento."
 
 #: src/renderer/state/remoteServersStore.ts
 msgid "The remote server returned no pairing credential."
@@ -13427,8 +13442,8 @@ msgid "The skills marketplace couldn't be loaded."
 msgstr "No se pudo cargar el marketplace de skills."
 
 #: src/renderer/i18n/sharedMessages.ts
-msgid "The SSH tunnel reached an incompatible Poracode server."
-msgstr "El túnel SSH llegó a un servidor de Poracode incompatible."
+msgid "The SSH tunnel reached an incompatible Orzi Code server."
+msgstr "El túnel SSH llegó a un servidor de Orzi Code incompatible."
 
 #: src/renderer/components/thread/ContinueInProviderDialog.tsx
 msgid "the target provider"
@@ -13586,8 +13601,8 @@ msgstr "Esta página HTTPS no pudo conectar con el escritorio en HTTP simple. Pe
 #~ msgstr "Cursor CLI, ACP y SDK usan esta clave para este perfil."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
-#~ msgid "This link opens the app Poracode serves on your network. The hosted app is served over HTTPS, which browsers block from reaching a plain-HTTP desktop."
-#~ msgstr "Este enlace abre la app que Poracode sirve en tu red. La app alojada se sirve por HTTPS, lo que impide que los navegadores lleguen a un escritorio en HTTP simple."
+#~ msgid "This link opens the app Orzi Code serves on your network. The hosted app is served over HTTPS, which browsers block from reaching a plain-HTTP desktop."
+#~ msgstr "Este enlace abre la app que Orzi Code sirve en tu red. La app alojada se sirve por HTTPS, lo que impide que los navegadores lleguen a un escritorio en HTTP simple."
 
 #: src/renderer/views/SettingsOverlay/parts/machineScope/MachineScopeHeading.tsx
 msgid "this machine"
@@ -13633,8 +13648,8 @@ msgid "This plugin's folder could not be read."
 msgstr "No se pudo leer la carpeta de este plugin."
 
 #: src/renderer/components/plugins/pluginCopy.ts
-msgid "This plugin's Poracode settings were ignored because they are not valid."
-msgstr "Se ignoraron los ajustes de Poracode de este plugin porque no son válidos."
+msgid "This plugin's Orzi Code settings were ignored because they are not valid."
+msgstr "Se ignoraron los ajustes de Orzi Code de este plugin porque no son válidos."
 
 #: src/renderer/components/plugins/pluginCopy.ts
 msgid "This plugin's skills could not be read."
@@ -13692,8 +13707,8 @@ msgid "This removes the worktree on \"{0}\", then deletes the branch."
 msgstr "Esto elimina el worktree en \"{0}\" y luego elimina la rama."
 
 #: src/renderer/components/mcp/McpServersManager.tsx
-msgid "This server requires authentication before Poracode can check it."
-msgstr "Este servidor requiere autenticación antes de que Poracode pueda comprobarlo."
+msgid "This server requires authentication before Orzi Code can check it."
+msgstr "Este servidor requiere autenticación antes de que Orzi Code pueda comprobarlo."
 
 #: src/renderer/components/plugins/pluginCopy.ts
 msgid "This server runs on this computer and is unavailable for WSL projects."
@@ -13712,8 +13727,8 @@ msgid "This thread is not ready for Steer."
 msgstr "Este hilo no está listo para una redirección."
 
 #: src/renderer/i18n/sharedMessages.ts
-msgid "This thread switched provider without transferring context: {agent} started without Poracode's read_thread tool, so it cannot read the earlier conversation. Re-enable the app-controls MCP tool, or summarize what it needs."
-msgstr "Este hilo cambió de proveedor sin transferir contexto: {agent} se inició sin la herramienta read_thread de Poracode, así que no puede leer la conversación anterior. Vuelve a habilitar la herramienta MCP app-controls o resume lo que necesita."
+msgid "This thread switched provider without transferring context: {agent} started without Orzi Code's read_thread tool, so it cannot read the earlier conversation. Re-enable the app-controls MCP tool, or summarize what it needs."
+msgstr "Este hilo cambió de proveedor sin transferir contexto: {agent} se inició sin la herramienta read_thread de Orzi Code, así que no puede leer la conversación anterior. Vuelve a habilitar la herramienta MCP app-controls o resume lo que necesita."
 
 #. placeholder {0}: props.worktreeBranch
 #: src/renderer/views/MainView/parts/Sidebar/parts/DeleteWorktreePopover.tsx
@@ -13721,8 +13736,8 @@ msgstr "Este hilo cambió de proveedor sin transferir contexto: {agent} se inici
 #~ msgstr "Este hilo usa el worktree <0>{0}</0>. ¿Eliminar también el directorio del worktree?"
 
 #: src/renderer/i18n/sharedMessages.ts
-msgid "This thread was forked without transferring context: {agent} started without Poracode's read_thread tool, so it cannot read the original conversation. Re-enable the app-controls MCP tool, or summarize what it needs."
-msgstr "Este hilo se bifurcó sin transferir contexto: {agent} se inició sin la herramienta read_thread de Poracode, así que no puede leer la conversación original. Vuelve a habilitar la herramienta MCP app-controls o resume lo que necesita."
+msgid "This thread was forked without transferring context: {agent} started without Orzi Code's read_thread tool, so it cannot read the original conversation. Re-enable the app-controls MCP tool, or summarize what it needs."
+msgstr "Este hilo se bifurcó sin transferir contexto: {agent} se inició sin la herramienta read_thread de Orzi Code, así que no puede leer la conversación original. Vuelve a habilitar la herramienta MCP app-controls o resume lo que necesita."
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/DeleteWorktreePopover.tsx
 #~ msgid "This will permanently delete the thread and its worktree."
@@ -13743,8 +13758,8 @@ msgstr "Este workflow no se puede iniciar manualmente."
 
 #. placeholder {0}: activeDialog.sourceBranch
 #: src/renderer/views/MainView/parts/PullFromSourceDialog.tsx
-msgid "This worktree has local changes. Poracode can temporarily stash them, pull from {0}, then re-apply your changes."
-msgstr "Este worktree tiene cambios locales. Poracode puede guardarlos temporalmente en el stash, extraer de {0} y luego volver a aplicar tus cambios."
+msgid "This worktree has local changes. Orzi Code can temporarily stash them, pull from {0}, then re-apply your changes."
+msgstr "Este worktree tiene cambios locales. Orzi Code puede guardarlos temporalmente en el stash, extraer de {0} y luego volver a aplicar tus cambios."
 
 #: src/renderer/components/thread/ChatPane/parts/items/Reasoning.tsx
 #: src/renderer/components/thread/ChatPane/parts/items/ReasoningInline.tsx
@@ -13860,8 +13875,8 @@ msgid "Timed out"
 msgstr "Tiempo de espera agotado"
 
 #: src/renderer/i18n/sharedMessages.ts
-msgid "Timed out waiting for Poracode Helper."
-msgstr "Se agotó el tiempo de espera de Poracode Helper."
+msgid "Timed out waiting for Orzi Code Helper."
+msgstr "Se agotó el tiempo de espera de Orzi Code Helper."
 
 #: src/renderer/components/mcp/McpServerEditor.tsx
 msgid "Timeout (ms)"
@@ -14031,8 +14046,8 @@ msgstr "Probar ahora"
 
 #: src/renderer/views/SettingsOverlay/parts/GitSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-#~ msgid "Turn on Auto-merge automatically for pull requests you create in Poracode."
-#~ msgstr "Activa automáticamente la fusión automática para los pull requests que crees en Poracode."
+#~ msgid "Turn on Auto-merge automatically for pull requests you create in Orzi Code."
+#~ msgstr "Activa automáticamente la fusión automática para los pull requests que crees en Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Turn on remote access to show a pairing code."
@@ -14040,8 +14055,8 @@ msgstr "Activa el acceso remoto para mostrar un código de emparejamiento."
 
 #: src/renderer/views/SettingsOverlay/parts/GitSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-#~ msgid "Turn on Watch PR automatically for pull requests you create in Poracode."
-#~ msgstr "Activa automáticamente Vigilar PR para los pull requests que crees en Poracode."
+#~ msgid "Turn on Watch PR automatically for pull requests you create in Orzi Code."
+#~ msgstr "Activa automáticamente Vigilar PR para los pull requests que crees en Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/UsageSettings.tsx
 msgid "Turn tracking on or off per provider. Disabled providers are skipped by the auto-refresh."
@@ -14641,8 +14656,8 @@ msgid "Update method"
 msgstr "Método de actualización"
 
 #: src/mobile/views/PortsView.tsx
-msgid "Update Poracode on your desktop to use port forwarding."
-msgstr "Actualiza Poracode en tu escritorio para usar el reenvío de puertos."
+msgid "Update Orzi Code on your desktop to use port forwarding."
+msgstr "Actualiza Orzi Code en tu escritorio para usar el reenvío de puertos."
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"
@@ -14860,8 +14875,8 @@ msgstr "Lo usa {conflict}"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
-msgid "Used for agents, authentication, installs, and Poracode's internal commands."
-msgstr "Se usa para agentes, autenticación, instalaciones y comandos internos de Poracode."
+msgid "Used for agents, authentication, installs, and Orzi Code's internal commands."
+msgstr "Se usa para agentes, autenticación, instalaciones y comandos internos de Orzi Code."
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -15102,8 +15117,6 @@ msgstr "Búsqueda web"
 msgid "Web server"
 msgstr "Servidor web"
 
-#. External link to the product website
-#: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/AcpRegistrySettings.tsx
 msgid "Website"
 msgstr "Sitio web"
@@ -15156,8 +15169,8 @@ msgid "What's New"
 msgstr "Novedades"
 
 #: src/renderer/views/SettingsOverlay/parts/ChangelogSettings.tsx
-msgid "What's new in Poracode, newest first."
-msgstr "Novedades en Poracode, las más recientes primero."
+msgid "What's new in Orzi Code, newest first."
+msgstr "Novedades en Orzi Code, las más recientes primero."
 
 #: src/renderer/views/SettingsOverlay/parts/SearchSettings.tsx
 msgid "When enabled, search respects <0>.gitignore</0> entries."
@@ -15165,8 +15178,8 @@ msgstr "Cuando está activado, la búsqueda respeta las entradas de <0>.gitignor
 
 #: src/renderer/views/SettingsOverlay/parts/BrowserSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-msgid "When links open in a Poracode browser tab, choose where the browser is revealed."
-msgstr "Cuando los enlaces se abren en una pestaña del navegador de Poracode, elige dónde se muestra el navegador."
+msgid "When links open in an Orzi Code browser tab, choose where the browser is revealed."
+msgstr "Cuando los enlaces se abren en una pestaña del navegador de Orzi Code, elige dónde se muestra el navegador."
 
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 msgid "When off, suppress notifications from terminal threads whose status comes from the OSC fallback (no CLI hook plugin)."
@@ -15179,8 +15192,8 @@ msgstr "Cuándo mostrar avisos dentro de la app para los hilos visibles."
 
 #: src/renderer/views/SettingsOverlay/parts/GeneralSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
-msgid "When you close the window, keep Poracode running in the system tray. Disable to quit on close."
-msgstr "Cuando cierres la ventana, mantener Poracode en ejecución en la bandeja del sistema. Desactívalo para salir al cerrar."
+msgid "When you close the window, keep Orzi Code running in the system tray. Disable to quit on close."
+msgstr "Cuando cierres la ventana, mantener Orzi Code en ejecución en la bandeja del sistema. Desactívalo para salir al cerrar."
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
@@ -15197,8 +15210,8 @@ msgid "Where do you want to begin?"
 msgstr "¿Por dónde quieres empezar?"
 
 #: src/renderer/views/SettingsOverlay/parts/WorktreeSettings.tsx
-msgid "Where Poracode creates git worktrees for new branches. Changes apply to worktrees created from now on; existing worktrees stay where they are."
-msgstr "Dónde crea Poracode los worktrees de git para las nuevas ramas. Los cambios se aplican a los worktrees creados a partir de ahora; los worktrees existentes permanecen donde están."
+msgid "Where Orzi Code creates git worktrees for new branches. Changes apply to worktrees created from now on; existing worktrees stay where they are."
+msgstr "Dónde crea Orzi Code los worktrees de git para las nuevas ramas. Los cambios se aplican a los worktrees creados a partir de ahora; los worktrees existentes permanecen donde están."
 
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 msgid "Where the run's conversation is created."
@@ -15413,8 +15426,8 @@ msgstr "Ubicación de almacenamiento de worktrees"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/ThreadSettings.tsx
-msgid "Worktree threads are marked done as soon as Poracode sees their pull request merge. Threads mid-turn wait until the turn finishes."
-msgstr "Los hilos de worktree se marcan como hechos en cuanto Poracode detecta que su pull request se fusiona. Los hilos con un turno en curso esperan a que el turno termine."
+msgid "Worktree threads are marked done as soon as Orzi Code sees their pull request merge. Threads mid-turn wait until the turn finishes."
+msgstr "Los hilos de worktree se marcan como hechos en cuanto Orzi Code detecta que su pull request se fusiona. Los hilos con un turno en curso esperan a que el turno termine."
 
 #. placeholder {0}: props.projectName
 #. placeholder {0}: props.worktreeBranch

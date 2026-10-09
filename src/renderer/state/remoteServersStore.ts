@@ -830,7 +830,7 @@ export const useRemoteServersStore = create<RemoteServersState>()(
         const tokenResult = await factory(normalized).exchangePairingCredential({
           credential: input.token,
           scopes: REMOTE_STANDARD_SCOPES,
-          client: { label: "Poracode Desktop", deviceType: "desktop" },
+          client: { label: i18n._(msg`Orzi Code Desktop`), deviceType: "desktop" },
         });
         const client = factory(normalized, tokenResult.accessToken);
         const [environment, snapshot, agentStatuses] = await Promise.all([

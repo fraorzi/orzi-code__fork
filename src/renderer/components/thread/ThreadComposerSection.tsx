@@ -315,7 +315,7 @@ function ThreadComposerSectionInner(props: ThreadComposerSectionProps & { thread
       ? [
           {
             id: "app-controls",
-            name: t`Poracode`,
+            name: t`Orzi Code`,
             icon: Settings2,
             enabled: true,
           },

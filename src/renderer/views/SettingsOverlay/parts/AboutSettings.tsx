@@ -12,7 +12,7 @@ import { SettingRow, SettingsPage } from "./SettingsForm";
 import appIconStableUrl from "../../../../../build/icon.png";
 import appIconNightlyUrl from "../../../../../build/icon-nightly.png";
 
-const GITHUB_REPO = "https://github.com/Porabuild/Poracode";
+const GITHUB_REPO = "https://github.com/fraorzi/orzi-code__fork";
 const WEBSITE_URL = "https://poracode.com/";
 
 function AboutLink(props: { href: string; children: React.ReactNode }) {
@@ -199,7 +199,7 @@ export function AboutSettings() {
               title={t`Import Lightcode data`}
               description={
                 <Trans>
-                  Copy all Lightcode data into Poracode. Poracode restarts and keeps a complete
+                  Copy all Lightcode data into Orzi Code. Orzi Code restarts and keeps a complete
                   backup of its current data.
                 </Trans>
               }
@@ -218,7 +218,7 @@ export function AboutSettings() {
 
         <div className="mt-8 space-y-3 border-t border-[var(--hairline)] pt-6">
           <AboutLink href={WEBSITE_URL}>
-            <Trans comment="External link to the product website">Website</Trans>
+            <Trans>Original project</Trans>
           </AboutLink>
           <br />
           <AboutLink href={GITHUB_REPO}>
@@ -233,7 +233,7 @@ export function AboutSettings() {
             <Trans>Report an Issue</Trans>
           </AboutLink>
           <br />
-          <AboutLink href={`${GITHUB_REPO}/blob/master/LICENSE`}>
+          <AboutLink href={`${GITHUB_REPO}/blob/main/LICENSE`}>
             <Trans comment="Link to the license file">License</Trans>
           </AboutLink>
         </div>
@@ -247,7 +247,7 @@ export function AboutSettings() {
         title={t`Import Lightcode data again?`}
         body={
           <Trans>
-            Poracode will restart, back up its current data, and replace it with a complete copy of
+            Orzi Code will restart, back up its current data, and replace it with a complete copy of
             your Lightcode data.
           </Trans>
         }

@@ -7,7 +7,8 @@
 // Cross-origin requests — notably the paired desktop's /api, /oauth and /ws
 // endpoints, which live on a different host — are never intercepted.
 const BUILD_VERSION = "__PORACODE_BUILD_VERSION__";
-const CACHE_NAME = `poracode-pwa-${BUILD_VERSION}`;
+// Shell v2 invalidates the earlier brand assets without changing user data.
+const CACHE_NAME = `poracode-pwa-v2-${BUILD_VERSION}`;
 const NAVIGATION_FALLBACK_DELAY_MS = 500;
 const APP_BASE_URL = new URL("./", self.location.href);
 const shellUrl = (path) => new URL(path, APP_BASE_URL).pathname;

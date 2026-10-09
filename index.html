@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Poracode</title>
+    <title>Orzi Code</title>
     <script>
       console.log(`[renderer-bootstrap] page +${Math.round(performance.now())}ms index parsed`);
     </script>
@@ -26,7 +26,7 @@
     </script>
     <script>
       // One-time namespace migration for renderer state copied from pre-rebrand
-      // installs. Keep the old keys as a backup; current code writes Poracode keys.
+      // installs. Keep the old keys as a backup; current code writes Orzi Code keys.
       (function () {
         try {
           for (var i = 0; i < localStorage.length; i++) {
@@ -50,7 +50,7 @@
       (function () {
         try {
           var root = document.documentElement;
-          var boot = JSON.parse(localStorage.getItem("poracode-boot") || "null");
+          var boot = JSON.parse(localStorage.getItem("poracode-boot-v2") || "null");
           var appearance =
             boot && (boot.appearance === "light" || boot.appearance === "dark")
               ? boot.appearance

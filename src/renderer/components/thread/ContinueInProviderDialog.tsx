@@ -643,7 +643,7 @@ export function ContinueInProviderDialog(props: {
             ? [
                 {
                   id: "app-controls",
-                  name: t`Poracode`,
+                  name: t`Orzi Code`,
                   icon: Settings2,
                   enabled: true,
                 },

@@ -61,7 +61,7 @@ export function PluginMarketplace(props: {
       </h1>
       <p className="mb-5 mt-1 text-xs text-muted">
         <Trans>
-          Bundles of skills and MCP servers that work across every supported agent. Poracode loads
+          Bundles of skills and MCP servers that work across every supported agent. Orzi Code loads
           any package built for the Agent Plugins specification.
         </Trans>
       </p>

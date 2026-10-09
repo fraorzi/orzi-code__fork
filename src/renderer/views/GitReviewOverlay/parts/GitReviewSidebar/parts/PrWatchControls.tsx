@@ -35,7 +35,7 @@ function blockedMessage(reason: NonNullable<PrWatch["blockedReason"]>): string {
     );
   }
   return i18n._(
-    msg`Automation is paused: this PR's branch could not be checked out. Poracode keeps retrying automatically.`,
+    msg`Automation is paused: this PR's branch could not be checked out. Orzi Code keeps retrying automatically.`,
   );
 }
 

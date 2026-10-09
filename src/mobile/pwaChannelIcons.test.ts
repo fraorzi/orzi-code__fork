@@ -72,9 +72,9 @@ describe("PWA channel icons", () => {
     expect(svg).toContain("<rect");
   });
 
-  it("draws the nightly pairing icon on the teal tile", () => {
-    expect(buildLocalPairingIconSvg("nightly")).toContain("#3BE0DA");
-    expect(buildLocalPairingIconSvg("stable")).not.toContain("#3BE0DA");
+  it("draws the nightly pairing icon with the Orzi Code light tile", () => {
+    expect(buildLocalPairingIconSvg("nightly")).toContain("#ececec");
+    expect(buildLocalPairingIconSvg("stable")).not.toContain("#ececec");
   });
 
   it.each(PORACODE_CHANNELS)("resolves the %s worker's notification icon", (channel) => {

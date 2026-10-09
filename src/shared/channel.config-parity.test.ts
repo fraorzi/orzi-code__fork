@@ -6,6 +6,7 @@ import {
   artifactPrefixFor,
   PORACODE_CHANNELS,
   productNameFor,
+  electronAppNameFor,
   updaterChannelFor,
   userDataDirNameFor,
 } from "./channel";
@@ -15,6 +16,7 @@ const cjs = requireFromHere("../../scripts/electron-builder.shared.cjs") as {
   CHANNELS: readonly string[];
   normalizeChannel: (v: unknown) => string;
   productNameFor: (channel: string) => string;
+  electronAppNameFor: (channel: string) => string;
   appIdFor: (channel: string) => string;
   userDataDirNameFor: (channel: string) => string;
   updaterChannelFor: (channel: string) => string | undefined;
@@ -30,6 +32,7 @@ describe("electron-builder.shared.cjs mirrors src/shared/channel.ts", () => {
   for (const channel of PORACODE_CHANNELS) {
     it(`agrees on every value for "${channel}"`, () => {
       expect(cjs.productNameFor(channel)).toBe(productNameFor(channel));
+      expect(cjs.electronAppNameFor(channel)).toBe(electronAppNameFor(channel));
       expect(cjs.appIdFor(channel)).toBe(appIdFor(channel));
       expect(cjs.userDataDirNameFor(channel)).toBe(userDataDirNameFor(channel));
       expect(cjs.updaterChannelFor(channel)).toBe(updaterChannelFor(channel));
@@ -44,10 +47,10 @@ describe("electron-builder.shared.cjs mirrors src/shared/channel.ts", () => {
     expect(cjs.normalizeChannel("beta")).toBe("stable");
   });
 
-  it("keeps macOS updater ZIPs on the legacy technical executable name", () => {
-    expect(cjs.macExecutableNameFor("stable", "updater")).toBe("Poracode Personal");
-    expect(cjs.macExecutableNameFor("nightly", "updater")).toBe("Poracode Personal Nightly");
-    expect(cjs.macExecutableNameFor("stable", "branded")).toBe("Poracode Personal");
-    expect(cjs.macExecutableNameFor("nightly", "branded")).toBe("Poracode Personal Nightly");
+  it("keeps macOS artifacts on the public executable name", () => {
+    expect(cjs.macExecutableNameFor("stable", "updater")).toBe("Orzi Code");
+    expect(cjs.macExecutableNameFor("nightly", "updater")).toBe("Orzi Code Nightly");
+    expect(cjs.macExecutableNameFor("stable", "branded")).toBe("Orzi Code");
+    expect(cjs.macExecutableNameFor("nightly", "branded")).toBe("Orzi Code Nightly");
   });
 });

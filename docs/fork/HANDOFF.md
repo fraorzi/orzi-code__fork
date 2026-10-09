@@ -1,4 +1,4 @@
-# Przekazanie osobistego forka PoraCode
+# Przekazanie Orzi Code
 
 Stan na 2026-10-09. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
 
@@ -22,13 +22,15 @@ Stan na 2026-10-09. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 
 Użytkownik zlecił kontynuację całej pozostałej listy oraz generowanie i edycję obrazów Google na istniejącej subskrypcji Gemini. Płatne API jest wykluczone. Oficjalna ścieżka Antigravity ma natywne `generate_image`; bieżąca dokumentacja deklaruje Nano Banana 2 bez wyboru modelu obrazu, więc nie obiecuj Nano Banana Pro przez CLI. `agy models` zgłasza brak logowania. Użytkownik otrzymał prośbę o zalogowanie przez `agy`; nie kopiuj ani nie drukuj tokenów. Pytanie o Groka nie otrzymało odpowiedzi.
 
-Użytkownik ustalił docelową nazwę Orzi Code i polecił zapisać [wymagania redesignu](redesign-requirements.md): pełny branding z ikoną/logo, kolorystyka, ikony i flow na podstawie rzeczywistych widoków Cursora, większe zdjęcia w inpucie oraz dropdown tylko z ulubionymi w kolumnach według subskrypcji. Pozostałe modele mają być dostępne przez opcję z plusem. Większe obrazy w inpucie oraz dropdown ulubionych z kolumnami kont i katalogiem pod plusem są już wdrożone i sprawdzone w Electron. Branding i motyw bazowy pozostają do wdrożenia. Referencję pustego widoku Cursor Agents obejrzano przez narzędzie UI; zasady zapisano w [DESIGN.md](../../DESIGN.md).
+Użytkownik ustalił docelową nazwę Orzi Code i polecił zapisać [wymagania redesignu](redesign-requirements.md): pełny branding z ikoną/logo, kolorystyka, ikony i flow na podstawie rzeczywistych widoków Cursora, większe zdjęcia w inpucie oraz dropdown tylko z ulubionymi w kolumnach według subskrypcji. Pozostałe modele mają być dostępne przez opcję z plusem. Większe obrazy w inpucie oraz dropdown ulubionych z kolumnami kont i katalogiem pod plusem są już wdrożone i sprawdzone w Electron. Branding Orzi Code, własne ikony i neutralny motyw bazowy są także wdrożone. Zachowano stare identyfikatory danych i nazwę techniczną Electron dla Keychain. Referencję pustego widoku Cursor Agents obejrzano przez narzędzie UI; zasady zapisano w [DESIGN.md](../../DESIGN.md).
 
 W bieżącym kodzie są trwałe zadania zespołu, jawne wznowienie zachowanego worktree, odzyskiwanie integracji i ekran sprzątania w ustawieniach Crossagents. Deterministyczne testy Git i smoke Electron przeszły. Naprawiono też ujawnione przez testy zamykanie paneli podczas pracy w tle. Szczegóły i granice zgodności opisuje początek [stanu implementacji](implementation.md). Te zmiany nie są jeszcze w zainstalowanym pakiecie.
 
 Pozostały zakres nadal obejmuje obrazy na subskrypcji, importer/scalanie historii, kanał aktualizacji forka, wersje agentów/rollback oraz rzeczywiste testy kont Google/Grok i własnego OAuth Figma. Implementacja OAuth MCP już istnieje; wymagane jest własne logowanie, nie przebudowa ani przejęcie poświadczeń Codex.
 
 Podstawowa obsługa obrazów jest teraz w kodzie: narzędzia MCP Crossagents, native image capability Antigravity, blokowanie API, walidacja plików i preview inline. Ścieżka supervisora z procesem testowym oraz renderer Electron przeszły kontrolę. Rzeczywisty Google nadal wymaga logowania użytkownika. Ograniczenia, wersję magazynu zespołu 2 i dowody opisuje początek [stanu implementacji](implementation.md). Nie utożsamiać tego z działającym Pro ani ze zmianą zainstalowanego pakietu.
+
+Branding i pełny smoke są opisane na początku [stanu implementacji](implementation.md). Pełny smoke mock oraz osobna kontrola po polsku w jasnym/ciemnym motywie przeszły. Zainstalowany pakiet nadal jest starszy. Aktualny kod został sprawdzony bez publikacji wydania. `agy models` na prawdziwym profilu nadal wymaga logowania, z CLI 1.3.2. Następne niezależne moduły to kanał aktualizacji forka i wersje agentów/rollback.
 
 ## Aktualizacja z 2026-10-07
 
@@ -72,7 +74,7 @@ Dodano osobne ustawienie automatycznych aktualizacji na stronie każdego agenta.
 - Figma działa w chacie Codex na podanym przykładzie. Współdzielenie połączenia zarządzanego przez aplikację z pozostałymi dostawcami wymaga osobnego OAuth. Nie kopiuj tokenów z Codex do forka.
 - Nazwane role i edytor puli modeli są wdrożone, sprawdzone także z rzeczywistymi modelami i przepakowane do zainstalowanej aplikacji. Szczegóły, testy i pozostały zakres podaje początek stanu implementacji.
 - Dalsze pomysły oh-my-pi są opisane w propozycji ról. Nie wszystkie zostały wybrane do implementacji.
-- Import historii użytkownika jest wykonany. Wykryte przy imporcie automatyczne kasowanie archiwum po 30 dniach zostało usunięte; pełną historię odtworzono ze snapshotu i sprawdzono po restarcie. Nie przywracaj tego kasowania. Brakuje ekranu importu/scalania, kanału publikacji aktualizacji samego forka, porządków w zachowanych worktree oraz odporności zespołu na restart. Pełne ograniczenia aktualizatorów i wspieranych platform są w stanie implementacji.
+- Import historii użytkownika jest wykonany. Wykryte przy imporcie automatyczne kasowanie archiwum po 30 dniach zostało usunięte; pełną historię odtworzono ze snapshotu i sprawdzono po restarcie. Nie przywracaj tego kasowania. Ekran importu/scalania, porządki w zachowanych worktree oraz jawne odzyskiwanie zespołu po restarcie są już w kodzie. Brakuje kanału publikacji aktualizacji samego forka. Pełne ograniczenia aktualizatorów i wspieranych platform są w stanie implementacji.
 - Osobne ustawienia automatycznych aktualizacji są dodane. Przypięcie konkretnej wersji i rollback z planu nie są wdrożone. Brakuje pełnej kontroli rzeczywistych aktualizacji oraz sesji Gemini/Grok na subskrypcjach. Użytkownik otrzymał pytanie o dostęp do Groka; import całej historii został już zlecony i wykonany.
 
 ## Miejsca w kodzie

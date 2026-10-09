@@ -111,7 +111,7 @@ export function ProviderMcpServersSection(props: { agentKind: string; descriptio
               <div className="space-y-0.5">
                 <McpToggleRow
                   title={t`Browser`}
-                  description={<Trans>Poracode's built-in browser tools.</Trans>}
+                  description={<Trans>Orzi Code's built-in browser tools.</Trans>}
                   isSelected={draftMcp.browserMcp}
                   isDisabled={mcpSaving}
                   onChange={(value) =>

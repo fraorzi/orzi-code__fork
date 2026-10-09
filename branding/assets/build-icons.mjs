@@ -1,4 +1,4 @@
-// Renders the Poracode SVG masters into production icon assets.
+// Renders the Orzi Code SVG masters into production icon assets.
 // Uses the repo's `sharp` for SVG->PNG, macOS `iconutil` for .icns, and a tiny
 // PNG-in-ICO packer for .ico. Outputs to branding/assets/out/. Run from repo root:
 //   node branding/assets/build-icons.mjs
@@ -30,10 +30,10 @@ async function macPng(svg, size) {
 // shells, ink P on light shells. Ice is too faint against a light taskbar, so
 // the nightly accent deepens for the ink variant.
 const TRAY_VARIANTS = [
-  { name: "tray-icon", glyph: "#EAF0FB", accent: "#8B7BFF" },
-  { name: "tray-icon-dark", glyph: "#0E0E14", accent: "#8B7BFF" },
-  { name: "tray-icon-nightly", glyph: "#EAF0FB", accent: "#5EE6E0" },
-  { name: "tray-icon-nightly-dark", glyph: "#0E0E14", accent: "#0E9C97" },
+  { name: "tray-icon", glyph: "#e6e6e6", accent: "#8B7BFF" },
+  { name: "tray-icon-dark", glyph: "#232323", accent: "#8B7BFF" },
+  { name: "tray-icon-nightly", glyph: "#e6e6e6", accent: "#5EE6E0" },
+  { name: "tray-icon-nightly-dark", glyph: "#232323", accent: "#0E9C97" },
 ];
 
 async function trayPng(svg, size, { glyph, accent }) {
@@ -42,7 +42,7 @@ async function trayPng(svg, size, { glyph, accent }) {
       'viewBox="0 0 1024 1024" width="1024" height="1024"',
       'viewBox="256 254 522 522" width="522" height="522"',
     )
-    .replace('fill="currentColor"', `fill="${glyph}"`)
+    .replaceAll('fill="currentColor"', `fill="${glyph}"`)
     .replace("#8B7BFF", accent);
   return sharp(Buffer.from(source), { density: 512 })
     .resize(size, size, { fit: "contain" })
@@ -59,7 +59,7 @@ async function trayMacTemplatePng(svg, size) {
       'viewBox="0 0 1024 1024" width="1024" height="1024"',
       'viewBox="256 254 522 522" width="522" height="522"',
     )
-    .replace('fill="currentColor"', 'fill="#000000"')
+    .replaceAll('fill="currentColor"', 'fill="#000000"')
     .replace("#8B7BFF", "#000000");
   // macOS menu-bar template: the canvas point size matches the bar height, but the
   // glyph must sit inside it with margin so it doesn't tower over neighbouring

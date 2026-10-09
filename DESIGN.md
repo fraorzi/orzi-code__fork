@@ -1,5 +1,7 @@
 # Orzi Code
 
+<!-- Hallmark - pre-emit critique: P5 H4 E5 S5 R5 V4. -->
+
 ## Źródło i zakres
 
 Wymagania: [redesign](docs/fork/redesign-requirements.md). Referencją jest rzeczywisty pusty widok Cursor Agents na macOS, odczytany 2026-10-09 przez narzędzie UI. Zrzut istniejącej rozmowy został odrzucony przez kontrolę prywatności; do inspekcji otwarto pusty chat. Treści rozmów i projektów nie są materiałem redesignu.

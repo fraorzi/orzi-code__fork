@@ -5,6 +5,7 @@ import {
   artifactPrefixFor,
   PORACODE_CHANNELS,
   productNameFor,
+  electronAppNameFor,
   updaterChannelFor,
   userDataDirNameFor,
 } from "./channel";
@@ -15,8 +16,13 @@ describe("channel", () => {
   });
 
   it("returns the right product names", () => {
-    expect(productNameFor("stable")).toBe("Poracode Personal");
-    expect(productNameFor("nightly")).toBe("Poracode Personal Nightly");
+    expect(productNameFor("stable")).toBe("Orzi Code");
+    expect(productNameFor("nightly")).toBe("Orzi Code Nightly");
+  });
+
+  it("preserves the previous Electron name and Keychain namespace across the public rename", () => {
+    expect(electronAppNameFor("stable")).toBe("Poracode Personal");
+    expect(electronAppNameFor("nightly")).toBe("Poracode Personal Nightly");
   });
 
   it("returns the right app ids", () => {
@@ -35,8 +41,8 @@ describe("channel", () => {
   });
 
   it("returns artifact prefixes that are distinct between channels", () => {
-    expect(artifactPrefixFor("stable")).toBe("Poracode Personal");
-    expect(artifactPrefixFor("nightly")).toBe("Poracode-Personal-Nightly");
+    expect(artifactPrefixFor("stable")).toBe("Orzi-Code");
+    expect(artifactPrefixFor("nightly")).toBe("Orzi-Code-Nightly");
     expect(artifactPrefixFor("stable")).not.toBe(artifactPrefixFor("nightly"));
   });
 });

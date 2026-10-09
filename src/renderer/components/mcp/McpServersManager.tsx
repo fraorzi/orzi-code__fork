@@ -193,7 +193,7 @@ export function McpServersManager(props: {
       .map((server) => ({ scope, source, server })),
   );
 
-  const builtInDescription = t`Provided and managed by Poracode for supported agents.`;
+  const builtInDescription = t`Provided and managed by Orzi Code for supported agents.`;
   const builtIns: BuiltInRow[] = [
     {
       id: "browser",
@@ -234,7 +234,7 @@ export function McpServersManager(props: {
       id: "app-controls",
       name: BUILT_IN_MCP_SERVER_NAMES["app-controls"],
       tools: BUILT_IN_MCP_SERVER_TOOL_NAMES["app-controls"],
-      label: t`Poracode`,
+      label: t`Orzi Code`,
       description: builtInDescription,
       icon: <Settings2 className="size-4" />,
     },
@@ -584,8 +584,8 @@ export function McpServersManager(props: {
                 </Trans>
               ) : (
                 <Trans>
-                  Built-in servers are managed by Poracode. They can be disabled globally but cannot
-                  be edited or removed.
+                  Built-in servers are managed by Orzi Code. They can be disabled globally but
+                  cannot be edited or removed.
                 </Trans>
               )}
             </p>
@@ -827,7 +827,7 @@ function McpServerProbeStatus(props: {
         <span className="size-2 shrink-0 rounded-full bg-warning" aria-hidden="true" />
         <Trans>Authentication required</Trans>
         <span aria-hidden="true">·</span>
-        <Trans>This server requires authentication before Poracode can check it.</Trans>
+        <Trans>This server requires authentication before Orzi Code can check it.</Trans>
       </div>
     );
   }

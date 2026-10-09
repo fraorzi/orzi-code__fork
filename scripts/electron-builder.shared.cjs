@@ -20,6 +20,10 @@ function normalizeChannel(value) {
 }
 
 function productNameFor(channel) {
+  return channel === "nightly" ? "Orzi Code Nightly" : "Orzi Code";
+}
+
+function electronAppNameFor(channel) {
   return channel === "nightly" ? "Poracode Personal Nightly" : "Poracode Personal";
 }
 
@@ -38,7 +42,7 @@ function updaterChannelFor(channel) {
 }
 
 function artifactPrefixFor(channel) {
-  return channel === "nightly" ? "Poracode-Personal-Nightly" : "Poracode Personal";
+  return channel === "nightly" ? "Orzi-Code-Nightly" : "Orzi-Code";
 }
 
 // Keep the same bundle name for installers and future personal updates.
@@ -52,6 +56,7 @@ module.exports = {
   PACKAGED_DIST_FILES,
   normalizeChannel,
   productNameFor,
+  electronAppNameFor,
   appIdFor,
   userDataDirNameFor,
   updaterChannelFor,

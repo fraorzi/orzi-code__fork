@@ -1,4 +1,4 @@
-/* Poracode brand type — Geist (Vercel, SIL OFL), bundled for offline use. */
+/* Orzi Code brand type - Geist (Vercel, SIL OFL), bundled for offline use. */
 @font-face {
   font-family: "Geist";
   src: url("../renderer/fonts/Geist-Variable.woff2") format("woff2");
@@ -16,6 +16,12 @@
 
 :root {
   --poracode-modal-radius: 0.7rem;
+}
+
+/* Menu exit cannot wait for animation frames in an occluded Electron window. */
+.dropdown__popover[data-exiting],
+.popover[data-exiting] {
+  animation: none;
 }
 
 .modal__dialog:not(.modal__dialog--cover):not(.modal__dialog--full),
@@ -1007,20 +1013,20 @@
   .light,
   [data-theme="light"] {
     color-scheme: light;
-    --background: oklch(0.96 0.004 286);
-    --foreground: oklch(0.21 0.006 286);
-    --surface: oklch(0.985 0.002 286);
-    --surface-secondary: oklch(0.955 0.003 286);
-    --surface-tertiary: oklch(0.94 0.003 286);
-    --overlay: oklch(0.99 0.002 286);
-    --muted: oklch(0.52 0.01 286);
-    --scrollbar: oklch(0.78 0.01 286);
+    --background: #f5f5f5;
+    --foreground: #252525;
+    --surface: #ffffff;
+    --surface-secondary: #f0f0f0;
+    --surface-tertiary: #ededed;
+    --overlay: #ffffff;
+    --muted: #686868;
+    --scrollbar: #bdbdbd;
     /* Neutral fill behind secondary/tertiary buttons, selects, chips, badges,
        toggle/checkbox/radio controls. Stepped darker than HeroUI's stock
        near-white default (~0.94) so these controls separate from the panel in
        light themes (~1.35:1 vs page) instead of vanishing into it. */
-    --default: oklch(0.86 0.004 286);
-    --accent: #5f6cd9;
+    --default: #d6d6d6;
+    --accent: #252525;
     --accent-foreground: var(--snow);
     --success: oklch(0.45 0.16 150);
     --success-foreground: var(--snow);
@@ -1042,48 +1048,41 @@
     --project-icon-blue: oklch(0.53 0.16 255);
     --project-icon-violet: oklch(0.53 0.19 292);
     --project-icon-pink: oklch(0.56 0.19 345);
-    --field-background: oklch(0.975 0.002 286);
-    --field-placeholder: oklch(0.55 0.01 286);
-    --field-border: oklch(0.84 0.006 286 / 0.7);
-    --segment: oklch(0.975 0.002 286);
-    --border: oklch(0.84 0.006 286 / 0.7);
-    --separator: oklch(0.88 0.004 286 / 0.9);
+    --field-background: #fafafa;
+    --field-placeholder: #858585;
+    --field-border: #cccccc;
+    --segment: #f2f2f2;
+    --border: #cccccc;
+    --separator: #dddddd;
 
     /* App-specific */
-    --sidebar-background: oklch(0.945 0.004 286);
-    --content-background: oklch(0.975 0.003 286);
+    --sidebar-background: #eeeeee;
+    --content-background: #fafafa;
     --window-header-background: var(--sidebar-background);
-    --composer-surface: oklch(0.982 0.002 286);
+    --composer-surface: #ffffff;
   }
 
   .dark,
   [data-theme="dark"] {
     color-scheme: dark;
-    /* Poracode "moonlight" — dark/cool surfaces, indigo accent. */
-    --background: #070709;
-    /* Primary text is a neutral off-white (no blue/violet chroma) so active
-       rows and chat prose read clean and "clear" like the Poracode Legacy
-       theme. The moonlight coolness lives in the surfaces/accent, not the
-       text — a tinted foreground made active text look violet. */
-    --foreground: #fafafa;
-    --surface: #0e0e14;
-    --surface-secondary: #1a1a1e;
+    /* Orzi Code: neutral graphite surfaces, light primary controls. */
+    --background: #191919;
+    --foreground: #d4d4d4;
+    --surface: #232323;
+    --surface-secondary: #2d2d2d;
     /* Matches --composer-surface so chat bubbles (user message) and the
        composer read as one surface. */
-    --surface-tertiary: #17171d;
+    --surface-tertiary: #222222;
     /* Floating chrome (modals, menus, popovers, tooltips) sits just above the
        panel surfaces. Fields/controls are lighter than this, so they read as
        raised cards on overlays instead of blending into them. */
-    --overlay: #121216;
-    /* Neutral cool-grey for secondary text — deliberately low chroma so it
-       reads as grey (not the old blue/violet cast). Kept a step below the
-       bright foreground so idle/secondary rows recede clearly from active
-       (foreground) ones. */
-    --muted: oklch(0.7 0.01 255);
-    --scrollbar: #3a3a48;
-    --default: #242429;
-    --accent: #8892ef;
-    --accent-foreground: #0a0a12;
+    --overlay: #282828;
+    /* Secondary text stays neutral and distinct from active text. */
+    --muted: #9f9f9f;
+    --scrollbar: #555555;
+    --default: #343434;
+    --accent: #e6e6e6;
+    --accent-foreground: #191919;
     --danger: oklch(0.64 0.2 24.63);
     --danger-foreground: var(--snow);
     /* Same project-icon hues, lifted for dark surfaces (see the light block). */
@@ -1095,25 +1094,22 @@
     --project-icon-blue: oklch(0.7 0.14 255);
     --project-icon-violet: oklch(0.71 0.16 292);
     --project-icon-pink: oklch(0.74 0.16 345);
-    --field-background: #18181b;
-    --field-placeholder: #6b6b7b;
-    --field-border: oklch(0.34 0.006 286 / 0.85);
-    --segment: #2e2f33;
-    --border: oklch(0.31 0.006 286 / 0.9);
-    --separator: oklch(0.3 0.006 286 / 0.85);
-    /* Brighter selected-row wash on dark so the active thread/list item reads
-       as a clearer, whiter highlight, well separated from the dimmed idle
-       rows (base is 11%). */
-    --row-active: color-mix(in oklab, var(--foreground) 20%, transparent);
+    --field-background: #222222;
+    --field-placeholder: #777777;
+    --field-border: #424242;
+    --segment: #303030;
+    --border: #3d3d3d;
+    --separator: #343434;
+    --row-active: color-mix(in oklab, var(--foreground) 11%, transparent);
 
     /* App-specific */
-    --sidebar-background: #0e0e14;
-    --content-background: #0b0b11;
+    --sidebar-background: #232323;
+    --content-background: #191919;
     /* Dark surfaces read muddier through heavy blur, so lean more on the theme
        color (higher alpha = less transparent) than the light default above. */
     --sidebar-glass-tint: color-mix(in oklab, var(--content-background) 65%, transparent);
     --window-header-background: var(--sidebar-background);
-    --composer-surface: #17171d;
+    --composer-surface: #222222;
   }
 
   * {

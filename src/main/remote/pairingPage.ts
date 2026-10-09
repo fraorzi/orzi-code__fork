@@ -212,7 +212,8 @@ export function buildLocalPairingManifestJson(
   return buildPairingManifest(channel);
 }
 
-const LOCAL_PAIRING_SERVICE_WORKER_JS = `const CACHE_NAME = "poracode-remote-local-__PORACODE_LOCAL_BUILD_VERSION__";
+// Shell v2 invalidates the earlier brand assets even when the package version is unchanged.
+const LOCAL_PAIRING_SERVICE_WORKER_JS = `const CACHE_NAME = "poracode-remote-local-v2-__PORACODE_LOCAL_BUILD_VERSION__";
 const LEGACY_CACHE_NAME = "lightcode-remote-local-v1";
 const NAVIGATION_FALLBACK_DELAY_MS = 500;
 const SHELL_URLS = ["/app", "/manifest.webmanifest", "/app-icon.svg"];
@@ -381,36 +382,25 @@ export function buildLocalPairingServiceWorkerJs(
 // static/standalone icons). The tile is approximated with a rounded rect rather
 // than the masters' squircle path — at favicon and home-screen sizes the two
 // are indistinguishable, and it keeps this inline copy readable.
-const PAIRING_ICON_GLYPH = `  <path fill-rule="evenodd" fill="__GLYPH__"
-    d="M352,300 H556 A152,152 0 0 1 556,604 H472 V730 H352 Z
-       M472,392 H548 A60,60 0 0 1 548,512 H472 Z"/>
-  <circle cx="636" cy="694" r="46" fill="#8B7BFF"/>`;
+const PAIRING_ICON_GLYPH = `  <path fill-rule="evenodd" fill="__GLYPH__" d="M768 512a256 256 0 1 0-512 0a256 256 0 1 0 512 0ZM672 512a160 160 0 1 1-320 0a160 160 0 1 1 320 0Z"/>
+  <path fill="__GLYPH__" d="M474 432l-80 80 80 80 28-28-52-52 52-52ZM550 432l80 80-80 80-28-28 52-52-52-52Z"/>`;
 
 const PAIRING_ICON_TILE: Record<
   PoracodeChannel,
   { readonly fill: string; readonly glyph: string }
 > = {
-  stable: { fill: "#0E0E14", glyph: "#EAF0FB" },
+  stable: { fill: "#232323", glyph: "#e6e6e6" },
   // Matches branding/assets/poracode-icon-nightly.svg's teal gradient tile.
-  nightly: { fill: "url(#nightlyTile)", glyph: "#0B1220" },
+  nightly: { fill: "#ececec", glyph: "#232323" },
 };
-
-const NIGHTLY_TILE_DEFS = `  <defs>
-    <linearGradient id="nightlyTile" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#3BE0DA"/>
-      <stop offset="1" stop-color="#12A6B8"/>
-    </linearGradient>
-  </defs>
-`;
 
 export function buildLocalPairingIconSvg(
   channel: PoracodeChannel = resolvePoracodeChannel(),
 ): string {
   const tile = PAIRING_ICON_TILE[channel];
-  const defs = channel === "nightly" ? NIGHTLY_TILE_DEFS : "";
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="${productNameFor(channel)}">
-${defs}  <rect width="1024" height="1024" rx="232" fill="${tile.fill}"/>
-${PAIRING_ICON_GLYPH.replace("__GLYPH__", tile.glyph)}
+  <rect width="1024" height="1024" rx="232" fill="${tile.fill}"/>
+${PAIRING_ICON_GLYPH.replaceAll("__GLYPH__", tile.glyph)}
 </svg>
 `;
 }
