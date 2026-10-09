@@ -9,6 +9,7 @@ const autoUpdaterMock = vi.hoisted(() => {
     autoInstallOnAppQuit: true,
     forceDevUpdateConfig: false,
     allowPrerelease: false,
+    allowDowngrade: false,
     channel: "",
     checkForUpdates: vi.fn<() => Promise<void>>(),
     downloadUpdate: vi.fn<() => Promise<void>>(),
@@ -59,6 +60,7 @@ describe("createAutoUpdaterController", () => {
       beforeInstall,
     );
 
+    controller.initialize();
     controller.installUpdate();
 
     expect(beforeInstall.mock.invocationCallOrder[0]!).toBeLessThan(
@@ -210,6 +212,58 @@ describe("createAutoUpdaterController", () => {
       type: "error",
       messageKey: "update.devUnavailable",
     });
+    expect(autoUpdaterMock.checkForUpdates).not.toHaveBeenCalled();
+    expect(autoUpdaterMock.setFeedURL).not.toHaveBeenCalled();
+  });
+
+  it("checks the embedded fork feed in packaged builds without a local override", async () => {
+    vi.stubEnv("UPDATE_SERVER_URL", "");
+    autoUpdaterMock.allowDowngrade = true;
+    const controller = createAutoUpdaterController(vi.fn(), "stable", false);
+
+    await controller.checkForUpdate();
+
+    expect(autoUpdaterMock.setFeedURL).not.toHaveBeenCalled();
+    expect(autoUpdaterMock.forceDevUpdateConfig).toBe(false);
+    expect(autoUpdaterMock.channel).toBe("latest");
+    expect(autoUpdaterMock.allowPrerelease).toBe(false);
+    expect(autoUpdaterMock.allowDowngrade).toBe(false);
+    expect(autoUpdaterMock.checkForUpdates).toHaveBeenCalledOnce();
+  });
+
+  it("keeps nightly discovery separate and refuses downgrades", () => {
+    vi.stubEnv("UPDATE_SERVER_URL", "");
+    const controller = createAutoUpdaterController(vi.fn(), "nightly", false);
+    controller.initialize();
+
+    expect(autoUpdaterMock.channel).toBe("nightly");
+    expect(autoUpdaterMock.allowPrerelease).toBe(true);
+    expect(autoUpdaterMock.allowDowngrade).toBe(false);
+    expect(autoUpdaterMock.setFeedURL).not.toHaveBeenCalled();
+  });
+
+  it("preserves an explicit local feed override for unpackaged updater QA", () => {
+    const controller = createAutoUpdaterController(vi.fn(), "stable", true);
+    controller.initialize();
+
+    expect(autoUpdaterMock.forceDevUpdateConfig).toBe(true);
+    expect(autoUpdaterMock.setFeedURL).toHaveBeenCalledWith({
+      provider: "generic",
+      url: "https://updates.example.test/personal",
+    });
+  });
+
+  it("cannot download or install from an unpackaged build without a QA feed", async () => {
+    vi.stubEnv("UPDATE_SERVER_URL", "");
+    const beforeInstall = vi.fn<() => void>();
+    const controller = createAutoUpdaterController(vi.fn(), "stable", true, vi.fn(), beforeInstall);
+
+    await controller.startUpdateDownload();
+    controller.installUpdate();
+
+    expect(autoUpdaterMock.downloadUpdate).not.toHaveBeenCalled();
+    expect(autoUpdaterMock.quitAndInstall).not.toHaveBeenCalled();
+    expect(beforeInstall).not.toHaveBeenCalled();
   });
 
   it("keeps signature failures observable without sending the raw error", async () => {

@@ -17,8 +17,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # ── Step 1: Read master version and compute timestamped release ──
+  # ── Step 1: Read main version and compute timestamped release ──
   prepare:
+    if: github.repository == 'fraorzi/orzi-code__fork'
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.resolve.outputs.tag }}
@@ -27,12 +28,11 @@ jobs:
       source_ref: ${{ steps.resolve.outputs.source_ref }}
 
     steps:
-      - name: Checkout master
+      - name: Checkout main
         uses: actions/checkout@v6
         with:
-          ref: master
+          ref: main
           fetch-depth: 0
-          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -123,7 +123,6 @@ jobs:
         with:
           ref: ${{ needs.prepare.outputs.source_ref }}
           fetch-depth: 0
-          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
 
       - name: Create release commit and staging tag
         id: stage_release
@@ -151,7 +150,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: release-draft-${{ github.run_id }}
-          name: Poracode Nightly ${{ needs.prepare.outputs.tag }}
+          name: Orzi Code Nightly ${{ needs.prepare.outputs.tag }}
           prerelease: true
           draft: true
           make_latest: false
@@ -196,17 +195,10 @@ jobs:
         env:
           DRAFT_TAG: release-draft-${{ github.run_id }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
         run: |
           gh release delete "$DRAFT_TAG" \
             --repo "${{ github.repository }}" \
             --cleanup-tag --yes 2>/dev/null || true
-          gh release delete "$RELEASE_TAG" \
-            --repo "${{ github.repository }}" \
-            --cleanup-tag --yes 2>/dev/null || true
           if gh api "repos/${{ github.repository }}/git/ref/tags/$DRAFT_TAG" >/dev/null 2>&1; then
             gh api --method DELETE "repos/${{ github.repository }}/git/refs/tags/$DRAFT_TAG"
-          fi
-          if gh api "repos/${{ github.repository }}/git/ref/tags/$RELEASE_TAG" >/dev/null 2>&1; then
-            gh api --method DELETE "repos/${{ github.repository }}/git/refs/tags/$RELEASE_TAG"
           fi

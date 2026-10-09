@@ -37,10 +37,14 @@ export interface AutoUpdaterController {
 export function createAutoUpdaterController(
   onStatus: (status: UpdateStatus) => void,
   channel: PoracodeChannel,
-  _isDev: boolean,
+  isDev: boolean,
   reportError: (error: unknown, tags?: PoracodeDiagnosticTags) => void = () => {},
   beforeInstall: () => void = () => {},
 ): AutoUpdaterController {
+  // Packaged builds use the fork feed embedded by electron-builder. An explicit
+  // override is reserved for local updater QA, including unpackaged Electron.
+  const localUpdateUrl = process.env.UPDATE_SERVER_URL;
+  const enabled = !isDev || Boolean(localUpdateUrl);
   let lastStatus: UpdateStatus | null = null;
   let initialized = false;
   // True while a check or download is in flight; gates the periodic timer so a
@@ -202,7 +206,7 @@ export function createAutoUpdaterController(
   }
 
   function initialize(): void {
-    if (initialized || !process.env.UPDATE_SERVER_URL) {
+    if (initialized || !enabled) {
       return;
     }
     initialized = true;
@@ -215,16 +219,17 @@ export function createAutoUpdaterController(
     // button. Once an update is downloaded, Cmd/Ctrl+Q still provides a
     // main-process-owned recovery path that applies it on quit.
     autoUpdater.autoInstallOnAppQuit = true;
-    autoUpdater.forceDevUpdateConfig = Boolean(process.env.UPDATE_SERVER_URL);
+    autoUpdater.forceDevUpdateConfig = isDev && Boolean(localUpdateUrl);
 
     if (channel === "nightly") {
       autoUpdater.channel = "nightly";
       autoUpdater.allowPrerelease = true;
     } else {
+      autoUpdater.channel = "latest";
       autoUpdater.allowPrerelease = false;
     }
+    autoUpdater.allowDowngrade = false;
 
-    const localUpdateUrl = process.env.UPDATE_SERVER_URL;
     if (localUpdateUrl) {
       autoUpdater.setFeedURL({ provider: "generic", url: localUpdateUrl });
     }
@@ -298,7 +303,8 @@ export function createAutoUpdaterController(
   }
 
   async function checkForUpdate(): Promise<void> {
-    if (!process.env.UPDATE_SERVER_URL) {
+    initialize();
+    if (!initialized) {
       sendStatus({ type: "error", messageKey: "update.devUnavailable" });
       return;
     }
@@ -311,10 +317,16 @@ export function createAutoUpdaterController(
   }
 
   async function startUpdateDownload(): Promise<void> {
+    initialize();
+    if (!initialized) {
+      sendStatus({ type: "error", messageKey: "update.devUnavailable" });
+      return;
+    }
     await beginDownload();
   }
 
   function installUpdate(): void {
+    if (!initialized) return;
     // Stop the recurring check so it can't race quitAndInstall.
     if (periodicTimer) {
       clearInterval(periodicTimer);

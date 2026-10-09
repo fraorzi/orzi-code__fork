@@ -25,7 +25,7 @@ import {
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { scanRuntimeExternals } from "./runtime-externals.mjs";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -37,6 +37,9 @@ const {
   snapshotMacUpdaterManifests,
   setMacUpdaterMinimumSystemVersion,
 } = requireFromHere("./mac-updater-manifest.cjs");
+const { validateReleaseSigning, releasePublishYaml, macSigningYaml } = requireFromHere(
+  "./desktop-release-config.cjs",
+);
 const { supportEmail } = requireFromHere("../branding/contact.json");
 
 // Runtime externals — packages tsdown does NOT inline into dist/main/*.cjs.
@@ -290,6 +293,8 @@ async function main() {
   const publish = args.publish ?? "never";
   const outputDir = resolve(repoRoot, args["output-dir"] ?? "release");
   const keepStage = Boolean(args["keep-stage"]);
+  const releaseSigning = Boolean(args["release-signing"]);
+  validateReleaseSigning(platform, releaseSigning, process.env);
 
   if (!PLATFORM_FLAG[platform]) {
     throw new Error(`Unknown platform "${platform}". Expected mac/linux/win.`);
@@ -341,7 +346,7 @@ async function main() {
     const initialMacArtifactKind = macArtifactKindFor(platform, target);
     writeFileSync(
       join(stageRoot, "electron-builder.yml"),
-      buildElectronBuilderConfig(initialMacArtifactKind),
+      buildElectronBuilderConfig(initialMacArtifactKind, releaseSigning),
     );
 
     // 6. Install prod + stage devdeps with a genuinely flat npm layout.
@@ -390,7 +395,7 @@ async function main() {
       if (platform === "mac") {
         writeFileSync(
           join(stageRoot, "electron-builder.yml"),
-          buildElectronBuilderConfig(macArtifactKind),
+          buildElectronBuilderConfig(macArtifactKind, releaseSigning),
         );
       }
       const electronBuilderArgs = [PLATFORM_FLAG[platform]];
@@ -406,9 +411,7 @@ async function main() {
     };
 
     if (platform === "mac" && !target) {
-      // Build updater ZIPs first with the legacy technical executable name so
-      // Lightcode -> Poracode does not trigger Squirrel's broken outer-bundle
-      // rename. Then build branded DMGs for fresh/manual installs. The second
+      // Build updater ZIPs first, then DMGs for manual installs. The second
       // pass overwrites the channel manifest with DMG metadata, so preserve the
       // updater ZIP manifest around it and restore that as the published feed.
       runElectronBuilder("zip", "updater");
@@ -439,13 +442,13 @@ async function main() {
   }
 }
 
-// macOS ZIP updates ship under the legacy executable name as a Squirrel.Mac
-// migration bridge; DMGs and every other platform stay fully Poracode-branded.
+// ZIP and DMG bundles use the same Orzi Code identity. Keep their manifests
+// separate because only the ZIP is a Squirrel.Mac update payload.
 function macArtifactKindFor(platform, target) {
   return platform === "mac" && target === "zip" ? "updater" : "branded";
 }
 
-function buildElectronBuilderConfig(macArtifactKind = "branded") {
+export function buildElectronBuilderConfig(macArtifactKind = "branded", releaseSigning = false) {
   // Generate the staged electron-builder config with a drastically simplified
   // `files:` block — the stage's node_modules contains only the runtime
   // externals we listed, so we can include all of node_modules without dragging
@@ -532,7 +535,7 @@ asarUnpack:
 
 afterPack: build/after-pack.cjs
 
-publish: null
+${releasePublishYaml(channel)}
 
 win:
   target:
@@ -583,14 +586,15 @@ mac:
     NSMicrophoneUsageDescription: Orzi Code uses the microphone for local voice input in the composer.
   entitlements: ${macEntitlements}
   entitlementsInherit: ${macEntitlementsInherit}
-  identity: "-"
-  notarize: false
+${macSigningYaml(releaseSigning)}
 
 npmRebuild: false
 `;
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? (error.stack ?? error.message) : error);
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? (error.stack ?? error.message) : error);
+    process.exit(1);
+  });
+}

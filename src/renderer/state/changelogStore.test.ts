@@ -47,11 +47,30 @@ describe("changelogStore upgrade behavior", () => {
     expect(localStorage.getItem("poracode-changelog-ack-version")).toBe("1.4.3");
     expect(localStorage.getItem("poracode-whatsnew-hidden")).toBe("true");
     const state = useChangelogStore.getState();
+    expect(state.releases).toEqual([]);
     expect(state.whatsNewOpen).toBe(false);
     expect(state.whatsNewHidden).toBe(true);
     expect(
       hasUnseenChangelog(state.releases, "1.5.1", state.lastSeenVersion, state.acknowledgedVersion),
     ).toBe(true);
+  });
+
+  it("invalidates upstream notes while retaining the user's reading preferences", async () => {
+    const oldCache = JSON.stringify({
+      releases: [
+        { version: "1.8.1", date: "2026-10-01", title: "Upstream", summary: "Old", changes: [] },
+      ],
+    });
+    localStorage.setItem("poracode-changelog-cache", oldCache);
+    localStorage.setItem("poracode-changelog-seen-version", "1.8.1");
+    localStorage.setItem("poracode-whatsnew-hidden", "true");
+
+    const { useChangelogStore } = await import("./changelogStore");
+
+    expect(useChangelogStore.getState().releases).toEqual([]);
+    expect(useChangelogStore.getState().lastSeenVersion).toBe("1.8.1");
+    expect(useChangelogStore.getState().whatsNewHidden).toBe(true);
+    expect(localStorage.getItem("poracode-changelog-cache")).toBe(oldCache);
   });
 
   it("surfaces What's New in the sidebar without opening it on later version bumps", async () => {

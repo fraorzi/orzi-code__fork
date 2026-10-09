@@ -12,7 +12,7 @@ on:
         required: true
         type: string
       channel:
-        description: "Poracode release channel (stable | nightly)"
+        description: "Orzi Code release channel (stable | nightly)"
         required: true
         type: string
       sentry_environment:
@@ -74,6 +74,17 @@ jobs:
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.ref }}
+
+      - name: Require macOS release credentials
+        if: matrix.platform == 'mac'
+        run: node -e 'require("./scripts/desktop-release-config.cjs").validateReleaseSigning("mac", true, process.env)'
+        shell: bash
+        env:
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: Install Linux helper build tools
         if: matrix.os == 'ubuntu-latest'
@@ -193,7 +204,7 @@ jobs:
         if: matrix.platform == 'mac'
         run: |
           pnpm run prepare:package-assets
-          node scripts/build-desktop-artifact.mjs --platform mac --skip-build
+          node scripts/build-desktop-artifact.mjs --platform mac --skip-build --release-signing
         shell: bash
         env:
           PORACODE_CHANNEL: ${{ inputs.channel }}
@@ -255,7 +266,7 @@ jobs:
             fi
           }
 
-          apps=(release/mac*/Poracode*.app)
+          apps=(release/mac*/Orzi\ Code*.app)
           if [ "${#apps[@]}" -eq 0 ]; then
             echo "::error::No branded macOS app bundles found under release/mac*."
             exit 1
@@ -264,7 +275,7 @@ jobs:
             verify_app "$app"
           done
 
-          zips=(release/Poracode-*.zip)
+          zips=(release/Orzi-Code-*.zip)
           if [ "${#zips[@]}" -eq 2 ]; then
             :
           else
@@ -296,11 +307,11 @@ jobs:
         with:
           name: ${{ matrix.artifact }}
           path: |
-            release/Poracode-*.exe
-            release/Poracode-*.dmg
-            release/Poracode-*.zip
-            release/Poracode-*.AppImage
-            release/Poracode-*.deb
+            release/Orzi-Code-*.exe
+            release/Orzi-Code-*.dmg
+            release/Orzi-Code-*.zip
+            release/Orzi-Code-*.AppImage
+            release/Orzi-Code-*.deb
             release/latest*.yml
             release/nightly*.yml
             release/*.blockmap

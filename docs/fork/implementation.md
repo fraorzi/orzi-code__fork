@@ -2,6 +2,15 @@
 
 Data: 2026-10-09. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Kanał aktualizacji forka - 2026-10-09
+
+- Pakowanie generuje jawny GitHub feed `fraorzi/orzi-code__fork`, stable `latest` i nightly `nightly`. Metadane repozytorium także wskazują fork. Nie ma wykrywania feedu z upstreamu. Updater pakietu czyta wygenerowane `app-update.yml`, uruchamia kontrolę po 30 s i co godzinę, nie wymaga już `UPDATE_SERVER_URL` i odmawia downgrade. Dev pozostaje wyłączony, chyba że jawnie podano adres lokalnego QA.
+- Ręczne workflow wydań używają `main`, nazw Orzi Code i obecnych globów artefaktów. Stable wymaga jawnej wersji i własnego wpisu changelogu. Usunięto zależność od upstreamowego deploy key. Draft jest publikowany dopiero po przesłaniu artefaktów; sprzątanie błędu zachowuje finalne wydanie. Żadnego workflow publikacji nie uruchamiano.
+- macOS ma osobny `--release-signing`. Release wymaga kompletnego zestawu sekretów, Developer ID i notarizacji, bez ad-hoc fallback. Lokalny pakiet zachowuje dotychczasowy podpis ad-hoc. Workflow weryfikuje aplikacje, helper i oba updater ZIP. Instrukcje: [desktop-updates.md](desktop-updates.md). Brakuje podpisanego wydania i testu rzeczywistej instalacji Squirrel.Mac. Pierwszą podpisaną wersję trzeba zainstalować ręcznie; nie obiecujemy przejścia ze starej nazwy/ad-hoc instalacji.
+- Changelog aplikacji używa `docs/fork/changelog.json` z `main` forka. Dokument jest pusty do rzeczywistego wydania. Cache upstreamu nie jest zgodny z nowym źródłem, dlatego ma osobny klucz `orzi-changelog-cache-v1`; testy poprzedniego Poracode/Lightcode zachowują preferencje użytkownika i ignorują stare notki. Nie zmieniono SQLite, ustawień, protokołów ani formatu standardowych manifestów updatera. Stare app-update config pozostaje częścią starego pakietu, nowy pakiet otrzymuje własną konfigurację.
+- Weryfikacja: 57 testów w 5 zestawach, typecheck i typowany lint, cztery konfiguracje pakowania zwalidowane przez rzeczywisty schema electron-builder, YAML i Bash workflow poprawne. Test prawdziwej biblioteki electron-updater 6.8.9 z lokalnym HTTP i transportem Node wykrył stable/nightly, pobrał poprawny artefakt, odrzucił downgrade i błędną checksum. Nie uruchamiał instalacji; nie jest testem podpisanego macOS ani serwera GitHub. Dowody: `.tmp/updater-qa/real-feed-result.json` i logi w tym katalogu.
+- Smoke Electron mock przeszedł welcome, baseline, ustawienia, geometrię i integracje mock oraz trzy bramki deterministyczne, z 0 błędów renderera: `/private/tmp/orzi-update-smoke-20261009/artifacts/smoke-report.json`. Sesja QA jest zamknięta. Zainstalowanego pakietu nie zmieniano. Następny niezależny moduł to przypinanie wersji/rollback agentów; obrazy Google nadal czekają na logowanie `agy`.
+
 ## Branding Orzi Code i motyw bazowy - 2026-10-09
 
 - Nazwa publiczna, nagłówek, wordmark, teksty ustawień i narzędzi oraz ekran mobilny używają Orzi Code. O programie wskazuje repozytorium forka, z osobnym linkiem do projektu źródłowego i zachowanym autorem/licencją. Nazwy wewnętrznych protokołów, folderów i historycznych danych nie zostały przemianowane.

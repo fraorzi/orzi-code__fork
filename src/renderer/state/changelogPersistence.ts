@@ -2,7 +2,7 @@ export const CHANGELOG_STORAGE_KEYS = {
   seenVersion: "poracode-changelog-seen-version",
   acknowledgedVersion: "poracode-changelog-ack-version",
   hidden: "poracode-whatsnew-hidden",
-  cache: "poracode-changelog-cache",
+  cache: "orzi-changelog-cache-v1",
 } as const;
 
 const LEGACY_CHANGELOG_STORAGE_KEYS = {
@@ -22,6 +22,9 @@ export function migrateLegacyChangelogStorage(storage: Pick<Storage, "getItem" |
     for (const key of Object.keys(CHANGELOG_STORAGE_KEYS) as Array<
       keyof typeof CHANGELOG_STORAGE_KEYS
     >) {
+      // Upstream release notes are not valid in the fork feed. Preserve the
+      // user's reading preferences, but start with an empty fork cache.
+      if (key === "cache") continue;
       const currentKey = CHANGELOG_STORAGE_KEYS[key];
       if (storage.getItem(currentKey) !== null) continue;
       const legacyValue = storage.getItem(LEGACY_CHANGELOG_STORAGE_KEYS[key]);
