@@ -1,5 +1,12 @@
 import { z } from "zod";
 import { projectSchema } from "../../contracts";
+import {
+  historyImportSourceSchema,
+  historyImportTokenSchema,
+  type HistoryImportPreview,
+  type HistoryImportReport,
+  type HistoryImportResult,
+} from "../../historyImport";
 import type { Project, ProjectNotes, Thread, ThreadContextUsage } from "../../contracts";
 import { defineIpcProcedure, defineNoArgProcedure, definePayloadProcedure } from "../core";
 import {
@@ -27,6 +34,21 @@ import {
 } from "../schemas";
 
 export const dbProcedures = {
+  prepareHistoryImport: definePayloadProcedure<
+    z.infer<typeof historyImportSourceSchema>,
+    HistoryImportResult<HistoryImportPreview>,
+    "main-local"
+  >("prepareHistoryImport", "main-local", historyImportSourceSchema),
+  applyHistoryImport: definePayloadProcedure<
+    z.infer<typeof historyImportTokenSchema>,
+    HistoryImportResult<HistoryImportReport>,
+    "main-local"
+  >("applyHistoryImport", "main-local", historyImportTokenSchema),
+  cancelHistoryImport: definePayloadProcedure<
+    z.infer<typeof historyImportTokenSchema>,
+    void,
+    "main-local"
+  >("cancelHistoryImport", "main-local", historyImportTokenSchema),
   dbGetProjects: defineNoArgProcedure<Project[], "main-local">("dbGetProjects", "main-local"),
   dbGetThreads: defineNoArgProcedure<Thread[], "main-local">("dbGetThreads", "main-local"),
   dbGetState: defineIpcProcedure<[string], string, string | null, "main-local">(

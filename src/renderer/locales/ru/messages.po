@@ -744,6 +744,10 @@ msgstr "30 дн"
 msgid "7d"
 msgstr "7 дн"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "A backup is saved before importing. Imported threads start inactive."
+msgstr "Перед импортом сохраняется резервная копия. Импортированные ветки будут неактивны."
+
 #: src/renderer/actions/experimentDecisionActions.ts
 #: src/renderer/actions/experimentWorktreeActions.ts
 msgid "A candidate is no longer on its experiment branch."
@@ -1411,6 +1415,10 @@ msgstr "Янтарный"
 msgid "An agent is fixing this PR."
 msgstr "Агент исправляет этот PR."
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "An attachment is missing or outside the source profile. Restore it before importing."
+msgstr "Вложение отсутствует или находится вне исходного профиля. Восстановите его перед импортом."
+
 #: src/renderer/i18n/sharedMessages.ts
 msgid "An expected worktree owner requires a branch"
 msgstr "Для ожидаемого владельца worktree требуется ветка"
@@ -1426,6 +1434,10 @@ msgstr "Сервер MCP с таким именем уже существует.
 #: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "Another chat uses this same tree. File restore could overwrite that chat's changes."
 msgstr "Другой чат использует это же дерево. Восстановление файлов может перезаписать изменения этого чата."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Another history import is running. Try again when it finishes."
+msgstr "Выполняется другой импорт истории. Повторите попытку после его завершения."
 
 #: src/renderer/actions/experimentOperationState.ts
 msgid "Another operation for this experiment is still running."
@@ -1643,6 +1655,10 @@ msgstr "Прикрепить к треду"
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/hooks/useElementPicker.ts
 msgid "Attached browser selection."
 msgstr "Выбор в браузере прикреплён."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Attachments"
+msgstr "Вложения"
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunDetail.tsx
 msgid "Attempt"
@@ -1889,6 +1905,10 @@ msgstr "Фоновая задача"
 #: src/renderer/components/thread/ThreadDocksPanel.tsx
 msgid "Background tasks"
 msgstr "Фоновые задачи"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Backup saved at"
+msgstr "Резервная копия сохранена в"
 
 #: src/renderer/components/experiment/NewExperimentModal.tsx
 #~ msgid "Base branch"
@@ -2239,6 +2259,7 @@ msgstr "Не удалось связаться с удалённым серве�
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
@@ -2482,6 +2503,10 @@ msgstr "Проверки пройдены"
 msgid "Checks pending"
 msgstr "Проверки ожидают выполнения"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Choose a database from another profile."
+msgstr "Выберите базу данных из другого профиля."
+
 #: src/mobile/views/ManageProjectsView.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/GeneralSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
@@ -2527,6 +2552,10 @@ msgstr "Выберите как минимум двух кандидатов и 
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Choose automatically or override with a detected shell for new terminals."
 #~ msgstr "Выберите автоматически или укажите обнаруженную оболочку для новых терминалов."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Choose history database"
+msgstr "Выбрать базу данных истории"
 
 #: src/renderer/views/SettingsOverlay/parts/GitSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -3636,6 +3665,10 @@ msgstr "Не удалось извлечь контекст."
 #: src/renderer/i18n/sharedMessages.ts
 msgid "Could not generate commit message: {detail}"
 msgstr "Не удалось сгенерировать сообщение коммита: {detail}"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Could not import history. Your existing history is preserved."
+msgstr "Не удалось импортировать историю. Существующая история сохранена."
 
 #. placeholder {0}: failure.project.name
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
@@ -5170,6 +5203,15 @@ msgstr "Шаблоны исключения"
 msgid "Existing or edited native entry; left unchanged"
 msgstr "Существующая или изменённая запись CLI оставлена без изменений"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
+msgid "Existing threads are kept. Only new threads are added. Account settings and credentials are not imported."
+msgstr "Существующие ветки сохраняются. Добавляются только новые ветки. Настройки учетных записей и учетные данные не импортируются."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Existing threads skipped"
+msgstr "Пропущенные существующие ветки"
+
 #. placeholder {0}: parsed.exitCode
 #: src/renderer/components/providers/antigravity/taskNotificationMarkdown.ts
 msgid "Exit code {0}"
@@ -6239,6 +6281,14 @@ msgstr "Скрыть терминал"
 msgid "History"
 msgstr "История"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "History database"
+msgstr "База данных истории"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "History imported."
+msgstr "История импортирована."
+
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
@@ -6377,6 +6427,11 @@ msgstr "Импортировать навыки внешних агентов"
 msgid "Import external skills"
 msgstr "Импортировать внешние навыки"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
+msgid "Import history"
+msgstr "Импорт истории"
+
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Import Lightcode data"
 msgstr "Импортировать данные Lightcode"
@@ -6392,6 +6447,10 @@ msgstr "Импортировать серверы MCP"
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Import method"
 msgstr "Способ импорта"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Import new threads"
+msgstr "Импортировать новые ветки"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Import selected"
@@ -8109,6 +8168,10 @@ msgstr "Имя нового профиля"
 msgid "New project"
 msgstr "Новый проект"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "New projects"
+msgstr "Новые проекты"
+
 #: src/renderer/commands/registry.ts
 msgid "New quick thread"
 msgstr "Новый быстрый тред"
@@ -8181,6 +8244,10 @@ msgstr "Новый поток в worktree"
 #: src/renderer/views/MainView/parts/Sidebar/parts/ThreadContextMenu.tsx
 msgid "New Thread in Worktree"
 msgstr "Новый тред в worktree"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "New threads"
+msgstr "Новые ветки"
 
 #: src/renderer/components/workspace/WorkspaceNameDialog.tsx
 msgid "New workspace"
@@ -13247,6 +13314,10 @@ msgstr "Аккаунт GitHub \"{login}\" относится к {host}, кото
 msgid "the global {0} WSL scope"
 msgstr "глобальную область WSL {0}"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "The history changed. Choose the source again to refresh the preview."
+msgstr "История изменилась. Выберите источник заново, чтобы обновить предварительный просмотр."
+
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostUpdateControl.tsx
 msgid "The host is restarting to install the update."
@@ -13498,6 +13569,10 @@ msgstr "Эта папка уже зарегистрирована как про�
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 msgid "This folder is empty."
 msgstr "Эта папка пуста."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "This history database is invalid or uses an unsupported version."
+msgstr "Эта база данных истории некорректна или использует неподдерживаемую версию."
 
 #: src/mobile/views/DesktopsView.tsx
 msgid "This HTTPS page couldn't reach the desktop on plain HTTP. Allow local network access for this site and pair again, or continue on the desktop's own address."

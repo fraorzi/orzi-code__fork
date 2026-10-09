@@ -744,6 +744,10 @@ msgstr "30 j"
 msgid "7d"
 msgstr "7 j"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "A backup is saved before importing. Imported threads start inactive."
+msgstr "Une sauvegarde est enregistrée avant l'importation. Les fils importés démarrent inactifs."
+
 #: src/renderer/actions/experimentDecisionActions.ts
 #: src/renderer/actions/experimentWorktreeActions.ts
 msgid "A candidate is no longer on its experiment branch."
@@ -1411,6 +1415,10 @@ msgstr "Ambre"
 msgid "An agent is fixing this PR."
 msgstr "Un agent corrige cette PR."
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "An attachment is missing or outside the source profile. Restore it before importing."
+msgstr "Une pièce jointe est manquante ou se trouve hors du profil source. Restaurez-la avant l'importation."
+
 #: src/renderer/i18n/sharedMessages.ts
 msgid "An expected worktree owner requires a branch"
 msgstr "Un propriétaire d'arbre de travail attendu nécessite une branche"
@@ -1426,6 +1434,10 @@ msgstr "Un serveur MCP portant ce nom existe déjà."
 #: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "Another chat uses this same tree. File restore could overwrite that chat's changes."
 msgstr "Un autre chat utilise ce même arbre. La restauration de fichiers pourrait écraser les modifications apportées à cette discussion."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Another history import is running. Try again when it finishes."
+msgstr "Une autre importation de l'historique est en cours. Réessayez une fois terminée."
 
 #: src/renderer/actions/experimentOperationState.ts
 msgid "Another operation for this experiment is still running."
@@ -1643,6 +1655,10 @@ msgstr "Attacher au fil"
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/hooks/useElementPicker.ts
 msgid "Attached browser selection."
 msgstr "Sélection du navigateur ci-jointe."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Attachments"
+msgstr "Pièces jointes"
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunDetail.tsx
 msgid "Attempt"
@@ -1889,6 +1905,10 @@ msgstr "Tâche en arrière-plan"
 #: src/renderer/components/thread/ThreadDocksPanel.tsx
 msgid "Background tasks"
 msgstr "Tâches en arrière-plan"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Backup saved at"
+msgstr "Sauvegarde enregistrée dans"
 
 #: src/renderer/components/experiment/NewExperimentModal.tsx
 #~ msgid "Base branch"
@@ -2239,6 +2259,7 @@ msgstr "Serveur distant inaccessible. Vérifiez qu'il est en ligne, puis reconne
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
@@ -2482,6 +2503,10 @@ msgstr "Vérifications réussies"
 msgid "Checks pending"
 msgstr "Vérifications en attente"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Choose a database from another profile."
+msgstr "Choisissez une base de données d'un autre profil."
+
 #: src/mobile/views/ManageProjectsView.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/GeneralSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
@@ -2527,6 +2552,10 @@ msgstr "Choisissez au moins deux candidats et saisissez une invite."
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Choose automatically or override with a detected shell for new terminals."
 #~ msgstr "Choisissez automatiquement ou utilisez un shell détecté pour les nouveaux terminaux."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Choose history database"
+msgstr "Choisir la base de données de l'historique"
 
 #: src/renderer/views/SettingsOverlay/parts/GitSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -3636,6 +3665,10 @@ msgstr "Impossible d'extraire le contexte."
 #: src/renderer/i18n/sharedMessages.ts
 msgid "Could not generate commit message: {detail}"
 msgstr "Impossible de générer le message de validation : {detail}"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Could not import history. Your existing history is preserved."
+msgstr "Impossible d'importer l'historique. Votre historique existant est conservé."
 
 #. placeholder {0}: failure.project.name
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
@@ -5170,6 +5203,15 @@ msgstr "Exclure les motifs"
 msgid "Existing or edited native entry; left unchanged"
 msgstr "Entrée native existante ou modifiée ; laissée inchangée"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
+msgid "Existing threads are kept. Only new threads are added. Account settings and credentials are not imported."
+msgstr "Les fils existants sont conservés. Seuls les nouveaux fils sont ajoutés. Les paramètres des comptes et les identifiants ne sont pas importés."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Existing threads skipped"
+msgstr "Fils existants ignorés"
+
 #. placeholder {0}: parsed.exitCode
 #: src/renderer/components/providers/antigravity/taskNotificationMarkdown.ts
 msgid "Exit code {0}"
@@ -6239,6 +6281,14 @@ msgstr "Masquer le terminal"
 msgid "History"
 msgstr "Historique"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "History database"
+msgstr "Base de données de l'historique"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "History imported."
+msgstr "Historique importé."
+
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
@@ -6377,6 +6427,11 @@ msgstr "Importer des compétences d’agents externes"
 msgid "Import external skills"
 msgstr "Importer des compétences externes"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
+msgid "Import history"
+msgstr "Importer l'historique"
+
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Import Lightcode data"
 msgstr "Importer les données Lightcode"
@@ -6392,6 +6447,10 @@ msgstr "Importer des serveurs MCP"
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Import method"
 msgstr "Méthode d’importation"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Import new threads"
+msgstr "Importer les nouveaux fils"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Import selected"
@@ -8108,6 +8167,10 @@ msgstr "Nom du nouveau profil"
 msgid "New project"
 msgstr "Nouveau projet"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "New projects"
+msgstr "Nouveaux projets"
+
 #: src/renderer/commands/registry.ts
 msgid "New quick thread"
 msgstr "Nouveau fil de discussion rapide"
@@ -8180,6 +8243,10 @@ msgstr "Nouveau fil dans le worktree"
 #: src/renderer/views/MainView/parts/Sidebar/parts/ThreadContextMenu.tsx
 msgid "New Thread in Worktree"
 msgstr "Nouveau fil de discussion dans le worktree"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "New threads"
+msgstr "Nouveaux fils"
 
 #: src/renderer/components/workspace/WorkspaceNameDialog.tsx
 msgid "New workspace"
@@ -13246,6 +13313,10 @@ msgstr "Le compte GitHub \"{login}\" appartient à {host}, qui ne correspond pas
 msgid "the global {0} WSL scope"
 msgstr "la portée WSL globale de {0}"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "The history changed. Choose the source again to refresh the preview."
+msgstr "L'historique a changé. Choisissez à nouveau la source pour actualiser l'aperçu."
+
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostUpdateControl.tsx
 msgid "The host is restarting to install the update."
@@ -13497,6 +13568,10 @@ msgstr "Ce dossier est déjà enregistré comme projet."
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 msgid "This folder is empty."
 msgstr "Ce dossier est vide."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "This history database is invalid or uses an unsupported version."
+msgstr "Cette base de données de l'historique est invalide ou utilise une version non prise en charge."
 
 #: src/mobile/views/DesktopsView.tsx
 msgid "This HTTPS page couldn't reach the desktop on plain HTTP. Allow local network access for this site and pair again, or continue on the desktop's own address."

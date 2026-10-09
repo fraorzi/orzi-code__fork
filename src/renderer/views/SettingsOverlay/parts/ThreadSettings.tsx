@@ -11,6 +11,7 @@ import {
 } from "@/renderer/state/threadDeletePreference";
 import { Select, ToggleSwitch } from "@/renderer/components/common";
 import { SettingRow, SettingsPage } from "./SettingsForm";
+import { HistoryImportSection } from "./HistoryImportSection";
 import {
   followUpBehaviorOptions,
   threadRemoveActionOptions,
@@ -192,6 +193,7 @@ export function ThreadSettings() {
           />
         </SettingRow>
       )}
+      {!remote && <HistoryImportSection />}
     </SettingsPage>
   );
 }

@@ -32,6 +32,8 @@ Podstawowa obsługa obrazów jest teraz w kodzie: narzędzia MCP Crossagents, na
 
 ## Aktualizacja z 2026-10-07
 
+Importer historii jest teraz wdrożony w ustawieniach wątków, z podglądem, addytywnym scalaniem, backupem i kopiowaniem załączników. Testy rzeczywistej SQLite i Electron przeszły. Obsługuje v41/v42, nie przejmuje ustawień kont ani nie nadpisuje istniejących wątków. Szczegóły i dowody są na początku [stanu implementacji](implementation.md). Zainstalowany pakiet pozostaje bez tej zmiany. Produkcyjnego importu użytkownika nie powtarzano.
+
 Kolejka follow-upów jest zapisywana atomowo w profilu supervisora i odzyskiwana po restarcie jako wstrzymana. Rzeczywisty pakiet z Codex 0.160.1 zachował dwie wiadomości po SIGKILL aplikacji, a kliknięcie wznowienia przekazało obie w kolejności, bez duplikatów. Nowa aplikacja jest w `/Applications/Poracode Personal.app`, poprzednia w `.tmp/previous-install/queue-persistence/Poracode Personal.app`. Szczegóły, testy i granicę ponownego dostarczenia opisuje początek [stanu implementacji](implementation.md).
 
 Na polecenie użytkownika poprawiono tożsamość Git: GitHub używa prywatnego e-maila, Bitbucket firmowego. Reguły `includeIf` wybierają ją według URL remote, a repozytorium ma dodatkowe lokalne ustawienie prywatnej tożsamości. Przepisano autora i commitera w pięciu opublikowanych commitach oraz jedenastu lokalnych checkpointach; drzewa plików i upstream pozostały identyczne. Zdalne `origin/main` i lokalne reflogi zostały sprawdzone. SSH uwierzytelnia GitHub jako `fraorzi`.

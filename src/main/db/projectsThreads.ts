@@ -1,6 +1,10 @@
 import type { Project, Thread } from "@/shared/contracts";
 import { getSqlite } from "./connection";
-import { forgetMainCreatedThread, noteMainCreatedThread } from "./mainCreatedThreads";
+import {
+  forgetMainCreatedThread,
+  noteMainCreatedThread,
+  forgetMainCreatedProject,
+} from "./mainCreatedThreads";
 import { notifyProjectThreadDataChanged } from "./projectThreadChanges";
 import {
   projectMutableRow,
@@ -143,6 +147,7 @@ export function dbDeleteThread(threadId: string): void {
 }
 
 export function dbDeleteProject(projectId: string): void {
+  forgetMainCreatedProject(projectId);
   const sqlite = getSqlite();
   const threadIds = (
     sqlite.prepare("SELECT id FROM threads WHERE project_id = ?").all(projectId) as {

@@ -354,6 +354,14 @@ export const SETTINGS_SEARCH_INDEX: readonly SettingsSearchEntry[] = [
     keywords: "confirm delete thread worktree remove ask warning",
     desktopOnly: true,
   },
+  {
+    section: "threads",
+    anchor: "threads.historyImport",
+    title: msg`Import history`,
+    description: msg`Existing threads are kept. Only new threads are added. Account settings and credentials are not imported.`,
+    keywords: "history import merge database sqlite backup archive attachments",
+    desktopOnly: true,
+  },
 
   // Git
   {

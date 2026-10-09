@@ -1,6 +1,9 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
+import { HistoryImportService } from "../historyImport/HistoryImportService";
+import { getSqlite } from "../db/connection";
+import { dbFlushThreadRuntimeWrites } from "../db/runtimeItems";
 import {
   app,
   clipboard,
@@ -196,6 +199,11 @@ export async function showAddFilesDialog(
 export function createLocalIpcHandlers(
   options: CreateLocalIpcHandlersOptions,
 ): MainLocalIpcHandlerMap {
+  const historyImport = new HistoryImportService({
+    database: getSqlite,
+    paths: options.requirePoracodePaths,
+    flush: dbFlushThreadRuntimeWrites,
+  });
   const publishProjectsChanged = (projects = dbGetProjects()): void => {
     const server = options.getRemoteAccessServer();
     if (!server) return;
@@ -502,6 +510,16 @@ export function createLocalIpcHandlers(
       return { nativeCapable };
     },
     dbGetProjects: () => dbGetProjects(),
+    prepareHistoryImport: ({ sourcePath }) => historyImport.prepare(sourcePath),
+    applyHistoryImport: async ({ token }) => {
+      const result = await historyImport.apply(token);
+      if (result.ok) {
+        publishProjectsChanged();
+        publishThreadsChanged(dbGetThreads().map((thread) => thread.id));
+      }
+      return result;
+    },
+    cancelHistoryImport: ({ token }) => historyImport.cancel(token),
     dbGetThreads: () => dbGetThreads(),
     dbGetState: (key) => dbGetState(key),
     dbSetState: ({ key, value }) => dbSetState(key, value),

@@ -12,6 +12,21 @@
  * renderer, so its own deletions keep working.
  */
 const unmirroredThreadIds = new Set<string>();
+const unmirroredProjectIds = new Set<string>();
+
+/** Imported projects remain main-owned until the renderer mirrors them. */
+export function noteMainCreatedProject(projectId: string): void {
+  unmirroredProjectIds.add(projectId);
+}
+export function forgetMainCreatedProject(projectId: string): void {
+  unmirroredProjectIds.delete(projectId);
+}
+export function isMainCreatedProjectUnmirrored(projectId: string): boolean {
+  return unmirroredProjectIds.has(projectId);
+}
+export function acknowledgeMirroredProjectIds(projectIds: Iterable<string>): void {
+  for (const id of projectIds) unmirroredProjectIds.delete(id);
+}
 
 export function noteMainCreatedThread(threadId: string): void {
   unmirroredThreadIds.add(threadId);
@@ -38,4 +53,5 @@ export function acknowledgeMirroredThreadIds(threadIds: Iterable<string>): void 
 /** Tied to the open database — a new database starts with no pending rows. */
 export function resetMainCreatedThreads(): void {
   unmirroredThreadIds.clear();
+  unmirroredProjectIds.clear();
 }

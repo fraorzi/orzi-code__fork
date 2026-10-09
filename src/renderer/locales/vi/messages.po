@@ -744,6 +744,10 @@ msgstr "30 ngày"
 msgid "7d"
 msgstr "7 ngày"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "A backup is saved before importing. Imported threads start inactive."
+msgstr "Bản sao lưu được lưu trước khi nhập. Các luồng được nhập sẽ ở trạng thái không hoạt động."
+
 #: src/renderer/actions/experimentDecisionActions.ts
 #: src/renderer/actions/experimentWorktreeActions.ts
 msgid "A candidate is no longer on its experiment branch."
@@ -1411,6 +1415,10 @@ msgstr "Hồ phách"
 msgid "An agent is fixing this PR."
 msgstr "Một tác nhân đang sửa PR này."
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "An attachment is missing or outside the source profile. Restore it before importing."
+msgstr "Tệp đính kèm bị thiếu hoặc nằm ngoài hồ sơ nguồn. Hãy khôi phục tệp trước khi nhập."
+
 #: src/renderer/i18n/sharedMessages.ts
 msgid "An expected worktree owner requires a branch"
 msgstr "Chủ sở hữu cây làm việc dự kiến yêu cầu một nhánh"
@@ -1426,6 +1434,10 @@ msgstr "Máy chủ MCP có tên này đã tồn tại."
 #: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "Another chat uses this same tree. File restore could overwrite that chat's changes."
 msgstr "Một cuộc trò chuyện khác cũng sử dụng cây này. Khôi phục tệp có thể ghi đè lên các thay đổi của cuộc trò chuyện đó."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Another history import is running. Try again when it finishes."
+msgstr "Một lần nhập lịch sử khác đang chạy. Hãy thử lại khi hoàn tất."
 
 #: src/renderer/actions/experimentOperationState.ts
 msgid "Another operation for this experiment is still running."
@@ -1643,6 +1655,10 @@ msgstr "Gắn vào chủ đề"
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/hooks/useElementPicker.ts
 msgid "Attached browser selection."
 msgstr "Lựa chọn trình duyệt đính kèm."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Attachments"
+msgstr "Tệp đính kèm"
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunDetail.tsx
 msgid "Attempt"
@@ -1889,6 +1905,10 @@ msgstr "Tác vụ nền"
 #: src/renderer/components/thread/ThreadDocksPanel.tsx
 msgid "Background tasks"
 msgstr "Tác vụ nền"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Backup saved at"
+msgstr "Bản sao lưu được lưu tại"
 
 #: src/renderer/components/experiment/NewExperimentModal.tsx
 #~ msgid "Base branch"
@@ -2239,6 +2259,7 @@ msgstr "Không thể kết nối tới máy chủ từ xa. Hãy kiểm tra máy 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ShortcutsSettings.tsx
@@ -2482,6 +2503,10 @@ msgstr "Kiểm tra thành công"
 msgid "Checks pending"
 msgstr "Kiểm tra đang chờ"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Choose a database from another profile."
+msgstr "Chọn cơ sở dữ liệu từ hồ sơ khác."
+
 #: src/mobile/views/ManageProjectsView.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/GeneralSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
@@ -2527,6 +2552,10 @@ msgstr "Chọn ít nhất hai ứng viên và nhập lời nhắc."
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 #~ msgid "Choose automatically or override with a detected shell for new terminals."
 #~ msgstr "Tự động chọn hoặc chỉ định một shell đã phát hiện cho các terminal mới."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Choose history database"
+msgstr "Chọn cơ sở dữ liệu lịch sử"
 
 #: src/renderer/views/SettingsOverlay/parts/GitSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -3636,6 +3665,10 @@ msgstr "Không thể trích xuất ngữ cảnh."
 #: src/renderer/i18n/sharedMessages.ts
 msgid "Could not generate commit message: {detail}"
 msgstr "Không thể tạo thông báo commit: {detail}"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Could not import history. Your existing history is preserved."
+msgstr "Không thể nhập lịch sử. Lịch sử hiện có của bạn được giữ nguyên."
 
 #. placeholder {0}: failure.project.name
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
@@ -5170,6 +5203,15 @@ msgstr "Loại trừ mẫu"
 msgid "Existing or edited native entry; left unchanged"
 msgstr "Mục cấu hình gốc đã tồn tại hoặc đã được chỉnh sửa; giữ nguyên"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
+msgid "Existing threads are kept. Only new threads are added. Account settings and credentials are not imported."
+msgstr "Các luồng hiện có được giữ nguyên. Chỉ thêm các luồng mới. Không nhập cài đặt tài khoản và thông tin xác thực."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Existing threads skipped"
+msgstr "Các luồng hiện có đã bỏ qua"
+
 #. placeholder {0}: parsed.exitCode
 #: src/renderer/components/providers/antigravity/taskNotificationMarkdown.ts
 msgid "Exit code {0}"
@@ -6239,6 +6281,14 @@ msgstr "Ẩn thiết bị đầu cuối"
 msgid "History"
 msgstr "Lịch sử"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "History database"
+msgstr "Cơ sở dữ liệu lịch sử"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "History imported."
+msgstr "Đã nhập lịch sử."
+
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
@@ -6377,6 +6427,11 @@ msgstr "Nhập skill của tác tử bên ngoài"
 msgid "Import external skills"
 msgstr "Nhập skill bên ngoài"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+#: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
+msgid "Import history"
+msgstr "Nhập lịch sử"
+
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Import Lightcode data"
 msgstr "Nhập dữ liệu Lightcode"
@@ -6392,6 +6447,10 @@ msgstr "Nhập máy chủ MCP"
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Import method"
 msgstr "Phương thức nhập"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "Import new threads"
+msgstr "Nhập các luồng mới"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Import selected"
@@ -8109,6 +8168,10 @@ msgstr "Tên hồ sơ mới"
 msgid "New project"
 msgstr "Dự án mới"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "New projects"
+msgstr "Dự án mới"
+
 #: src/renderer/commands/registry.ts
 msgid "New quick thread"
 msgstr "Luồng nhanh mới"
@@ -8181,6 +8244,10 @@ msgstr "Luồng mới trong worktree"
 #: src/renderer/views/MainView/parts/Sidebar/parts/ThreadContextMenu.tsx
 msgid "New Thread in Worktree"
 msgstr "Luồng mới trong Worktree"
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "New threads"
+msgstr "Luồng mới"
 
 #: src/renderer/components/workspace/WorkspaceNameDialog.tsx
 msgid "New workspace"
@@ -13247,6 +13314,10 @@ msgstr "Tài khoản GitHub \"{login}\" thuộc về {host}, không khớp với
 msgid "the global {0} WSL scope"
 msgstr "phạm vi WSL toàn cục {0}"
 
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "The history changed. Choose the source again to refresh the preview."
+msgstr "Lịch sử đã thay đổi. Chọn lại nguồn để làm mới bản xem trước."
+
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostUpdateControl.tsx
 msgid "The host is restarting to install the update."
@@ -13498,6 +13569,10 @@ msgstr "Thư mục này đã được đăng ký làm dự án."
 #: src/renderer/views/SettingsOverlay/parts/RemoteHostFolderPicker.tsx
 msgid "This folder is empty."
 msgstr "Thư mục này trống."
+
+#: src/renderer/views/SettingsOverlay/parts/HistoryImportSection.tsx
+msgid "This history database is invalid or uses an unsupported version."
+msgstr "Cơ sở dữ liệu lịch sử này không hợp lệ hoặc sử dụng phiên bản không được hỗ trợ."
 
 #: src/mobile/views/DesktopsView.tsx
 msgid "This HTTPS page couldn't reach the desktop on plain HTTP. Allow local network access for this site and pair again, or continue on the desktop's own address."

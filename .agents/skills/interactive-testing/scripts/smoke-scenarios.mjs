@@ -38,6 +38,13 @@ export const functionalAreas = [
     manual: ["live-voice", "provider-live", "ipc-roundtrip", "changed-surface"],
   },
   {
+    id: "history-import",
+    title: "Additive history import, review ticket, backups and attachments",
+    patterns: [/historyImport/i, /HistoryImport/, /mainCreatedThreads/],
+    automated: ["baseline", "settings", "history-import"],
+    manual: ["changed-surface", "ipc-roundtrip", "project-mutations"],
+  },
+  {
     id: "subscription-images",
     title: "Native account image generation, edit references and inline output",
     patterns: [

@@ -12,6 +12,8 @@ import {
   acknowledgeMirroredThreadIds,
   isMainCreatedThreadUnmirrored,
   noteRecoveredThreads,
+  isMainCreatedProjectUnmirrored,
+  acknowledgeMirroredProjectIds,
 } from "./mainCreatedThreads";
 import { notifyProjectThreadDataChanged } from "./projectThreadChanges";
 import { dbDiscardThreadRuntimeWrites } from "./runtimeItems";
@@ -72,7 +74,10 @@ export function dbSyncAll(
     const existingProjectIds = new Set(existingProjectRows.map((row) => row.id));
     const incomingProjectIds = new Set(incomingProjects.map((p) => p.id));
     const deletedProjectIds = new Set(
-      [...existingProjectIds].filter((projectId) => !incomingProjectIds.has(projectId)),
+      [...existingProjectIds].filter(
+        (projectId) =>
+          !incomingProjectIds.has(projectId) && !isMainCreatedProjectUnmirrored(projectId),
+      ),
     );
     const deleteProject = sqlite.prepare("DELETE FROM projects WHERE id = ?");
     const deleteProjectNotes = sqlite.prepare("DELETE FROM project_notes WHERE project_id = ?");
@@ -90,7 +95,7 @@ export function dbSyncAll(
     const incomingThreads = remapThreadProjectIds(threadsData, duplicateIds);
 
     for (const pid of existingProjectIds) {
-      if (!incomingProjectIds.has(pid)) {
+      if (deletedProjectIds.has(pid)) {
         deleteProject.run(pid);
         deleteProjectNotes.run(pid);
       }
@@ -122,6 +127,7 @@ export function dbSyncAll(
     // Anything in this snapshot is renderer-owned from here on, so a later
     // snapshot that drops it is a real deletion.
     acknowledgeMirroredThreadIds(incomingThreadIds);
+    acknowledgeMirroredProjectIds(incomingProjectIds);
 
     sqlite
       .prepare(

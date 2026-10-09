@@ -2,6 +2,15 @@
 
 Data: 2026-10-09. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Import i scalanie historii - 2026-10-09
+
+- Ustawienia wątków zawierają lokalny importer `state.sqlite` z podglądem nowych projektów, wątków i załączników. Istniejące identyfikatory wątków są pomijane, projekty łączone według lokalizacji. Bieżące tytuły i transkrypty pozostają zachowane. Import nie synchronizuje późniejszych zmian źródła ani nie scala wiadomości istniejącego wątku.
+- Obsługiwane są bazy v41 i v42. Migracja dotyczy wyłącznie prywatnej kopii w cache. Walidacja obejmuje schemat, integralność, relacje i serializowane rekordy historii. Przed zapisem powstaje online backup aktualnej bazy. Transakcja kopiuje wyłącznie historię, bez ustawień kont, MCP, skryptów projektów i poświadczeń.
+- Wątki trafiają jako nieaktywne, z oryginalnym archiwum i datami. Załączniki należące do źródłowego profilu są kopiowane podczas podglądu, z referencjami przepisanymi na katalog docelowego wątku. Brakujący plik albo symlink poza profilem blokuje import. Zewnętrzne ścieżki nie są kopiowane. Zmiana docelowych identyfikatorów po podglądzie wymaga odświeżenia. Stare snapshoty renderera nie usuwają świeżo importowanych rekordów.
+- Nie zmieniono wersji SQLite 42 ani formatów historii. Trzy nowe procedury są addytywnym IPC lokalnego urządzenia, ukrytym w sesji zdalnej. Token podglądu jest jednorazowy i wygasa po 30 minutach. Nie ma automatycznego importu po restarcie.
+- Weryfikacja: 45 testów w 4 końcowych zestawach, typecheck i lint przeszły. Wszystkie 12 tłumaczeń ma 0 brakujących wpisów. Smoke Electron potwierdził podgląd, anulowanie, zapis IPC, archiwum z 2020 roku, bajty załącznika, kopię sprzed zapisu i idempotentny kolejny podgląd. Raport w `/private/tmp/poracode-history-merge-smoke-20261009`, dodatkowe obrazy i kontrola SQLite w `/private/tmp/poracode-history-merge-ui-20261009`. 0 błędów renderera. Natywny file picker korzysta z istniejącego API i został wyłączony z automatycznej kontroli Electron, aby nie przejmować fokusu; wybór jest objęty testem komponentu.
+- Kod nie został jeszcze przepakowany ani zainstalowany. Produkcyjny jednorazowy import użytkownika nie był powtarzany.
+
 ## Obrazy na koncie Google - 2026-10-09
 
 - Crossagents udostępnia `list_image_providers`, `create_image` i `get_image_result`. Główny agent może zlecić obraz lub edycję z maksymalnie pięcioma referencjami, otrzymać identyfikator zadania i poczekać na wynik. Potrzebny jest lokalny projekt, dostępny dostawca w puli Crossagents i nowa ścieżka PNG. Timeout oczekiwania nie przerywa zadania. Anulowanie korzysta z istniejącego `cancel`.
