@@ -1,6 +1,6 @@
 # Przekazanie osobistego forka PoraCode
 
-Stan na 2026-10-07. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
+Stan na 2026-10-09. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
 
 ## Zacznij tutaj
 
@@ -17,6 +17,14 @@ Stan na 2026-10-07. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Integracja zmian wykonawców jest automatyczna. Użytkownik wyraźnie wykluczył zatwierdzanie każdego scalenia. Nie należy ponownie otwierać tej decyzji.
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
+
+## Aktualizacja z 2026-10-09
+
+Użytkownik zlecił kontynuację całej pozostałej listy oraz generowanie i edycję obrazów Google na istniejącej subskrypcji Gemini. Płatne API jest wykluczone. Oficjalna ścieżka Antigravity ma natywne `generate_image`; bieżąca dokumentacja deklaruje Nano Banana 2 bez wyboru modelu obrazu, więc nie obiecuj Nano Banana Pro przez CLI. `agy models` zgłasza brak logowania. Użytkownik otrzymał prośbę o zalogowanie przez `agy`; nie kopiuj ani nie drukuj tokenów. Pytania o Groka i nazwę aplikacji nie otrzymały odpowiedzi; na razie zachowaj Poracode Personal.
+
+W bieżącym kodzie są trwałe zadania zespołu, jawne wznowienie zachowanego worktree, odzyskiwanie integracji i ekran sprzątania w ustawieniach Crossagents. Deterministyczne testy Git i smoke Electron przeszły. Naprawiono też ujawnione przez testy zamykanie paneli podczas pracy w tle. Szczegóły i granice zgodności opisuje początek [stanu implementacji](implementation.md). Te zmiany nie są jeszcze w zainstalowanym pakiecie.
+
+Pozostały zakres nadal obejmuje obrazy na subskrypcji, importer/scalanie historii, kanał aktualizacji forka, wersje agentów/rollback oraz rzeczywiste testy kont Google/Grok i własnego OAuth Figma. Implementacja OAuth MCP już istnieje; wymagane jest własne logowanie, nie przebudowa ani przejęcie poświadczeń Codex.
 
 ## Aktualizacja z 2026-10-07
 

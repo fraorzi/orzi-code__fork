@@ -33,6 +33,7 @@ import {
   TIMEOUT_S_DESCRIPTION,
 } from "./toolResult";
 import { parseRunIds, parseSpawnRequest, parseSpawnRequests } from "./toolRequests";
+import { TEAM_TOOLS, dispatchTeamTool } from "./teamTools";
 import { rankingCandidateOf, resolveSubagentExecution } from "./types";
 import type {
   McpToolResult,
@@ -88,6 +89,7 @@ export const CROSSAGENT_MCP_INSTRUCTIONS_BASE = [
   `Pass tasks=[...] to the same spawn_agent call to launch up to ${MAX_CONCURRENT_CHILDREN_PER_PARENT} independent agents in parallel. Each parent thread can have at most ${MAX_CONCURRENT_CHILDREN_PER_PARENT} running agents across all calls; wait for an existing run to finish before spawning beyond that limit.`,
   "Use ordered fallbacks to retry startup failures on another model or provider. Retrying after a dispatched turn requires retry_on='any-failure' because it may repeat side effects.",
   "Background runs also survive interruption of the current parent turn, but still stop when the parent thread closes.",
+  "Teamwork tasks and worktrees are saved across app restarts. Call list_team_workspaces to find interrupted tasks. Use resume_team_run to continue in the existing worktree after inspecting its prior work, or recover_team_integration to finish an integration interrupted after the worker completed. Do not blindly repeat external side effects. Cleanup integrated work with remove_team_workspace; discard_changes=true requires the user's explicit request to discard unfinished work.",
   "Give each subagent a self-contained prompt — it does not share your conversation context.",
   "Use steer_agent to send a follow-up message to a running child: corrections, new evidence, or narrowed scope. The child keeps its session and context and continues with your message. It is a message, not a result: keep waiting for the child to finish. list_runs.can_steer is false only while a child is still starting, has finished, or is processing a previous message.",
   "For larger batches, call list_runs with include_capacity=true to inspect available_slots (a snapshot, not a reservation). Use wait_for_agent with run_ids and wait_mode='any' to collect the next completed result and refill free slots; omit already-settled runs from the next wait. Scope concurrent edits to distinct files or clearly separated responsibilities. Include the objective, relevant context, constraints, and acceptance checks in each prompt. Ask for findings with file references, verification evidence, and unresolved risks; validate the returned work before integrating it.",
@@ -398,7 +400,7 @@ const BASE_TOOLS: ToolSpec[] = RAW_TOOLS.map((tool) => ({
 
 /** Catalog: the ephemeral subagent-run lane. Full-thread orchestration lives
  *  in the always-on `poracode` (app-controls) MCP server's thread tools. */
-export const TOOLS: ToolSpec[] = BASE_TOOLS;
+export const TOOLS: ToolSpec[] = [...BASE_TOOLS, ...TEAM_TOOLS];
 
 export const TOOL_NAMES = new Set(TOOLS.map((t) => t.name));
 const LEGACY_TOOL_NAMES = new Set(["run_agent", "spawn_agents", "wait_for_agents"]);
@@ -885,6 +887,8 @@ export async function dispatchTool(
   ctx: SubagentToolContext,
 ): Promise<McpToolResult> {
   try {
+    const teamResult = await dispatchTeamTool(name, args, ctx);
+    if (teamResult) return teamResult;
     switch (name) {
       case "list_agents":
         return jsonResult(

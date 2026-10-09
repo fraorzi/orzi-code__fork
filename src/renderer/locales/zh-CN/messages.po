@@ -896,6 +896,7 @@ msgstr "{title} 的操作"
 #: src/renderer/components/thread/ThreadGoalDock.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 #: src/renderer/views/SchedulesView/SchedulesView.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/WorkspacesSettings.tsx
 msgid "Active"
 msgstr "活动"
@@ -4597,6 +4598,10 @@ msgstr "放弃实验"
 msgid "Discard experiment?"
 msgstr "放弃实验？"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Discard unintegrated work?"
+msgstr "丢弃尚未合并的工作？"
+
 #: src/mobile/views/useOpenFile.ts
 #: src/renderer/commands/registry.ts
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPane/FileEditorPane.tsx
@@ -4609,6 +4614,10 @@ msgstr "放弃{path}中未保存的更改？"
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPanel.tsx
 msgid "Discard unsaved editor changes?"
 msgstr "放弃未保存的编辑器更改？"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Discard workspace"
+msgstr "丢弃工作区"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 msgid "Disconnect server"
@@ -6740,6 +6749,10 @@ msgstr "代理在选择要委派给哪个代理或模型时遵循的说明。"
 msgid "Instructions are added to the delegated task. They do not restrict the worker's file access."
 msgstr "指令会添加到委派的任务中，不会限制执行者对文件的访问。"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Integrated"
+msgstr "已合并"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Internal commands and agents"
@@ -8589,6 +8602,10 @@ msgstr "尚无运行记录。"
 #: src/renderer/components/thread/ChatPane/ChatRuntimeDebugPanel.tsx
 msgid "No runtime items yet for this thread."
 msgstr "该线程还没有运行时项目。"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "No saved team workspaces."
+msgstr "没有已保存的团队工作区。"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #~ msgid "No servers connected yet."
@@ -10450,6 +10467,7 @@ msgstr "隐藏通知内容"
 #: src/renderer/views/PrReviewOverlay/PrReviewOverlay.tsx
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/NativeMcpSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/UsageSettings.tsx
@@ -10617,6 +10635,7 @@ msgstr "远程网址"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginManager.tsx
 #: src/renderer/components/thread/ThreadRuntimeRequestPanel/StructuredCustomValues.tsx
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 msgid "Remove"
 msgstr "删除"
 
@@ -10702,6 +10721,10 @@ msgstr "移除环境变量"
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Remove fallback {0}"
 msgstr "移除备用模型 {0}"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
+msgstr "删除已完成的工作区以释放磁盘空间。主代理可以在原来的对话中恢复被中断的任务。"
 
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Remove from favorites"
@@ -11465,6 +11488,10 @@ msgstr "已保存的凭据在所有设备间共享。"
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Saved shell"
 msgstr "已保存的 shell"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Saved team workspaces"
+msgstr "已保存的团队工作区"
 
 #: src/mobile/QrScanner.tsx
 msgid "Scan pairing QR code"
@@ -13570,6 +13597,10 @@ msgstr "当检查点快照可用时，这会删除稍后的消息并恢复文件
 msgid "This removes the schedule and its latest result from this device."
 msgstr "这会从此设备中删除计划及其最新结果。"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "This removes the worker's saved files and its recovery data. Changes already integrated into your project are kept."
+msgstr "这将删除执行代理保存的文件及其恢复数据。已合并到项目中的更改会保留。"
+
 #. placeholder {0}: pendingDelete.branch.name
 #. placeholder {1}: pendingDelete.threadCount
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
@@ -14030,6 +14061,10 @@ msgstr "无法加载差异。"
 msgid "Unable to load remote access pairing."
 msgstr "无法加载远程访问配对。"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unable to load team workspaces."
+msgstr "无法加载团队工作区。"
+
 #: src/mobile/useRemoteDesktop.ts
 msgid "Unable to load thread."
 msgstr "无法加载线程。"
@@ -14117,6 +14152,10 @@ msgstr "无法移除记忆条目。"
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unable to remove pinned route."
 msgstr "无法移除固定路由。"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unable to remove team workspace."
+msgstr "无法删除团队工作区。"
 
 #: src/renderer/actions/worktreeActions.ts
 msgid "Unable to remove worktree."
@@ -14329,6 +14368,10 @@ msgstr "卸载"
 msgid "Uninstall {name}"
 msgstr "卸载 {name}"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unintegrated"
+msgstr "尚未合并"
+
 #: src/renderer/components/thread/threadContextUsage.ts
 #: src/renderer/utils/prStatus.ts
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunList.tsx
@@ -14400,6 +14443,10 @@ msgstr "取消固定"
 #: src/renderer/views/GitHubActionsView/GitHubActionsSidebar.tsx
 msgid "Unpin workflow"
 msgstr "取消固定工作流"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unreadable workspace"
+msgstr "无法读取的工作区"
 
 #: src/mobile/views/GitActionSheet.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/FileRow.tsx

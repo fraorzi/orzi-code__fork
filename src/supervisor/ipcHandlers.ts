@@ -34,6 +34,9 @@ export function createSupervisorIpcHandlers(runtime: SupervisorRuntime): Supervi
     userPluginsDir: pluginRegistry.ensureUserPluginsDir(),
   });
   return defineSupervisorIpcHandlers({
+    getTeamWorkspaces: () => runtime.subagentRunManager.getTeamWorkspaces(),
+    cleanupTeamWorkspace: ({ runId, discardChanges }) =>
+      runtime.subagentRunManager.cleanupTeamWorkspace(runId, discardChanges),
     confirmCrossagentRoutingOverride: (payload) =>
       runtime.confirmCrossagentRoutingOverride(payload),
     getCrossagentRouting: () => runtime.getCrossagentRoutingSnapshot(),

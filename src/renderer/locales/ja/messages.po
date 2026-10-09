@@ -895,6 +895,7 @@ msgstr "{title} のアクション"
 #: src/renderer/components/thread/ThreadGoalDock.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 #: src/renderer/views/SchedulesView/SchedulesView.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/WorkspacesSettings.tsx
 msgid "Active"
 msgstr "アクティブ"
@@ -4596,6 +4597,10 @@ msgstr "実験を破棄"
 msgid "Discard experiment?"
 msgstr "実験を破棄しますか？"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Discard unintegrated work?"
+msgstr "未統合の作業を破棄しますか？"
+
 #: src/mobile/views/useOpenFile.ts
 #: src/renderer/commands/registry.ts
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPane/FileEditorPane.tsx
@@ -4608,6 +4613,10 @@ msgstr "{path}の未保存の変更を破棄しますか?"
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPanel.tsx
 msgid "Discard unsaved editor changes?"
 msgstr "保存されていないエディターの変更を破棄しますか?"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Discard workspace"
+msgstr "ワークスペースを破棄"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 msgid "Disconnect server"
@@ -6739,6 +6748,10 @@ msgstr "どのエージェントやモデルに委任するかを選ぶ際に、
 msgid "Instructions are added to the delegated task. They do not restrict the worker's file access."
 msgstr "指示は委任されたタスクに追加されます。ワーカーのファイルアクセスは制限されません。"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Integrated"
+msgstr "統合済み"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Internal commands and agents"
@@ -8588,6 +8601,10 @@ msgstr "まだ実行はありません。"
 #: src/renderer/components/thread/ChatPane/ChatRuntimeDebugPanel.tsx
 msgid "No runtime items yet for this thread."
 msgstr "このスレッドにはランタイム アイテムがまだありません。"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "No saved team workspaces."
+msgstr "保存されたチームワークスペースはありません。"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #~ msgid "No servers connected yet."
@@ -10449,6 +10466,7 @@ msgstr "通知内容を伏せる"
 #: src/renderer/views/PrReviewOverlay/PrReviewOverlay.tsx
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/NativeMcpSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/UsageSettings.tsx
@@ -10616,6 +10634,7 @@ msgstr "リモートURL"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginManager.tsx
 #: src/renderer/components/thread/ThreadRuntimeRequestPanel/StructuredCustomValues.tsx
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 msgid "Remove"
 msgstr "削除する"
 
@@ -10701,6 +10720,10 @@ msgstr "環境変数を削除"
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Remove fallback {0}"
 msgstr "代替モデル {0} を削除"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
+msgstr "完了したワークスペースを削除するとディスク容量を解放できます。中断したタスクは、元のスレッドでリーダーエージェントが再開できます。"
 
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Remove from favorites"
@@ -11464,6 +11487,10 @@ msgstr "保存された認証情報はすべてのマシンで共有されます
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Saved shell"
 msgstr "保存済みのシェル"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Saved team workspaces"
+msgstr "保存されたチームワークスペース"
 
 #: src/mobile/QrScanner.tsx
 msgid "Scan pairing QR code"
@@ -13569,6 +13596,10 @@ msgstr "これにより、後続のメッセージが削除され、チェック
 msgid "This removes the schedule and its latest result from this device."
 msgstr "このデバイスからスケジュールと最新の結果を削除します。"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "This removes the worker's saved files and its recovery data. Changes already integrated into your project are kept."
+msgstr "作業エージェントの保存済みファイルと復旧データを削除します。プロジェクトに統合済みの変更は保持されます。"
+
 #. placeholder {0}: pendingDelete.branch.name
 #. placeholder {1}: pendingDelete.threadCount
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
@@ -14029,6 +14060,10 @@ msgstr "差分を読み込めませんでした。"
 msgid "Unable to load remote access pairing."
 msgstr "リモートアクセスのペアリングを読み込めませんでした。"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unable to load team workspaces."
+msgstr "チームワークスペースを読み込めません。"
+
 #: src/mobile/useRemoteDesktop.ts
 msgid "Unable to load thread."
 msgstr "スレッドを読み込めません。"
@@ -14116,6 +14151,10 @@ msgstr "メモリエントリーを削除できません。"
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unable to remove pinned route."
 msgstr "固定ルートを削除できませんでした。"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unable to remove team workspace."
+msgstr "チームワークスペースを削除できません。"
 
 #: src/renderer/actions/worktreeActions.ts
 msgid "Unable to remove worktree."
@@ -14328,6 +14367,10 @@ msgstr "アンインストール"
 msgid "Uninstall {name}"
 msgstr "{name}をアンインストール"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unintegrated"
+msgstr "未統合"
+
 #: src/renderer/components/thread/threadContextUsage.ts
 #: src/renderer/utils/prStatus.ts
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunList.tsx
@@ -14399,6 +14442,10 @@ msgstr "固定を解除する"
 #: src/renderer/views/GitHubActionsView/GitHubActionsSidebar.tsx
 msgid "Unpin workflow"
 msgstr "ワークフローのピン留めを解除"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unreadable workspace"
+msgstr "読み込めないワークスペース"
 
 #: src/mobile/views/GitActionSheet.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/FileRow.tsx

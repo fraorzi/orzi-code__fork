@@ -1,6 +1,16 @@
 # Stan implementacji
 
-Data: 2026-10-07. Lokalna wersja testowa na bazie PoraCode 1.8.1.
+Data: 2026-10-09. Lokalna wersja testowa na bazie PoraCode 1.8.1.
+
+## Odzyskiwanie zespołu i porządki - 2026-10-09
+
+- Zadanie wykonawcy jest zapisywane atomowo przed uruchomieniem procesu. Po restarcie główny agent może wylistować przerwane zadania i wznowić je w tym samym worktree przez `list_team_workspaces` i `resume_team_run`. Wznowienie wymaga działającego wątku właściciela w pierwotnym projekcie. Uruchamia nowy kontekst z pierwotnym zadaniem oraz zachowanymi plikami; nie odtwarza automatycznie zewnętrznych skutków wcześniejszej pracy.
+- Integracja zapisuje paragon przed i po zastosowaniu patcha. `recover_team_integration` kończy integrację ukończonego zadania, bez ponownego uruchamiania wykonawcy. Rozpoznaje także dokładny patch zastosowany przed awarią zapisu paragonu. Zapisany wynik integracji chroni późniejsze edycje projektu przed ponownym zastosowaniem patcha. Niejednoznaczny konflikt pozostaje do rozwiązania, nie jest nadpisywany.
+- Ustawienia Crossagents pokazują lokalne zachowane worktree. Aktywne zadanie blokuje usuwanie, a niezintegrowana praca wymaga jawnego potwierdzenia jej odrzucenia. Sprzątanie usuwa rejestrację Git, katalog wykonawcy oraz jego referencję migawki. MCP `remove_team_workspace` jest ograniczony do wątku właściciela.
+- Granice zgodności: istniejący `workspace.json` zachowuje wersję 1. Nowe `run.json` i `integration.json` mają niezależną wersję 1. Starsze workspace bez zadania można posprzątać, ale nie są automatycznie wznawiane. Uszkodzone i nieznane wersje są zachowane. Addytywne procedury IPC są lokalne; UI jest ukryte przy połączeniu zdalnym. Nie zmieniono SQLite, ustawień ani protokołu remote.
+- Naprawiono zamykanie i ponowne otwieranie paneli w tle. Wspólny wrapper ignoruje zakończenie starej animacji po ponownym otwarciu i ma ograniczony czas oczekiwania na klatkę oraz zakończenie animacji. Ekran powitalny również znika przy niedostarczonym `transitionend`.
+- Przeszły 163 testy zespołu/runtime w 5 zestawach i 8 testów overlayów. Smoke rzeczywistego Electron w izolowanym profilu mock sprawdził IPC, Git, odmowę usunięcia bez zgody, anulowanie potwierdzenia oraz usunięcie zintegrowanego workspace. Ustawienia i edytor ról także przeszły; 0 błędów renderera. Dowody: `/private/tmp/poracode-team-workspace-ui5-20261009/artifacts/smoke-report.json`. To kontrola deterministyczna, nie test awarii rzeczywistego dostawcy.
+- Kod nie został jeszcze przepakowany do zainstalowanej aplikacji. Integracja obrazów przez konto Google i pozostałe pozycje planu są w toku. Użytkownik wykluczył płatne API; nie dodawać konfiguracji klucza API jako alternatywy.
 
 ## Trwała kolejka i odzyskiwanie po awarii - 2026-10-07
 

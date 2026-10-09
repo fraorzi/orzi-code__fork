@@ -15,6 +15,59 @@ async function flushFadeIn() {
 }
 
 describe("OverlayShell", () => {
+  it("opens and exits when the background window provides no animation frames or transition events", () => {
+    vi.useFakeTimers();
+    const raf = vi.spyOn(window, "requestAnimationFrame").mockImplementation(() => 123);
+    try {
+      const onExited = vi.fn<() => void>();
+      const { container, rerender } = render(
+        <OverlayShell open onExited={onExited}>
+          <div>Settings</div>
+        </OverlayShell>,
+      );
+      act(() => vi.advanceTimersByTime(16));
+      expect(surface(container).className).toContain("opacity-100");
+      rerender(
+        <OverlayShell open={false} onExited={onExited}>
+          {null}
+        </OverlayShell>,
+      );
+      act(() => vi.advanceTimersByTime(150));
+      expect(screen.queryByText("Settings")).not.toBeInTheDocument();
+      expect(onExited).toHaveBeenCalledOnce();
+    } finally {
+      raf.mockRestore();
+      vi.useRealTimers();
+    }
+  });
+
+  it("keeps a reopened surface alive when an old exit transition finishes", () => {
+    vi.useFakeTimers();
+    try {
+      const onExited = vi.fn<() => void>();
+      const { container, rerender } = render(
+        <OverlayShell open instantEnter onExited={onExited}>
+          <div>Settings</div>
+        </OverlayShell>,
+      );
+      rerender(
+        <OverlayShell open={false} instantEnter onExited={onExited}>
+          {null}
+        </OverlayShell>,
+      );
+      rerender(
+        <OverlayShell open instantEnter onExited={onExited}>
+          <div>Settings reopened</div>
+        </OverlayShell>,
+      );
+      fireEvent.transitionEnd(surface(container), { propertyName: "opacity" });
+      act(() => vi.advanceTimersByTime(150));
+      expect(screen.getByText("Settings reopened")).toBeInTheDocument();
+      expect(onExited).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
   it("retains the open content until the exit transition finishes", () => {
     const onExited = vi.fn<() => void>();
     const { container, rerender } = render(

@@ -32,6 +32,80 @@ afterEach(async () => {
 });
 
 describe("team worktree integration", () => {
+  it("recovers a prior-release workspace without inventing a task to replay", async () => {
+    const workspace = await service.create("111111111111", { kind: "posix", path: root });
+    const restarted = new TeamWorktreeService(join(directory, "teams"));
+    expect(await restarted.load(workspace.runId)).toEqual({ workspace });
+    expect(await restarted.list()).toEqual([{ runId: workspace.runId, workspace }]);
+  });
+
+  it("persists the task and report across restarts and preserves corrupt metadata", async () => {
+    const workspace = await service.create("222222222222", { kind: "posix", path: root });
+    const run = {
+      version: 1 as const,
+      parentThreadId: "parent",
+      request: { agent: "worker", prompt: "finish task" },
+      status: "running" as const,
+      output: "",
+    };
+    service.saveRun(workspace, run);
+    const restarted = new TeamWorktreeService(join(directory, "teams"));
+    expect((await restarted.load(workspace.runId)).run).toEqual(run);
+    const path = join(directory, "teams", workspace.runId, "run.json");
+    await writeFile(path, '{"version":2}');
+    expect(() => restarted.saveRun(workspace, run)).toThrow("version");
+    expect(await readFile(path, "utf8")).toBe('{"version":2}');
+    expect(await restarted.list()).toMatchObject([
+      { runId: workspace.runId, error: expect.any(String) },
+    ]);
+  });
+
+  it("never re-applies an integrated task after a restart or overwrites later parent changes", async () => {
+    const workspace = await service.create("333333333333", { kind: "posix", path: root });
+    await writeFile(join(workspace.root, "task.txt"), "worker result\n");
+    const result = await service.integrate(workspace, () => false);
+    await writeFile(join(root, "task.txt"), "later parent work\n");
+    const restarted = new TeamWorktreeService(join(directory, "teams"));
+    expect(await restarted.integrate(workspace, () => false)).toEqual(result);
+    expect(await readFile(join(root, "task.txt"), "utf8")).toBe("later parent work\n");
+  });
+
+  it("recognizes a patch applied before a crash prevented saving its receipt", async () => {
+    const workspace = await service.create("444444444444", { kind: "posix", path: root });
+    await writeFile(join(workspace.root, "task.txt"), "worker result\n");
+    await service.integrate(workspace, () => false);
+    const path = join(directory, "teams", workspace.runId, "integration.json");
+    await writeFile(path, JSON.stringify({ version: 1, state: "prepared", files: ["task.txt"] }));
+    const restarted = new TeamWorktreeService(join(directory, "teams"));
+    expect(await restarted.integrate(workspace, () => false)).toEqual({
+      status: "applied",
+      files: ["task.txt"],
+    });
+    expect(JSON.parse(await readFile(path, "utf8"))).toMatchObject({ state: "applied" });
+  });
+
+  it("removes integrated worktrees and Git refs while protecting unintegrated files", async () => {
+    const workspace = await service.create("555555555555", { kind: "posix", path: root });
+    await writeFile(join(workspace.root, "task.txt"), "worker result\n");
+    await expect(service.remove(workspace.runId)).rejects.toThrow("explicit discard");
+    expect(await readFile(join(workspace.root, "task.txt"), "utf8")).toBe("worker result\n");
+    await service.integrate(workspace, () => false);
+    await service.remove(workspace.runId);
+    expect(await service.list()).toEqual([]);
+    expect(await git("worktree", "list", "--porcelain")).not.toContain(workspace.root);
+    expect(await git("for-each-ref", workspace.baselineRef)).toBe("");
+    expect(await readFile(join(root, "task.txt"), "utf8")).toBe("worker result\n");
+  });
+
+  it("rejects a manifest redirecting cleanup outside the owned run directory", async () => {
+    const workspace = await service.create("666666666666", { kind: "posix", path: root });
+    await writeFile(
+      join(directory, "teams", workspace.runId, "workspace.json"),
+      JSON.stringify({ ...workspace, root }),
+    );
+    await expect(service.remove(workspace.runId, true)).rejects.toThrow("identity mismatch");
+    expect(await readFile(join(root, "task.txt"), "utf8")).toBe("baseline\n");
+  });
   it("snapshots dirty and untracked files and applies only child changes without changing HEAD or the parent index", async () => {
     const head = await git("rev-parse", "HEAD");
     const index = await readFile(join(root, ".git/index"));

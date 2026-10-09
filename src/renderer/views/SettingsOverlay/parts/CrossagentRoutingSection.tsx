@@ -15,6 +15,7 @@ import { CrossagentMemorySection } from "./crossagent/CrossagentMemorySection";
 import { CrossagentProviderModelFilter } from "./crossagent/CrossagentProviderModelFilter";
 import { CrossagentRolesSection } from "./crossagent/CrossagentRolesSection";
 import { CrossagentRankedRow } from "./crossagent/CrossagentRankedRow";
+import { TeamWorkspacesSection } from "./crossagent/TeamWorkspacesSection";
 
 /**
  * Crossagents routing settings: the live globally ranked (provider, model)
@@ -160,6 +161,7 @@ export function CrossagentRoutingSection() {
         </p>
       </section>
       <CrossagentMemorySection />
+      <TeamWorkspacesSection />
       <section className="space-y-2">
         <p className="text-sm font-medium text-foreground">
           <Trans>Crossagent routing guide</Trans>

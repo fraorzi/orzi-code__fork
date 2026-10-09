@@ -1,7 +1,8 @@
-import { useEffect, useState, type ReactNode, type TransitionEvent } from "react";
+import { useEffect, useEffectEvent, useState, type ReactNode, type TransitionEvent } from "react";
 import { pushEscapeHandler } from "./overlayEscapeStack";
 
 export type OverlayShellMode = "fixed" | "absolute";
+const OVERLAY_FADE_MS = 150;
 
 /**
  * Shared overlay wrapper with fade-in/fade-out animation.
@@ -62,8 +63,24 @@ export function OverlayShell(props: {
   useEffect(() => {
     if (!open || instantEnter || escapeClosing) return;
     const raf = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(raf);
+    // Occluded Electron windows can stop delivering frames entirely.
+    const timer = window.setTimeout(() => setVisible(true), 16);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
   }, [open, instantEnter, escapeClosing]);
+
+  const finishExit = useEffectEvent(() => {
+    if (!mounted || (open && !escapeClosing)) return;
+    setMounted(false);
+    onExited?.();
+  });
+  useEffect(() => {
+    if (!mounted || (open && !escapeClosing)) return;
+    const timer = window.setTimeout(finishExit, OVERLAY_FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [mounted, open, escapeClosing]);
 
   // Close on Escape via the overlay escape stack — only the topmost overlay
   // dismisses, so a transient overlay floating above this one (e.g. the
@@ -83,7 +100,7 @@ export function OverlayShell(props: {
   function handleTransitionEnd(event: TransitionEvent<HTMLDivElement>) {
     if (event.target !== event.currentTarget) return;
     if (event.propertyName !== "opacity") return;
-    if (!visible) {
+    if (mounted && (!open || escapeClosing)) {
       setMounted(false);
       onExited?.();
     }
@@ -101,9 +118,10 @@ export function OverlayShell(props: {
       // shows the main-window sidebar through the translucent overlay. The
       // overlay is responsible for painting its own chrome on the first frame.
       {...(visible ? { "data-overlay-visible": "" } : {})}
-      className={`${positionClass} flex flex-col bg-background transition-opacity duration-150 ${
+      className={`${positionClass} flex flex-col bg-background transition-opacity ${
         visible ? "opacity-100" : "opacity-0"
       }`}
+      style={{ transitionDuration: `${OVERLAY_FADE_MS}ms` }}
       onTransitionEnd={handleTransitionEnd}
     >
       {open ? children : exitChildren}

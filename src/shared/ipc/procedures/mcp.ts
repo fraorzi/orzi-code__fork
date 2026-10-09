@@ -25,7 +25,12 @@ import {
   type ReloadAgentMcpServersPayload,
 } from "../../contracts";
 import { z } from "zod";
-import { definePayloadProcedure } from "../core";
+import { defineNoArgProcedure, definePayloadProcedure } from "../core";
+import {
+  cleanupTeamWorkspacePayloadSchema,
+  type CleanupTeamWorkspacePayload,
+  type TeamWorkspaceSummary,
+} from "../../teamWorkspaces";
 
 export const confirmCrossagentRoutingOverridePayloadSchema = z.object({
   requestId: z.string().uuid(),
@@ -37,6 +42,15 @@ export type ConfirmCrossagentRoutingOverridePayload = z.infer<
 >;
 
 export const mcpProcedures = {
+  getTeamWorkspaces: defineNoArgProcedure<TeamWorkspaceSummary[], "supervisor">(
+    "getTeamWorkspaces",
+    "supervisor",
+  ),
+  cleanupTeamWorkspace: definePayloadProcedure<CleanupTeamWorkspacePayload, void, "supervisor">(
+    "cleanupTeamWorkspace",
+    "supervisor",
+    cleanupTeamWorkspacePayloadSchema,
+  ),
   getNativeMcpSetup: definePayloadProcedure<
     NativeMcpSetupPayload,
     NativeMcpSetupStatus,

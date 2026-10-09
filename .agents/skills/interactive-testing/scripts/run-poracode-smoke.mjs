@@ -307,6 +307,11 @@ function pnpmSpawnCommand() {
 }
 
 async function createFixture() {
+  // Native CLI binaries remain discoverable through the login shell even in
+  // mock mode. Keep fixture startup from updating those real installations.
+  // Update scenarios opt in explicitly through the fixture's settings.
+  await mkdir(dataDir, { recursive: true });
+  await writeFile(join(dataDir, "settings.json"), JSON.stringify({ automaticAgentUpdates: false }));
   await mkdir(projectDir, { recursive: true });
   await mkdir(homeDir, { recursive: true });
   await mkdir(localAppDataDir, { recursive: true });

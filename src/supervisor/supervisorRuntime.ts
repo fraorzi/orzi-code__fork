@@ -143,7 +143,7 @@ export class SupervisorRuntime {
   readonly pluginRegistry: PluginRegistry;
   private readonly pluginDataDir: string;
   private readonly crossagentMcpIngress: CrossagentMcpIngress;
-  private readonly subagentRunManager: SubagentRunManager;
+  readonly subagentRunManager: SubagentRunManager;
   private readonly routingOverridePersistence: RoutingOverridePersistence;
   private readonly disposeWslCredentialProjectScope: () => void;
   private readonly disposeWindowsPowerShellPreference: () => void;

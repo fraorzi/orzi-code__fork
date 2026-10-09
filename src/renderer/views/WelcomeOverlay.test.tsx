@@ -1,4 +1,4 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { act, fireEvent, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useAppStore } from "@/renderer/state/appStore";
 import { WELCOME_SEEN_STORAGE_KEY } from "@/renderer/state/welcomeGateStore";
@@ -44,5 +44,18 @@ describe("WelcomeOverlay", () => {
     if (overlay) fireEvent.transitionEnd(overlay);
 
     expect(document.querySelector(".poracode-welcome-page")).toBeNull();
+  });
+
+  it("unmounts in a background window even when transitionend never arrives", () => {
+    vi.useFakeTimers();
+    try {
+      render(<WelcomeOverlay />);
+      fireEvent.click(screen.getByText("Ask Question"));
+      expect(localStorage.getItem(WELCOME_SEEN_STORAGE_KEY)).toBe("true");
+      act(() => vi.advanceTimersByTime(500));
+      expect(document.querySelector(".poracode-welcome-page")).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

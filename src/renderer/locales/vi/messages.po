@@ -896,6 +896,7 @@ msgstr "Hành động cho {title}"
 #: src/renderer/components/thread/ThreadGoalDock.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 #: src/renderer/views/SchedulesView/SchedulesView.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/WorkspacesSettings.tsx
 msgid "Active"
 msgstr "Đang hoạt động"
@@ -4597,6 +4598,10 @@ msgstr "Hủy bỏ thử nghiệm"
 msgid "Discard experiment?"
 msgstr "Hủy bỏ thử nghiệm?"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Discard unintegrated work?"
+msgstr "Bỏ công việc chưa tích hợp?"
+
 #: src/mobile/views/useOpenFile.ts
 #: src/renderer/commands/registry.ts
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPane/FileEditorPane.tsx
@@ -4609,6 +4614,10 @@ msgstr "Hủy các thay đổi chưa được lưu trong {path}?"
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPanel.tsx
 msgid "Discard unsaved editor changes?"
 msgstr "Hủy các thay đổi chưa lưu trong trình chỉnh sửa?"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Discard workspace"
+msgstr "Xóa không gian làm việc"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 msgid "Disconnect server"
@@ -6740,6 +6749,10 @@ msgstr "Hướng dẫn mà các tác nhân tuân theo khi chọn tác nhân ho�
 msgid "Instructions are added to the delegated task. They do not restrict the worker's file access."
 msgstr "Hướng dẫn được thêm vào nhiệm vụ đã giao. Chúng không giới hạn quyền truy cập tệp của tác nhân thực hiện."
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Integrated"
+msgstr "Đã tích hợp"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Internal commands and agents"
@@ -8590,6 +8603,10 @@ msgstr "Chưa có lần chạy nào."
 #: src/renderer/components/thread/ChatPane/ChatRuntimeDebugPanel.tsx
 msgid "No runtime items yet for this thread."
 msgstr "Chưa có mục thời gian chạy nào cho luồng này."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "No saved team workspaces."
+msgstr "Không có không gian làm việc nhóm đã lưu."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #~ msgid "No servers connected yet."
@@ -10451,6 +10468,7 @@ msgstr "Ẩn nội dung thông báo"
 #: src/renderer/views/PrReviewOverlay/PrReviewOverlay.tsx
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/NativeMcpSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/UsageSettings.tsx
@@ -10618,6 +10636,7 @@ msgstr "URL từ xa"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginManager.tsx
 #: src/renderer/components/thread/ThreadRuntimeRequestPanel/StructuredCustomValues.tsx
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 msgid "Remove"
 msgstr "Xóa"
 
@@ -10703,6 +10722,10 @@ msgstr "Xóa biến môi trường"
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Remove fallback {0}"
 msgstr "Xóa mô hình dự phòng {0}"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
+msgstr "Xóa các không gian làm việc đã hoàn thành để giải phóng dung lượng. Tác nhân chính có thể tiếp tục các tác vụ bị gián đoạn trong cuộc hội thoại ban đầu."
 
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Remove from favorites"
@@ -11466,6 +11489,10 @@ msgstr "Thông tin đăng nhập đã lưu được dùng chung cho tất cả c
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Saved shell"
 msgstr "Shell đã lưu"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Saved team workspaces"
+msgstr "Không gian làm việc nhóm đã lưu"
 
 #: src/mobile/QrScanner.tsx
 msgid "Scan pairing QR code"
@@ -13571,6 +13598,10 @@ msgstr "Thao tác này sẽ xóa các tin nhắn sau này và khôi phục các 
 msgid "This removes the schedule and its latest result from this device."
 msgstr "Thao tác này xóa lịch biểu và kết quả mới nhất khỏi thiết bị này."
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "This removes the worker's saved files and its recovery data. Changes already integrated into your project are kept."
+msgstr "Thao tác này xóa các tệp đã lưu của tác nhân thực hiện và dữ liệu khôi phục. Các thay đổi đã tích hợp vào dự án được giữ lại."
+
 #. placeholder {0}: pendingDelete.branch.name
 #. placeholder {1}: pendingDelete.threadCount
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
@@ -14031,6 +14062,10 @@ msgstr "Không thể tải phần khác biệt."
 msgid "Unable to load remote access pairing."
 msgstr "Không thể tải ghép đôi truy cập từ xa."
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unable to load team workspaces."
+msgstr "Không thể tải các không gian làm việc nhóm."
+
 #: src/mobile/useRemoteDesktop.ts
 msgid "Unable to load thread."
 msgstr "Không thể tải luồng."
@@ -14118,6 +14153,10 @@ msgstr "Không thể xóa mục bộ nhớ."
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unable to remove pinned route."
 msgstr "Không thể xóa tuyến đã ghim."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unable to remove team workspace."
+msgstr "Không thể xóa không gian làm việc nhóm."
 
 #: src/renderer/actions/worktreeActions.ts
 msgid "Unable to remove worktree."
@@ -14330,6 +14369,10 @@ msgstr "Gỡ cài đặt"
 msgid "Uninstall {name}"
 msgstr "Gỡ cài đặt {name}"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unintegrated"
+msgstr "Chưa tích hợp"
+
 #: src/renderer/components/thread/threadContextUsage.ts
 #: src/renderer/utils/prStatus.ts
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunList.tsx
@@ -14401,6 +14444,10 @@ msgstr "Bỏ ghim"
 #: src/renderer/views/GitHubActionsView/GitHubActionsSidebar.tsx
 msgid "Unpin workflow"
 msgstr "Bỏ ghim quy trình làm việc"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unreadable workspace"
+msgstr "Không thể đọc không gian làm việc"
 
 #: src/mobile/views/GitActionSheet.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/FileRow.tsx

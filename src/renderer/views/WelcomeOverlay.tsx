@@ -40,6 +40,7 @@ const COMET_LIGHT_TICK_MS = 50; // ~20fps
 // frame. A user who clicks a CTA sooner releases the gate immediately in
 // `dismissWelcome`.
 const WELCOME_SETTLE_MS = 3200;
+const WELCOME_EXIT_FADE_MS = 500;
 
 export function WelcomeOverlay() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -77,6 +78,14 @@ export function WelcomeOverlay() {
   } else if (visible) {
     setVisible(false);
   }
+
+  useEffect(() => {
+    if (open || !mounted) return;
+    // Occluded windows and reduced-motion styles may never emit transitionend.
+    // Dismissal owns the lifecycle; the finite visual fade cannot keep it mounted.
+    const timer = window.setTimeout(() => setMounted(false), WELCOME_EXIT_FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [open, mounted]);
 
   // First launch only: defer heavy background work until the intro animation
   // has settled, then release the gate so MainView can start agent detection.
@@ -173,8 +182,9 @@ export function WelcomeOverlay() {
     <div
       ref={containerRef}
       className={`poracode-welcome-page fixed inset-0 z-50 flex flex-col bg-background transition-opacity ${
-        visible ? "opacity-100 duration-150" : "opacity-0 duration-500"
+        visible ? "opacity-100" : "opacity-0"
       }`}
+      style={{ transitionDuration: `${visible ? 150 : WELCOME_EXIT_FADE_MS}ms` }}
       onTransitionEnd={handleTransitionEnd}
       onMouseMove={(e) => {
         mousePosRef.current = { x: e.clientX, y: e.clientY };

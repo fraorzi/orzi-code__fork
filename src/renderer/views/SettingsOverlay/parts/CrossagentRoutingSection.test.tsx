@@ -31,6 +31,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@/renderer/bridge", () => ({
   readBridge: () => ({
     appVersion: "desktop",
+    getTeamWorkspaces: async () => [],
     getCrossagentRouting: mocks.getCrossagentRouting,
     saveCrossagentRole: mocks.saveCrossagentRole,
     removeCrossagentRoutingOverride: mocks.removeCrossagentRoutingOverride,

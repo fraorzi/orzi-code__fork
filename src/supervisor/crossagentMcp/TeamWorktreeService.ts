@@ -1,8 +1,18 @@
 import { execFile } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { mkdir, mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
-import { isAbsolute, join, relative } from "node:path";
+import { isAbsolute, join, relative, resolve } from "node:path";
 import { promisify } from "node:util";
 import type { ProjectLocation } from "@/shared/contracts";
+import {
+  readTeamRecord,
+  readTeamWorkspace,
+  saveTeamRecord,
+  teamIntegrationRecordSchema,
+  teamRunSchema,
+  teamWorkspaceIds,
+  type SavedTeamRun,
+} from "./TeamWorkspaceStore";
 
 const execFileAsync = promisify(execFile);
 
@@ -25,8 +35,59 @@ export type TeamIntegration =
 /** Native Git snapshots and patch integration, without commits or parent index writes. */
 export class TeamWorktreeService {
   private readonly queues = new Map<string, Promise<unknown>>();
+  private readonly directory: string;
 
-  constructor(private readonly directory: string) {}
+  constructor(directory: string) {
+    this.directory = resolve(directory);
+  }
+
+  async load(runId: string) {
+    const workspace = await readTeamWorkspace(this.directory, runId);
+    const run = await readTeamRecord(join(this.directory, runId, "run.json"), teamRunSchema);
+    const integration = await readTeamRecord(
+      join(this.directory, runId, "integration.json"),
+      teamIntegrationRecordSchema,
+    );
+    return { workspace, ...(run ? { run } : {}), ...(integration ? { integration } : {}) };
+  }
+
+  async list() {
+    return Promise.all(
+      (await teamWorkspaceIds(this.directory)).map(async (runId) => {
+        try {
+          return { runId, ...(await this.load(runId)) };
+        } catch (error) {
+          return { runId, error: error instanceof Error ? error.message : String(error) };
+        }
+      }),
+    );
+  }
+
+  saveRun(workspace: TeamWorkspace, run: SavedTeamRun): void {
+    const path = join(this.directory, workspace.runId, "run.json");
+    try {
+      teamRunSchema.parse(JSON.parse(readFileSync(path, "utf8")));
+    } catch (error) {
+      if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
+    }
+    saveTeamRecord(path, teamRunSchema.parse(run));
+  }
+
+  async remove(runId: string, discardChanges = false): Promise<void> {
+    const { workspace } = await this.load(runId);
+    await this.serial(workspace.parentRoot, async () => {
+      const { integration } = await this.load(runId);
+      if (
+        !discardChanges &&
+        integration?.state !== "applied" &&
+        integration?.state !== "no_changes"
+      )
+        throw new Error("Workspace contains unintegrated work; explicit discard is required");
+      await this.git(workspace.parentRoot, ["worktree", "remove", "--force", workspace.root]);
+      await this.git(workspace.parentRoot, ["update-ref", "-d", workspace.baselineRef]);
+      await rm(join(this.directory, runId), { recursive: true });
+    });
+  }
 
   async create(runId: string, location: ProjectLocation): Promise<TeamWorkspace> {
     if (location.kind !== "posix") {
@@ -65,9 +126,7 @@ export class TeamWorktreeService {
       };
       // Keep the snapshot reachable even if Git GC runs while the child works.
       await this.git(parentRoot, ["update-ref", workspace.baselineRef, baselineTree]);
-      await writeFile(join(runDirectory, "workspace.json"), JSON.stringify(workspace, null, 2), {
-        mode: 0o600,
-      });
+      saveTeamRecord(join(runDirectory, "workspace.json"), workspace);
       await this.git(parentRoot, [
         "-c",
         "core.hooksPath=/dev/null",
@@ -86,6 +145,28 @@ export class TeamWorktreeService {
   async integrate(workspace: TeamWorkspace, isCancelled: () => boolean): Promise<TeamIntegration> {
     return this.serial(workspace.parentRoot, async () => {
       if (isCancelled()) return { status: "cancelled", files: [] };
+      const path = join(this.directory, workspace.runId, "integration.json");
+      const previous = await readTeamRecord(path, teamIntegrationRecordSchema);
+      if (previous?.state === "applied" || previous?.state === "no_changes")
+        return { status: previous.state, files: previous.files };
+      if (previous?.state === "prepared") {
+        // The app may have died between git apply and its durable receipt. A
+        // reverse check proves that exact patch is already present. Otherwise
+        // re-applying it still validates the entire patch before writing.
+        try {
+          await this.git(workspace.parentRoot, [
+            "apply",
+            "--reverse",
+            "--check",
+            workspace.patchPath,
+          ]);
+          saveTeamRecord(path, { ...previous, state: "applied" });
+          return { status: "applied", files: previous.files };
+        } catch {
+          /* The parent does not contain the complete patch. */
+        }
+        return this.applyPrepared(workspace, path, previous.files, isCancelled);
+      }
       const finalTree = await this.snapshot(
         workspace.root,
         workspace.baselineTree,
@@ -113,20 +194,35 @@ export class TeamWorktreeService {
       ]);
       await writeFile(workspace.patchPath, patch, { mode: 0o600 });
       if (isCancelled()) return { status: "cancelled", files };
-      if (files.length === 0) return { status: "no_changes", files };
-      try {
-        // Git validates the whole patch before writing. No --index/--3way: the
-        // user's staged state must survive both a successful apply and conflicts.
-        await this.git(workspace.parentRoot, ["apply", "--whitespace=nowarn", workspace.patchPath]);
-        return { status: "applied", files };
-      } catch (error) {
-        return {
-          status: "needs_resolution",
-          files,
-          message: error instanceof Error ? error.message : String(error),
-        };
+      if (files.length === 0) {
+        saveTeamRecord(path, { version: 1, state: "no_changes", files });
+        return { status: "no_changes", files };
       }
+      saveTeamRecord(path, { version: 1, state: "prepared", files });
+      return this.applyPrepared(workspace, path, files, isCancelled);
     });
+  }
+
+  private async applyPrepared(
+    workspace: TeamWorkspace,
+    path: string,
+    files: string[],
+    isCancelled: () => boolean,
+  ): Promise<TeamIntegration> {
+    if (isCancelled()) return { status: "cancelled", files };
+    try {
+      // Git validates the whole patch before writing. No --index/--3way: the
+      // user's staged state must survive both a successful apply and conflicts.
+      await this.git(workspace.parentRoot, ["apply", "--whitespace=nowarn", workspace.patchPath]);
+      saveTeamRecord(path, { version: 1, state: "applied", files });
+      return { status: "applied", files };
+    } catch (error) {
+      return {
+        status: "needs_resolution",
+        files,
+        message: error instanceof Error ? error.message : String(error),
+      };
+    }
   }
 
   private async snapshot(root: string, base: string, directory: string): Promise<string> {

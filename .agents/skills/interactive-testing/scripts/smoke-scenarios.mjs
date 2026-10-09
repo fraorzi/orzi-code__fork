@@ -12,6 +12,13 @@ export const productionRoots = [
 
 export const functionalAreas = [
   {
+    id: "team-workspaces",
+    title: "Saved team tasks, restart recovery, and workspace cleanup",
+    patterns: [/TeamWork/, /TeamRunRecovery/, /teamTools/, /teamWorkspaces/],
+    automated: ["baseline", "settings", "team-workspaces"],
+    manual: ["ipc-roundtrip", "project-mutations"],
+  },
+  {
     id: "crossagent-roles",
     title: "Worker roles, model pool, and persisted task routing",
     patterns: [/crossagentRoles/i, /CrossagentRole/, /CrossagentRoutingSection/],

@@ -896,6 +896,7 @@ msgstr "Akcje dla {title}"
 #: src/renderer/components/thread/ThreadGoalDock.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 #: src/renderer/views/SchedulesView/SchedulesView.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/WorkspacesSettings.tsx
 msgid "Active"
 msgstr "Aktywny"
@@ -4597,6 +4598,10 @@ msgstr "Odrzuć eksperyment"
 msgid "Discard experiment?"
 msgstr "Odrzucić eksperyment?"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Discard unintegrated work?"
+msgstr "Odrzucić niezintegrowaną pracę?"
+
 #: src/mobile/views/useOpenFile.ts
 #: src/renderer/commands/registry.ts
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPane/FileEditorPane.tsx
@@ -4609,6 +4614,10 @@ msgstr "Odrzucić niezapisane zmiany w {path}?"
 #: src/renderer/views/FileEditorOverlay/parts/FileEditorPanel.tsx
 msgid "Discard unsaved editor changes?"
 msgstr "Odrzucić niezapisane zmiany edytora?"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Discard workspace"
+msgstr "Odrzuć katalog roboczy"
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 msgid "Disconnect server"
@@ -6740,6 +6749,10 @@ msgstr "Instrukcje, którymi kierują się agenci przy wyborze agenta lub modelu
 msgid "Instructions are added to the delegated task. They do not restrict the worker's file access."
 msgstr "Instrukcje są dodawane do delegowanego zadania. Nie ograniczają dostępu wykonawcy do plików."
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Integrated"
+msgstr "Zintegrowano"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Internal commands and agents"
@@ -8590,6 +8603,10 @@ msgstr "Brak uruchomień."
 #: src/renderer/components/thread/ChatPane/ChatRuntimeDebugPanel.tsx
 msgid "No runtime items yet for this thread."
 msgstr "Brak jeszcze elementów wykonawczych dla tego wątku."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "No saved team workspaces."
+msgstr "Brak zapisanych katalogów roboczych zespołu."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #~ msgid "No servers connected yet."
@@ -10451,6 +10468,7 @@ msgstr "Ukryj treść powiadomień"
 #: src/renderer/views/PrReviewOverlay/PrReviewOverlay.tsx
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/RemoteServersSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/NativeMcpSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/UsageSettings.tsx
@@ -10618,6 +10636,7 @@ msgstr "Zdalny adres URL"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginManager.tsx
 #: src/renderer/components/thread/ThreadRuntimeRequestPanel/StructuredCustomValues.tsx
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
 msgid "Remove"
 msgstr "Usuń"
 
@@ -10703,6 +10722,10 @@ msgstr "Usuń zmienną środowiskową"
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleEditor.tsx
 msgid "Remove fallback {0}"
 msgstr "Usuń model zapasowy {0}"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
+msgstr "Usuń zakończone katalogi robocze, aby zwolnić miejsce. Przerwane zadania może wznowić główny agent w ich pierwotnym wątku."
 
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Remove from favorites"
@@ -11466,6 +11489,10 @@ msgstr "Zapisane dane logowania są wspólne dla wszystkich komputerów."
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Saved shell"
 msgstr "Zapisana powłoka"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Saved team workspaces"
+msgstr "Zapisane katalogi robocze zespołu"
 
 #: src/mobile/QrScanner.tsx
 msgid "Scan pairing QR code"
@@ -13571,6 +13598,10 @@ msgstr "Spowoduje to usunięcie późniejszych wiadomości i przywrócenie plik�
 msgid "This removes the schedule and its latest result from this device."
 msgstr "Usuwa harmonogram i jego ostatni wynik z tego urządzenia."
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "This removes the worker's saved files and its recovery data. Changes already integrated into your project are kept."
+msgstr "Usuwa zapisane pliki wykonawcy i dane odzyskiwania. Zmiany już zintegrowane z projektem zostają zachowane."
+
 #. placeholder {0}: pendingDelete.branch.name
 #. placeholder {1}: pendingDelete.threadCount
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
@@ -14031,6 +14062,10 @@ msgstr "Nie udało się wczytać różnic."
 msgid "Unable to load remote access pairing."
 msgstr "Nie można załadować parowania dostępu zdalnego."
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unable to load team workspaces."
+msgstr "Nie można załadować katalogów roboczych zespołu."
+
 #: src/mobile/useRemoteDesktop.ts
 msgid "Unable to load thread."
 msgstr "Nie można załadować wątku."
@@ -14118,6 +14153,10 @@ msgstr "Nie udało się usunąć wpisu pamięci."
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRolesSection.tsx
 msgid "Unable to remove pinned route."
 msgstr "Nie udało się usunąć przypiętej trasy."
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unable to remove team workspace."
+msgstr "Nie można usunąć katalogu roboczego zespołu."
 
 #: src/renderer/actions/worktreeActions.ts
 msgid "Unable to remove worktree."
@@ -14330,6 +14369,10 @@ msgstr "Odinstaluj"
 msgid "Uninstall {name}"
 msgstr "Odinstaluj {name}"
 
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unintegrated"
+msgstr "Niezintegrowano"
+
 #: src/renderer/components/thread/threadContextUsage.ts
 #: src/renderer/utils/prStatus.ts
 #: src/renderer/views/GitHubActionsView/GitHubActionsRunList.tsx
@@ -14401,6 +14444,10 @@ msgstr "Odepnij"
 #: src/renderer/views/GitHubActionsView/GitHubActionsSidebar.tsx
 msgid "Unpin workflow"
 msgstr "Odepnij przepływ pracy"
+
+#: src/renderer/views/SettingsOverlay/parts/crossagent/TeamWorkspacesSection.tsx
+msgid "Unreadable workspace"
+msgstr "Nieczytelny katalog roboczy"
 
 #: src/mobile/views/GitActionSheet.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/FileRow.tsx

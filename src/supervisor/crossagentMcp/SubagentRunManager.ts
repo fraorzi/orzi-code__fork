@@ -14,6 +14,7 @@ import type { AgentAdapter, StructuredSessionHandle } from "@/supervisor/agents/
 import { ForwardedRuntimeItemTracker } from "./ForwardedRuntimeItemTracker";
 import { SubagentAttemptRunner, type AttemptExecutionState } from "./SubagentAttemptRunner";
 import type { TeamWorktreeService, TeamWorkspace, TeamIntegration } from "./TeamWorktreeService";
+import { TeamRunRecovery } from "./TeamRunRecovery";
 import { SubagentSpawnError } from "./errors";
 import { prepareSubagentRun, type PreparedSubagentRun } from "./spawnPlan";
 import type {
@@ -64,7 +65,8 @@ function clipOutputTail(text: string, maxChars: number): string {
 export interface SubagentRunManagerDeps {
   adapters: Map<AgentKind, AgentAdapter>;
   host: SubagentRunHost;
-  teamWorktrees?: Pick<TeamWorktreeService, "create" | "integrate">;
+  teamWorktrees?: Pick<TeamWorktreeService, "create" | "integrate"> &
+    Partial<Pick<TeamWorktreeService, "saveRun" | "load" | "list" | "remove">>;
   /**
    * Settings-filtered provider capabilities from the same status pipeline that
    * serves the roster. `null` explicitly denies a provider; `undefined` falls
@@ -91,6 +93,7 @@ interface RunRecord extends AttemptExecutionState {
   runId: string;
   createdAt: number;
   workspace?: TeamWorkspace;
+  teamRequest?: SpawnAgentRequest;
   integration?: TeamIntegration;
   parentThreadId: string;
   childThreadId: string;
@@ -217,9 +220,19 @@ function parseNamespacedRequestId(
 export class SubagentRunManager {
   private readonly runs = new Map<string, RunRecord>();
   private readonly attemptRunner: SubagentAttemptRunner;
+  private readonly teamRecovery: TeamRunRecovery;
 
   constructor(private readonly deps: SubagentRunManagerDeps) {
     this.attemptRunner = new SubagentAttemptRunner(deps.host);
+    this.teamRecovery = new TeamRunRecovery({
+      service: deps.teamWorktrees,
+      status: (runId) => this.ownedRun(runId)?.status,
+      parent: (threadId) => this.requireParent(threadId),
+      activeCount: (threadId) => this.activeCountForParent(threadId),
+      prepare: (parent, request) => prepareSubagentRun(this.deps, parent, request),
+      start: (threadId, plan, request, workspace) =>
+        this.startRun(threadId, plan, request, workspace),
+    });
   }
 
   /** Validate and start one child run, returning its id immediately. */
@@ -255,11 +268,35 @@ export class SubagentRunManager {
       );
     }
     const plans = requests.map((request) => prepareSubagentRun(this.deps, parent, request));
-    return plans.map((plan) => this.startRun(parentThreadId, plan));
+    return plans.map((plan, index) => this.startRun(parentThreadId, plan, requests[index]!));
   }
 
-  private startRun(parentThreadId: string, plan: PreparedSubagentRun): { runId: string } {
-    const runId = randomBytes(6).toString("hex");
+  listTeamWorkspaces(parentThreadId: string) {
+    return this.teamRecovery.list(parentThreadId);
+  }
+  getTeamWorkspaces() {
+    return this.teamRecovery.listAll();
+  }
+  cleanupTeamWorkspace(runId: string, discardChanges: boolean) {
+    return this.teamRecovery.cleanup(runId, discardChanges);
+  }
+  resumeTeamRun(parentThreadId: string, runId: string) {
+    return this.teamRecovery.resume(parentThreadId, runId);
+  }
+  recoverTeamIntegration(parentThreadId: string, runId: string) {
+    return this.teamRecovery.integrate(parentThreadId, runId);
+  }
+  removeTeamWorkspace(parentThreadId: string, runId: string, discardChanges: boolean) {
+    return this.teamRecovery.remove(parentThreadId, runId, discardChanges);
+  }
+
+  private startRun(
+    parentThreadId: string,
+    plan: PreparedSubagentRun,
+    request: SpawnAgentRequest,
+    workspace?: TeamWorkspace,
+  ): { runId: string } {
+    const runId = workspace?.runId ?? randomBytes(6).toString("hex");
     const firstAttempt = plan.attempts[0]!;
     const childThreadId = this.childThreadId(parentThreadId, runId, 0);
 
@@ -270,6 +307,8 @@ export class SubagentRunManager {
     const record: RunRecord = {
       runId,
       createdAt: Date.now(),
+      ...(workspace ? { workspace } : {}),
+      ...(plan.teamMode ? { teamRequest: request } : {}),
       parentThreadId,
       childThreadId,
       label: firstAttempt.label,
@@ -325,7 +364,15 @@ export class SubagentRunManager {
     try {
       const service = this.deps.teamWorktrees;
       if (!service) throw new Error("Team worktree service is unavailable");
-      record.workspace = await service.create(record.runId, record.plan.projectLocation);
+      record.workspace ??= await service.create(record.runId, record.plan.projectLocation);
+      if (record.teamRequest)
+        service.saveRun?.(record.workspace, {
+          version: 1,
+          parentThreadId: record.parentThreadId,
+          request: record.teamRequest,
+          status: record.status,
+          output: record.output,
+        });
       if (record.cancelRequested || record.settled) return;
       record.plan.projectLocation = { kind: "posix", path: record.workspace.projectPath };
       record.plan.prompt = [
@@ -1033,6 +1080,20 @@ export class SubagentRunManager {
     }
 
     if (status === "completed" && record.workspace) {
+      if (record.teamRequest) {
+        try {
+          this.deps.teamWorktrees?.saveRun?.(record.workspace, {
+            version: 1,
+            parentThreadId: record.parentThreadId,
+            request: record.teamRequest,
+            status: "completed",
+            output: record.output,
+          });
+        } catch (error) {
+          this.settle(record, "failed", `Unable to persist completed team task: ${String(error)}`);
+          return;
+        }
+      }
       void this.integrateTeamRun(record);
       return;
     }
@@ -1063,6 +1124,20 @@ export class SubagentRunManager {
     options?: { teardown?: boolean },
   ): void {
     if (record.settled) return;
+    if (record.workspace && record.teamRequest) {
+      try {
+        this.deps.teamWorktrees?.saveRun?.(record.workspace, {
+          version: 1,
+          parentThreadId: record.parentThreadId,
+          request: record.teamRequest,
+          status,
+          output: record.output,
+        });
+      } catch (error) {
+        status = "failed";
+        errorMessage = `Unable to persist team result: ${error instanceof Error ? error.message : String(error)}`;
+      }
+    }
     record.settled = true;
     if (record.status === "running") record.status = status;
 

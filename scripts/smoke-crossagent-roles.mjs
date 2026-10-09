@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { writeFile } from "node:fs/promises";
 
 /** Exercise the real desktop IPC and editor using only the isolated smoke profile. */
 export async function crossagentRolesScenario({
@@ -82,9 +83,26 @@ export async function crossagentRolesScenario({
       "unavailable worker role editor",
     );
     const screenshotPath = join(outDir, "smoke-worker-role-editor.png");
+    await writeFile(
+      join(outDir, "role-editor-animations.json"),
+      JSON.stringify(
+        await evaluate(
+          client,
+          `document.getAnimations().map(animation => ({playState: animation.playState, currentTime: animation.currentTime, timing: animation.effect?.getComputedTiming(), target: animation.effect?.target?.className, animationName: animation.animationName}))`,
+        ),
+        null,
+        2,
+      ),
+    );
     await evaluate(
       client,
-      `Promise.all(document.getAnimations().filter(animation => animation.effect?.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {})))`,
+      `(() => {
+        // Electron can suspend visual animation clocks in an occluded QA window.
+        // Controls were checked above; finish finite transitions for a stable shot.
+        const animations = document.getAnimations().filter(animation => Number.isFinite(animation.effect?.getComputedTiming().endTime));
+        for (const animation of animations) animation.finish();
+        return Promise.allSettled(animations.map(animation => animation.finished));
+      })()`,
       true,
     );
     await screenshot(client, screenshotPath);
