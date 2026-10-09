@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Tooltip } from "@heroui/react";
 import { Monitor, X } from "lucide-react";
+import { Button } from "@/renderer/components/common/Button";
 import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { isRemoteSession } from "@/renderer/bridge";
@@ -213,11 +214,12 @@ function AttachmentChip(props: {
 
 function ImagePreview(props: {
   attachment: Attachment;
+  onRemove?: ((id: string) => void) | undefined;
   onPreviewImage?: ((attachment: Attachment) => void) | undefined;
   imageUrlForPath?: ((path: string) => string) | undefined;
 }) {
   const { t } = useLingui();
-  const { attachment: att, onPreviewImage, imageUrlForPath } = props;
+  const { attachment: att, onPreviewImage, imageUrlForPath, onRemove } = props;
   const img = (
     <img
       src={attachmentImageUrl(att, imageUrlForPath)}
@@ -226,6 +228,31 @@ function ImagePreview(props: {
       draggable={false}
     />
   );
+  if (onRemove) {
+    return (
+      <div className="poracode-composer-image-preview">
+        <Button
+          variant="ghost"
+          className="poracode-composer-image-preview__open"
+          aria-label={t`Preview ${att.name}`}
+          isDisabled={!onPreviewImage}
+          onPress={() => onPreviewImage?.(att)}
+        >
+          {img}
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          isIconOnly
+          className="poracode-composer-image-preview__remove"
+          aria-label={t`Remove ${att.name}`}
+          onPress={() => onRemove(att.id)}
+        >
+          <X className="size-3" />
+        </Button>
+      </div>
+    );
+  }
   if (onPreviewImage) {
     return (
       <button
@@ -282,10 +309,11 @@ export function AttachmentBar(props: {
     <div className={className}>
       {leading}
       {attachments.map((att) =>
-        imagesAsPreview && att.isImage && !att.selector ? (
+        (imagesAsPreview || onRemove) && att.isImage && !att.selector ? (
           <ImagePreview
             key={att.id}
             attachment={att}
+            onRemove={onRemove}
             onPreviewImage={onPreviewImage}
             imageUrlForPath={imageUrlForPath}
           />

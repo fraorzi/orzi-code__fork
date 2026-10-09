@@ -1101,6 +1101,7 @@ msgstr "Ajouter une étiquette..."
 msgid "Add to composer"
 msgstr "Ajouter au compositeur"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Add to favorites"
 msgstr "Ajouter aux favoris"
@@ -5500,7 +5501,7 @@ msgstr "Les modèles de secours sont lancés uniquement si un exécutant ne peut
 msgid "Fast"
 msgstr "Rapide"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/ProfileOverlay/parts/ActivityInsights.tsx
 msgid "Fast mode"
 msgstr "Mode rapide"
@@ -5519,6 +5520,8 @@ msgid "Favorite"
 msgstr "Favori"
 
 #: src/renderer/components/common/ProviderModelMenu/parts/buildItems.ts
+#: src/renderer/components/common/ProviderModelMenu/parts/FavoriteModelColumns.tsx
+#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Favorites"
 msgstr "Favoris"
 
@@ -7813,7 +7816,7 @@ msgstr "Modèle supprimé des favoris"
 msgid "Model usage"
 msgstr "Utilisation des modèles"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/WindowedProviderModelList.tsx
 #: src/renderer/views/SettingsOverlay/parts/ClaudeProfileSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Models"
@@ -10793,7 +10796,7 @@ msgstr "Supprimer le modèle de secours {0}"
 msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
 msgstr "Supprimez les espaces de travail terminés pour libérer de l’espace disque. L’agent principal peut reprendre les tâches interrompues dans leur fil d’origine."
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 msgid "Remove from favorites"
 msgstr "Supprimer des favoris"
 
@@ -12937,7 +12940,7 @@ msgstr "Le mode support apparaît une fois la session connectée."
 msgid "Support:"
 msgstr "Prise en charge :"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Supports Fast mode"

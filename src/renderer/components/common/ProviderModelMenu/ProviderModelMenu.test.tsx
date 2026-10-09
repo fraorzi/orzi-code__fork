@@ -3,6 +3,9 @@ import { renderWithI18n as render } from "@/renderer/testUtils/i18n";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import "@/renderer/components/providers/opencode";
 import "@/renderer/components/providers/cursor";
+import "@/renderer/components/providers/claude";
+import "@/renderer/components/providers/codex";
+import "@/renderer/components/providers/gemini";
 import { useSharedSettings } from "@/renderer/state/sharedSettingsStore";
 import { ProviderModelMenu, type ProviderModelMenuProvider } from "./ProviderModelMenu";
 
@@ -128,6 +131,150 @@ describe("ProviderModelMenu", () => {
     });
   });
 
+  it("shows only favorites in account columns, including models made by another vendor", () => {
+    useSharedSettings.setState({
+      favoriteModels: [
+        { agentKind: "claude", modelId: "model-1", presentationMode: "gui" },
+        { agentKind: "codex", modelId: "model-1", presentationMode: "gui" },
+        { agentKind: "cursor", modelId: "model-1", presentationMode: "gui" },
+        { agentKind: "gemini", modelId: "model-1", presentationMode: "gui" },
+      ],
+      providerOrder: [],
+    });
+    const providers = [
+      makeNamedProvider("gemini", "Gemini", 2),
+      makeNamedProvider("cursor", "Cursor", 2),
+      makeNamedProvider("codex", "Codex", 2),
+      makeNamedProvider("claude", "Claude", 2),
+    ];
+    const provider = providers.find((entry) => entry.kind === "cursor");
+    if (!provider) throw new Error("missing fixture");
+    provider.capabilities.models[0] = { id: "model-1", label: "Claude via Cursor" };
+    render(
+      <ProviderModelMenu
+        providers={providers}
+        currentAgentKind="codex"
+        currentModel="model-2"
+        presentationMode="gui"
+        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    const listbox = screen.getByRole("listbox", { name: "Favorites" });
+    expect(
+      within(listbox)
+        .getAllByRole("group")
+        .map((group) => group.getAttribute("aria-label")),
+    ).toEqual(["Claude", "Codex", "Cursor", "Gemini"]);
+    expect(
+      within(within(listbox).getByRole("group", { name: "Cursor" })).getByText("Claude via Cursor"),
+    ).toBeInTheDocument();
+    expect(within(listbox).queryByText("Model 2")).not.toBeInTheDocument();
+    expect(screen.queryByText("Recent")).not.toBeInTheDocument();
+  });
+
+  it("opens the catalog through plus, adds a favorite without changing the active model and resets on reopen", async () => {
+    const onChange = vi.fn<(next: { agentKind: string; model: string }) => void>();
+    render(
+      <ProviderModelMenu
+        providers={[makeProvider(3)]}
+        currentAgentKind="codex"
+        currentModel="model-1"
+        onChange={onChange}
+      />,
+    );
+    const trigger = screen.getByRole("button", { name: "Select model" });
+    fireEvent.click(trigger);
+    expect(screen.queryByRole("option")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(within(screen.getByRole("listbox", { name: "Models" })).getByText("Model 2"));
+    expect(useSharedSettings.getState().favoriteModels).toContainEqual({
+      agentKind: "codex",
+      modelId: "model-2",
+      presentationMode: "terminal",
+    });
+    expect(onChange).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Favorites" }));
+    expect(screen.getByRole("listbox", { name: "Favorites" })).toHaveTextContent("Model 2");
+    fireEvent.click(screen.getByRole("button", { name: "Remove from favorites" }));
+    expect(screen.queryByRole("option")).not.toBeInTheDocument();
+    fireEvent.click(trigger);
+    fireEvent.click(trigger);
+    expect(screen.queryByRole("listbox", { name: "Models" })).not.toBeInTheDocument();
+  });
+
+  it("keeps hidden and other-presentation favorites out of the default columns", () => {
+    useSharedSettings.setState({
+      favoriteModels: [
+        { agentKind: "codex", modelId: "model-1", presentationMode: "gui" },
+        { agentKind: "codex", modelId: "model-2", presentationMode: "terminal" },
+      ],
+      hiddenModels: { codex: ["model-1"] },
+    });
+    render(
+      <ProviderModelMenu
+        providers={[makeProvider(3)]}
+        currentAgentKind="codex"
+        currentModel="model-3"
+        presentationMode="gui"
+        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    expect(screen.queryByRole("option")).not.toBeInTheDocument();
+  });
+
+  it("moves across account columns with the keyboard and selects the active favorite", () => {
+    useSharedSettings.setState({
+      favoriteModels: [
+        { agentKind: "claude", modelId: "model-1", presentationMode: "gui" },
+        { agentKind: "cursor", modelId: "model-2", presentationMode: "gui" },
+      ],
+    });
+    const onChange = vi.fn<(next: { agentKind: string; model: string }) => void>();
+    render(
+      <ProviderModelMenu
+        providers={[
+          makeNamedProvider("claude", "Claude", 2),
+          makeNamedProvider("cursor", "Cursor", 2),
+        ]}
+        currentAgentKind="claude"
+        currentModel="model-1"
+        presentationMode="gui"
+        onChange={onChange}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    const search = screen.getByRole("combobox");
+    fireEvent.keyDown(search, { key: "ArrowRight" });
+    expect(search).toHaveAttribute("aria-activedescendant", expect.stringContaining("cursor"));
+    fireEvent.keyDown(search, { key: "Enter" });
+    expect(onChange).toHaveBeenCalledWith({
+      agentKind: "cursor",
+      model: "model-2",
+      presentationMode: "gui",
+    });
+  });
+
+  it("keeps a saved custom favorite visible while the account catalog is incomplete", () => {
+    useSharedSettings.setState({
+      favoriteModels: [{ agentKind: "codex", modelId: "custom-model", presentationMode: "gui" }],
+    });
+    render(
+      <ProviderModelMenu
+        providers={[makeProvider(1)]}
+        currentAgentKind="codex"
+        currentModel="model-1"
+        presentationMode="gui"
+        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    expect(
+      within(screen.getByRole("listbox", { name: "Favorites" })).getByText("Custom Model"),
+    ).toBeInTheDocument();
+  });
+
   it("uses a renamed Cursor profile label for the trigger badge", () => {
     const provider = makeCursorProvider();
     provider.kind = "cursor:work";
@@ -158,6 +305,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(listbox).toHaveClass("no-scrollbar");
@@ -183,6 +331,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     const fixedWidthPopover = listbox.closest(".w-96");
@@ -195,6 +344,13 @@ describe("ProviderModelMenu", () => {
   });
 
   it("navigates and selects search results without moving focus out of search", async () => {
+    useSharedSettings.setState({
+      favoriteModels: [1, 2, 3].map((id) => ({
+        agentKind: "codex",
+        modelId: `model-${id}`,
+        presentationMode: "terminal",
+      })),
+    });
     const onChange = vi.fn<(next: { agentKind: string; model: string }) => void>();
     render(
       <ProviderModelMenu
@@ -208,7 +364,7 @@ describe("ProviderModelMenu", () => {
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
 
     const search = await screen.findByPlaceholderText("Search models...");
-    const listbox = screen.getByRole("listbox", { name: "Models" });
+    const listbox = screen.getByRole("listbox", { name: "Favorites" });
     await waitFor(() => expect(search).toHaveFocus());
 
     fireEvent.keyDown(search, { key: "ArrowDown" });
@@ -229,10 +385,21 @@ describe("ProviderModelMenu", () => {
 
     fireEvent.keyDown(search, { key: "Enter" });
 
-    expect(onChange).toHaveBeenCalledWith({ agentKind: "codex", model: "model-3" });
+    expect(onChange).toHaveBeenCalledWith({
+      agentKind: "codex",
+      model: "model-3",
+      presentationMode: "terminal",
+    });
   });
 
   it("selects from the current query when Enter follows typing immediately", async () => {
+    useSharedSettings.setState({
+      favoriteModels: [1, 2, 3].map((id) => ({
+        agentKind: "codex",
+        modelId: `model-${id}`,
+        presentationMode: "terminal",
+      })),
+    });
     const onChange = vi.fn<(next: { agentKind: string; model: string }) => void>();
     render(
       <ProviderModelMenu
@@ -253,7 +420,11 @@ describe("ProviderModelMenu", () => {
     fireEvent.change(search, { target: { value: "Model 3" } });
     fireEvent.keyDown(search, { key: "Enter" });
 
-    expect(onChange).toHaveBeenCalledWith({ agentKind: "codex", model: "model-3" });
+    expect(onChange).toHaveBeenCalledWith({
+      agentKind: "codex",
+      model: "model-3",
+      presentationMode: "terminal",
+    });
   });
 
   it("renders normalized model rate descriptions as muted row hints", async () => {
@@ -276,6 +447,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     expect(await screen.findByRole("option", { name: /Opus/u })).toHaveTextContent("· 2x");
   });
@@ -302,6 +474,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(listbox).getByRole("img", { name: "Supports Fast mode" })).toBeInTheDocument();
@@ -326,6 +499,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(listbox).getByRole("img", { name: "Fast mode" })).toBeInTheDocument();
@@ -351,6 +525,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     expect(await screen.findByRole("option", { name: /Opus/u })).toHaveTextContent("Opus");
     expect(screen.getByRole("option", { name: /Opus/u })).not.toHaveTextContent("Factory");
@@ -377,6 +552,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
     const row = await screen.findByRole("option", { name: /Opus/u });
     expect(row).toHaveTextContent("· 2x");
     expect(screen.queryByText("2x Factory token rate")).not.toBeInTheDocument();
@@ -396,6 +572,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     fireEvent.scroll(listbox, { target: { scrollTop: 220 * 28 } });
@@ -417,6 +594,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     fireEvent.scroll(listbox, { target: { scrollTop: 32 + 3 * 28 - 1 } });
@@ -477,6 +655,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     fireEvent.scroll(listbox, { target: { scrollTop: 8 * 28 } });
@@ -504,6 +683,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
     fireEvent.change(await screen.findByPlaceholderText("Search models..."), {
       target: { value: "model 500" },
     });
@@ -523,6 +703,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(listbox).toHaveClass("no-scrollbar");
@@ -530,6 +711,13 @@ describe("ProviderModelMenu", () => {
   });
 
   it("selects models for provider kinds containing colons", async () => {
+    useSharedSettings.setState({
+      favoriteModels: [1, 2, 3].map((id) => ({
+        agentKind: "acp-generic:glm-acp-agent",
+        modelId: `model-${id}`,
+        presentationMode: "terminal",
+      })),
+    });
     const onChange = vi.fn<(next: { agentKind: string; model: string }) => void>();
 
     render(
@@ -548,6 +736,7 @@ describe("ProviderModelMenu", () => {
       expect(onChange).toHaveBeenCalledWith({
         agentKind: "acp-generic:glm-acp-agent",
         model: "model-2",
+        presentationMode: "terminal",
       });
     });
   });
@@ -563,6 +752,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     fireEvent.scroll(listbox, { target: { scrollTop: 500 * 28 } });
@@ -578,266 +768,6 @@ describe("ProviderModelMenu", () => {
 
     const rerenderedListbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(rerenderedListbox).getAllByRole("option").length).toBeGreaterThan(0);
-  });
-
-  it("aggregates favorites into a sticky section when multiple providers are visible", async () => {
-    render(
-      <ProviderModelMenu
-        providers={[
-          makeNamedProvider("codex", "Codex", 3),
-          makeNamedProvider("claude", "Claude", 3),
-        ]}
-        currentAgentKind="codex"
-        currentModel="model-1"
-        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
-      />,
-    );
-
-    const trigger = screen.getByRole("button", { name: "Select model" });
-    fireEvent.click(trigger);
-
-    const addButtons = await screen.findAllByRole("button", { name: "Add to favorites" });
-    fireEvent.click(addButtons[1]!);
-
-    expect(screen.queryByText("Favorites")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Remove from favorites" })).toBeInTheDocument();
-
-    fireEvent.click(trigger);
-    fireEvent.click(trigger);
-
-    expect((await screen.findAllByText("Favorites")).length).toBeGreaterThan(0);
-  });
-
-  it("shows shortcut sub-provider labels before provider icons", async () => {
-    useSharedSettings.setState({
-      favoriteModels: [
-        { agentKind: "opencode", modelId: "github-copilot/model-1", presentationMode: "gui" },
-      ],
-      recentModels: [{ agentKind: "opencode", modelId: "openai/model-1", presentationMode: "gui" }],
-    });
-
-    render(
-      <ProviderModelMenu
-        providers={[makeSubProviderBackedProvider(), makeNamedProvider("claude", "Claude", 3)]}
-        currentAgentKind="opencode"
-        currentModel="github-copilot/model-2"
-        presentationMode="gui"
-        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-
-    const assertShortcutRailOrder = async (modelLabel: string, subProviderLabel: string) => {
-      let row: Element | null | undefined;
-      await waitFor(() => {
-        row = screen
-          .getAllByText(modelLabel)
-          .map((element) => element.closest('[role="option"]'))
-          .find((option) => option?.textContent?.includes(subProviderLabel));
-        expect(row).not.toBeUndefined();
-      });
-      expect(row).not.toBeNull();
-      const label = within(row as HTMLElement).getByText(subProviderLabel);
-      const providerIcon = (row as HTMLElement).querySelector(".poracode-provider-icon");
-      expect(providerIcon).not.toBeNull();
-      expect(label.compareDocumentPosition(providerIcon as Element)).toBe(
-        Node.DOCUMENT_POSITION_FOLLOWING,
-      );
-    };
-
-    await assertShortcutRailOrder("Copilot Model 1", "Copilot");
-    await assertShortcutRailOrder("OpenAI Model 1", "OpenAI");
-  });
-
-  it("lets a long sub-provider label truncate before the model name", async () => {
-    const baseProvider = makeSubProviderBackedProvider();
-    const longSubProvider = {
-      ...baseProvider,
-      capabilities: {
-        ...baseProvider.capabilities,
-        subProviders: [
-          { id: "github-copilot", label: "An Extremely Long Sub-Provider Display Name" },
-          { id: "openai", label: "OpenAI" },
-        ],
-      },
-    };
-    useSharedSettings.setState({
-      favoriteModels: [
-        { agentKind: "opencode", modelId: "github-copilot/model-1", presentationMode: "gui" },
-      ],
-    });
-
-    render(
-      <ProviderModelMenu
-        providers={[longSubProvider, makeNamedProvider("claude", "Claude", 3)]}
-        currentAgentKind="opencode"
-        currentModel="github-copilot/model-2"
-        presentationMode="gui"
-        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-
-    let row: Element | null | undefined;
-    await waitFor(() => {
-      row = screen
-        .getAllByText("Copilot Model 1")
-        .map((element) => element.closest('[role="option"]'))
-        .find((option) => option?.textContent?.includes("An Extremely Long Sub-Provider"));
-      expect(row).not.toBeUndefined();
-    });
-    expect(row).not.toBeNull();
-
-    const modelName = within(row as HTMLElement).getByText("Copilot Model 1");
-    const subProviderLabel = within(row as HTMLElement).getByText(
-      "An Extremely Long Sub-Provider Display Name",
-    );
-    const subProviderRail = subProviderLabel.parentElement as HTMLElement;
-
-    // The model name owns the flexible space, so it only truncates once the
-    // sub-provider rail has fully shrunk. The rail is additionally width-capped
-    // so the model always keeps the majority of the row.
-    expect(modelName.parentElement?.className).toContain("flex-1");
-    expect(subProviderRail.className).toContain("max-w-[45%]");
-    expect(subProviderRail.className).not.toContain("shrink-0");
-    expect(subProviderLabel.className).toContain("min-w-0");
-    expect(subProviderLabel.className).toContain("truncate");
-  });
-
-  it("keeps shortcut favorites and recents scoped to the current presentation mode", async () => {
-    useSharedSettings.setState({
-      favoriteModels: [
-        { agentKind: "codex", modelId: "gui-fav", presentationMode: "gui" },
-        { agentKind: "codex", modelId: "terminal-fav", presentationMode: "terminal" },
-      ],
-      recentModels: [
-        { agentKind: "codex", modelId: "gui-recent", presentationMode: "gui" },
-        { agentKind: "codex", modelId: "terminal-recent", presentationMode: "terminal" },
-      ],
-    });
-
-    render(
-      <ProviderModelMenu
-        providers={[
-          makeNamedProvider("codex", "Codex", 1),
-          makeNamedProvider("claude", "Claude", 1),
-        ]}
-        currentAgentKind="codex"
-        currentModel="model-1"
-        presentationMode="gui"
-        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-
-    const listbox = await screen.findByRole("listbox", { name: "Models" });
-    expect(within(listbox).getByText("Gui Fav")).toBeInTheDocument();
-    expect(within(listbox).getByText("Gui Recent")).toBeInTheDocument();
-    expect(within(listbox).queryByText("Terminal Fav")).not.toBeInTheDocument();
-    expect(within(listbox).queryByText("Terminal Recent")).not.toBeInTheDocument();
-  });
-
-  it("keeps hidden models out of the favorites and recents sections", async () => {
-    useSharedSettings.setState({
-      favoriteModels: [{ agentKind: "codex", modelId: "model-2", presentationMode: "gui" }],
-      recentModels: [
-        { agentKind: "codex", modelId: "model-4[1m]", presentationMode: "gui" },
-        { agentKind: "codex", modelId: "model-3", presentationMode: "gui" },
-      ],
-      hiddenModels: { codex: ["model-2", "model-4"] },
-    });
-
-    // Callers strip hidden models from the capabilities they pass in, so the
-    // visible catalog only carries model-1 and model-3.
-    const codex = makeNamedProvider("codex", "Codex", 3);
-    codex.capabilities.models = codex.capabilities.models.filter((m) => m.id !== "model-2");
-
-    render(
-      <ProviderModelMenu
-        providers={[codex, makeNamedProvider("claude", "Claude", 1)]}
-        currentAgentKind="codex"
-        currentModel="model-1"
-        presentationMode="gui"
-        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-
-    const listbox = await screen.findByRole("listbox", { name: "Models" });
-    expect(within(listbox).getByText("Recent")).toBeInTheDocument();
-    expect(within(listbox).getAllByText("Model 3").length).toBeGreaterThan(0);
-    expect(within(listbox).queryAllByText("Favorites")).toHaveLength(0);
-    expect(within(listbox).queryAllByText("Model 2")).toHaveLength(0);
-    expect(within(listbox).queryAllByText(/Model 4/u)).toHaveLength(0);
-  });
-
-  it("does not duplicate favorites into a separate section when only one provider is visible", async () => {
-    useSharedSettings.setState({
-      favoriteModels: [{ agentKind: "codex", modelId: "model-2", presentationMode: "gui" }],
-      recentModels: [],
-    });
-
-    render(
-      <ProviderModelMenu
-        providers={[makeProvider(3)]}
-        currentAgentKind="codex"
-        currentModel="model-1"
-        presentationMode="gui"
-        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-
-    const listbox = await screen.findByRole("listbox", { name: "Models" });
-    expect(within(listbox).queryByText("Favorites")).not.toBeInTheDocument();
-    const optionLabels = within(listbox)
-      .getAllByRole("option")
-      .map((o) => o.textContent?.trim());
-    expect(optionLabels[0]).toContain("Model 2");
-  });
-
-  it("hoists the selected favorite to the top of the single-provider list when reopened", async () => {
-    useSharedSettings.setState({
-      favoriteModels: [{ agentKind: "codex", modelId: "model-500", presentationMode: "gui" }],
-      recentModels: [],
-    });
-
-    render(
-      <ProviderModelMenu
-        providers={[makeProvider(500)]}
-        currentAgentKind="codex"
-        currentModel="model-500"
-        presentationMode="gui"
-        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-
-    const listbox = await screen.findByRole("listbox", { name: "Models" });
-    expect(within(listbox).queryByText("Favorites")).not.toBeInTheDocument();
-    expect(await within(listbox).findByText("Model 500")).toBeInTheDocument();
-    await waitFor(() => expect(listbox.scrollTop).toBe(0));
-  });
-
-  it("keeps the scrollbar hidden for short lists too", async () => {
-    render(
-      <ProviderModelMenu
-        providers={[makeProvider(3)]}
-        currentAgentKind="codex"
-        currentModel="model-1"
-        onChange={vi.fn<(next: { agentKind: string; model: string }) => void>()}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-
-    expect(await screen.findByRole("listbox", { name: "Models" })).toHaveClass("no-scrollbar");
   });
 
   it("shows the selected model sub-provider in the trigger", () => {
@@ -889,6 +819,7 @@ describe("ProviderModelMenu", () => {
     expect(within(trigger).getByText("GPT-5.5")).toBeInTheDocument();
 
     fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(listbox).getByText("GPT-5.5")).toBeInTheDocument();
@@ -949,6 +880,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(listbox).getByText("Composer 2")).toBeInTheDocument();
@@ -969,6 +901,7 @@ describe("ProviderModelMenu", () => {
     expect(within(trigger).getByText("Codex 5.1 Max")).toBeInTheDocument();
 
     fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(listbox).getByText("Codex 5.1 Max")).toBeInTheDocument();

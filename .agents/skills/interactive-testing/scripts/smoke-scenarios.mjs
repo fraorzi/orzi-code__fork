@@ -12,6 +12,17 @@ export const productionRoots = [
 
 export const functionalAreas = [
   {
+    id: "composer-redesign",
+    title: "Favorite account columns, catalog and larger removable image previews",
+    patterns: [
+      /ProviderModelMenu/,
+      /composer\/AttachmentBar/,
+      /providers\/(cursor|gemini)\/manifest\.ts/,
+    ],
+    automated: ["baseline", "composer-redesign"],
+    manual: ["changed-surface"],
+  },
+  {
     id: "team-workspaces",
     title: "Saved team tasks, restart recovery, and workspace cleanup",
     patterns: [/TeamWork/, /TeamRunRecovery/, /teamTools/, /teamWorkspaces/],

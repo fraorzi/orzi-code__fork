@@ -4,5 +4,6 @@ import type { RendererProviderManifest } from "../providerManifest";
 export default {
   kind: "cursor",
   label: msg`Cursor`,
-  order: 80,
+  order: 30,
+  utilityOrder: 80,
 } satisfies RendererProviderManifest;

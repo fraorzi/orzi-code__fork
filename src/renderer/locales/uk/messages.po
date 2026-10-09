@@ -1101,6 +1101,7 @@ msgstr "Додати тег..."
 msgid "Add to composer"
 msgstr "Додати до Composer"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Add to favorites"
 msgstr "Додати до обраного"
@@ -5500,7 +5501,7 @@ msgstr "Резервні моделі запускаються лише якщо
 msgid "Fast"
 msgstr "Швидкий"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/ProfileOverlay/parts/ActivityInsights.tsx
 msgid "Fast mode"
 msgstr "Швидкий режим"
@@ -5519,6 +5520,8 @@ msgid "Favorite"
 msgstr "Обране"
 
 #: src/renderer/components/common/ProviderModelMenu/parts/buildItems.ts
+#: src/renderer/components/common/ProviderModelMenu/parts/FavoriteModelColumns.tsx
+#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Favorites"
 msgstr "Вибране"
 
@@ -7814,7 +7817,7 @@ msgstr "Модель видалено з обраного"
 msgid "Model usage"
 msgstr "Використання моделей"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/WindowedProviderModelList.tsx
 #: src/renderer/views/SettingsOverlay/parts/ClaudeProfileSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Models"
@@ -10794,7 +10797,7 @@ msgstr "Видалити резервну модель {0}"
 msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
 msgstr "Видаліть завершені робочі області, щоб звільнити місце. Головний агент може відновити перервані завдання в початковому діалозі."
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 msgid "Remove from favorites"
 msgstr "Видалити з обраного"
 
@@ -12938,7 +12941,7 @@ msgstr "Режим підтримки з'являється після підк�
 msgid "Support:"
 msgstr "Підтримка:"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Supports Fast mode"

@@ -2,6 +2,15 @@
 
 Data: 2026-10-09. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Redesign composera - 2026-10-09
+
+- Domyślny dropdown zawiera tylko ulubione, w kolumnach według dostawcy/konta uruchamiającego model. Domyślna kolejność to Claude, Codex, Cursor, Gemini; istniejący wybór kolejności użytkownika nadal ma pierwszeństwo. Model Claude oferowany przez Cursor pozostaje w kolumnie Cursor. Profile i zapisany tryb GUI/terminal pozostają odróżnione. Ukryte modele nie trafiają do ulubionych; własny zapisany model pozostaje widoczny przy niepełnym katalogu.
+- Przycisk z plusem otwiera osobny katalog. Dodanie ulubionego nie zmienia bieżącego modelu ani nie uruchamia zadania. Powrót pokazuje nowe ulubione, a ponowne otwarcie wraca do widoku kolumn. Wspólna nawigacja klawiaturą, wybór, hinty i gwiazdki działają w obu widokach. Długi katalog nadal używa wirtualizacji. Wyodrębniono listę, wiersz i kolumny z wcześniejszego komponentu mającego ponad 1000 linii.
+- Obrazy w inpucie mają podgląd 96 x 80 px, pełny kadr i osobny, stale widoczny przycisk usuwania. Otwierają istniejący lightbox. Podpisane chipy plików i elementów strony oraz małe obrazy w historii pozostają zachowane.
+- 62 testy w 5 zestawach, typecheck i typowany lint przeszły. Lingui ma 0 brakujących tłumaczeń we wszystkich 12 katalogach. Smoke Electron z izolowanymi kontami potwierdził cztery kolumny, brak modeli spoza ulubionych, katalog, zapis ulubionego i rzeczywiste dekodowanie oraz usunięcie zdjęcia. Raport i zrzuty: `/private/tmp/orzi-composer-redesign-complete-20261009/artifacts/`. 0 błędów renderera. Nie uruchamiano zewnętrznej tury modelu. Poprzednie nieudane próby ujawniły błędy fixture zdjęcia i oczekiwania na animację, poprawione w scenariuszu QA.
+- Nie zmieniono schematu ustawień, bazy ani protokołów. Zachowano format istniejących ulubionych; priorytety dostawców dla automatycznych zadań pozostają dotychczasowe. Kod nie jest jeszcze przepakowany do instalacji.
+- Rzeczywisty pusty widok Cursor Agents został obejrzany przez narzędzie UI. Obserwacje i wspólne zasady zapisano w [DESIGN.md](../../DESIGN.md). Branding i motyw bazowy są następnym etapem.
+
 ## Import i scalanie historii - 2026-10-09
 
 - Ustawienia wątków zawierają lokalny importer `state.sqlite` z podglądem nowych projektów, wątków i załączników. Istniejące identyfikatory wątków są pomijane, projekty łączone według lokalizacji. Bieżące tytuły i transkrypty pozostają zachowane. Import nie synchronizuje późniejszych zmian źródła ani nie scala wiadomości istniejącego wątku.

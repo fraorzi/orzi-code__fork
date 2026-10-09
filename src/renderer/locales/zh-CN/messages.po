@@ -1101,6 +1101,7 @@ msgstr "添加标签..."
 msgid "Add to composer"
 msgstr "添加到编写器"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Add to favorites"
 msgstr "添加到收藏夹"
@@ -5500,7 +5501,7 @@ msgstr "仅当执行者无法开始任务时才运行备用模型。"
 msgid "Fast"
 msgstr "快"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/ProfileOverlay/parts/ActivityInsights.tsx
 msgid "Fast mode"
 msgstr "快速模式"
@@ -5519,6 +5520,8 @@ msgid "Favorite"
 msgstr "收藏"
 
 #: src/renderer/components/common/ProviderModelMenu/parts/buildItems.ts
+#: src/renderer/components/common/ProviderModelMenu/parts/FavoriteModelColumns.tsx
+#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Favorites"
 msgstr "收藏夹"
 
@@ -7813,7 +7816,7 @@ msgstr "已将模型从收藏夹中删除"
 msgid "Model usage"
 msgstr "模型用量"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/WindowedProviderModelList.tsx
 #: src/renderer/views/SettingsOverlay/parts/ClaudeProfileSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Models"
@@ -10793,7 +10796,7 @@ msgstr "移除备用模型 {0}"
 msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
 msgstr "删除已完成的工作区以释放磁盘空间。主代理可以在原来的对话中恢复被中断的任务。"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 msgid "Remove from favorites"
 msgstr "从收藏夹中删除"
 
@@ -12937,7 +12940,7 @@ msgstr "会话连接后就会出现支持模式。"
 msgid "Support:"
 msgstr "支持："
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Supports Fast mode"

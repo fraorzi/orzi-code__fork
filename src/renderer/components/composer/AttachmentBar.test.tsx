@@ -5,6 +5,22 @@ import { AttachmentBar } from "./AttachmentBar";
 import type { Attachment } from "./useAttachments";
 
 describe("AttachmentBar", () => {
+  it("lets a composer image open its preview and be removed with a separate control", () => {
+    const onRemove = vi.fn<(id: string) => void>();
+    const onPreviewImage = vi.fn<(attachment: Attachment) => void>();
+    render(
+      <AttachmentBar
+        attachments={[{ id: "image-1", path: "/tmp/shot.png", name: "shot.png", isImage: true }]}
+        onRemove={onRemove}
+        onPreviewImage={onPreviewImage}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Preview shot.png" }));
+    expect(onPreviewImage).toHaveBeenCalledWith(expect.objectContaining({ id: "image-1" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove shot.png" }));
+    expect(onRemove).toHaveBeenCalledWith("image-1");
+    expect(onPreviewImage).toHaveBeenCalledTimes(1);
+  });
   it("renders image attachments as labeled inset chips by default", () => {
     const onPreviewImage = vi.fn<(attachment: Attachment) => void>();
     const { container } = render(

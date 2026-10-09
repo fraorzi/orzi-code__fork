@@ -1101,6 +1101,7 @@ msgstr "태그 추가..."
 msgid "Add to composer"
 msgstr "작성기에 추가"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Add to favorites"
 msgstr "즐겨찾기에 추가"
@@ -5500,7 +5501,7 @@ msgstr "작업자가 작업을 시작하지 못한 경우에만 대체 모델이
 msgid "Fast"
 msgstr "빠르게"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/ProfileOverlay/parts/ActivityInsights.tsx
 msgid "Fast mode"
 msgstr "고속 모드"
@@ -5519,6 +5520,8 @@ msgid "Favorite"
 msgstr "즐겨찾기"
 
 #: src/renderer/components/common/ProviderModelMenu/parts/buildItems.ts
+#: src/renderer/components/common/ProviderModelMenu/parts/FavoriteModelColumns.tsx
+#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Favorites"
 msgstr "즐겨찾기"
 
@@ -7814,7 +7817,7 @@ msgstr "모델을 즐겨찾기에서 제거함"
 msgid "Model usage"
 msgstr "모델 사용량"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/WindowedProviderModelList.tsx
 #: src/renderer/views/SettingsOverlay/parts/ClaudeProfileSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Models"
@@ -10794,7 +10797,7 @@ msgstr "대체 모델 {0} 삭제"
 msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
 msgstr "완료된 작업 공간을 삭제하여 디스크 공간을 확보하세요. 중단된 작업은 원래 스레드에서 리더 에이전트가 재개할 수 있습니다."
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 msgid "Remove from favorites"
 msgstr "즐겨찾기에서 제거"
 
@@ -12938,7 +12941,7 @@ msgstr "세션이 연결되면 지원 모드가 나타납니다."
 msgid "Support:"
 msgstr "지원:"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Supports Fast mode"

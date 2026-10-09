@@ -59,6 +59,8 @@ export interface BuildProviderModelItemsInput {
   currentModel?: string;
   /** Persisted favorites (provider/model pairs). Surfaced as a sticky section. */
   favorites?: readonly ModelRef[];
+  /** Resolve saved favorites without appending the catalog or recent models. */
+  favoritesOnly?: boolean;
   /** Favorite state used for row stars without affecting section ordering. */
   favoriteStateRefs?: readonly ModelRef[];
   /** Persisted recents (provider/model pairs). Capped to `recentsLimit` and de-duped against favorites. */
@@ -341,18 +343,14 @@ function resolveModelRef(
   const visibleProvider = findVisibleProvider(providersByKind, ref.agentKind, ref.presentationMode);
   if (!visibleProvider) return undefined;
   const { provider, cache } = visibleProvider;
+  const hidden = getHiddenAliases(hiddenModels?.[visibleProvider.visibilityKey]);
+  if (modelLookupAliases(ref.modelId).some((alias) => hidden.has(alias))) return undefined;
   let model = findModelEntry(cache, ref.modelId);
   if (!model) {
     // Missing from the visible catalog means the caller either hid this model or
     // never offered it. Hidden ones drop out of the section; genuinely unknown
     // ids (stale recents, custom models) still get a synthesized row. Only this
     // miss path pays for the hidden lookup — a resolvable id can't be hidden.
-    const hidden = getHiddenAliases(hiddenModels?.[visibleProvider.visibilityKey]);
-    if (hidden.size > 0) {
-      for (const alias of modelLookupAliases(ref.modelId)) {
-        if (hidden.has(alias)) return undefined;
-      }
-    }
     model = makeModelEntry(
       ref.modelId,
       formatShortcutFallbackLabel(ref.agentKind, ref.modelId),
@@ -517,6 +515,17 @@ export function buildProviderModelItems(input: BuildProviderModelItemsInput): Pr
     }
   }
 
+  if (input.favoritesOnly) {
+    pushShortcutSection(
+      "fav",
+      msg`Favorites`,
+      [...(favorites ?? [])].sort(
+        (a, b) => providerSortKey(a.agentKind) - providerSortKey(b.agentKind),
+      ),
+    );
+    return out.filter((item) => item.type === "model");
+  }
+
   if (!singleProviderMode) {
     if (favorites?.length) {
       pushShortcutSection("fav", msg`Favorites`, favorites);
@@ -543,6 +552,7 @@ export function buildProviderModelItems(input: BuildProviderModelItemsInput): Pr
     const filtered: ModelEntry[] = [];
     for (let index = 0; index < sourceModelCount; index += 1) {
       const model = index < cache.models.length ? cache.models[index]! : currentEntry!;
+      if (hiddenModels?.[visibilityKey]?.includes(model.id)) continue;
       if (!isSearching || providerHit || model.searchText.includes(query)) {
         filtered.push(model);
       }

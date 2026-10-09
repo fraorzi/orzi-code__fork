@@ -4,5 +4,6 @@ import type { RendererProviderManifest } from "../providerManifest";
 export default {
   kind: "gemini",
   label: msg`Gemini`,
-  order: 30,
+  order: 32,
+  utilityOrder: 30,
 } satisfies RendererProviderManifest;

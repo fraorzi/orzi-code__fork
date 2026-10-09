@@ -1101,6 +1101,7 @@ msgstr "Thêm thẻ..."
 msgid "Add to composer"
 msgstr "Thêm vào trình soạn thảo"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Add to favorites"
 msgstr "Thêm vào mục yêu thích"
@@ -5500,7 +5501,7 @@ msgstr "Mô hình dự phòng chỉ chạy khi tác nhân thực hiện không t
 msgid "Fast"
 msgstr "Nhanh"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/ProfileOverlay/parts/ActivityInsights.tsx
 msgid "Fast mode"
 msgstr "Chế độ nhanh"
@@ -5519,6 +5520,8 @@ msgid "Favorite"
 msgstr "Yêu thích"
 
 #: src/renderer/components/common/ProviderModelMenu/parts/buildItems.ts
+#: src/renderer/components/common/ProviderModelMenu/parts/FavoriteModelColumns.tsx
+#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Favorites"
 msgstr "Yêu thích"
 
@@ -7814,7 +7817,7 @@ msgstr "Đã xóa mô hình khỏi mục yêu thích"
 msgid "Model usage"
 msgstr "Mức dùng mô hình"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/WindowedProviderModelList.tsx
 #: src/renderer/views/SettingsOverlay/parts/ClaudeProfileSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Models"
@@ -10794,7 +10797,7 @@ msgstr "Xóa mô hình dự phòng {0}"
 msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
 msgstr "Xóa các không gian làm việc đã hoàn thành để giải phóng dung lượng. Tác nhân chính có thể tiếp tục các tác vụ bị gián đoạn trong cuộc hội thoại ban đầu."
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 msgid "Remove from favorites"
 msgstr "Xóa khỏi mục yêu thích"
 
@@ -12938,7 +12941,7 @@ msgstr "Chế độ hỗ trợ xuất hiện khi phiên kết nối."
 msgid "Support:"
 msgstr "Hỗ trợ:"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Supports Fast mode"

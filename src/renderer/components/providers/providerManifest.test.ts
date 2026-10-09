@@ -20,6 +20,7 @@ import { sortByAutoPreference } from "./utilityTask";
 const EXPECTED_PROVIDER_ORDER = [
   "claude",
   "codex",
+  "cursor",
   "gemini",
   "qwen",
   "qoder",
@@ -31,7 +32,6 @@ const EXPECTED_PROVIDER_ORDER = [
   "opencode",
   "opencode2",
   "pi",
-  "cursor",
   "copilot",
   "factory",
 ] as const;

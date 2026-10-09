@@ -1101,6 +1101,7 @@ msgstr "Etiket ekle..."
 msgid "Add to composer"
 msgstr "Yazım alanına ekle"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Add to favorites"
 msgstr "Favorilere ekle"
@@ -5500,7 +5501,7 @@ msgstr "Yedek modeller yalnızca bir çalışan görevini başlatamadığında �
 msgid "Fast"
 msgstr "Hızlı"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/ProfileOverlay/parts/ActivityInsights.tsx
 msgid "Fast mode"
 msgstr "Hızlı mod"
@@ -5519,6 +5520,8 @@ msgid "Favorite"
 msgstr "Favori"
 
 #: src/renderer/components/common/ProviderModelMenu/parts/buildItems.ts
+#: src/renderer/components/common/ProviderModelMenu/parts/FavoriteModelColumns.tsx
+#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Favorites"
 msgstr "Favoriler"
 
@@ -7814,7 +7817,7 @@ msgstr "Model favorilerden kaldırıldı"
 msgid "Model usage"
 msgstr "Model kullanımı"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/WindowedProviderModelList.tsx
 #: src/renderer/views/SettingsOverlay/parts/ClaudeProfileSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Models"
@@ -10794,7 +10797,7 @@ msgstr "Yedek model {0} kaldır"
 msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
 msgstr "Disk alanı açmak için tamamlanan çalışma alanlarını kaldırın. Ana ajan, kesintiye uğrayan görevleri özgün konuşmalarında sürdürebilir."
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 msgid "Remove from favorites"
 msgstr "Favorilerden kaldır"
 
@@ -12938,7 +12941,7 @@ msgstr "Oturum bağlandığında destek modu görünür."
 msgid "Support:"
 msgstr "Destek:"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Supports Fast mode"

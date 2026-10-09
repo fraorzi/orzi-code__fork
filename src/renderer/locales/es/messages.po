@@ -1101,6 +1101,7 @@ msgstr "Añadir etiqueta..."
 msgid "Add to composer"
 msgstr "Agregar al composer"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Add to favorites"
 msgstr "Agregar a favoritos"
@@ -5500,7 +5501,7 @@ msgstr "Los modelos alternativos se ejecutan solo si un ejecutor no puede inicia
 msgid "Fast"
 msgstr "Rápido"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/ProfileOverlay/parts/ActivityInsights.tsx
 msgid "Fast mode"
 msgstr "Modo rápido"
@@ -5519,6 +5520,8 @@ msgid "Favorite"
 msgstr "Favorito"
 
 #: src/renderer/components/common/ProviderModelMenu/parts/buildItems.ts
+#: src/renderer/components/common/ProviderModelMenu/parts/FavoriteModelColumns.tsx
+#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Favorites"
 msgstr "Favoritos"
 
@@ -7814,7 +7817,7 @@ msgstr "Modelo quitado de favoritos"
 msgid "Model usage"
 msgstr "Uso de modelos"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/WindowedProviderModelList.tsx
 #: src/renderer/views/SettingsOverlay/parts/ClaudeProfileSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Models"
@@ -10794,7 +10797,7 @@ msgstr "Eliminar alternativa {0}"
 msgid "Remove finished workspaces to free disk space. Interrupted tasks can be resumed by the lead agent in their original thread."
 msgstr "Elimina los espacios de trabajo terminados para liberar espacio. El agente principal puede reanudar las tareas interrumpidas en su hilo original."
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 msgid "Remove from favorites"
 msgstr "Quitar de favoritos"
 
@@ -12938,7 +12941,7 @@ msgstr "El modo de soporte aparece cuando la sesión se conecta."
 msgid "Support:"
 msgstr "Soporte:"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Supports Fast mode"
