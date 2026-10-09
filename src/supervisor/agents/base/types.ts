@@ -772,6 +772,20 @@ export interface AgentSkillSupport {
   };
 }
 
+/** Native raster generation/editing using the provider's signed-in account. */
+export interface AgentSubscriptionImages {
+  readonly model: string;
+  readonly label: string;
+  /** The harness that owns the native image tool and account authentication. */
+  readonly execution: "structured" | "one-shot";
+  /** Verify account billing before returning the provider-native task prompt. */
+  prepareTask(input: {
+    prompt: string;
+    outputPath: string;
+    referencePaths: readonly string[];
+  }): Promise<string>;
+}
+
 export interface AgentAdapter
   extends
     AgentMetadata,
@@ -801,6 +815,7 @@ export interface AgentAdapter
   /** Run this provider inside WSL when its project lives on native Windows. */
   readonly windowsProjectExecution?: "wsl";
   readonly skillSupport?: AgentSkillSupport;
+  readonly subscriptionImages?: AgentSubscriptionImages;
   /** Release provider-owned shared processes after all thread sessions have closed. */
   shutdown?(): void | Promise<void>;
 

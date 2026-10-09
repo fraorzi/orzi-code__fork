@@ -1,4 +1,5 @@
 import { antigravityNativeMcpConfig } from "./nativeMcp";
+import { antigravitySubscriptionImages, verifyAntigravityImageAccount } from "./subscriptionImages";
 import type {
   AgentCapability,
   AgentInstanceConfig,
@@ -78,6 +79,7 @@ export function createAntigravityAdapter(acpInstance?: AgentInstanceConfig): Age
   });
 
   return {
+    subscriptionImages: antigravitySubscriptionImages(),
     nativeMcpConfig: (ctx) => (ctx.envKind === "wsl" ? undefined : antigravityNativeMcpConfig()),
     kind: detectionSpec.kind,
     label: detectionSpec.label,
@@ -333,6 +335,7 @@ export function createAntigravityAdapter(acpInstance?: AgentInstanceConfig): Age
     // execution source for child work. Unlike title/commit generation this does
     // NOT isolate the cwd — a child runs in the parent's project directory.
     buildSubagentOneShotCommand({ model, effort, prompt, location }) {
+      verifyAntigravityImageAccount(prompt);
       return {
         command: "agy",
         args: [

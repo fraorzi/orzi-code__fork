@@ -23,7 +23,7 @@ beforeEach(async () => {
   service = new TeamWorktreeService(join(directory, "teams"));
   workspace = await service.create("123456789abc", { kind: "posix", path: root });
   service.saveRun(workspace, {
-    version: 1,
+    version: 2,
     parentThreadId: "parent",
     request,
     status: "running",
@@ -110,7 +110,7 @@ describe("saved team task recovery", () => {
     );
     await expect(readFile(join(root, "task.txt"))).rejects.toThrow("ENOENT");
     service.saveRun(workspace, {
-      version: 1,
+      version: 2,
       parentThreadId: "parent",
       request,
       status: "completed",

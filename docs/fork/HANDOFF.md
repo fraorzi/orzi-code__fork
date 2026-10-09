@@ -20,11 +20,15 @@ Stan na 2026-10-09. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 
 ## Aktualizacja z 2026-10-09
 
-Użytkownik zlecił kontynuację całej pozostałej listy oraz generowanie i edycję obrazów Google na istniejącej subskrypcji Gemini. Płatne API jest wykluczone. Oficjalna ścieżka Antigravity ma natywne `generate_image`; bieżąca dokumentacja deklaruje Nano Banana 2 bez wyboru modelu obrazu, więc nie obiecuj Nano Banana Pro przez CLI. `agy models` zgłasza brak logowania. Użytkownik otrzymał prośbę o zalogowanie przez `agy`; nie kopiuj ani nie drukuj tokenów. Pytania o Groka i nazwę aplikacji nie otrzymały odpowiedzi; na razie zachowaj Poracode Personal.
+Użytkownik zlecił kontynuację całej pozostałej listy oraz generowanie i edycję obrazów Google na istniejącej subskrypcji Gemini. Płatne API jest wykluczone. Oficjalna ścieżka Antigravity ma natywne `generate_image`; bieżąca dokumentacja deklaruje Nano Banana 2 bez wyboru modelu obrazu, więc nie obiecuj Nano Banana Pro przez CLI. `agy models` zgłasza brak logowania. Użytkownik otrzymał prośbę o zalogowanie przez `agy`; nie kopiuj ani nie drukuj tokenów. Pytanie o Groka nie otrzymało odpowiedzi.
+
+Użytkownik ustalił docelową nazwę Orzi Code i polecił zapisać [wymagania redesignu](redesign-requirements.md): pełny branding z ikoną/logo, kolorystyka, ikony i flow na podstawie rzeczywistych widoków Cursora, większe zdjęcia w inpucie oraz dropdown tylko z ulubionymi w kolumnach według subskrypcji. Pozostałe modele mają być dostępne przez opcję z plusem. Te wymagania nie są jeszcze zaimplementowane.
 
 W bieżącym kodzie są trwałe zadania zespołu, jawne wznowienie zachowanego worktree, odzyskiwanie integracji i ekran sprzątania w ustawieniach Crossagents. Deterministyczne testy Git i smoke Electron przeszły. Naprawiono też ujawnione przez testy zamykanie paneli podczas pracy w tle. Szczegóły i granice zgodności opisuje początek [stanu implementacji](implementation.md). Te zmiany nie są jeszcze w zainstalowanym pakiecie.
 
 Pozostały zakres nadal obejmuje obrazy na subskrypcji, importer/scalanie historii, kanał aktualizacji forka, wersje agentów/rollback oraz rzeczywiste testy kont Google/Grok i własnego OAuth Figma. Implementacja OAuth MCP już istnieje; wymagane jest własne logowanie, nie przebudowa ani przejęcie poświadczeń Codex.
+
+Podstawowa obsługa obrazów jest teraz w kodzie: narzędzia MCP Crossagents, native image capability Antigravity, blokowanie API, walidacja plików i preview inline. Ścieżka supervisora z procesem testowym oraz renderer Electron przeszły kontrolę. Rzeczywisty Google nadal wymaga logowania użytkownika. Ograniczenia, wersję magazynu zespołu 2 i dowody opisuje początek [stanu implementacji](implementation.md). Nie utożsamiać tego z działającym Pro ani ze zmianą zainstalowanego pakietu.
 
 ## Aktualizacja z 2026-10-07
 

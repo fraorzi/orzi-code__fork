@@ -34,6 +34,7 @@ import {
 } from "./toolResult";
 import { parseRunIds, parseSpawnRequest, parseSpawnRequests } from "./toolRequests";
 import { TEAM_TOOLS, dispatchTeamTool } from "./teamTools";
+import { IMAGE_TOOLS, dispatchImageTool } from "./imageTools";
 import { rankingCandidateOf, resolveSubagentExecution } from "./types";
 import type {
   McpToolResult,
@@ -94,6 +95,7 @@ export const CROSSAGENT_MCP_INSTRUCTIONS_BASE = [
   "Use steer_agent to send a follow-up message to a running child: corrections, new evidence, or narrowed scope. The child keeps its session and context and continues with your message. It is a message, not a result: keep waiting for the child to finish. list_runs.can_steer is false only while a child is still starting, has finished, or is processing a previous message.",
   "For larger batches, call list_runs with include_capacity=true to inspect available_slots (a snapshot, not a reservation). Use wait_for_agent with run_ids and wait_mode='any' to collect the next completed result and refill free slots; omit already-settled runs from the next wait. Scope concurrent edits to distinct files or clearly separated responsibilities. Include the objective, relevant context, constraints, and acceptance checks in each prompt. Ask for findings with file references, verification evidence, and unresolved risks; validate the returned work before integrating it.",
   "Always set name on spawn_agent and on every tasks=[...] entry: a short, specific label describing what that subagent will do (for example `Review runtime findings`). Users see this label in the thread; do not omit it or repeat provider/model/reasoning values there — Crossagents appends those automatically.",
+  "For raster generation or image edits on signed-in accounts, call list_image_providers, then create_image with a new project-relative output_path and optional reference_paths. Collect the file and inline preview with get_image_result. Respect the advertised image model; never silently substitute an unavailable model or use paid API billing.",
   "For long-lived, first-class app threads the user sees in the sidebar (optionally in their own git worktree) — e.g. one ticket or feature per thread — use the always-on `poracode` MCP server's thread tools (create_thread, list_threads, get_thread, read_thread, send_to_thread, wait_for_thread, interrupt_thread, stop_thread) instead.",
 ].join(" ");
 
@@ -400,7 +402,7 @@ const BASE_TOOLS: ToolSpec[] = RAW_TOOLS.map((tool) => ({
 
 /** Catalog: the ephemeral subagent-run lane. Full-thread orchestration lives
  *  in the always-on `poracode` (app-controls) MCP server's thread tools. */
-export const TOOLS: ToolSpec[] = [...BASE_TOOLS, ...TEAM_TOOLS];
+export const TOOLS: ToolSpec[] = [...BASE_TOOLS, ...TEAM_TOOLS, ...IMAGE_TOOLS];
 
 export const TOOL_NAMES = new Set(TOOLS.map((t) => t.name));
 const LEGACY_TOOL_NAMES = new Set(["run_agent", "spawn_agents", "wait_for_agents"]);
@@ -887,6 +889,8 @@ export async function dispatchTool(
   ctx: SubagentToolContext,
 ): Promise<McpToolResult> {
   try {
+    const imageResult = await dispatchImageTool(name, args, ctx);
+    if (imageResult) return imageResult;
     const teamResult = await dispatchTeamTool(name, args, ctx);
     if (teamResult) return teamResult;
     switch (name) {

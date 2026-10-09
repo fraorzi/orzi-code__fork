@@ -35,6 +35,8 @@ const TOOL_PERMISSION_ALIASES = new Map([
   ["spawn_agents", "spawn_agent"],
   ["wait_for_agents", "wait_for_agent"],
   ["run_agent", "spawn_agent"],
+  ["create_image", "spawn_agent"],
+  ["resume_team_run", "spawn_agent"],
 ]);
 
 interface JsonRpcRequest {

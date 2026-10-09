@@ -182,6 +182,8 @@ export interface ExplicitSpawnAgentSelection {
 
 /** Arguments accepted by `spawn_agent` / `run_agent`. */
 export interface SpawnAgentRequest extends SpawnAgentSelection {
+  /** Internal capability-specific lane; ordinary MCP spawning uses the adapter default. */
+  execution?: CrossagentExecution;
   prompt: string;
   name?: string;
   /**
@@ -231,7 +233,7 @@ export interface SubagentWaitResult {
   output: string;
   /** Full run transcript length and cursor for the next incremental read. */
   total_output_chars?: number;
-  workspace?: { path: string; patch_path: string };
+  workspace?: { path: string; project_path: string; patch_path: string };
   integration?: TeamIntegration;
   error?: {
     message: string;

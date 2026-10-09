@@ -22,8 +22,8 @@ function selection(value: z.infer<typeof selectionSchema>) {
 // workspace.json remains v1. These additional stores did not exist in older
 // releases; missing run metadata means a retained legacy workspace, not a task
 // to replay. Unknown or corrupt records are preserved and never overwritten.
-export const teamRunSchema = z.object({
-  version: z.literal(1),
+const currentTeamRunSchema = z.object({
+  version: z.literal(2),
   parentThreadId: z.string().min(1),
   request: selectionSchema
     .extend({
@@ -32,6 +32,7 @@ export const teamRunSchema = z.object({
       background: z.boolean().optional(),
       fallbacks: z.array(selectionSchema).max(3).optional(),
       retryMode: z.enum(["startup", "any-failure"]).optional(),
+      execution: z.enum(["structured", "one-shot"]).optional(),
     })
     .transform((value) => ({
       ...selection(value),
@@ -40,10 +41,16 @@ export const teamRunSchema = z.object({
       ...(value.background !== undefined ? { background: value.background } : {}),
       ...(value.fallbacks !== undefined ? { fallbacks: value.fallbacks.map(selection) } : {}),
       ...(value.retryMode !== undefined ? { retryMode: value.retryMode } : {}),
+      ...(value.execution !== undefined ? { execution: value.execution } : {}),
     })),
   status: z.enum(["running", "completed", "failed", "cancelled"]),
   output: z.string(),
 });
+// v2 preserves capability-specific execution. Older readers must not silently
+// switch a saved account-only task to a different harness on resume.
+export const teamRunSchema = z
+  .union([currentTeamRunSchema, currentTeamRunSchema.extend({ version: z.literal(1) })])
+  .transform((run) => ({ ...run, version: 2 as const }));
 export type SavedTeamRun = z.infer<typeof teamRunSchema>;
 
 const workspaceSchema = z.object({

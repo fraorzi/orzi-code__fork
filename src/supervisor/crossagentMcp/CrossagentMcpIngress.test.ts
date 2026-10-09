@@ -267,12 +267,19 @@ describe("CrossagentMcpIngress", () => {
     const names = (body.result.tools as Array<{ name: string }>).map((t) => t.name).sort();
     expect(names).toEqual([
       "cancel",
+      "create_image",
       "get_agent",
+      "get_image_result",
       "get_status",
       "list_agents",
+      "list_image_providers",
       "list_routing_preferences",
       "list_runs",
+      "list_team_workspaces",
+      "recover_team_integration",
       "remove_routing_preference",
+      "remove_team_workspace",
+      "resume_team_run",
       "set_routing_preference",
       "spawn_agent",
       "steer_agent",
@@ -295,6 +302,14 @@ describe("CrossagentMcpIngress", () => {
     expect((await call.json()).result).toMatchObject({ isError: true });
     const batchCall = await rpc("tools/call", { name: "spawn_agents", arguments: {} });
     expect((await batchCall.json()).result).toMatchObject({ isError: true });
+    for (const name of ["create_image", "resume_team_run"]) {
+      expect(listBody.result.tools.map((tool: { name: string }) => tool.name)).not.toContain(name);
+      const response = await rpc("tools/call", { name, arguments: {} });
+      expect((await response.json()).result).toMatchObject({
+        isError: true,
+        content: [{ type: "text", text: `Tool disabled by Poracode: ${name}` }],
+      });
+    }
   });
 
   it("enforces disabled steering in discovery and calls", async () => {

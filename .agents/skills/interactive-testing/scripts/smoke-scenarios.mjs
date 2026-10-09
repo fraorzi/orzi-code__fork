@@ -38,6 +38,17 @@ export const functionalAreas = [
     manual: ["live-voice", "provider-live", "ipc-roundtrip", "changed-surface"],
   },
   {
+    id: "subscription-images",
+    title: "Native account image generation, edit references and inline output",
+    patterns: [
+      /subscriptionImages/i,
+      /SubscriptionImageTasks/,
+      /crossagentMcp\/image(Files|Tools)/,
+    ],
+    automated: ["baseline"],
+    manual: ["provider-live", "mcp-extension", "project-mutations", "changed-surface"],
+  },
+  {
     id: "desktop-shell",
     title: "Electron lifecycle and renderer shell",
     patterns: [/^src\/main\//, /^src\/preload\//, /^src\/renderer\/(app|main|devBridge)\./],

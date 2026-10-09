@@ -42,7 +42,7 @@ describe("team worktree integration", () => {
   it("persists the task and report across restarts and preserves corrupt metadata", async () => {
     const workspace = await service.create("222222222222", { kind: "posix", path: root });
     const run = {
-      version: 1 as const,
+      version: 2 as const,
       parentThreadId: "parent",
       request: { agent: "worker", prompt: "finish task" },
       status: "running" as const,
@@ -52,9 +52,16 @@ describe("team worktree integration", () => {
     const restarted = new TeamWorktreeService(join(directory, "teams"));
     expect((await restarted.load(workspace.runId)).run).toEqual(run);
     const path = join(directory, "teams", workspace.runId, "run.json");
-    await writeFile(path, '{"version":2}');
+    await writeFile(path, JSON.stringify({ ...run, version: 1 }));
+    expect((await restarted.load(workspace.runId)).run).toEqual(run);
+    restarted.saveRun(workspace, { ...run, request: { ...run.request, execution: "one-shot" } });
+    expect(JSON.parse(await readFile(path, "utf8"))).toMatchObject({
+      version: 2,
+      request: { execution: "one-shot" },
+    });
+    await writeFile(path, '{"version":99}');
     expect(() => restarted.saveRun(workspace, run)).toThrow("version");
-    expect(await readFile(path, "utf8")).toBe('{"version":2}');
+    expect(await readFile(path, "utf8")).toBe('{"version":99}');
     expect(await restarted.list()).toMatchObject([
       { runId: workspace.runId, error: expect.any(String) },
     ]);

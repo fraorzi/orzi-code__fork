@@ -54,7 +54,7 @@ export function prepareSubagentRun(
   const runName = request.name?.trim();
   const attempts = selections.map((selection, index) => {
     try {
-      return resolveAttempt(deps, parent.config, selection, runName);
+      return resolveAttempt(deps, parent.config, selection, runName, request.execution);
     } catch (err) {
       if (index === 0) throw err;
       const role = `fallbacks[${index - 1}]`;
@@ -78,14 +78,20 @@ function resolveAttempt(
   parentConfig: ThreadConfig,
   selection: SpawnAgentSelection,
   runName: string | undefined,
+  requestedExecution: CrossagentExecution | undefined,
 ): ResolvedSpawnAttempt {
   const adapter = deps.adapters.get(selection.agent as AgentKind);
   if (!adapter) throw new SubagentSpawnError(`Unknown provider: ${selection.agent}`);
 
-  const execution = resolveSubagentExecution(adapter);
+  const execution = requestedExecution ?? resolveSubagentExecution(adapter);
   if (!execution) {
     throw new SubagentSpawnError(`Provider ${selection.agent} cannot be spawned as a subagent`);
   }
+  if (
+    (execution === "one-shot" && !adapter.buildSubagentOneShotCommand) ||
+    (execution === "structured" && !adapter.createStructuredSession)
+  )
+    throw new SubagentSpawnError(`Provider ${selection.agent} cannot use ${execution} execution`);
 
   const configuredCapabilities = deps.getStatusCapabilities?.(adapter.kind);
   if (configuredCapabilities === null) {

@@ -14,6 +14,7 @@ import type { AgentAdapter, StructuredSessionHandle } from "@/supervisor/agents/
 import { ForwardedRuntimeItemTracker } from "./ForwardedRuntimeItemTracker";
 import { SubagentAttemptRunner, type AttemptExecutionState } from "./SubagentAttemptRunner";
 import type { TeamWorktreeService, TeamWorkspace, TeamIntegration } from "./TeamWorktreeService";
+import { SubscriptionImageTasks } from "./SubscriptionImageTasks";
 import { TeamRunRecovery } from "./TeamRunRecovery";
 import { SubagentSpawnError } from "./errors";
 import { prepareSubagentRun, type PreparedSubagentRun } from "./spawnPlan";
@@ -221,8 +222,15 @@ export class SubagentRunManager {
   private readonly runs = new Map<string, RunRecord>();
   private readonly attemptRunner: SubagentAttemptRunner;
   private readonly teamRecovery: TeamRunRecovery;
+  readonly subscriptionImages: SubscriptionImageTasks;
 
   constructor(private readonly deps: SubagentRunManagerDeps) {
+    this.subscriptionImages = new SubscriptionImageTasks({
+      adapters: deps.adapters,
+      host: deps.host,
+      spawn: (threadId, request) => this.spawn(threadId, request),
+      wait: (runId, timeoutMs, threadId) => this.waitFor(runId, timeoutMs, threadId),
+    });
     this.attemptRunner = new SubagentAttemptRunner(deps.host);
     this.teamRecovery = new TeamRunRecovery({
       service: deps.teamWorktrees,
@@ -367,7 +375,7 @@ export class SubagentRunManager {
       record.workspace ??= await service.create(record.runId, record.plan.projectLocation);
       if (record.teamRequest)
         service.saveRun?.(record.workspace, {
-          version: 1,
+          version: 2,
           parentThreadId: record.parentThreadId,
           request: record.teamRequest,
           status: record.status,
@@ -647,6 +655,7 @@ export class SubagentRunManager {
    * Called on parent thread interrupt and close.
    */
   cancelAllForThread(parentThreadId: string): void {
+    this.subscriptionImages.clearThread(parentThreadId);
     for (const record of [...this.runs.values()]) {
       if (record.parentThreadId !== parentThreadId) continue;
       record.cancelRequested = true;
@@ -716,7 +725,13 @@ export class SubagentRunManager {
       status: record.status,
       output,
       ...(record.workspace
-        ? { workspace: { path: record.workspace.root, patch_path: record.workspace.patchPath } }
+        ? {
+            workspace: {
+              path: record.workspace.root,
+              project_path: record.workspace.projectPath,
+              patch_path: record.workspace.patchPath,
+            },
+          }
         : {}),
       ...(record.integration ? { integration: record.integration } : {}),
       ...(incremental || !isCompleteTranscript ? { total_output_chars: total } : {}),
@@ -1083,7 +1098,7 @@ export class SubagentRunManager {
       if (record.teamRequest) {
         try {
           this.deps.teamWorktrees?.saveRun?.(record.workspace, {
-            version: 1,
+            version: 2,
             parentThreadId: record.parentThreadId,
             request: record.teamRequest,
             status: "completed",
@@ -1127,7 +1142,7 @@ export class SubagentRunManager {
     if (record.workspace && record.teamRequest) {
       try {
         this.deps.teamWorktrees?.saveRun?.(record.workspace, {
-          version: 1,
+          version: 2,
           parentThreadId: record.parentThreadId,
           request: record.teamRequest,
           status,
@@ -1194,6 +1209,7 @@ export class SubagentRunManager {
     });
 
     record.resolveSettled();
+    this.subscriptionImages.settled(record.runId);
     this.pruneSettledRuns(record.parentThreadId);
   }
 
