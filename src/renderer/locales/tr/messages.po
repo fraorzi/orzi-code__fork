@@ -1528,7 +1528,9 @@ msgstr "onaylandı"
 msgid "Approved"
 msgstr "Onaylandı"
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarArchiveRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarThreadRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Archive"
@@ -1577,9 +1579,12 @@ msgstr "İleti Dizisini Arşivle"
 msgid "Archived at {archivedTime}"
 msgstr "{archivedTime} saatinde arşivlendi"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+msgid "Archived thread. Restore it to continue the conversation."
+msgstr "Arşivlenmiş konu. Sohbete devam etmek için geri yükleyin."
+
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1588,6 +1593,10 @@ msgstr "Arşivlenmiş İleti Dizileri"
 #: src/mobile/views/SettingsView.tsx
 #~ msgid "Archived threads are managed from the desktop app. Restoring or deleting them from this device isn't available yet."
 #~ msgstr "Arşivlenmiş konular masaüstü uygulamasından yönetilir. Bu cihazdan geri yükleme veya silme henüz kullanılamıyor."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Archived threads open read-only. Restore one to bring it back to the sidebar."
+msgstr "Arşivlenmiş konular salt okunur açılır. Kenar çubuğuna geri getirmek için birini geri yükleyin."
 
 #. placeholder {0}: file.path
 #: src/renderer/views/GitReviewOverlay/parts/GitStackedDiff.tsx
@@ -6296,6 +6305,7 @@ msgstr "Geçmiş veritabanı"
 msgid "History imported."
 msgstr "Geçmiş içe aktarıldı."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
@@ -8311,6 +8321,10 @@ msgstr "Etkin tarayıcı sekmesi yok"
 #~ msgid "No active session"
 #~ msgstr "Aktif oturum yok"
 
+#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
+msgid "No active threads. Send a first prompt and its project appears here."
+msgstr "Etkin konu yok. İlk istemi gönderin, projesi burada görünsün."
+
 #: src/renderer/views/GitHubActionsView/GitHubActionsView.tsx
 #~ msgid "No active workflows"
 #~ msgstr "Etkin iş akışı yok"
@@ -8359,7 +8373,12 @@ msgstr "Hiçbir aracı yüklü değil."
 msgid "No AI commits, PRs, or conflict resolutions tracked yet."
 msgstr "Henüz yapay zeka commit'leri, PR'ları veya çakışma çözümleri izlenmedi."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "No archived threads match your search."
+msgstr "Aramanızla eşleşen arşivlenmiş konu yok."
+
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 msgid "No archived threads."
 msgstr "Arşivlenmiş konu yok."
@@ -11143,8 +11162,9 @@ msgstr "Yeniden temel alma veya birleştirme sırasındaki birleştirme çakış
 msgid "Restart Orzi Code"
 msgstr "Orzi Code'u yeniden başlat"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "Geri yükle"
 
@@ -11740,6 +11760,10 @@ msgstr "Aracıları ara"
 #: src/renderer/views/SettingsOverlay/parts/AcpRegistrySettings.tsx
 msgid "Search agents..."
 msgstr "Aracıları ara..."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Search archive"
+msgstr "Arşivde ara"
 
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
 msgid "Search branches..."
@@ -14511,6 +14535,7 @@ msgid "Unknown"
 msgstr "Bilinmiyor"
 
 #: src/renderer/notifications.ts
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 msgid "Unknown project"
 msgstr "Bilinmeyen proje"
 

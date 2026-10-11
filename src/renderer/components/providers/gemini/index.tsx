@@ -3,7 +3,7 @@ export * from "./GeminiIcon";
 import { GeminiIcon } from "./GeminiIcon";
 import providerManifest from "./manifest";
 import { standardPlanApprovalControls } from "../composerControlBuilders";
-import { registerProviderIcon } from "../ProviderIcon";
+import { registerProviderBrandColor, registerProviderIcon } from "../ProviderIcon";
 import { registerComposerControls } from "../providerComposer";
 import { registerCommitGenDefaults } from "../commitGen";
 import { registerConflictResolverDefaults } from "../conflictResolver";
@@ -12,6 +12,7 @@ import { registerTitleGenDefaults } from "../titleGen";
 const PROVIDER_KIND = providerManifest.kind;
 
 registerProviderIcon(PROVIDER_KIND, GeminiIcon);
+registerProviderBrandColor(PROVIDER_KIND, "#8e7ff0");
 registerCommitGenDefaults(PROVIDER_KIND, {
   label: "Gemini",
   hint: "3 Flash",

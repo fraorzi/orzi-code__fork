@@ -1528,7 +1528,9 @@ msgstr "đã được phê duyệt"
 msgid "Approved"
 msgstr "Đã được phê duyệt"
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarArchiveRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarThreadRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Archive"
@@ -1577,9 +1579,12 @@ msgstr "Lưu trữ luồng"
 msgid "Archived at {archivedTime}"
 msgstr "Đã lưu trữ lúc {archivedTime}"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+msgid "Archived thread. Restore it to continue the conversation."
+msgstr "Luồng đã lưu trữ. Khôi phục để tiếp tục cuộc trò chuyện."
+
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1588,6 +1593,10 @@ msgstr "Luồng đã lưu trữ"
 #: src/mobile/views/SettingsView.tsx
 #~ msgid "Archived threads are managed from the desktop app. Restoring or deleting them from this device isn't available yet."
 #~ msgstr "Các luồng đã lưu trữ được quản lý từ ứng dụng máy tính. Chưa thể khôi phục hoặc xóa chúng từ thiết bị này."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Archived threads open read-only. Restore one to bring it back to the sidebar."
+msgstr "Luồng đã lưu trữ mở ở chế độ chỉ đọc. Khôi phục một luồng để đưa nó trở lại thanh bên."
 
 #. placeholder {0}: file.path
 #: src/renderer/views/GitReviewOverlay/parts/GitStackedDiff.tsx
@@ -6296,6 +6305,7 @@ msgstr "Cơ sở dữ liệu lịch sử"
 msgid "History imported."
 msgstr "Đã nhập lịch sử."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
@@ -8311,6 +8321,10 @@ msgstr "Không có tab trình duyệt đang hoạt động"
 #~ msgid "No active session"
 #~ msgstr "Không có phiên hoạt động"
 
+#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
+msgid "No active threads. Send a first prompt and its project appears here."
+msgstr "Không có luồng đang hoạt động. Gửi prompt đầu tiên và dự án của nó sẽ xuất hiện ở đây."
+
 #: src/renderer/views/GitHubActionsView/GitHubActionsView.tsx
 #~ msgid "No active workflows"
 #~ msgstr "Không có quy trình đang hoạt động"
@@ -8359,7 +8373,12 @@ msgstr "Không có tác nhân nào được cài đặt."
 msgid "No AI commits, PRs, or conflict resolutions tracked yet."
 msgstr "Chưa ghi nhận commit, PR hay giải quyết xung đột nào bằng AI."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "No archived threads match your search."
+msgstr "Không có luồng đã lưu trữ nào khớp với tìm kiếm."
+
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 msgid "No archived threads."
 msgstr "Không có luồng nào đã lưu trữ."
@@ -11143,8 +11162,9 @@ msgstr "Giải quyết xung đột hợp nhất trong quá trình rebase hoặc 
 msgid "Restart Orzi Code"
 msgstr "Khởi động lại Orzi Code"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "Khôi phục"
 
@@ -11740,6 +11760,10 @@ msgstr "Tìm kiếm tác nhân"
 #: src/renderer/views/SettingsOverlay/parts/AcpRegistrySettings.tsx
 msgid "Search agents..."
 msgstr "Tìm kiếm tác nhân..."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Search archive"
+msgstr "Tìm trong kho lưu trữ"
 
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
 msgid "Search branches..."
@@ -14511,6 +14535,7 @@ msgid "Unknown"
 msgstr "Không xác định"
 
 #: src/renderer/notifications.ts
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 msgid "Unknown project"
 msgstr "Dự án không xác định"
 

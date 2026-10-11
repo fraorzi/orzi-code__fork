@@ -45,6 +45,7 @@ import { HomeView } from "@/renderer/views/HomeView";
 import { ExperimentView } from "@/renderer/views/ExperimentView/ExperimentView";
 import { PullRequestsView } from "@/renderer/views/PullRequestsView/PullRequestsView";
 import { SchedulesView } from "@/renderer/views/SchedulesView/SchedulesView";
+import { ArchiveView } from "@/renderer/views/ArchiveView/ArchiveView";
 import { ThreadPane } from "./parts/ThreadPane";
 import { DraftPane } from "./parts/DraftPane";
 
@@ -237,6 +238,14 @@ export function AppContent() {
     return (
       <div className="h-full overflow-y-auto px-6 pb-8 pt-4 [scrollbar-gutter:stable]">
         <SchedulesView />
+      </div>
+    );
+  }
+
+  if (view.kind === "archive") {
+    return (
+      <div className="h-full overflow-y-auto px-6 pb-8 pt-4 [scrollbar-gutter:stable]">
+        <ArchiveView />
       </div>
     );
   }

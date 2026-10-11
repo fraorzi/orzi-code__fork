@@ -3,7 +3,7 @@ export * from "./ClaudeIcon";
 import { ClaudeIcon } from "./ClaudeIcon";
 import providerManifest from "./manifest";
 import { approvalPolicyDropdown, planWorkToggle } from "../composerControlBuilders";
-import { registerProviderIcon } from "../ProviderIcon";
+import { registerProviderBrandColor, registerProviderIcon } from "../ProviderIcon";
 import { registerComposerControls } from "../providerComposer";
 import { registerCommitGenDefaults } from "../commitGen";
 import { registerConflictResolverDefaults } from "../conflictResolver";
@@ -13,6 +13,7 @@ import { isClaudeAutoCapable } from "@/shared/agents/claudeModels";
 const PROVIDER_KIND = providerManifest.kind;
 
 registerProviderIcon(PROVIDER_KIND, ClaudeIcon);
+registerProviderBrandColor(PROVIDER_KIND, "#d97757");
 // Benchmark-driven (blind quality judging over real diffs): Sonnet at MEDIUM
 // effort is the sweet spot. At low/high effort Sonnet sometimes mislabels the
 // commit type (e.g. a fix scored as "test") and emits markdown fences; medium

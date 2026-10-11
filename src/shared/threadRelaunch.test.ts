@@ -13,8 +13,12 @@ describe("shouldRelaunchThreadOnOpen", () => {
       ["error", false],
     ];
     for (const [status, expected] of cases) {
-      expect(shouldRelaunchThreadOnOpen({ status })).toBe(expected);
+      expect(shouldRelaunchThreadOnOpen({ status, archived: false })).toBe(expected);
     }
+  });
+
+  it("keeps archived threads read-only", () => {
+    expect(shouldRelaunchThreadOnOpen({ status: "inactive", archived: true })).toBe(false);
   });
 });
 

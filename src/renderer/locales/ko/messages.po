@@ -1528,7 +1528,9 @@ msgstr "승인됨"
 msgid "Approved"
 msgstr "승인됨"
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarArchiveRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarThreadRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Archive"
@@ -1577,9 +1579,12 @@ msgstr "아카이브 스레드"
 msgid "Archived at {archivedTime}"
 msgstr "{archivedTime}에 보관됨"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+msgid "Archived thread. Restore it to continue the conversation."
+msgstr "보관된 스레드입니다. 대화를 계속하려면 복원하세요."
+
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1588,6 +1593,10 @@ msgstr "보관된 스레드"
 #: src/mobile/views/SettingsView.tsx
 #~ msgid "Archived threads are managed from the desktop app. Restoring or deleting them from this device isn't available yet."
 #~ msgstr "보관된 스레드는 데스크톱 앱에서 관리됩니다. 이 기기에서 복원하거나 삭제하는 기능은 아직 사용할 수 없습니다."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Archived threads open read-only. Restore one to bring it back to the sidebar."
+msgstr "보관된 스레드는 읽기 전용으로 열립니다. 복원하면 사이드바로 돌아갑니다."
 
 #. placeholder {0}: file.path
 #: src/renderer/views/GitReviewOverlay/parts/GitStackedDiff.tsx
@@ -6296,6 +6305,7 @@ msgstr "기록 데이터베이스"
 msgid "History imported."
 msgstr "기록을 가져왔습니다."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
@@ -8311,6 +8321,10 @@ msgstr "활성 브라우저 탭이 없습니다."
 #~ msgid "No active session"
 #~ msgstr "활성 세션 없음"
 
+#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
+msgid "No active threads. Send a first prompt and its project appears here."
+msgstr "활성 스레드가 없습니다. 첫 프롬프트를 보내면 해당 프로젝트가 여기에 표시됩니다."
+
 #: src/renderer/views/GitHubActionsView/GitHubActionsView.tsx
 #~ msgid "No active workflows"
 #~ msgstr "활성 워크플로 없음"
@@ -8359,7 +8373,12 @@ msgstr "설치된 에이전트가 없습니다."
 msgid "No AI commits, PRs, or conflict resolutions tracked yet."
 msgstr "아직 추적된 AI 커밋, PR, 충돌 해결이 없습니다."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "No archived threads match your search."
+msgstr "검색과 일치하는 보관된 스레드가 없습니다."
+
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 msgid "No archived threads."
 msgstr "보관된 스레드가 없습니다."
@@ -11143,8 +11162,9 @@ msgstr "리베이스 또는 병합 중 병합 충돌을 해결합니다."
 msgid "Restart Orzi Code"
 msgstr "Orzi Code 다시 시작"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "복원"
 
@@ -11740,6 +11760,10 @@ msgstr "에이전트 검색"
 #: src/renderer/views/SettingsOverlay/parts/AcpRegistrySettings.tsx
 msgid "Search agents..."
 msgstr "에이전트 검색..."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Search archive"
+msgstr "보관함 검색"
 
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
 msgid "Search branches..."
@@ -14511,6 +14535,7 @@ msgid "Unknown"
 msgstr "알 수 없음"
 
 #: src/renderer/notifications.ts
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 msgid "Unknown project"
 msgstr "알 수 없는 프로젝트"
 

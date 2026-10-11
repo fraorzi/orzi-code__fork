@@ -1528,7 +1528,9 @@ msgstr "approved"
 msgid "Approved"
 msgstr "Approved"
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarArchiveRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarThreadRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Archive"
@@ -1577,9 +1579,12 @@ msgstr "Archive Thread"
 msgid "Archived at {archivedTime}"
 msgstr "Archived at {archivedTime}"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+msgid "Archived thread. Restore it to continue the conversation."
+msgstr "Archived thread. Restore it to continue the conversation."
+
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1588,6 +1593,10 @@ msgstr "Archived Threads"
 #: src/mobile/views/SettingsView.tsx
 #~ msgid "Archived threads are managed from the desktop app. Restoring or deleting them from this device isn't available yet."
 #~ msgstr "Archived threads are managed from the desktop app. Restoring or deleting them from this device isn't available yet."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Archived threads open read-only. Restore one to bring it back to the sidebar."
+msgstr "Archived threads open read-only. Restore one to bring it back to the sidebar."
 
 #. placeholder {0}: file.path
 #: src/renderer/views/GitReviewOverlay/parts/GitStackedDiff.tsx
@@ -6304,6 +6313,7 @@ msgstr "History database"
 msgid "History imported."
 msgstr "History imported."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
@@ -8319,6 +8329,10 @@ msgstr "No active browser tab"
 #~ msgid "No active session"
 #~ msgstr "No active session"
 
+#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
+msgid "No active threads. Send a first prompt and its project appears here."
+msgstr "No active threads. Send a first prompt and its project appears here."
+
 #: src/renderer/views/GitHubActionsView/GitHubActionsView.tsx
 #~ msgid "No active workflows"
 #~ msgstr "No active workflows"
@@ -8367,7 +8381,12 @@ msgstr "No agents installed."
 msgid "No AI commits, PRs, or conflict resolutions tracked yet."
 msgstr "No AI commits, PRs, or conflict resolutions tracked yet."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "No archived threads match your search."
+msgstr "No archived threads match your search."
+
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 msgid "No archived threads."
 msgstr "No archived threads."
@@ -11159,8 +11178,9 @@ msgstr "Resolves merge conflicts during rebase or merge."
 msgid "Restart Orzi Code"
 msgstr "Restart Orzi Code"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "Restore"
 
@@ -11756,6 +11776,10 @@ msgstr "Search agents"
 #: src/renderer/views/SettingsOverlay/parts/AcpRegistrySettings.tsx
 msgid "Search agents..."
 msgstr "Search agents..."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Search archive"
+msgstr "Search archive"
 
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
 msgid "Search branches..."
@@ -14539,6 +14563,7 @@ msgid "Unknown"
 msgstr "Unknown"
 
 #: src/renderer/notifications.ts
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 msgid "Unknown project"
 msgstr "Unknown project"
 

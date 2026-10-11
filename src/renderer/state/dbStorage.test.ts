@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createDbStorage } from "./dbStorage";
+import { createDbStorage, persistableView } from "./dbStorage";
 
 const bridge = vi.hoisted(() => ({
   windowKind: "main" as "main" | "quickComposer",
@@ -166,5 +166,13 @@ describe("dbStorage persistence error reporting", () => {
 
     expect(bridge.dbSetState).toHaveBeenCalledOnce();
     expect(captureRendererException).not.toHaveBeenCalled();
+  });
+});
+
+describe("persistableView", () => {
+  it("stores the archive view as Home so older builds can restore it", () => {
+    expect(persistableView({ kind: "archive" })).toEqual({ kind: "home" });
+    expect(persistableView(undefined)).toEqual({ kind: "home" });
+    expect(persistableView({ kind: "schedules" })).toEqual({ kind: "schedules" });
   });
 });

@@ -457,6 +457,19 @@ export function unarchiveThread(threadId: string): void {
   store.unarchiveThread(threadId);
 }
 
+/**
+ * Restores an archived thread to the sidebar. An archived thread opens
+ * read-only (no runtime relaunch), so when it is on screen its runtime is
+ * reopened right away to hand control back to the composer.
+ */
+export function restoreArchivedThread(threadId: string): void {
+  unarchiveThread(threadId);
+  const { view } = useAppStore.getState();
+  if (view.kind === "thread" && view.panes.includes(threadId)) {
+    reopenStoredThread(threadId);
+  }
+}
+
 export function unloadThread(threadId: string): void {
   void unloadStoredThread(threadId, { closeThreadPane: true }).catch((error) =>
     toast.danger(friendlyError(error)),

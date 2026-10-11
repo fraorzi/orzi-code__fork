@@ -22,8 +22,8 @@ export function isUnknownThreadSessionError(error: unknown): boolean {
  * Both clients gate on this one rule before relaunching: the desktop renderer
  * in `reopenStoredThread`, the mobile PWA in `ensureThreadRunning`.
  */
-export function shouldRelaunchThreadOnOpen(thread: Pick<Thread, "status">): boolean {
-  return thread.status === "inactive";
+export function shouldRelaunchThreadOnOpen(thread: Pick<Thread, "status" | "archived">): boolean {
+  return thread.status === "inactive" && !thread.archived;
 }
 
 /**

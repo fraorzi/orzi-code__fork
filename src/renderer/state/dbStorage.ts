@@ -151,7 +151,7 @@ async function saveAppStore(value: StorageValue<unknown>): Promise<void> {
       .dbSyncAll(
         state.projects ?? [],
         state.threads ?? [],
-        JSON.stringify(state.view ?? { kind: "home" }),
+        JSON.stringify(persistableView(state.view)),
       )
       .catch((error) => reportPersistError("projects/threads/view", error));
     if (state.groupLayouts) {
@@ -163,6 +163,15 @@ async function saveAppStore(value: StorageValue<unknown>): Promise<void> {
     // Synchronous failure (e.g. JSON.stringify on a circular structure).
     reportPersistError("app store", error);
   }
+}
+
+/**
+ * Views older builds cannot render are stored as Home, so a rollback never
+ * restores into a view it does not know. The archive view is transient anyway.
+ */
+export function persistableView(view: AppView | undefined): AppView {
+  if (!view || view.kind === "archive") return { kind: "home" };
+  return view;
 }
 
 function parseStorageValue(raw: string | null): StorageValue<unknown> | null {

@@ -1528,7 +1528,9 @@ msgstr "схвалено"
 msgid "Approved"
 msgstr "Схвалено"
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarArchiveRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarThreadRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Archive"
@@ -1577,9 +1579,12 @@ msgstr "Архівувати тред"
 msgid "Archived at {archivedTime}"
 msgstr "Архівовано о {archivedTime}"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+msgid "Archived thread. Restore it to continue the conversation."
+msgstr "Тред в архіві. Відновіть його, щоб продовжити розмову."
+
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1588,6 +1593,10 @@ msgstr "Архівовані треди"
 #: src/mobile/views/SettingsView.tsx
 #~ msgid "Archived threads are managed from the desktop app. Restoring or deleting them from this device isn't available yet."
 #~ msgstr "Архівовані треди керуються з настільної програми. Відновлення або видалення з цього пристрою поки недоступне."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Archived threads open read-only. Restore one to bring it back to the sidebar."
+msgstr "Архівні треди відкриваються лише для читання. Відновіть тред, щоб повернути його на бічну панель."
 
 #. placeholder {0}: file.path
 #: src/renderer/views/GitReviewOverlay/parts/GitStackedDiff.tsx
@@ -6296,6 +6305,7 @@ msgstr "База даних історії"
 msgid "History imported."
 msgstr "Історію імпортовано."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
@@ -8311,6 +8321,10 @@ msgstr "Немає активної вкладки браузера"
 #~ msgid "No active session"
 #~ msgstr "Немає активної сесії"
 
+#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
+msgid "No active threads. Send a first prompt and its project appears here."
+msgstr "Немає активних тредів. Надішліть перший промпт, і його проєкт з’явиться тут."
+
 #: src/renderer/views/GitHubActionsView/GitHubActionsView.tsx
 #~ msgid "No active workflows"
 #~ msgstr "Немає активних робочих процесів"
@@ -8359,7 +8373,12 @@ msgstr "Немає встановлених агентів."
 msgid "No AI commits, PRs, or conflict resolutions tracked yet."
 msgstr "Ще не відстежено жодних комітів, PR чи розв'язань конфліктів від AI."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "No archived threads match your search."
+msgstr "Жоден архівний тред не відповідає пошуку."
+
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 msgid "No archived threads."
 msgstr "Немає архівованих тредів."
@@ -11143,8 +11162,9 @@ msgstr "Розв'язує конфлікти злиття під час rebase �
 msgid "Restart Orzi Code"
 msgstr "Перезапустити Orzi Code"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "Відновити"
 
@@ -11740,6 +11760,10 @@ msgstr "Пошук агентів"
 #: src/renderer/views/SettingsOverlay/parts/AcpRegistrySettings.tsx
 msgid "Search agents..."
 msgstr "Пошук агентів..."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Search archive"
+msgstr "Пошук в архіві"
 
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
 msgid "Search branches..."
@@ -14511,6 +14535,7 @@ msgid "Unknown"
 msgstr "Невідомо"
 
 #: src/renderer/notifications.ts
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 msgid "Unknown project"
 msgstr "Невідомий проєкт"
 

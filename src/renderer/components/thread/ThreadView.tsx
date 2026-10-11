@@ -23,6 +23,7 @@ import type { SaveClipboardImage } from "../composer/useAttachments";
 import { ContinueInProviderDialog, type ContinueIntent } from "./ContinueInProviderDialog";
 import type { PendingLaunchProviderSwitch } from "@/renderer/state/slices/launchSlice";
 import { useContinueInProviderStore } from "@/renderer/state/continueInProviderStore";
+import { ArchivedThreadBar } from "./ArchivedThreadBar";
 import { GuiThreadContent } from "./ThreadContent";
 import { TerminalThreadContent } from "./TerminalThreadContent";
 import { ThreadHeaderStatusButton } from "./ThreadHeaderStatus";
@@ -67,6 +68,7 @@ function areThreadViewPropsEqual(prev: ThreadViewProps, next: ThreadViewProps): 
     prev.thread.worktreePath === next.thread.worktreePath &&
     prev.thread.presentationMode === next.thread.presentationMode &&
     prev.thread.done === next.thread.done &&
+    prev.thread.archived === next.thread.archived &&
     prev.thread.canResumeWithConfig === next.thread.canResumeWithConfig &&
     prev.thread.sessionRef?.providerSessionId === next.thread.sessionRef?.providerSessionId &&
     (!configAffectsLaunch || prev.thread.config === next.thread.config) &&
@@ -539,6 +541,7 @@ export const ThreadView = memo(function ThreadView(props: ThreadViewProps) {
                 paneCount={paneCount}
                 terminalPaneRef={terminalPaneRef}
                 runtimeDebugOpen={import.meta.env.DEV && runtimeDebugOpen}
+                hideComposer={thread.archived === true}
                 {...(onSubmitInput ? { onSubmitInput } : {})}
                 {...(onOpenProjectRelativePath ? { onOpenProjectRelativePath } : {})}
                 {...(checkpointActions ? { checkpointActions } : {})}
@@ -547,6 +550,7 @@ export const ThreadView = memo(function ThreadView(props: ThreadViewProps) {
                 {...(saveClipboardImage ? { saveClipboardImage } : {})}
               />
             )}
+            {thread.archived ? <ArchivedThreadBar threadId={thread.id} /> : null}
           </div>
         </div>
       </div>

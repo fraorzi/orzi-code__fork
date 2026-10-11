@@ -1528,7 +1528,9 @@ msgstr "aprovado"
 msgid "Approved"
 msgstr "Aprovado"
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarArchiveRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarThreadRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Archive"
@@ -1577,9 +1579,12 @@ msgstr "Arquivar Tópico"
 msgid "Archived at {archivedTime}"
 msgstr "Arquivada às {archivedTime}"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+msgid "Archived thread. Restore it to continue the conversation."
+msgstr "Thread arquivada. Restaure-a para continuar a conversa."
+
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1588,6 +1593,10 @@ msgstr "Tópicos arquivados"
 #: src/mobile/views/SettingsView.tsx
 #~ msgid "Archived threads are managed from the desktop app. Restoring or deleting them from this device isn't available yet."
 #~ msgstr "Os tópicos arquivados são gerenciados pelo app desktop. Restaurá-los ou excluí-los deste dispositivo ainda não está disponível."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Archived threads open read-only. Restore one to bring it back to the sidebar."
+msgstr "Threads arquivadas abrem somente para leitura. Restaure uma para trazê-la de volta à barra lateral."
 
 #. placeholder {0}: file.path
 #: src/renderer/views/GitReviewOverlay/parts/GitStackedDiff.tsx
@@ -6296,6 +6305,7 @@ msgstr "Banco de dados do histórico"
 msgid "History imported."
 msgstr "Histórico importado."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
@@ -8311,6 +8321,10 @@ msgstr "Nenhuma guia do navegador ativa"
 #~ msgid "No active session"
 #~ msgstr "Nenhuma sessão ativa"
 
+#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
+msgid "No active threads. Send a first prompt and its project appears here."
+msgstr "Nenhuma thread ativa. Envie um primeiro prompt e o projeto aparecerá aqui."
+
 #: src/renderer/views/GitHubActionsView/GitHubActionsView.tsx
 #~ msgid "No active workflows"
 #~ msgstr "Nenhum fluxo de trabalho ativo"
@@ -8359,7 +8373,12 @@ msgstr "Nenhum agente instalado."
 msgid "No AI commits, PRs, or conflict resolutions tracked yet."
 msgstr "Nenhum commit, PR ou resolução de conflito por IA registrado ainda."
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "No archived threads match your search."
+msgstr "Nenhuma thread arquivada corresponde à sua busca."
+
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 msgid "No archived threads."
 msgstr "Nenhum tópico arquivado."
@@ -11143,8 +11162,9 @@ msgstr "Resolve conflitos de mesclagem durante rebase ou mesclagem."
 msgid "Restart Orzi Code"
 msgstr "Reiniciar o Orzi Code"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "Restaurar"
 
@@ -11740,6 +11760,10 @@ msgstr "Pesquisar agentes"
 #: src/renderer/views/SettingsOverlay/parts/AcpRegistrySettings.tsx
 msgid "Search agents..."
 msgstr "Procurar agentes..."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Search archive"
+msgstr "Buscar no arquivo"
 
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
 msgid "Search branches..."
@@ -14511,6 +14535,7 @@ msgid "Unknown"
 msgstr "Desconhecido"
 
 #: src/renderer/notifications.ts
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 msgid "Unknown project"
 msgstr "Projeto desconhecido"
 

@@ -14,6 +14,17 @@ export function registerProviderIcon(kind: string, icon: IconComponent) {
   ICON_REGISTRY.set(kind, icon);
 }
 
+const BRAND_COLOR_REGISTRY = new Map<string, string>();
+
+/**
+ * Brand color of a provider's mark. It tints the icon only in the resting
+ * tones (`inactive` / `active`); status tones keep their semantic colors.
+ * Providers with a monochrome mark register nothing and stay neutral.
+ */
+export function registerProviderBrandColor(kind: string, color: string) {
+  BRAND_COLOR_REGISTRY.set(kind, color);
+}
+
 function externalIconStyle(src: string): CSSProperties {
   const cssUrl = `url(${JSON.stringify(src)})`;
   return {
@@ -165,17 +176,26 @@ export function ProviderIcon(props: {
       {...(props.className ? { className: props.className } : {})}
     />
   );
+  const brandColor = lookupProviderRegistration(BRAND_COLOR_REGISTRY, props.kind);
+  const branded = (content: ReactNode) =>
+    brandColor ? (
+      <span className="contents" style={{ "--provider-brand": brandColor } as CSSProperties}>
+        {content}
+      </span>
+    ) : (
+      content
+    );
   // Every multi-profile provider gets the same instance badge, so the icon
   // needs no per-provider knowledge.
   if (isAgentProfileKind(props.kind)) {
-    return (
+    return branded(
       <span className={`relative inline-flex ${props.className ?? ""}`}>
         {rendered}
         <span className="absolute -bottom-0.5 -right-0.5 flex size-2.5 items-center justify-center rounded-full border border-background bg-surface text-[6px] font-semibold leading-none text-foreground">
           {fallbackInitial(profileBadgeLabel(props.kind, props.fallbackLabel))}
         </span>
-      </span>
+      </span>,
     );
   }
-  return rendered;
+  return branded(rendered);
 }

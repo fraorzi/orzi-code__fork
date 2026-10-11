@@ -38,6 +38,8 @@ import {
 import { useScrollFade } from "@/renderer/hooks/useScrollFade";
 import { useAppStore } from "@/renderer/state/appStore";
 import { SidebarNewThreadRow } from "./parts/SidebarNewThreadRow";
+import { SidebarArchiveRow } from "./parts/SidebarArchiveRow";
+import { useActiveThreadProjectIds } from "./parts/activeSidebarProjects";
 import { SidebarProjectsHeading } from "./parts/SidebarProjectsHeading";
 import { useIsPanelTabVisible } from "@/renderer/state/panelDockSelectors";
 import { usePanelStore } from "@/renderer/state/panelStore";
@@ -181,9 +183,13 @@ export function Sidebar() {
   // Only the active workspace's projects; Home is handled separately below and
   // belongs to every workspace.
   const projectIds = useWorkspaceProjectIds();
+  const activeProjectIds = useActiveThreadProjectIds();
+  const visibleProjectIds = projectIds.filter((projectId) => activeProjectIds.has(projectId));
   const hiddenProjectCount = useProjectIdsHiddenByWorkspace().size;
   const homeProject = useAppStore((state) => state.projects.find(isHomeProject));
   const homeScopeEnabled = useSharedSettings((s) => s.homeScopeEnabled);
+  const showHomeSection =
+    homeScopeEnabled && homeProject !== undefined && activeProjectIds.has(homeProject.id);
   const remoteAccessEnabled = useSharedSettings((s) => s.remoteAccessEnabled);
   const currentProjectId = useCurrentProjectId();
   const currentWorktreePath = useCurrentWorktreePath();
@@ -400,7 +406,14 @@ export function Sidebar() {
               <SidebarProjectsHeading />
             </div>
             <div className="space-y-1">
-              {homeScopeEnabled && homeProject ? (
+              {visibleProjectIds.length === 0 && !showHomeSection ? (
+                <p className="mx-2 my-3 rounded-[8px] border border-dashed border-[var(--hairline-strong)] px-3 py-3 text-xs leading-relaxed text-muted/70">
+                  <Trans>
+                    No active threads. Send a first prompt and its project appears here.
+                  </Trans>
+                </p>
+              ) : null}
+              {showHomeSection ? (
                 <section className="space-y-0.5">
                   <SidebarButton
                     icon={
@@ -432,7 +445,7 @@ export function Sidebar() {
                   )}
                 </section>
               ) : null}
-              {projectIds.map((projectId, projectIndex) => (
+              {visibleProjectIds.map((projectId, projectIndex) => (
                 <SidebarProjectSection
                   key={projectId}
                   projectId={projectId}
@@ -440,6 +453,9 @@ export function Sidebar() {
                   sortMode={sortMode}
                 />
               ))}
+            </div>
+            <div className="mt-2.5">
+              <SidebarArchiveRow />
             </div>
           </div>
         )}

@@ -73,7 +73,7 @@ export function SidebarProjectHeader(props: {
         label={
           <span className="flex items-center gap-1.5">
             {customIcon}
-            <span className="truncate text-xs font-semibold text-foreground">{project.name}</span>
+            <span className="truncate text-[13px] font-medium text-foreground">{project.name}</span>
             <ProjectRemoteServerIcon info={remote} />
             {/* Own span rather than the shared chip: the machine name has to
                 undo the project name's `font-semibold` beside it. */}

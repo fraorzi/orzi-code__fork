@@ -5,7 +5,7 @@ import { AntigravityIcon } from "./AntigravityIcon";
 import providerManifest from "./manifest";
 import { ANTIGRAVITY_ACP_REGISTRY_ID } from "@/shared/agents/antigravity";
 import { standardPlanApprovalControls } from "../composerControlBuilders";
-import { registerProviderIcon } from "../ProviderIcon";
+import { registerProviderBrandColor, registerProviderIcon } from "../ProviderIcon";
 import {
   registerCombinedRuntimeUpdates,
   registerComposerControls,
@@ -18,6 +18,7 @@ import { registerTitleGenDefaults } from "../titleGen";
 const PROVIDER_KIND = providerManifest.kind;
 
 registerProviderIcon(PROVIDER_KIND, AntigravityIcon);
+registerProviderBrandColor(PROVIDER_KIND, "#4c8df6");
 registerCombinedRuntimeUpdates(PROVIDER_KIND, ({ agentStatus }) => {
   const cli = agentStatus.runtimeVariants?.cli;
   const acp = agentStatus.runtimeVariants?.acp;

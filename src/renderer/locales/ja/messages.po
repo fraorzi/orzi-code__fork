@@ -1527,7 +1527,9 @@ msgstr "承認された"
 msgid "Approved"
 msgstr "承認済み"
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarArchiveRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarThreadRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Archive"
@@ -1576,9 +1578,12 @@ msgstr "アーカイブスレッド"
 msgid "Archived at {archivedTime}"
 msgstr "{archivedTime} にアーカイブ"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+msgid "Archived thread. Restore it to continue the conversation."
+msgstr "アーカイブ済みのスレッドです。会話を続けるには復元してください。"
+
 #: src/mobile/settingsSections.ts
 #: src/mobile/views/SettingsView.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
 msgid "Archived Threads"
@@ -1587,6 +1592,10 @@ msgstr "アーカイブされたスレッド"
 #: src/mobile/views/SettingsView.tsx
 #~ msgid "Archived threads are managed from the desktop app. Restoring or deleting them from this device isn't available yet."
 #~ msgstr "アーカイブ済みスレッドはデスクトップアプリで管理されます。このデバイスからの復元または削除はまだ利用できません。"
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Archived threads open read-only. Restore one to bring it back to the sidebar."
+msgstr "アーカイブ済みのスレッドは読み取り専用で開きます。復元するとサイドバーに戻ります。"
 
 #. placeholder {0}: file.path
 #: src/renderer/views/GitReviewOverlay/parts/GitStackedDiff.tsx
@@ -6295,6 +6304,7 @@ msgstr "履歴データベース"
 msgid "History imported."
 msgstr "履歴をインポートしました。"
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
@@ -8309,6 +8319,10 @@ msgstr "アクティブなブラウザタブがありません"
 #~ msgid "No active session"
 #~ msgstr "アクティブなセッションがありません"
 
+#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
+msgid "No active threads. Send a first prompt and its project appears here."
+msgstr "アクティブなスレッドはありません。最初のプロンプトを送信すると、そのプロジェクトがここに表示されます。"
+
 #: src/renderer/views/GitHubActionsView/GitHubActionsView.tsx
 #~ msgid "No active workflows"
 #~ msgstr "アクティブなワークフローがありません"
@@ -8357,7 +8371,12 @@ msgstr "エージェントがインストールされていません。"
 msgid "No AI commits, PRs, or conflict resolutions tracked yet."
 msgstr "AIによるコミット、PR、競合解決はまだ記録されていません。"
 
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "No archived threads match your search."
+msgstr "検索に一致するアーカイブ済みスレッドはありません。"
+
 #: src/mobile/views/SettingsView.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/SettingsOverlay/parts/ArchivedThreadsSettings.tsx
 msgid "No archived threads."
 msgstr "アーカイブされたスレッドはありません。"
@@ -11141,8 +11160,9 @@ msgstr "リベースまたはマージ中のマージ競合を解決します。
 msgid "Restart Orzi Code"
 msgstr "Orzi Code を再起動"
 
+#: src/renderer/components/thread/ArchivedThreadBar.tsx
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/ProjectArchive.tsx
 msgid "Restore"
 msgstr "復元"
 
@@ -11738,6 +11758,10 @@ msgstr "エージェントを検索"
 #: src/renderer/views/SettingsOverlay/parts/AcpRegistrySettings.tsx
 msgid "Search agents..."
 msgstr "エージェントを検索..."
+
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
+msgid "Search archive"
+msgstr "アーカイブを検索"
 
 #: src/renderer/components/common/BranchSelector/BranchSelector.tsx
 msgid "Search branches..."
@@ -14509,6 +14533,7 @@ msgid "Unknown"
 msgstr "不明"
 
 #: src/renderer/notifications.ts
+#: src/renderer/views/ArchiveView/ArchiveView.tsx
 msgid "Unknown project"
 msgstr "不明なプロジェクト"
 

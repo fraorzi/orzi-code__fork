@@ -1985,12 +1985,12 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
 }
 
 .poracode-provider-icon--inactive {
-  color: color-mix(in oklab, var(--muted) 94%, var(--foreground));
+  color: var(--provider-brand, color-mix(in oklab, var(--muted) 94%, var(--foreground)));
   opacity: 0.78;
 }
 
 .poracode-provider-icon--active {
-  color: var(--foreground);
+  color: var(--provider-brand, var(--foreground));
   filter: drop-shadow(0 0 0.35rem color-mix(in oklab, var(--foreground) 18%, transparent));
 }
 
