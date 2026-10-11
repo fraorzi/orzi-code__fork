@@ -1,6 +1,7 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { isNewerVersion } from "@/shared/agents/updateResolver";
 import { allowsAutomaticAgentUpdate } from "@/shared/agentUpdateSettings";
+import { AgentVersionService } from "./agentVersionService";
 import { AgentUpdateCoordinator, type AgentUpdateTask } from "./agentUpdateCoordinator";
 import type {
   ManageAgentCredentialsPayload,
@@ -128,6 +129,7 @@ export class AgentRegistryService {
   private readonly adapterInputKeys = new Map<AgentKind, string>();
 
   readonly updates: AgentUpdateCoordinator;
+  readonly versions: AgentVersionService;
 
   constructor(private readonly deps: AgentRegistryServiceDeps) {
     this.updates = new AgentUpdateCoordinator({
@@ -138,6 +140,12 @@ export class AgentRegistryService {
         if (!result.ok) console.warn("[agent-update]", { id, ...result });
         else console.info("[agent-update]", { id, ok: true });
       },
+    });
+    this.versions = new AgentVersionService({
+      baseDir: deps.baseDir,
+      adapters: () => this.deps.adapters,
+      updates: this.updates,
+      refresh: (kinds) => this.refreshAffectedAgentStatuses(kinds),
     });
   }
 
@@ -159,7 +167,8 @@ export class AgentRegistryService {
         {
           id: status.executablePath,
           enabled: () =>
-            allowsAutomaticAgentUpdate(this.deps.sharedSettingsCache.read(), status.kind),
+            allowsAutomaticAgentUpdate(this.deps.sharedSettingsCache.read(), status.kind) &&
+            !this.versions.isPinned(this.deps.adapters.get(status.kind)?.managedVersions),
           isOutdated: async () => {
             const latest = await this.getLatestAgentVersion({ agentKind: status.kind });
             if (!latest.version) throw new Error("Agent version source is unavailable.");
@@ -612,6 +621,13 @@ export class AgentRegistryService {
       };
     }
 
+    if (payload.envKind !== "wsl" && this.versions.isPinned(adapter.managedVersions)) {
+      return {
+        ok: false,
+        output:
+          "This runtime version is pinned. Use managed version controls to change it or return to the system installation.",
+      };
+    }
     const envContext: AgentEnvContext = {
       envKind: payload.envKind,
       ...(payload.wslDistro ? { wslDistro: payload.wslDistro } : {}),

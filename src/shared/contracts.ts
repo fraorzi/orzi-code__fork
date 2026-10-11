@@ -27,3 +27,4 @@ export * from "./contracts/nativeMcpSetup";
 
 export * from "./contracts/agentCredentials";
 export * from "./contracts/agentPlugins";
+export * from "./contracts/agentVersions";

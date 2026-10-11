@@ -5191,6 +5191,10 @@ msgstr "Mỗi giờ"
 msgid "Every hour at {0} minutes past"
 msgstr "Mỗi giờ vào phút thứ {0}"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Exact CLI version"
+msgstr "Phiên bản CLI chính xác"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServerProjectList.tsx
 msgid "Exclude from sync"
 msgstr "Loại khỏi đồng bộ hóa"
@@ -6634,6 +6638,14 @@ msgstr "Cài đặt ACP trong {environment}"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 msgid "Install and manage native OpenCode plugins."
 msgstr "Cài đặt và quản lý plugin gốc của OpenCode."
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin"
+msgstr "Cài đặt và ghim"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin an exact CLI version in the app's own folder. Native profiles share it. Automatic updates stay paused while pinned. Active sessions must close before switching. The system installation and login are preserved."
+msgstr "Cài đặt và ghim một phiên bản CLI cụ thể trong thư mục riêng của ứng dụng. Các hồ sơ cục bộ dùng chung phiên bản này. Cập nhật tự động tạm dừng khi đã ghim. Hãy đóng các phiên hoạt động trước khi chuyển. Bản cài đặt hệ thống và trạng thái đăng nhập được giữ nguyên."
 
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 msgid "Install and restart"
@@ -9739,6 +9751,11 @@ msgstr "Đã ghim"
 #~ msgid "Pinned task routes"
 #~ msgstr "Tuyến tác vụ đã ghim"
 
+#. placeholder {0}: state.active
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Pinned: {0}"
+msgstr "Đã ghim: {0}"
+
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
 #: src/renderer/components/thread/ThreadDockBubbles.tsx
@@ -11128,6 +11145,11 @@ msgstr "Khởi động lại Orzi Code"
 msgid "Restore"
 msgstr "Khôi phục"
 
+#. placeholder {0}: state.previous
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Restore {0}"
+msgstr "Khôi phục {0}"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "Khôi phục trình duyệt"
@@ -11486,6 +11508,10 @@ msgstr "Gỡ lỗi thời gian chạy"
 #: src/renderer/views/MainView/parts/CreateProject/CreateProjectModal.tsx
 msgid "Runtime options"
 msgstr "Tùy chọn thời gian chạy"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Runtime version"
+msgstr "Phiên bản môi trường"
 
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -13082,6 +13108,10 @@ msgstr "Trình duyệt hệ thống"
 msgid "System default"
 msgstr "Mặc định hệ thống"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "System installation"
+msgstr "Bản cài đặt hệ thống"
+
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 msgid "System notifications"
 msgstr "Thông báo hệ thống"
@@ -14085,6 +14115,10 @@ msgstr "Nhập vào trang (chạm vào trường trước)"
 msgid "Unable to authenticate {0}."
 msgstr "Không thể xác thực {0}."
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Unable to change the runtime version."
+msgstr "Không thể thay đổi phiên bản môi trường."
+
 #. placeholder {0}: friendlyError(error)
 #: src/renderer/actions/experimentDecisionActions.ts
 msgid "Unable to compare candidates: {0}"
@@ -14839,6 +14873,10 @@ msgstr "Dùng CLI OpenCode để cập nhật các gói chỉ dành cho terminal
 msgid "Use Session"
 msgstr "Sử dụng phiên"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Use system installation"
+msgstr "Dùng bản cài đặt hệ thống"
+
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
 msgid "Use the {name} skill."
 msgstr "Sử dụng skill {name}."
@@ -14915,6 +14953,10 @@ msgstr "Xác minh khóa máy chủ"
 #: src/mobile/views/DesktopsView.tsx
 msgid "Verify SSH host key"
 msgstr "Xác minh khóa máy chủ SSH"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Verifying the runtime..."
+msgstr "Đang xác minh môi trường..."
 
 #. About page label: app version row
 #: src/renderer/components/plugins/PluginDetail.tsx

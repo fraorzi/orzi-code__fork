@@ -5190,6 +5190,10 @@ msgstr "毎時"
 msgid "Every hour at {0} minutes past"
 msgstr "毎時{0}分"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Exact CLI version"
+msgstr "正確なCLIバージョン"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServerProjectList.tsx
 msgid "Exclude from sync"
 msgstr "同期から除外"
@@ -6633,6 +6637,14 @@ msgstr "{environment} に ACP をインストール"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 msgid "Install and manage native OpenCode plugins."
 msgstr "OpenCode のネイティブプラグインをインストール・管理します。"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin"
+msgstr "インストールして固定"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin an exact CLI version in the app's own folder. Native profiles share it. Automatic updates stay paused while pinned. Active sessions must close before switching. The system installation and login are preserved."
+msgstr "アプリ専用フォルダーに特定のCLIバージョンをインストールして固定します。ローカルプロファイルは同じバージョンを使用します。固定中は自動更新が停止します。切り替える前に実行中のセッションを終了してください。システムのインストールとログインは保持されます。"
 
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 msgid "Install and restart"
@@ -9737,6 +9749,11 @@ msgstr "固定された"
 #~ msgid "Pinned task routes"
 #~ msgstr "固定されたタスクルート"
 
+#. placeholder {0}: state.active
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Pinned: {0}"
+msgstr "固定済み: {0}"
+
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
 #: src/renderer/components/thread/ThreadDockBubbles.tsx
@@ -11126,6 +11143,11 @@ msgstr "Orzi Code を再起動"
 msgid "Restore"
 msgstr "復元"
 
+#. placeholder {0}: state.previous
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Restore {0}"
+msgstr "{0}を復元"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "ブラウザを復元する"
@@ -11484,6 +11506,10 @@ msgstr "ランタイムデバッグ"
 #: src/renderer/views/MainView/parts/CreateProject/CreateProjectModal.tsx
 msgid "Runtime options"
 msgstr "実行時オプション"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Runtime version"
+msgstr "ランタイムのバージョン"
 
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -13080,6 +13106,10 @@ msgstr "システムブラウザ"
 msgid "System default"
 msgstr "システムのデフォルト"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "System installation"
+msgstr "システムのインストール"
+
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 msgid "System notifications"
 msgstr "システム通知"
@@ -14083,6 +14113,10 @@ msgstr "ページに入力（先にフィールドをタップ）"
 msgid "Unable to authenticate {0}."
 msgstr "{0}を認証できません。"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Unable to change the runtime version."
+msgstr "ランタイムのバージョンを変更できませんでした。"
+
 #. placeholder {0}: friendlyError(error)
 #: src/renderer/actions/experimentDecisionActions.ts
 msgid "Unable to compare candidates: {0}"
@@ -14837,6 +14871,10 @@ msgstr "ターミナル専用パッケージの更新には OpenCode CLI を使�
 msgid "Use Session"
 msgstr "セッションを使用する"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Use system installation"
+msgstr "システムのインストールを使用"
+
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
 msgid "Use the {name} skill."
 msgstr "{name} スキルを使用します。"
@@ -14913,6 +14951,10 @@ msgstr "ホストキーを確認"
 #: src/mobile/views/DesktopsView.tsx
 msgid "Verify SSH host key"
 msgstr "SSH ホストキーを確認"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Verifying the runtime..."
+msgstr "ランタイムを検証中..."
 
 #. About page label: app version row
 #: src/renderer/components/plugins/PluginDetail.tsx

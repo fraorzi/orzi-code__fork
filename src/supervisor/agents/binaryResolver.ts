@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs";
+import { getManagedExecutable } from "./managedExecutable";
 import type { ProjectLocation } from "@/shared/contracts";
 import {
   findPosixExecutableInWellKnownDirs,
@@ -26,6 +27,10 @@ export function resolveAgentBinaryPath(
   location: ProjectLocation,
   binary: string,
 ): string | undefined {
+  if (location.kind !== "wsl") {
+    const managed = getManagedExecutable(binary);
+    if (managed) return managed;
+  }
   if (location.kind === "windows") {
     const key = keyOf("windows", binary);
     if (cache.has(key)) {

@@ -29,6 +29,7 @@ import {
   type AgentEnvContext,
 } from "../agents/base";
 import { clearFastModeCache } from "../agents/claude/fastModeCache";
+import { managedExecutableSnapshot } from "../agents/managedExecutable";
 import { readSupervisorSharedSettings } from "./supervisorSharedSettings";
 
 const execFileAsync = promisify(execFile);
@@ -98,7 +99,9 @@ const execFileAsync = promisify(execFile);
 // credential lists alongside auth state.
 // v34 re-probes skill slash commands so cached skill invocations pick up the
 // provider's current form.
-export const STATUS_CACHE_VERSION = 34;
+// v36 fingerprints managed activation so a cache written before switching
+// runtimes cannot survive a crash or restart with a stale executable path.
+export const STATUS_CACHE_VERSION = 36;
 const WSL_AGENT_DETECTION_TIMEOUT_MS = 60_000;
 const WSL_LXSS_REGISTRY_KEY = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Lxss";
 
@@ -621,6 +624,7 @@ export class AgentStatusService {
         version?: number;
         windows?: unknown[];
         wsl?: unknown[];
+        managedExecutables?: unknown;
       };
 
       // Cache version is bumped whenever derived fields like `loginCommand`
@@ -629,6 +633,14 @@ export class AgentStatusService {
       // hand back pre-bump values that no longer match what fresh detection
       // would compute.
       if (cache.version !== STATUS_CACHE_VERSION) {
+        return { windows: [], wsl: [], fromCache: false };
+      }
+      // Activation is a separate atomic store. A crash between switching it
+      // and refreshing statuses must never revive the previous executable path.
+      if (
+        JSON.stringify(cache.managedExecutables ?? {}) !==
+        JSON.stringify(managedExecutableSnapshot())
+      ) {
         return { windows: [], wsl: [], fromCache: false };
       }
 
@@ -681,6 +693,7 @@ export class AgentStatusService {
         this.options.statusCachePath,
         JSON.stringify({
           version: STATUS_CACHE_VERSION,
+          managedExecutables: managedExecutableSnapshot(),
           windows,
           wsl,
           savedAt: new Date().toISOString(),

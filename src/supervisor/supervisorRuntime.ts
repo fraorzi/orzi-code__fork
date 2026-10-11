@@ -217,6 +217,7 @@ export class SupervisorRuntime {
       closeThreadsForAgentKind: (agentKind) => this.closeThreadsForAgentKind(agentKind),
     });
     this.agentRegistryService.refreshAgentRegistryAdapters();
+    this.agentRegistryService.versions.initialize();
     mkdirSync(paths.cacheDir, { recursive: true });
     mkdirSync(this.logsDir, { recursive: true });
 

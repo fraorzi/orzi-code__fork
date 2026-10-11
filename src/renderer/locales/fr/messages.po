@@ -5191,6 +5191,10 @@ msgstr "Toutes les heures"
 msgid "Every hour at {0} minutes past"
 msgstr "Toutes les heures, à {0} minutes"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Exact CLI version"
+msgstr "Version exacte de la CLI"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServerProjectList.tsx
 msgid "Exclude from sync"
 msgstr "Exclure de la synchronisation"
@@ -6634,6 +6638,14 @@ msgstr "Installer ACP dans {environment}"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 msgid "Install and manage native OpenCode plugins."
 msgstr "Installez et gérez les plugins natifs d’OpenCode."
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin"
+msgstr "Installer et fixer"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin an exact CLI version in the app's own folder. Native profiles share it. Automatic updates stay paused while pinned. Active sessions must close before switching. The system installation and login are preserved."
+msgstr "Installez et fixez une version précise de la CLI dans le dossier de l’application. Les profils locaux la partagent. Les mises à jour automatiques sont suspendues tant que la version est fixée. Fermez les sessions actives avant de changer. L’installation système et la connexion sont conservées."
 
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 msgid "Install and restart"
@@ -9738,6 +9750,11 @@ msgstr "Épinglé"
 #~ msgid "Pinned task routes"
 #~ msgstr "Routes de tâche épinglées"
 
+#. placeholder {0}: state.active
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Pinned: {0}"
+msgstr "Fixée : {0}"
+
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
 #: src/renderer/components/thread/ThreadDockBubbles.tsx
@@ -11127,6 +11144,11 @@ msgstr "Redémarrer Orzi Code"
 msgid "Restore"
 msgstr "Restaurer"
 
+#. placeholder {0}: state.previous
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Restore {0}"
+msgstr "Restaurer {0}"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "Restaurer le navigateur"
@@ -11485,6 +11507,10 @@ msgstr "Débogage d'exécution"
 #: src/renderer/views/MainView/parts/CreateProject/CreateProjectModal.tsx
 msgid "Runtime options"
 msgstr "Options d'exécution"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Runtime version"
+msgstr "Version du moteur"
 
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -13081,6 +13107,10 @@ msgstr "Navigateur système"
 msgid "System default"
 msgstr "Valeur par défaut du système"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "System installation"
+msgstr "Installation système"
+
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 msgid "System notifications"
 msgstr "Notifications système"
@@ -14084,6 +14114,10 @@ msgstr "Saisir dans la page (touchez d'abord un champ)"
 msgid "Unable to authenticate {0}."
 msgstr "Impossible d'authentifier {0}."
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Unable to change the runtime version."
+msgstr "Impossible de changer la version du moteur."
+
 #. placeholder {0}: friendlyError(error)
 #: src/renderer/actions/experimentDecisionActions.ts
 msgid "Unable to compare candidates: {0}"
@@ -14838,6 +14872,10 @@ msgstr "Utilisez la CLI d’OpenCode pour mettre à jour les paquets réservés 
 msgid "Use Session"
 msgstr "Utiliser la session"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Use system installation"
+msgstr "Utiliser l’installation système"
+
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
 msgid "Use the {name} skill."
 msgstr "Utiliser la compétence {name}."
@@ -14914,6 +14952,10 @@ msgstr "Vérifier la clé d’hôte"
 #: src/mobile/views/DesktopsView.tsx
 msgid "Verify SSH host key"
 msgstr "Vérifier la clé d’hôte SSH"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Verifying the runtime..."
+msgstr "Vérification du moteur..."
 
 #. About page label: app version row
 #: src/renderer/components/plugins/PluginDetail.tsx

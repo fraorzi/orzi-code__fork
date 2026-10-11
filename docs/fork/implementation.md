@@ -1,6 +1,18 @@
 # Stan implementacji
 
-Data: 2026-10-09. Lokalna wersja testowa na bazie PoraCode 1.8.1.
+Data: 2026-10-11. Lokalna wersja testowa na bazie PoraCode 1.8.1.
+
+## Zarządzane wersje Codex - 2026-10-11
+
+- Ustawienia deklarującego tę możliwość agenta zawierają instalację dokładnej wersji CLI, pin, przywrócenie poprzedniej wersji i powrót do systemowej instalacji. Początkowym dostawcą jest Codex na macOS/Linux. Profile tej samej instalacji współdzielą pakiet. To nie jest pin modelu ani biblioteki SDK; nie deklarujemy obsługi pozostałych dystrybucji lub WSL/Windows.
+- Cały pakiet npm wraz z opcjonalnymi zależnościami jest instalowany obok pozostałych wersji w prywatnym `agent-versions/<hash-package>/<version>`. Weryfikacja obejmuje metadane oficjalnego npm registry i integrity lock, tożsamość pakietu, ścieżkę wykonywalną pozostającą wewnątrz instalacji, rzeczywiste `--version` oraz provider-owned handshake `initialize` i `configRequirements/read`. Nie uruchamia tury modelowej. Nie kopiujemy pojedynczego binarnego pliku ani poświadczeń.
+- Atomowy `active.json` ma wersję 1. Brak pliku w starej aplikacji oznacza systemowy CLI. Nieznany/uszkodzony zapis jest zachowany i blokuje uruchamianie zadeklarowanego zarządzanego runtime, zamiast cicho przełączyć go na inny program. Nieudany kandydat nie zmienia aktywacji. Przełączenie korzysta z istniejącej globalnej blokady sesji i launchów. Pin blokuje automatyczne i zwykłe ręczne aktualizacje CLI, a świadoma zmiana wersji jest dostępna w osobnych kontrolkach.
+- Zarządzana ścieżka ma pierwszeństwo w wykrywaniu i resolverze używanym przez chat GUI i PTY. Powrót do systemu odświeża cache ścieżek. Odczyt aktywacji następuje po rejestracji adapterów i przed wykrywaniem. Test restartu wykrył wcześniejszy odczyt pustej mapy i doprowadził do poprawienia tej kolejności.
+- Cache statusów supervisora ma wersję 36 i fingerprint aktywacji. Cache renderera ma wersję 33. Testy poprzednich wersji 34/31 oraz aktualnego cache sprzed przełączenia potwierdzają odrzucenie starych ścieżek. To zabezpiecza też awarię po zapisaniu aktywacji, przed odświeżeniem statusu. Nie zmieniono SQLite, ustawień ani protokołów; dwa nowe IPC są addytywne i lokalne.
+- Rzeczywisty Electron z pełnymi syntetycznymi pakietami przeszedł instalację, pin, odmowę zwykłej aktualizacji, rollback i powrót do systemu. Dowody: `/private/tmp/orzi-versions-smoke-20261011/artifacts/agent-versions-verification.json` i `agent-versions-rollback.png`. Profil mock nie potwierdza odpowiedzi modelowej.
+- Rzeczywiste npm pakiety Codex 0.160.1 i 0.160.0 zainstalowano przez IPC w izolowanym profilu Electron. Handshake i rzeczywiste wersje przeszły, rollback odtworzył 0.160.1, a restart tego samego profilu odczytał zapis i tę samą ścieżkę. Następnie powrót do systemu i zamknięcie QA przeszły. Globalnej instalacji nie zastępowano. Logi `.tmp/managed-versions-real-{install,second-install,rollback,restart,system}.log`, pakiety i zapis w `/private/tmp/orzi-versions-real-packages-20261011/`. Osobny test istniejącego realnego CLI przeszedł bez tury modelowej.
+- Końcowa weryfikacja: 168 testów w 9 zestawach, typecheck i typowany lint, 0 brakujących tłumaczeń we wszystkich 12 katalogach. Smoke po poprawkach restartu/cache i oczekiwania na zakończenie IPC przeszedł wszystkie wybrane scenariusze i 5 bramek mock, z 0 błędów renderera: `/private/tmp/orzi-versions-verified-smoke-20261011/artifacts/smoke-report.json`. Sesje QA są zamknięte. Poprzedni przebieg zakończył się z pending IPC podczas teardownu; skrypt teraz oczekuje na zakończenie żądania, bez osłabienia asercji.
+- Pozostałe prace i rozdzielenie lokalnego używania od publikacji wydania opisuje [gotowość](readiness.md). `agy models` nadal wymaga logowania. Zainstalowanego pakietu użytkownika nie podmieniano.
 
 ## Kanał aktualizacji forka - 2026-10-09
 

@@ -5191,6 +5191,10 @@ msgstr "매시간"
 msgid "Every hour at {0} minutes past"
 msgstr "매시 {0}분"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Exact CLI version"
+msgstr "정확한 CLI 버전"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServerProjectList.tsx
 msgid "Exclude from sync"
 msgstr "동기화에서 제외"
@@ -6634,6 +6638,14 @@ msgstr "{environment}에 ACP 설치"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 msgid "Install and manage native OpenCode plugins."
 msgstr "OpenCode 기본 플러그인을 설치하고 관리합니다."
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin"
+msgstr "설치하고 고정"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin an exact CLI version in the app's own folder. Native profiles share it. Automatic updates stay paused while pinned. Active sessions must close before switching. The system installation and login are preserved."
+msgstr "앱 전용 폴더에 정확한 CLI 버전을 설치하고 고정합니다. 로컬 프로필은 같은 버전을 공유합니다. 버전이 고정된 동안 자동 업데이트가 일시 중지됩니다. 전환하기 전에 활성 세션을 종료하세요. 시스템 설치와 로그인은 유지됩니다."
 
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 msgid "Install and restart"
@@ -9739,6 +9751,11 @@ msgstr "고정됨"
 #~ msgid "Pinned task routes"
 #~ msgstr "고정된 작업 경로"
 
+#. placeholder {0}: state.active
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Pinned: {0}"
+msgstr "고정됨: {0}"
+
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
 #: src/renderer/components/thread/ThreadDockBubbles.tsx
@@ -11128,6 +11145,11 @@ msgstr "Orzi Code 다시 시작"
 msgid "Restore"
 msgstr "복원"
 
+#. placeholder {0}: state.previous
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Restore {0}"
+msgstr "{0} 복원"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "브라우저 복원"
@@ -11486,6 +11508,10 @@ msgstr "런타임 디버그"
 #: src/renderer/views/MainView/parts/CreateProject/CreateProjectModal.tsx
 msgid "Runtime options"
 msgstr "런타임 옵션"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Runtime version"
+msgstr "런타임 버전"
 
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -13082,6 +13108,10 @@ msgstr "시스템 브라우저"
 msgid "System default"
 msgstr "시스템 기본값"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "System installation"
+msgstr "시스템 설치"
+
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 msgid "System notifications"
 msgstr "시스템 알림"
@@ -14085,6 +14115,10 @@ msgstr "페이지에 입력(먼저 필드를 탭하세요)"
 msgid "Unable to authenticate {0}."
 msgstr "{0}을(를) 인증할 수 없습니다."
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Unable to change the runtime version."
+msgstr "런타임 버전을 변경할 수 없습니다."
+
 #. placeholder {0}: friendlyError(error)
 #: src/renderer/actions/experimentDecisionActions.ts
 msgid "Unable to compare candidates: {0}"
@@ -14839,6 +14873,10 @@ msgstr "터미널 전용 패키지를 업데이트하려면 OpenCode CLI를 사�
 msgid "Use Session"
 msgstr "세션 사용"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Use system installation"
+msgstr "시스템 설치 사용"
+
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
 msgid "Use the {name} skill."
 msgstr "{name} 스킬을 사용합니다."
@@ -14915,6 +14953,10 @@ msgstr "호스트 키 확인"
 #: src/mobile/views/DesktopsView.tsx
 msgid "Verify SSH host key"
 msgstr "SSH 호스트 키 확인"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Verifying the runtime..."
+msgstr "런타임 검증 중..."
 
 #. About page label: app version row
 #: src/renderer/components/plugins/PluginDetail.tsx

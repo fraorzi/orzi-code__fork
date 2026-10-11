@@ -1,4 +1,6 @@
 import {
+  getAgentVersionsPayloadSchema,
+  manageAgentVersionPayloadSchema,
   authenticateAcpAgentPayloadSchema,
   clearPendingSteerPayloadSchema,
   controlThreadGoalPayloadSchema,
@@ -32,6 +34,10 @@ import {
   writeTerminalPayloadSchema,
 } from "../../contracts";
 import type {
+  GetAgentVersionsPayload,
+  ManageAgentVersionPayload,
+  AgentVersionsState,
+  ManageAgentVersionResult,
   EditQueuedThreadFollowUpPayload,
   ReorderQueuedThreadFollowUpPayload,
   AcpRegistryListResult,
@@ -149,6 +155,16 @@ export const threadProcedures = {
     AcpRegistryMutationResult,
     "supervisor"
   >("updateAcpRegistryAgent", "supervisor", updateAcpRegistryAgentPayloadSchema),
+  getAgentVersions: definePayloadProcedure<
+    GetAgentVersionsPayload,
+    AgentVersionsState,
+    "supervisor"
+  >("getAgentVersions", "supervisor", getAgentVersionsPayloadSchema),
+  manageAgentVersion: definePayloadProcedure<
+    ManageAgentVersionPayload,
+    ManageAgentVersionResult,
+    "supervisor"
+  >("manageAgentVersion", "supervisor", manageAgentVersionPayloadSchema),
   updateAgentBinary: definePayloadProcedure<
     UpdateAgentBinaryPayload,
     UpdateAgentBinaryResult,

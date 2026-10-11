@@ -272,6 +272,7 @@ vi.mock("@/renderer/bridge", () => ({
   isMac: () => false,
   isWindows: () => true,
   readBridge: () => ({
+    getAgentVersions: async () => ({ supported: false }),
     refreshAgentStatuses: refreshAgentStatusesMock,
     setAcpRegistryAgentAuth: setAcpRegistryAgentAuthMock,
     authenticateAcpAgent: authenticateAcpAgentMock,

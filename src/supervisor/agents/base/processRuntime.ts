@@ -3,6 +3,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { promisify } from "node:util";
+import { getManagedExecutable } from "../managedExecutable";
 import { terminateChildProcessTree } from "@/shared/processTree";
 import {
   getPosixLoginShellArgs,
@@ -226,6 +227,8 @@ export function findPosixExecutableInWellKnownDirs(binary: string): string | und
 }
 
 export function resolveExecutablePath(command: string): string | undefined {
+  const managed = getManagedExecutable(command);
+  if (managed) return managed;
   if (process.platform === "win32") {
     const resolved = resolveWindowsExecutablePath(command);
     if (resolved) return resolved;
@@ -793,6 +796,8 @@ export async function primeExecutablePathCache(commands: readonly string[]): Pro
 }
 
 export async function resolveExecutablePathAsync(command: string): Promise<string | undefined> {
+  const managed = getManagedExecutable(command);
+  if (managed) return managed;
   const cached = execPathCache.get(command);
   if (cached && Date.now() - cached.ts < EXEC_CACHE_TTL_MS) {
     return cached.path;

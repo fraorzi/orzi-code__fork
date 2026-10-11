@@ -530,6 +530,20 @@ async function runWithCodexAppServer<T>(
   }
 }
 
+/** Verify the runtime handshake without starting a thread or reading account credentials. */
+export async function verifyCodexInstallation(path: string): Promise<void> {
+  const initialized = await runWithCodexAppServer(
+    { kind: "posix", path: process.cwd() },
+    { wslExecPath: path, label: "version-install" },
+    async ({ client }) => {
+      await client.request("configRequirements/read", {});
+      return true;
+    },
+  );
+  if (!initialized)
+    throw new Error("The installed runtime did not complete its protocol handshake.");
+}
+
 function extractCodexAccountInfo(rawResponse: unknown): CodexAccountInfo | undefined {
   if (!rawResponse || typeof rawResponse !== "object") return undefined;
   const account = (rawResponse as { account?: unknown }).account;

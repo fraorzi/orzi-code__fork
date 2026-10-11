@@ -690,6 +690,15 @@ export interface AgentUpdaterCommand {
 }
 
 export interface AgentUpdater {
+  /** Native side-by-side npm installation, verified with this provider's real protocol.
+   * The package, executable and probe belong to the provider. Profiles share this installation.
+   * Omit when the provider's distribution or bundled runtime cannot be pinned this way.
+   */
+  readonly managedVersions?: {
+    npmPackage: string;
+    binary: string;
+    verifyInstallation(path: string): Promise<void>;
+  };
   /**
    * Build the update command for a given (env, installed-status) pair. Return
    * `undefined` to defer to the shared package-manager fallback.

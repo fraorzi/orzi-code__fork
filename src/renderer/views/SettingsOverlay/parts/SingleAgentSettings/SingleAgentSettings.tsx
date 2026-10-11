@@ -55,6 +55,7 @@ import {
 import { SAVED_CREDENTIAL_MASK } from "../secretMask";
 import { AgentHeader } from "./parts/AgentHeader";
 import { AgentAutomaticUpdates } from "./parts/AgentAutomaticUpdates";
+import { AgentVersions } from "./parts/AgentVersions";
 import { AgentSettingRow } from "./parts/AgentSettingRow";
 import { ModelVisibilityDropdown } from "./parts/ModelVisibilityDropdown";
 import { modelSurfaceLabel } from "./parts/modelSurfaceLabel";
@@ -970,6 +971,7 @@ export function SingleAgentSettings(props: {
 
       <div className="space-y-4">
         {!isRemoteMachine && <AgentAutomaticUpdates agentKind={props.agentKind} />}
+        {!isRemoteMachine && <AgentVersions key={props.agentKind} agentKind={props.agentKind} />}
         {providerEntry?.settingsPanel && !isRemoteMachine ? (
           <providerEntry.settingsPanel
             agentKind={props.agentKind}

@@ -20,6 +20,7 @@ import { teamWorkspacesScenario } from "../../../../scripts/smoke-team-workspace
 import { composerRedesignScenario } from "../../../../scripts/smoke-composer-redesign.mjs";
 import { historyImportScenario } from "../../../../scripts/smoke-history-import.mjs";
 import { crossagentRolesScenario } from "../../../../scripts/smoke-crossagent-roles.mjs";
+import { agentVersionsScenario } from "../../../../scripts/smoke-agent-versions.mjs";
 import { agentUpdatePreferencesScenario } from "../../../../scripts/smoke-agent-update-preferences.mjs";
 import { mockLiveVoiceGate } from "./smoke-live-voice.mjs";
 
@@ -246,6 +247,11 @@ async function runSmoke(plan) {
           screenshot,
           outDir,
         }),
+      );
+    }
+    if (plan.automated.includes("agent-versions")) {
+      await runScenario(report, "agent-versions", () =>
+        agentVersionsScenario({ client, evaluate, bridgeInvoke, waitForValue, screenshot, outDir }),
       );
     }
     if (plan.automated.includes("agent-update-preferences")) {

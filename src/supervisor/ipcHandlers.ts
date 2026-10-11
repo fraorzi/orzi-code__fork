@@ -55,6 +55,8 @@ export function createSupervisorIpcHandlers(runtime: SupervisorRuntime): Supervi
     listAcpRegistry: () => registry.listAcpRegistry(),
     installAcpRegistryAgent: (payload) => registry.installAcpRegistryAgent(payload),
     updateAcpRegistryAgent: (payload) => registry.updateAcpRegistryAgent(payload),
+    getAgentVersions: (payload) => registry.versions.getState(payload),
+    manageAgentVersion: (payload) => registry.versions.manage(payload),
     updateAgentBinary: (payload) => registry.updateAgentBinary(payload),
     getLatestAgentVersion: (payload) => registry.getLatestAgentVersion(payload),
     resolveAgentAccount: (payload) => registry.resolveAgentAccount(payload),

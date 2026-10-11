@@ -5191,6 +5191,10 @@ msgstr "Her saat"
 msgid "Every hour at {0} minutes past"
 msgstr "Her saat {0} geçe"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Exact CLI version"
+msgstr "Tam CLI sürümü"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServerProjectList.tsx
 msgid "Exclude from sync"
 msgstr "Senkronizasyondan çıkar"
@@ -6634,6 +6638,14 @@ msgstr "ACP'yi {environment} ortamına yükle"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 msgid "Install and manage native OpenCode plugins."
 msgstr "Yerel OpenCode eklentilerini yükleyin ve yönetin."
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin"
+msgstr "Yükle ve sabitle"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin an exact CLI version in the app's own folder. Native profiles share it. Automatic updates stay paused while pinned. Active sessions must close before switching. The system installation and login are preserved."
+msgstr "Uygulamanın kendi klasörüne belirli bir CLI sürümü yükleyip sabitleyin. Yerel profiller bu sürümü paylaşır. Sürüm sabitken otomatik güncellemeler duraklatılır. Geçişten önce etkin oturumları kapatın. Sistem kurulumu ve oturum açma bilgileri korunur."
 
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 msgid "Install and restart"
@@ -9739,6 +9751,11 @@ msgstr "Sabitlendi"
 #~ msgid "Pinned task routes"
 #~ msgstr "Sabitlenmiş görev rotaları"
 
+#. placeholder {0}: state.active
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Pinned: {0}"
+msgstr "Sabitlenmiş: {0}"
+
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
 #: src/renderer/components/thread/ThreadDockBubbles.tsx
@@ -11128,6 +11145,11 @@ msgstr "Orzi Code'u yeniden başlat"
 msgid "Restore"
 msgstr "Geri yükle"
 
+#. placeholder {0}: state.previous
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Restore {0}"
+msgstr "{0} sürümünü geri yükle"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "Tarayıcıyı geri yükle"
@@ -11486,6 +11508,10 @@ msgstr "Çalışma zamanı hata ayıklaması"
 #: src/renderer/views/MainView/parts/CreateProject/CreateProjectModal.tsx
 msgid "Runtime options"
 msgstr "Çalışma zamanı seçenekleri"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Runtime version"
+msgstr "Çalışma ortamı sürümü"
 
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -13082,6 +13108,10 @@ msgstr "Sistem Tarayıcısı"
 msgid "System default"
 msgstr "Sistem varsayılanı"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "System installation"
+msgstr "Sistem kurulumu"
+
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 msgid "System notifications"
 msgstr "Sistem bildirimleri"
@@ -14085,6 +14115,10 @@ msgstr "Sayfaya yazın (önce bir alana dokunun)"
 msgid "Unable to authenticate {0}."
 msgstr "{0} kimlik doğrulaması yapılamıyor."
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Unable to change the runtime version."
+msgstr "Çalışma ortamı sürümü değiştirilemedi."
+
 #. placeholder {0}: friendlyError(error)
 #: src/renderer/actions/experimentDecisionActions.ts
 msgid "Unable to compare candidates: {0}"
@@ -14839,6 +14873,10 @@ msgstr "Yalnızca terminale yönelik paketleri güncellemek için OpenCode CLI'y
 msgid "Use Session"
 msgstr "Oturumu Kullan"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Use system installation"
+msgstr "Sistem kurulumunu kullan"
+
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
 msgid "Use the {name} skill."
 msgstr "{name} becerisini kullan."
@@ -14915,6 +14953,10 @@ msgstr "Ana makine anahtarını doğrula"
 #: src/mobile/views/DesktopsView.tsx
 msgid "Verify SSH host key"
 msgstr "SSH ana makine anahtarını doğrula"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Verifying the runtime..."
+msgstr "Çalışma ortamı doğrulanıyor..."
 
 #. About page label: app version row
 #: src/renderer/components/plugins/PluginDetail.tsx

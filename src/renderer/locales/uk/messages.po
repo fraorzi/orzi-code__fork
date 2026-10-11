@@ -5191,6 +5191,10 @@ msgstr "Щогодини"
 msgid "Every hour at {0} minutes past"
 msgstr "Щогодини о {0} хв."
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Exact CLI version"
+msgstr "Точна версія CLI"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServerProjectList.tsx
 msgid "Exclude from sync"
 msgstr "Виключити із синхронізації"
@@ -6634,6 +6638,14 @@ msgstr "Установити ACP у {environment}"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 msgid "Install and manage native OpenCode plugins."
 msgstr "Установлення й керування нативними плагінами OpenCode."
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin"
+msgstr "Установити й закріпити"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin an exact CLI version in the app's own folder. Native profiles share it. Automatic updates stay paused while pinned. Active sessions must close before switching. The system installation and login are preserved."
+msgstr "Установіть і закріпіть точну версію CLI в папці застосунку. Локальні профілі використовують її спільно. Автооновлення призупинено, доки версію закріплено. Перед перемиканням закрийте активні сеанси. Системне встановлення та вхід в обліковий запис зберігаються."
 
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 msgid "Install and restart"
@@ -9739,6 +9751,11 @@ msgstr "Закріплено"
 #~ msgid "Pinned task routes"
 #~ msgstr "Закріплені маршрути завдань"
 
+#. placeholder {0}: state.active
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Pinned: {0}"
+msgstr "Закріплено: {0}"
+
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
 #: src/renderer/components/thread/ThreadDockBubbles.tsx
@@ -11128,6 +11145,11 @@ msgstr "Перезапустити Orzi Code"
 msgid "Restore"
 msgstr "Відновити"
 
+#. placeholder {0}: state.previous
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Restore {0}"
+msgstr "Відновити {0}"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "Відновити браузер"
@@ -11486,6 +11508,10 @@ msgstr "Налагодження середовища виконання"
 #: src/renderer/views/MainView/parts/CreateProject/CreateProjectModal.tsx
 msgid "Runtime options"
 msgstr "Параметри середовища виконання"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Runtime version"
+msgstr "Версія середовища"
 
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -13082,6 +13108,10 @@ msgstr "Системний браузер"
 msgid "System default"
 msgstr "Системний за замовчуванням"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "System installation"
+msgstr "Системне встановлення"
+
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 msgid "System notifications"
 msgstr "Системні сповіщення"
@@ -14085,6 +14115,10 @@ msgstr "Вводите на странице (сначала коснитесь 
 msgid "Unable to authenticate {0}."
 msgstr "Не вдалося автентифікувати {0}."
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Unable to change the runtime version."
+msgstr "Не вдалося змінити версію середовища."
+
 #. placeholder {0}: friendlyError(error)
 #: src/renderer/actions/experimentDecisionActions.ts
 msgid "Unable to compare candidates: {0}"
@@ -14839,6 +14873,10 @@ msgstr "Для оновлення пакетів лише для терміна�
 msgid "Use Session"
 msgstr "Використати сесію"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Use system installation"
+msgstr "Використати системне встановлення"
+
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
 msgid "Use the {name} skill."
 msgstr "Використати навичку {name}."
@@ -14915,6 +14953,10 @@ msgstr "Перевірити ключ хоста"
 #: src/mobile/views/DesktopsView.tsx
 msgid "Verify SSH host key"
 msgstr "Перевірити ключ SSH-хоста"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Verifying the runtime..."
+msgstr "Перевірка середовища..."
 
 #. About page label: app version row
 #: src/renderer/components/plugins/PluginDetail.tsx

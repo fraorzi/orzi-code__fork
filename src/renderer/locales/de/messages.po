@@ -5191,6 +5191,10 @@ msgstr "Jede Stunde"
 msgid "Every hour at {0} minutes past"
 msgstr "Jede Stunde {0} Minuten nach der vollen Stunde"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Exact CLI version"
+msgstr "Exakte CLI-Version"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServerProjectList.tsx
 msgid "Exclude from sync"
 msgstr "Von Synchronisierung ausschließen"
@@ -6634,6 +6638,14 @@ msgstr "ACP in {environment} installieren"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 msgid "Install and manage native OpenCode plugins."
 msgstr "Installiere und verwalte native OpenCode-Plugins."
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin"
+msgstr "Installieren und fixieren"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin an exact CLI version in the app's own folder. Native profiles share it. Automatic updates stay paused while pinned. Active sessions must close before switching. The system installation and login are preserved."
+msgstr "Installiere und fixiere eine bestimmte CLI-Version im eigenen Ordner der App. Lokale Profile verwenden sie gemeinsam. Automatische Updates pausieren bei fixierter Version. Schließe aktive Sitzungen vor dem Wechsel. Systeminstallation und Anmeldung bleiben erhalten."
 
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 msgid "Install and restart"
@@ -9739,6 +9751,11 @@ msgstr "Angepinnt"
 #~ msgid "Pinned task routes"
 #~ msgstr "Angeheftete Aufgabenrouten"
 
+#. placeholder {0}: state.active
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Pinned: {0}"
+msgstr "Fixiert: {0}"
+
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
 #: src/renderer/components/thread/ThreadDockBubbles.tsx
@@ -11128,6 +11145,11 @@ msgstr "Orzi Code neu starten"
 msgid "Restore"
 msgstr "Wiederherstellen"
 
+#. placeholder {0}: state.previous
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Restore {0}"
+msgstr "{0} wiederherstellen"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "Browser wiederherstellen"
@@ -11486,6 +11508,10 @@ msgstr "Laufzeit-Debug"
 #: src/renderer/views/MainView/parts/CreateProject/CreateProjectModal.tsx
 msgid "Runtime options"
 msgstr "Laufzeitoptionen"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Runtime version"
+msgstr "Laufzeitversion"
 
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -13082,6 +13108,10 @@ msgstr "Systembrowser"
 msgid "System default"
 msgstr "Systemstandard"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "System installation"
+msgstr "Systeminstallation"
+
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 msgid "System notifications"
 msgstr "Systembenachrichtigungen"
@@ -14085,6 +14115,10 @@ msgstr "In die Seite tippen (zuerst ein Feld antippen)"
 msgid "Unable to authenticate {0}."
 msgstr "{0} konnte nicht authentifiziert werden."
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Unable to change the runtime version."
+msgstr "Die Laufzeitversion konnte nicht geändert werden."
+
 #. placeholder {0}: friendlyError(error)
 #: src/renderer/actions/experimentDecisionActions.ts
 msgid "Unable to compare candidates: {0}"
@@ -14839,6 +14873,10 @@ msgstr "Verwende die OpenCode-CLI, um reine Terminal-Pakete zu aktualisieren."
 msgid "Use Session"
 msgstr "Sitzung verwenden"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Use system installation"
+msgstr "Systeminstallation verwenden"
+
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
 msgid "Use the {name} skill."
 msgstr "Den Skill {name} verwenden."
@@ -14915,6 +14953,10 @@ msgstr "Hostschlüssel prüfen"
 #: src/mobile/views/DesktopsView.tsx
 msgid "Verify SSH host key"
 msgstr "SSH-Hostschlüssel prüfen"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Verifying the runtime..."
+msgstr "Laufzeit wird geprüft..."
 
 #. About page label: app version row
 #: src/renderer/components/plugins/PluginDetail.tsx

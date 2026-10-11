@@ -6,6 +6,7 @@ import type { AgentStatus } from "@/shared/contracts";
 import type { SupervisorEvent } from "@/shared/ipc";
 import { encryptSecret } from "@/shared/secretStorage";
 import type { AgentAdapter } from "../agents/base";
+import { setManagedExecutable } from "../agents/managedExecutable";
 
 vi.mock("../agents/base", async (importActual) => {
   const actual = await importActual<typeof import("../agents/base")>();
@@ -210,8 +211,42 @@ HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\{333}
         wsl: [],
       }),
     );
-    expect(STATUS_CACHE_VERSION).toBe(34);
+    expect(STATUS_CACHE_VERSION).toBe(36);
     expect(service.getCachedCapabilities("codex")).toBeUndefined();
+  });
+
+  it("rejects v34 executable paths captured before managed activation", () => {
+    const { service, statusCachePath } = makeService(vi.fn<AgentAdapter["detectInstall"]>());
+    writeFileSync(
+      statusCachePath,
+      JSON.stringify({
+        version: 34,
+        windows: [{ ...makeStatus(), executablePath: "/system/old-runtime" }],
+        wsl: [],
+      }),
+    );
+    expect(service.getCachedCapabilities("codex")).toBeUndefined();
+  });
+
+  it("rejects a current cache captured before an atomic runtime activation", () => {
+    const { service, statusCachePath } = makeService(vi.fn<AgentAdapter["detectInstall"]>());
+    const executable = join(dirname(statusCachePath), "fixture-runtime");
+    writeFileSync(executable, "fixture");
+    writeFileSync(
+      statusCachePath,
+      JSON.stringify({
+        version: STATUS_CACHE_VERSION,
+        managedExecutables: {},
+        windows: [{ ...makeStatus(), executablePath: "/system/old-runtime" }],
+        wsl: [],
+      }),
+    );
+    setManagedExecutable("fixture-runtime", executable);
+    try {
+      expect(service.getCachedCapabilities("codex")).toBeUndefined();
+    } finally {
+      setManagedExecutable("fixture-runtime", undefined);
+    }
   });
 
   it("drops the on-disk status cache before an explicit full refresh", async () => {

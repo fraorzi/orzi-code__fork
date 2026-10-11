@@ -5191,6 +5191,10 @@ msgstr "每小时"
 msgid "Every hour at {0} minutes past"
 msgstr "每小时过 {0} 分钟"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Exact CLI version"
+msgstr "准确的 CLI 版本"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServerProjectList.tsx
 msgid "Exclude from sync"
 msgstr "从同步中排除"
@@ -6634,6 +6638,14 @@ msgstr "在 {environment} 中安装 ACP"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 msgid "Install and manage native OpenCode plugins."
 msgstr "安装和管理 OpenCode 原生插件。"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin"
+msgstr "安装并固定"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin an exact CLI version in the app's own folder. Native profiles share it. Automatic updates stay paused while pinned. Active sessions must close before switching. The system installation and login are preserved."
+msgstr "在应用专用文件夹中安装并固定准确的 CLI 版本。本地配置共享此版本。固定期间会暂停自动更新。切换前请关闭活动会话。系统安装和登录状态会保留。"
 
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 msgid "Install and restart"
@@ -9738,6 +9750,11 @@ msgstr "已固定"
 #~ msgid "Pinned task routes"
 #~ msgstr "已固定的任务路由"
 
+#. placeholder {0}: state.active
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Pinned: {0}"
+msgstr "已固定：{0}"
+
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
 #: src/renderer/components/thread/ThreadDockBubbles.tsx
@@ -11127,6 +11144,11 @@ msgstr "重新启动 Orzi Code"
 msgid "Restore"
 msgstr "恢复"
 
+#. placeholder {0}: state.previous
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Restore {0}"
+msgstr "恢复 {0}"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "恢复浏览器"
@@ -11485,6 +11507,10 @@ msgstr "运行时调试"
 #: src/renderer/views/MainView/parts/CreateProject/CreateProjectModal.tsx
 msgid "Runtime options"
 msgstr "运行时选项"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Runtime version"
+msgstr "运行时版本"
 
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -13081,6 +13107,10 @@ msgstr "系统浏览器"
 msgid "System default"
 msgstr "系统默认"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "System installation"
+msgstr "系统安装"
+
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 msgid "System notifications"
 msgstr "系统通知"
@@ -14084,6 +14114,10 @@ msgstr "在页面中输入（请先点按一个字段）"
 msgid "Unable to authenticate {0}."
 msgstr "无法验证{0}。"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Unable to change the runtime version."
+msgstr "无法更改运行时版本。"
+
 #. placeholder {0}: friendlyError(error)
 #: src/renderer/actions/experimentDecisionActions.ts
 msgid "Unable to compare candidates: {0}"
@@ -14838,6 +14872,10 @@ msgstr "请使用 OpenCode CLI 更新仅供终端使用的软件包。"
 msgid "Use Session"
 msgstr "使用会话"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Use system installation"
+msgstr "使用系统安装"
+
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
 msgid "Use the {name} skill."
 msgstr "使用 {name} 技能。"
@@ -14914,6 +14952,10 @@ msgstr "验证主机密钥"
 #: src/mobile/views/DesktopsView.tsx
 msgid "Verify SSH host key"
 msgstr "验证 SSH 主机密钥"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Verifying the runtime..."
+msgstr "正在验证运行时..."
 
 #. About page label: app version row
 #: src/renderer/components/plugins/PluginDetail.tsx

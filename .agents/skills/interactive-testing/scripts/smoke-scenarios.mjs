@@ -12,6 +12,19 @@ export const productionRoots = [
 
 export const functionalAreas = [
   {
+    id: "agent-versions",
+    title: "Managed runtime version pinning, rollback and system fallback",
+    patterns: [
+      /managedAgentVersions/,
+      /agentVersionService/,
+      /managedExecutable/,
+      /AgentVersions/,
+      /contracts\/agentVersions/,
+    ],
+    automated: ["baseline", "settings", "agent-versions"],
+    manual: ["changed-surface", "ipc-roundtrip", "native-auth-update"],
+  },
+  {
     id: "composer-redesign",
     title: "Favorite account columns, catalog and larger removable image previews",
     patterns: [

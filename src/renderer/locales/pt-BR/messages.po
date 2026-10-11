@@ -5191,6 +5191,10 @@ msgstr "A cada hora"
 msgid "Every hour at {0} minutes past"
 msgstr "A cada hora, aos {0} minutos"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Exact CLI version"
+msgstr "Versão exata da CLI"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteServerProjectList.tsx
 msgid "Exclude from sync"
 msgstr "Excluir da sincronização"
@@ -6634,6 +6638,14 @@ msgstr "Instalar ACP em {environment}"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 msgid "Install and manage native OpenCode plugins."
 msgstr "Instale e gerencie plugins nativos do OpenCode."
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin"
+msgstr "Instalar e fixar"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Install and pin an exact CLI version in the app's own folder. Native profiles share it. Automatic updates stay paused while pinned. Active sessions must close before switching. The system installation and login are preserved."
+msgstr "Instale e fixe uma versão exata da CLI na pasta do aplicativo. Os perfis locais a compartilham. As atualizações automáticas ficam pausadas enquanto estiver fixada. Feche as sessões ativas antes de trocar. A instalação do sistema e o login são preservados."
 
 #: src/renderer/components/thread/RemoteHostUpdateDock.tsx
 msgid "Install and restart"
@@ -9739,6 +9751,11 @@ msgstr "Fixado"
 #~ msgid "Pinned task routes"
 #~ msgstr "Rotas de tarefa fixadas"
 
+#. placeholder {0}: state.active
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Pinned: {0}"
+msgstr "Fixada: {0}"
+
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/providers/composerControlBuilders.tsx
 #: src/renderer/components/thread/ThreadDockBubbles.tsx
@@ -11128,6 +11145,11 @@ msgstr "Reiniciar o Orzi Code"
 msgid "Restore"
 msgstr "Restaurar"
 
+#. placeholder {0}: state.previous
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Restore {0}"
+msgstr "Restaurar {0}"
+
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "Restaurar navegador"
@@ -11486,6 +11508,10 @@ msgstr "Depuração de tempo de execução"
 #: src/renderer/views/MainView/parts/CreateProject/CreateProjectModal.tsx
 msgid "Runtime options"
 msgstr "Opções de tempo de execução"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Runtime version"
+msgstr "Versão do ambiente"
 
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -13082,6 +13108,10 @@ msgstr "Navegador do sistema"
 msgid "System default"
 msgstr "Padrão do sistema"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "System installation"
+msgstr "Instalação do sistema"
+
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 msgid "System notifications"
 msgstr "Notificações do sistema"
@@ -14085,6 +14115,10 @@ msgstr "Digite na página (toque primeiro em um campo)"
 msgid "Unable to authenticate {0}."
 msgstr "Não foi possível autenticar {0}."
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Unable to change the runtime version."
+msgstr "Não foi possível alterar a versão do ambiente."
+
 #. placeholder {0}: friendlyError(error)
 #: src/renderer/actions/experimentDecisionActions.ts
 msgid "Unable to compare candidates: {0}"
@@ -14839,6 +14873,10 @@ msgstr "Use a CLI do OpenCode para atualizar pacotes exclusivos do terminal."
 msgid "Use Session"
 msgstr "Usar sessão"
 
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Use system installation"
+msgstr "Usar a instalação do sistema"
+
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
 msgid "Use the {name} skill."
 msgstr "Usar a skill {name}."
@@ -14915,6 +14953,10 @@ msgstr "Verificar chave do host"
 #: src/mobile/views/DesktopsView.tsx
 msgid "Verify SSH host key"
 msgstr "Verificar chave do host SSH"
+
+#: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
+msgid "Verifying the runtime..."
+msgstr "Verificando o ambiente..."
 
 #. About page label: app version row
 #: src/renderer/components/plugins/PluginDetail.tsx

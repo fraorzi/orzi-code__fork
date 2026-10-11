@@ -13,6 +13,7 @@ import {
   type CreateStructuredSessionInput,
   type TerminalStatusHint,
 } from "../base";
+import { verifyCodexInstallation } from "./probe";
 import { resolveAgentBinaryPath } from "../binaryResolver";
 import { CodexStructuredSession } from "./acp";
 import { buildCodexArgvFor, codexExtraArgsPosition, primeCodexGoalsSupport } from "./argv";
@@ -112,6 +113,11 @@ export function createCodexAdapter(): AgentAdapter {
     kind: codexDetectionSpec.kind,
     label: codexDetectionSpec.label,
     binary: codexDetectionSpec.binary,
+    managedVersions: {
+      npmPackage: "@openai/codex",
+      binary: "codex",
+      verifyInstallation: verifyCodexInstallation,
+    },
     skillSupport: {
       roots: [
         {

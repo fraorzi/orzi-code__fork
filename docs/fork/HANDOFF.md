@@ -1,6 +1,6 @@
 # Przekazanie Orzi Code
 
-Stan na 2026-10-09. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
+Stan na 2026-10-11. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
 
 ## Zacznij tutaj
 
@@ -17,6 +17,14 @@ Stan na 2026-10-09. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Integracja zmian wykonawców jest automatyczna. Użytkownik wyraźnie wykluczył zatwierdzanie każdego scalenia. Nie należy ponownie otwierać tej decyzji.
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
+
+## Aktualizacja z 2026-10-11
+
+Użytkownik polecił kontynuować, poprosił o listę prac przed pełną gotowością oraz wyjaśnienie korzystania z aplikacji podczas edycji jej źródeł. [Gotowość desktopu](readiness.md) rozróżnia źródła, starszą instalację i zależności od kont/podpisywania. Edycja checkoutu nie przeładowuje zainstalowanego pakietu. Podmiana pakietu wymaga zamknięcia aplikacji; QA używa osobnych profili.
+
+Wdrożono zarządzane kompletne instalacje npm, pin i rollback dla deklarującego tę możliwość Codex na macOS/Linux. Zmiana wersji jest blokowana przez istniejący koordynator aktywnych sesji i launchów. GUI/PTY oraz wykrywanie używają wspólnej ścieżki. Test realnych pakietów 0.160.1 i 0.160.0, rollback i ponowny start tego samego profilu QA przeszły. Naprawiono ujawnioną kolejność inicjalizacji oraz cache po przerwanej aktywacji. Nie mylić tego z obsługą wszystkich dostawców, SDK ani WSL/Windows. Szczegóły i wersje magazynów są na początku [stanu implementacji](implementation.md).
+
+`agy models` ponownie sprawdzono 2026-10-11. Nadal wymaga logowania. Produkcyjnego konta/CLI ani profilu użytkownika nie zmieniano. Zainstalowany pakiet nadal jest starszy. Kontynuować deklaracje i weryfikację zarządzanych wersji pozostałych dostawców, testy kont oraz końcowy pakiet desktopu. Publikacja podpisanego wydania pozostaje osobną decyzją.
 
 ## Aktualizacja z 2026-10-09
 
