@@ -197,6 +197,11 @@ msgstr "{0} saat {time}"
 msgid "{0} authenticated."
 msgstr "{0} kimliği doğrulandı."
 
+#. placeholder {0}: conflicts.map((file) => file.path).join(", ")
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "{0} changed after this prompt. Undoing everything would overwrite those edits."
+msgstr "{0} bu istemden sonra değişti. Tümünü geri almak bu değişikliklerin üzerine yazar."
+
 #. placeholder {0}: agent.label
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/SingleAgentSettings.tsx
 msgid "{0} credentials removed."
@@ -465,6 +470,14 @@ msgstr "{days} gün önce"
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "{envOrAgentLabel} needs authentication."
 msgstr "{envOrAgentLabel} kimlik doğrulaması gerektiriyor."
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "{fileCount, plural, one {# file restored} other {# files restored}}"
+msgstr "{fileCount, plural, one {# dosya geri yüklendi} other {# dosya geri yüklendi}}"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "{fileCount, plural, one {# file} other {# files}}"
+msgstr "{fileCount, plural, one {# dosya} other {# dosya}}"
 
 #: src/mobile/views/pr/PrOverviewPage.tsx
 msgid "{filesCount, plural, one {# file changed} other {# files changed}}"
@@ -2359,6 +2372,10 @@ msgstr "Kısayolu değiştir"
 msgid "Change User"
 msgstr "Kullanıcıyı Değiştir"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changed after this prompt"
+msgstr "Bu istemden sonra değişti"
+
 #. Link to the list of release notes
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ChangelogSettings.tsx
@@ -2388,6 +2405,10 @@ msgstr "Değişiklikler bu ortamın tamamına uygulanır."
 #: src/renderer/components/skills/SkillsManager.tsx
 msgid "Changes apply to new chats. Providers that support live skill reload may update sooner."
 msgstr "Değişiklikler yeni sohbetlere uygulanır. Canlı beceri yenilemeyi destekleyen sağlayıcılar daha erken güncellenebilir."
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changes from this prompt were undone"
+msgstr "Bu istemin değişiklikleri geri alındı"
 
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 msgid "Changes in PR"
@@ -3017,6 +3038,7 @@ msgstr "Kod kopyalandı."
 msgid "Codex"
 msgstr "Codex"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 #: src/renderer/components/thread/ThreadBackgroundTasksDock.tsx
 #: src/renderer/components/thread/ThreadErrorDock.tsx
 #: src/renderer/components/thread/ThreadImagesDock.tsx
@@ -9015,7 +9037,9 @@ msgid "Open"
 msgstr "Açık"
 
 #. placeholder {0}: entry.name
+#. placeholder {0}: file.path
 #: src/renderer/components/plugins/PluginMarketplace.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 msgid "Open {0}"
 msgstr "{0} aç"
 
@@ -11185,7 +11209,9 @@ msgstr "Orzi Code'u yeniden başlat"
 msgid "Restore"
 msgstr "Geri yükle"
 
+#. placeholder {0}: file.path
 #. placeholder {0}: state.previous
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
 msgid "Restore {0}"
 msgstr "{0} sürümünü geri yükle"
@@ -11193,6 +11219,10 @@ msgstr "{0} sürümünü geri yükle"
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "Tarayıcıyı geri yükle"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Restore changes"
+msgstr "Değişiklikleri geri yükle"
 
 #: src/renderer/views/SettingsOverlay/parts/WorktreeBaseFolderField.tsx
 msgid "Restore default worktree base folder"
@@ -11306,9 +11336,12 @@ msgid "Revert to checkpoint?"
 msgstr "Kontrol noktasına geri dönülsün mü?"
 
 #: src/mobile/UserMessageActionsSheet.tsx
-#: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "Revert to this checkpoint"
 msgstr "Bu kontrol noktasına geri dön"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Review"
+msgstr "İncele"
 
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 msgid "Review and track work across your GitHub accounts."
@@ -11370,6 +11403,10 @@ msgstr "İncelediklerim"
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Revoke {name}"
 msgstr "{name} oturumunu iptal et"
+
+#: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
+msgid "Rewind conversation to here"
+msgstr "Konuşmayı buraya geri sar"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Right"
@@ -14515,6 +14552,19 @@ msgstr "İşareti kaldırılan sağlayıcılar ve modeller, otomatik Crossagents
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentProviderModelFilter.tsx
 #~ msgid "Unchecked providers and models are skipped by Crossagents only."
 #~ msgstr "İşaretlenmemiş sağlayıcılar ve modeller yalnızca Crossagents tarafından atlanır."
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Undo"
+msgstr "Geri al"
+
+#. placeholder {0}: file.path
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Undo {0}"
+msgstr "{0} geri al"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Undo the other files"
+msgstr "Diğer dosyaları geri al"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 msgid "Ungroup"

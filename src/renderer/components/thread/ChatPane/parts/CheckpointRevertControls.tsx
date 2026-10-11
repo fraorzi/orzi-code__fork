@@ -37,7 +37,7 @@ export function CheckpointRevertButton(props: {
       <Tooltip.Trigger>
         <button
           type="button"
-          aria-label={t`Revert to this checkpoint`}
+          aria-label={t`Rewind conversation to here`}
           className="flex size-5 items-center justify-center rounded text-muted/70 transition-colors hover:bg-foreground/5 hover:text-foreground"
           onClick={(event) => {
             event.stopPropagation();
@@ -48,7 +48,7 @@ export function CheckpointRevertButton(props: {
         </button>
       </Tooltip.Trigger>
       <Tooltip.Content placement="top">
-        <Trans>Revert to this checkpoint</Trans>
+        <Trans>Rewind conversation to here</Trans>
       </Tooltip.Content>
     </Tooltip>
   );

@@ -35,7 +35,7 @@ describe("QuestionAnswer", () => {
     expect(screen.getByText("Allow once")).toBeInTheDocument();
     expect(screen.getByText("Only for this run")).toBeInTheDocument();
     expect(container).toHaveTextContent("Use README.md instead.");
-    const revertButton = screen.getByRole("button", { name: "Revert to this checkpoint" });
+    const revertButton = screen.getByRole("button", { name: "Rewind conversation to here" });
     expect(revertButton).toBeInTheDocument();
     expect(revertButton.closest(".poracode-message-action-strip")).not.toBeNull();
   });

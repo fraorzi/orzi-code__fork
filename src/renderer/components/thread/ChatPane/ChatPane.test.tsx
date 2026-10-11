@@ -2091,7 +2091,7 @@ describe("ChatPane", () => {
     renderChatPane(thread);
     await waitFor(() => expect(hydrateThreadRuntimeItems).toHaveBeenCalledWith(thread.id));
 
-    const buttons = screen.getAllByRole("button", { name: "Revert to this checkpoint" });
+    const buttons = screen.getAllByRole("button", { name: "Rewind conversation to here" });
     expect(buttons).toHaveLength(1);
     expect(screen.getByText("Follow-up prompt").closest(".surface")).toContainElement(buttons[0]!);
     expect(buttons[0]!.closest(".poracode-message-action-strip")).not.toBeNull();
@@ -2148,7 +2148,7 @@ describe("ChatPane", () => {
     renderChatPane(thread);
     await waitFor(() => expect(hydrateThreadRuntimeItems).toHaveBeenCalledWith(thread.id));
 
-    fireEvent.click(screen.getAllByRole("button", { name: "Revert to this checkpoint" })[0]!);
+    fireEvent.click(screen.getAllByRole("button", { name: "Rewind conversation to here" })[0]!);
     fireEvent.click(await screen.findByRole("button", { name: "Revert" }));
 
     await waitFor(() => expect(screen.queryByText("Follow-up prompt")).not.toBeInTheDocument());
@@ -2183,7 +2183,7 @@ describe("ChatPane", () => {
     renderChatPane(thread);
     await waitFor(() => expect(hydrateThreadRuntimeItems).toHaveBeenCalledWith(thread.id));
 
-    fireEvent.click(screen.getAllByRole("button", { name: "Revert to this checkpoint" })[1]!);
+    fireEvent.click(screen.getAllByRole("button", { name: "Rewind conversation to here" })[1]!);
     const confirm = await screen.findByRole("button", { name: "Revert" });
     fireEvent.click(confirm);
     fireEvent.click(confirm);
@@ -2226,7 +2226,7 @@ describe("ChatPane", () => {
     renderChatPane(thread);
     await waitFor(() => expect(hydrateThreadRuntimeItems).toHaveBeenCalledWith(thread.id));
 
-    fireEvent.click(screen.getByRole("button", { name: "Revert to this checkpoint" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rewind conversation to here" }));
     fireEvent.click(await screen.findByRole("button", { name: "Revert" }));
     expect(await screen.findByText("Checkpoint save failed")).toBeInTheDocument();
     expect(dbTruncateThreadRuntimeAfter).toHaveBeenCalledTimes(1);
@@ -2273,7 +2273,7 @@ describe("ChatPane", () => {
     renderChatPane(thread);
     await waitFor(() => expect(hydrateThreadRuntimeItems).toHaveBeenCalledWith(thread.id));
 
-    fireEvent.click(screen.getByRole("button", { name: "Revert to this checkpoint" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rewind conversation to here" }));
     fireEvent.click(await screen.findByRole("button", { name: "Revert" }));
 
     await waitFor(() =>
@@ -2305,7 +2305,7 @@ describe("ChatPane", () => {
     renderChatPane(thread);
     await waitFor(() => expect(hydrateThreadRuntimeItems).toHaveBeenCalledWith(thread.id));
 
-    fireEvent.click(screen.getByRole("button", { name: "Revert to this checkpoint" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rewind conversation to here" }));
     fireEvent.click(await screen.findByRole("button", { name: "Revert" }));
 
     await waitFor(() => expect(screen.queryByText("Follow-up prompt")).not.toBeInTheDocument());
@@ -2334,7 +2334,7 @@ describe("ChatPane", () => {
     renderChatPane(thread);
     await waitFor(() => expect(hydrateThreadRuntimeItems).toHaveBeenCalledWith(thread.id));
 
-    fireEvent.click(screen.getAllByRole("button", { name: "Revert to this checkpoint" })[0]!);
+    fireEvent.click(screen.getAllByRole("button", { name: "Rewind conversation to here" })[0]!);
 
     expect(await screen.findByText("Revert to checkpoint?")).toBeInTheDocument();
     expect(screen.queryByText("Chat only")).not.toBeInTheDocument();
@@ -2352,7 +2352,7 @@ describe("ChatPane", () => {
     await waitFor(() => expect(hydrateThreadRuntimeItems).toHaveBeenCalledWith(thread.id));
 
     expect(
-      screen.queryByRole("button", { name: "Revert to this checkpoint" }),
+      screen.queryByRole("button", { name: "Rewind conversation to here" }),
     ).not.toBeInTheDocument();
   });
 
@@ -2365,7 +2365,7 @@ describe("ChatPane", () => {
     renderChatPane(thread);
     await waitFor(() => expect(hydrateThreadRuntimeItems).toHaveBeenCalledWith(thread.id));
 
-    fireEvent.click(screen.getAllByRole("button", { name: "Revert to this checkpoint" })[0]!);
+    fireEvent.click(screen.getAllByRole("button", { name: "Rewind conversation to here" })[0]!);
     fireEvent.click(await screen.findByLabelText("Don't ask again"));
     fireEvent.click(screen.getByRole("button", { name: "Revert" }));
 
@@ -2384,7 +2384,7 @@ describe("ChatPane", () => {
     });
     await screen.findByText("Another prompt");
 
-    fireEvent.click(screen.getAllByRole("button", { name: "Revert to this checkpoint" })[0]!);
+    fireEvent.click(screen.getAllByRole("button", { name: "Rewind conversation to here" })[0]!);
 
     expect(screen.queryByText("Revert to checkpoint?")).not.toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText("Another prompt")).not.toBeInTheDocument());

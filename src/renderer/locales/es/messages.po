@@ -197,6 +197,11 @@ msgstr "{0} a las {time}"
 msgid "{0} authenticated."
 msgstr "{0} autenticado."
 
+#. placeholder {0}: conflicts.map((file) => file.path).join(", ")
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "{0} changed after this prompt. Undoing everything would overwrite those edits."
+msgstr "{0} cambió después de este prompt. Deshacerlo todo sobrescribiría esos cambios."
+
 #. placeholder {0}: agent.label
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/SingleAgentSettings.tsx
 msgid "{0} credentials removed."
@@ -465,6 +470,14 @@ msgstr "hace {days}d"
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "{envOrAgentLabel} needs authentication."
 msgstr "{envOrAgentLabel} necesita autenticación."
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "{fileCount, plural, one {# file restored} other {# files restored}}"
+msgstr "{fileCount, plural, one {# archivo restaurado} other {# archivos restaurados}}"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "{fileCount, plural, one {# file} other {# files}}"
+msgstr "{fileCount, plural, one {# archivo} other {# archivos}}"
 
 #: src/mobile/views/pr/PrOverviewPage.tsx
 msgid "{filesCount, plural, one {# file changed} other {# files changed}}"
@@ -2359,6 +2372,10 @@ msgstr "Cambiar atajo"
 msgid "Change User"
 msgstr "Cambiar usuario"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changed after this prompt"
+msgstr "Cambiado después de este prompt"
+
 #. Link to the list of release notes
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ChangelogSettings.tsx
@@ -2388,6 +2405,10 @@ msgstr "Los cambios se aplican globalmente a este entorno."
 #: src/renderer/components/skills/SkillsManager.tsx
 msgid "Changes apply to new chats. Providers that support live skill reload may update sooner."
 msgstr "Los cambios se aplican a los chats nuevos. Los proveedores que admiten recargar skills en vivo podrían actualizarse antes."
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changes from this prompt were undone"
+msgstr "Se deshicieron los cambios de este prompt"
 
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 msgid "Changes in PR"
@@ -3017,6 +3038,7 @@ msgstr "Código copiado. "
 msgid "Codex"
 msgstr "Codex"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 #: src/renderer/components/thread/ThreadBackgroundTasksDock.tsx
 #: src/renderer/components/thread/ThreadErrorDock.tsx
 #: src/renderer/components/thread/ThreadImagesDock.tsx
@@ -9015,7 +9037,9 @@ msgid "Open"
 msgstr "Abrir"
 
 #. placeholder {0}: entry.name
+#. placeholder {0}: file.path
 #: src/renderer/components/plugins/PluginMarketplace.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 msgid "Open {0}"
 msgstr "Abrir {0}"
 
@@ -11185,7 +11209,9 @@ msgstr "Reiniciar Orzi Code"
 msgid "Restore"
 msgstr "Restaurar"
 
+#. placeholder {0}: file.path
 #. placeholder {0}: state.previous
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
 msgid "Restore {0}"
 msgstr "Restaurar {0}"
@@ -11193,6 +11219,10 @@ msgstr "Restaurar {0}"
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "Restaurar navegador"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Restore changes"
+msgstr "Restaurar cambios"
 
 #: src/renderer/views/SettingsOverlay/parts/WorktreeBaseFolderField.tsx
 msgid "Restore default worktree base folder"
@@ -11306,9 +11336,12 @@ msgid "Revert to checkpoint?"
 msgstr "¿Revertir al punto de control?"
 
 #: src/mobile/UserMessageActionsSheet.tsx
-#: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "Revert to this checkpoint"
 msgstr "Revertir a este punto de control"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Review"
+msgstr "Revisar"
 
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 msgid "Review and track work across your GitHub accounts."
@@ -11370,6 +11403,10 @@ msgstr "Para revisar"
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Revoke {name}"
 msgstr "Revocar {name}"
+
+#: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
+msgid "Rewind conversation to here"
+msgstr "Retroceder la conversación hasta aquí"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Right"
@@ -14515,6 +14552,19 @@ msgstr "Los proveedores y modelos no seleccionados se excluyen del enrutamiento 
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentProviderModelFilter.tsx
 #~ msgid "Unchecked providers and models are skipped by Crossagents only."
 #~ msgstr "Crossagents solo omite los proveedores y modelos no seleccionados."
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Undo"
+msgstr "Deshacer"
+
+#. placeholder {0}: file.path
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Undo {0}"
+msgstr "Deshacer {0}"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Undo the other files"
+msgstr "Deshacer los demás archivos"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 msgid "Ungroup"

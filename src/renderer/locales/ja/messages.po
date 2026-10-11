@@ -197,6 +197,11 @@ msgstr "{0}の{time}"
 msgid "{0} authenticated."
 msgstr "{0}が認証されました。"
 
+#. placeholder {0}: conflicts.map((file) => file.path).join(", ")
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "{0} changed after this prompt. Undoing everything would overwrite those edits."
+msgstr "{0} はこのプロンプトの後に変更されました。すべて元に戻すとその変更が上書きされます。"
+
 #. placeholder {0}: agent.label
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/SingleAgentSettings.tsx
 msgid "{0} credentials removed."
@@ -465,6 +470,14 @@ msgstr "{days}日前"
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentEnvironmentRow.tsx
 msgid "{envOrAgentLabel} needs authentication."
 msgstr "{envOrAgentLabel}には認証が必要です。"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "{fileCount, plural, one {# file restored} other {# files restored}}"
+msgstr "{fileCount, plural, one {#個のファイルを復元} other {#個のファイルを復元}}"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "{fileCount, plural, one {# file} other {# files}}"
+msgstr "{fileCount, plural, one {#ファイル} other {#ファイル}}"
 
 #: src/mobile/views/pr/PrOverviewPage.tsx
 msgid "{filesCount, plural, one {# file changed} other {# files changed}}"
@@ -2358,6 +2371,10 @@ msgstr "ショートカットを変更"
 msgid "Change User"
 msgstr "ユーザーの変更"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changed after this prompt"
+msgstr "このプロンプトの後に変更"
+
 #. Link to the list of release notes
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ChangelogSettings.tsx
@@ -2387,6 +2404,10 @@ msgstr "変更はこの環境全体に適用されます。"
 #: src/renderer/components/skills/SkillsManager.tsx
 msgid "Changes apply to new chats. Providers that support live skill reload may update sooner."
 msgstr "変更は新しいチャットに適用されます。スキルのライブ再読み込みに対応するプロバイダーでは、より早く更新される場合があります。"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Changes from this prompt were undone"
+msgstr "このプロンプトの変更を元に戻しました"
 
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 msgid "Changes in PR"
@@ -3016,6 +3037,7 @@ msgstr "コードがコピーされました。"
 msgid "Codex"
 msgstr "Codex"
 
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 #: src/renderer/components/thread/ThreadBackgroundTasksDock.tsx
 #: src/renderer/components/thread/ThreadErrorDock.tsx
 #: src/renderer/components/thread/ThreadImagesDock.tsx
@@ -9013,7 +9035,9 @@ msgid "Open"
 msgstr "開く"
 
 #. placeholder {0}: entry.name
+#. placeholder {0}: file.path
 #: src/renderer/components/plugins/PluginMarketplace.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 msgid "Open {0}"
 msgstr "{0} を開く"
 
@@ -11183,7 +11207,9 @@ msgstr "Orzi Code を再起動"
 msgid "Restore"
 msgstr "復元"
 
+#. placeholder {0}: file.path
 #. placeholder {0}: state.previous
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
 msgid "Restore {0}"
 msgstr "{0}を復元"
@@ -11191,6 +11217,10 @@ msgstr "{0}を復元"
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 msgid "Restore browser"
 msgstr "ブラウザを復元する"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Restore changes"
+msgstr "変更を復元"
 
 #: src/renderer/views/SettingsOverlay/parts/WorktreeBaseFolderField.tsx
 msgid "Restore default worktree base folder"
@@ -11304,9 +11334,12 @@ msgid "Revert to checkpoint?"
 msgstr "チェックポイントに戻りますか?"
 
 #: src/mobile/UserMessageActionsSheet.tsx
-#: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "Revert to this checkpoint"
 msgstr "このチェックポイントに戻る"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Review"
+msgstr "確認"
 
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 msgid "Review and track work across your GitHub accounts."
@@ -11368,6 +11401,10 @@ msgstr "レビュー中"
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Revoke {name}"
 msgstr "{name}を取り消す"
+
+#: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
+msgid "Rewind conversation to here"
+msgstr "会話をここまで戻す"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Right"
@@ -14513,6 +14550,19 @@ msgstr "選択を解除したプロバイダーとモデルは Crossagents の�
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentProviderModelFilter.tsx
 #~ msgid "Unchecked providers and models are skipped by Crossagents only."
 #~ msgstr "チェックを外したプロバイダーとモデルはCrossagentsでのみスキップされます。"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Undo"
+msgstr "元に戻す"
+
+#. placeholder {0}: file.path
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Undo {0}"
+msgstr "{0} を元に戻す"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+msgid "Undo the other files"
+msgstr "他のファイルを元に戻す"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 msgid "Ungroup"
