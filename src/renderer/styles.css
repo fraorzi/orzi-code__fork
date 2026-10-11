@@ -1065,22 +1065,22 @@
   .dark,
   [data-theme="dark"] {
     color-scheme: dark;
-    /* Orzi Code: neutral graphite surfaces, light primary controls. */
-    --background: #191919;
-    --foreground: #d4d4d4;
-    --surface: #232323;
-    --surface-secondary: #2d2d2d;
+    /* Orzi Code: pure black surfaces, light primary controls. */
+    --background: #050505;
+    --foreground: #f0f0f0;
+    --surface: #121212;
+    --surface-secondary: #1a1a1a;
     /* Matches --composer-surface so chat bubbles (user message) and the
        composer read as one surface. */
-    --surface-tertiary: #222222;
+    --surface-tertiary: #121212;
     /* Floating chrome (modals, menus, popovers, tooltips) sits just above the
        panel surfaces. Fields/controls are lighter than this, so they read as
        raised cards on overlays instead of blending into them. */
-    --overlay: #282828;
+    --overlay: #121212;
     /* Secondary text stays neutral and distinct from active text. */
-    --muted: #9f9f9f;
-    --scrollbar: #555555;
-    --default: #343434;
+    --muted: #979797;
+    --scrollbar: #3a3a3a;
+    --default: #1f1f1f;
     --accent: #e6e6e6;
     --accent-foreground: #191919;
     --danger: oklch(0.64 0.2 24.63);
@@ -1094,22 +1094,24 @@
     --project-icon-blue: oklch(0.7 0.14 255);
     --project-icon-violet: oklch(0.71 0.16 292);
     --project-icon-pink: oklch(0.74 0.16 345);
-    --field-background: #222222;
-    --field-placeholder: #777777;
-    --field-border: #424242;
-    --segment: #303030;
-    --border: #3d3d3d;
-    --separator: #343434;
-    --row-active: color-mix(in oklab, var(--foreground) 11%, transparent);
+    --field-background: #121212;
+    --field-placeholder: #616161;
+    --field-border: color-mix(in oklab, var(--foreground) 18%, transparent);
+    --segment: #1a1a1a;
+    --border: color-mix(in oklab, var(--foreground) 10%, transparent);
+    --separator: color-mix(in oklab, var(--foreground) 17%, transparent);
+    --row-active: color-mix(in oklab, var(--foreground) 10%, transparent);
+    --hairline: color-mix(in oklab, var(--foreground) 10%, transparent);
+    --hairline-strong: color-mix(in oklab, var(--foreground) 18%, transparent);
 
     /* App-specific */
-    --sidebar-background: #232323;
-    --content-background: #191919;
+    --sidebar-background: #000000;
+    --content-background: #050505;
     /* Dark surfaces read muddier through heavy blur, so lean more on the theme
        color (higher alpha = less transparent) than the light default above. */
     --sidebar-glass-tint: color-mix(in oklab, var(--content-background) 65%, transparent);
     --window-header-background: var(--sidebar-background);
-    --composer-surface: #222222;
+    --composer-surface: #121212;
   }
 
   * {

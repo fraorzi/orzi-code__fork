@@ -501,7 +501,7 @@ export function createLocalIpcHandlers(
       if (process.platform === "win32") {
         mainWindow.setBackgroundMaterial(wantsMaterial ? "acrylic" : "none");
         mainWindow.setBackgroundColor(
-          wantsMaterial ? "#00000000" : payload.appearance === "dark" ? "#070709" : "#f1f1f4",
+          wantsMaterial ? "#00000000" : payload.appearance === "dark" ? "#050505" : "#f1f1f4",
         );
       }
       if (wantsMaterial && payload.appearance) {

@@ -492,7 +492,7 @@ export const sharedSettingsSchema = z.object({
   /**
    * Translucent ("liquid glass") sidebar. When on, the window uses a
    * native blur material where supported (macOS vibrancy, Windows 11 acrylic)
-   * and an in-app translucent fallback elsewhere. Default on.
+   * and an in-app translucent fallback elsewhere. Default off.
    */
   sidebarTranslucency: z.boolean(),
   /**
@@ -794,7 +794,7 @@ export const defaultSharedSettings: SharedSettings = {
   homeScopeEnabled: true,
   sidebarHiddenShortcuts: ["githubActions"],
   sidebarShortcutOrder: [...SIDEBAR_SHORTCUT_IDS],
-  sidebarTranslucency: true,
+  sidebarTranslucency: false,
   sidebarGlassTint: { light: null, dark: null },
   autoShowTerminalPanel: true,
   worktreeStorageMode: "global",

@@ -35,8 +35,8 @@ const SHARED_SETTINGS_CACHE_KEY = "poracode-shared-settings";
 
 // Resolved appearance + background, read by the inline pre-paint script in
 // index.html so the first frame matches the active theme. Keep the key in sync.
-// v2 invalidates the derived background of the previous default palette.
-const BOOT_CACHE_KEY = "poracode-boot-v2";
+// v3 invalidates the derived background of the previous (graphite) default palette.
+const BOOT_CACHE_KEY = "poracode-boot-v3";
 
 /**
  * Persists the resolved appearance + background so the next launch's pre-paint

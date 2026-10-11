@@ -253,7 +253,7 @@ function ShellSidebarAside(props: {
       ? "border-[color:var(--accent)]"
       : glassActive
         ? "border-transparent"
-        : "border-[color:var(--border)]";
+        : "border-[color:var(--separator)]";
   // Windows: stop the sidebar divider below the header so it doesn't run through the title row —
   // the opaque title row shares --content-background across sidebar + content, reading as one
   // continuous titlebar that a line through would split. EXCEPT when the sidebar is translucent:
