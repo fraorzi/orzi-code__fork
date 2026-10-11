@@ -15,7 +15,7 @@ import {
 } from "react";
 import { LegendList, type LegendListRef, type LegendListState } from "@legendapp/list/react";
 import { Surface } from "@heroui/react";
-import { Trans } from "@lingui/react/macro";
+import { useLingui } from "@lingui/react/macro";
 import type {
   MessageItemPayload,
   ProjectLocation,
@@ -717,14 +717,15 @@ function CompletedTurnIndicator({
   threadId: string;
   record: CompletedTurnRecord;
 }) {
+  const { t } = useLingui();
   const elapsedSeconds = Math.max(0, Math.floor((record.endedAt - record.startedAt) / 1000));
   const elapsed = formatElapsed(elapsedSeconds);
   return (
     <Surface variant="transparent" className={chatMessageSurfaceClass}>
-      <div className="flex flex-col gap-0.5 text-[length:var(--lc-chat-font-size-meta)] text-foreground-muted">
+      <div className="flex flex-wrap items-center gap-1.5 text-[length:var(--lc-chat-font-size-meta)] text-foreground-muted">
         {elapsedSeconds >= 1 ? (
-          <span className="text-muted">
-            <Trans>Worked for {elapsed}</Trans>
+          <span className="text-muted" title={t`Worked for ${elapsed}`}>
+            {elapsed}
           </span>
         ) : null}
         {record.anchorItemId && (

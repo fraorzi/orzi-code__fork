@@ -1859,7 +1859,7 @@ describe("ChatPane", () => {
       lastTurnEndedAt: "2026-05-01T12:01:15.000Z",
     });
 
-    expect(screen.getByText("Worked for 1m 15s")).toBeInTheDocument();
+    expect(screen.getByTitle("Worked for 1m 15s")).toBeInTheDocument();
   });
 
   it("keeps the working timer live while a native Agent call is still running", () => {
@@ -1887,7 +1887,7 @@ describe("ChatPane", () => {
     renderChatPane(thread);
 
     expect(screen.getByText("Working for 2m 00s")).toBeInTheDocument();
-    expect(screen.queryByText("Worked for 1m 15s")).not.toBeInTheDocument();
+    expect(screen.queryByTitle("Worked for 1m 15s")).not.toBeInTheDocument();
   });
 
   it("suppresses the anchored completed turn while background work keeps the timer live", () => {
@@ -1923,7 +1923,7 @@ describe("ChatPane", () => {
     renderChatPane(thread);
 
     expect(screen.getByText("Working for 2m 00s")).toBeInTheDocument();
-    expect(screen.queryByText("Worked for 1m 15s")).not.toBeInTheDocument();
+    expect(screen.queryByTitle("Worked for 1m 15s")).not.toBeInTheDocument();
   });
 
   it("renders anchored completed turn duration inside a chat surface", () => {
@@ -1939,7 +1939,7 @@ describe("ChatPane", () => {
 
     renderChatPane(thread);
 
-    const label = screen.getByText("Worked for 1m 15s");
+    const label = screen.getByTitle("Worked for 1m 15s");
     expect(label.closest(".surface")).not.toBeNull();
   });
 
@@ -1970,7 +1970,7 @@ describe("ChatPane", () => {
 
     renderChatPane(thread);
 
-    expect(screen.getAllByText("Worked for 1m 15s")).toHaveLength(1);
+    expect(screen.getAllByTitle("Worked for 1m 15s")).toHaveLength(1);
   });
 
   it("keeps a completed turn anchored before an optimistic follow-up prompt", async () => {
@@ -1991,17 +1991,17 @@ describe("ChatPane", () => {
     ]);
 
     const { container } = renderChatPane(thread);
-    await waitFor(() => expect(screen.getByText("Worked for 1m 15s")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTitle("Worked for 1m 15s")).toBeInTheDocument());
 
     act(() => {
       seedUserMessage(thread.id, "Follow-up prompt", "user-2");
     });
     await screen.findByText("Follow-up prompt");
 
-    expect(screen.getAllByText("Worked for 1m 15s")).toHaveLength(1);
+    expect(screen.getAllByTitle("Worked for 1m 15s")).toHaveLength(1);
     const text = container.textContent ?? "";
-    expect(text.indexOf("Inspect output")).toBeLessThan(text.indexOf("Worked for 1m 15s"));
-    expect(text.indexOf("Worked for 1m 15s")).toBeLessThan(text.indexOf("Follow-up prompt"));
+    expect(text.indexOf("Inspect output")).toBeLessThan(text.indexOf("1m 15s"));
+    expect(text.indexOf("1m 15s")).toBeLessThan(text.indexOf("Follow-up prompt"));
   });
 
   it("ignores sub-second duplicate completed turns when rendering a rehydrated footer", () => {
@@ -2028,8 +2028,8 @@ describe("ChatPane", () => {
 
     renderChatPane(thread);
 
-    expect(screen.getAllByText("Worked for 7m 50s")).toHaveLength(1);
-    expect(screen.queryByText("Worked for 0s")).not.toBeInTheDocument();
+    expect(screen.getAllByTitle("Worked for 7m 50s")).toHaveLength(1);
+    expect(screen.queryByTitle("Worked for 0s")).not.toBeInTheDocument();
   });
 
   it("does not invent historical diffs by snapshotting files when a chat mounts", async () => {

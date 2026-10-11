@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { Surface } from "@heroui/react";
 import { useLingui } from "@lingui/react/macro";
 import { useShimmerRef } from "@/renderer/thinkingAnimator";
@@ -13,15 +13,19 @@ export interface TurnTiming {
 export function ChatTurnElapsedFooter({
   turn,
   isPaused = false,
+  suffix,
 }: {
   turn: TurnTiming;
   isPaused?: boolean;
+  /** Rendered on the same line after the timer (e.g. the prompt's file changes). */
+  suffix?: ReactNode;
 }) {
   return (
     <div className="mx-auto w-full max-w-[920px]">
       <Surface variant="transparent" className={chatMessageSurfaceClass}>
-        <div className="inline-flex items-center gap-1.5 text-[length:var(--lc-chat-font-size-meta)] text-foreground-muted">
+        <div className="flex flex-wrap items-center gap-1.5 text-[length:var(--lc-chat-font-size-meta)] text-foreground-muted">
           <WorkingFor turn={turn} isPaused={isPaused} />
+          {suffix}
         </div>
       </Surface>
     </div>
@@ -87,10 +91,10 @@ function WorkedFor({ startedAt, endedAt }: { startedAt: number; endedAt: number 
   const { t } = useLingui();
   const elapsedSeconds = Math.max(0, Math.floor((endedAt - startedAt) / 1000));
   const elapsed = formatElapsed(elapsedSeconds);
-  const text = elapsedSeconds < 1 ? "" : t`Worked for ${elapsed}`;
+  if (elapsedSeconds < 1) return null;
   return (
-    <span className="text-muted" aria-live="polite">
-      {text}
+    <span className="text-muted" aria-live="polite" title={t`Worked for ${elapsed}`}>
+      {elapsed}
     </span>
   );
 }

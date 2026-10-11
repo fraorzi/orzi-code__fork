@@ -420,7 +420,7 @@ export const ThreadView = memo(function ThreadView(props: ThreadViewProps) {
               </div>
               <div className="flex shrink-0 items-center">
                 {projectName ? (
-                  <span className="px-1 text-sm leading-tight text-muted/60 @max-[560px]:text-xs @max-[360px]:text-[11px]">
+                  <span className="mr-1 inline-flex h-[22px] max-w-48 items-center truncate rounded-full border border-[var(--hairline)] bg-[color-mix(in_oklab,var(--foreground)_4%,transparent)] px-2 text-xs leading-none text-muted @max-[360px]:hidden">
                     {projectName}
                   </span>
                 ) : null}
@@ -494,7 +494,6 @@ export const ThreadView = memo(function ThreadView(props: ThreadViewProps) {
                 {awaitingWorktree ? null : (
                   <ThreadToolRail
                     projectId={thread.projectId}
-                    paneCount={paneCount}
                     {...(thread.worktreePath ? { worktreePath: thread.worktreePath } : {})}
                   />
                 )}

@@ -8506,8 +8506,12 @@ msgid "No external skills were found in this scope."
 msgstr "이 범위에서 외부 스킬을 찾지 못했습니다."
 
 #: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
-msgid "No file changes in this prompt."
-msgstr "이 프롬프트에서는 파일이 변경되지 않았습니다."
+msgid "no file changes"
+msgstr "파일 변경 없음"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#~ msgid "No file changes in this prompt."
+#~ msgstr "이 프롬프트에서는 파일이 변경되지 않았습니다."
 
 #: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "No file checkpoint is stored for this message."
@@ -12297,8 +12301,8 @@ msgid "Show the microphone button in the composer."
 msgstr "작성기에 마이크 버튼을 표시합니다."
 
 #: src/renderer/components/thread/ThreadToolRail.tsx
-msgid "Show thread tools"
-msgstr "스레드 도구 표시"
+#~ msgid "Show thread tools"
+#~ msgstr "스레드 도구 표시"
 
 #: src/renderer/views/SettingsOverlay/parts/AudioSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts

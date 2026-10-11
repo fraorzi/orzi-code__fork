@@ -9,6 +9,15 @@ import { LazyInlineDiffView } from "./items/LazyInlineDiffView";
 type DiffState = { kind: "empty" | "loading" | "error" } | { kind: "ready"; diff: string };
 
 /** An immutable before/after comparison for one completed prompt. */
+/** Joins the prompt's changes onto the turn meta line ("6s · no file changes"). */
+function MetaSeparator() {
+  return (
+    <span aria-hidden className="text-muted/60">
+      ·
+    </span>
+  );
+}
+
 export function PromptChanges({
   threadId,
   checkpointItemId,
@@ -28,16 +37,21 @@ export function PromptChanges({
   if (!checkpoint || !thread || !project || thread.remoteServerId) return null;
   if (checkpoint.changedFiles.length === 0) {
     return (
-      <span className="text-xs text-foreground-muted">
-        <Trans>No file changes in this prompt.</Trans>
-      </span>
+      <>
+        <MetaSeparator />
+        <span className="text-foreground-muted">
+          <Trans>no file changes</Trans>
+        </span>
+      </>
     );
   }
   return (
-    <div className="min-w-0">
+    <>
+      <MetaSeparator />
       <Button
         size="sm"
         variant="ghost"
+        className="h-auto min-w-0 px-1 py-0 text-[length:inherit] text-foreground-muted hover:text-foreground"
         aria-expanded={expanded}
         onPress={() => {
           setExpanded(!expanded);
@@ -56,7 +70,7 @@ export function PromptChanges({
         <Trans>Changes in this prompt</Trans> ({checkpoint.changedFiles.length})
       </Button>
       {expanded && (
-        <div className="mt-2 min-w-0 rounded-lg border border-default p-3">
+        <div className="mt-1 w-full min-w-0 basis-full rounded-lg border border-default p-3">
           {result.kind === "loading" && <Trans>Loading...</Trans>}
           {result.kind === "error" && <Trans>Could not load this diff.</Trans>}
           {result.kind === "ready" && (
@@ -64,6 +78,6 @@ export function PromptChanges({
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }

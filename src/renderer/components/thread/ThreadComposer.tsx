@@ -115,6 +115,11 @@ export type ComposerControl =
       tier?: number | undefined;
     };
 
+/** Permission controls render as an icon; the active mode is in the tooltip and menu. */
+function rendersIconOnly(control: Extract<ComposerControl, { iconOnly?: boolean }>): boolean {
+  return control.iconOnly === true || ("iconKind" in control && control.iconKind === "permission");
+}
+
 export function resolveComposerControlIcon(control: ComposerControl): ReactNode | undefined {
   if (control.kind === "static") return control.icon;
   if (control.kind === "provider-model" || control.kind === "effort-context") {
@@ -589,7 +594,7 @@ export function ThreadComposer(props: {
     const resolvedIcon = resolveComposerControlIcon(control);
     const optionalProps = {
       ...(resolvedIcon ? { icon: resolvedIcon } : {}),
-      ...(control.iconOnly ? { iconOnly: control.iconOnly } : {}),
+      ...(rendersIconOnly(control) ? { iconOnly: true } : {}),
       ...(control.placeholder ? { placeholder: control.placeholder } : {}),
       ...(control.isDisabled !== undefined ? { isDisabled: control.isDisabled } : {}),
       ...(hideOnWrap || shouldHideLabel

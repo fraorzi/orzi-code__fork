@@ -446,7 +446,7 @@ describe("MessageList", () => {
         />,
       );
 
-      expect(screen.getByText("Worked for 1m 15s")).toBeInTheDocument();
+      expect(screen.getByTitle("Worked for 1m 15s")).toBeInTheDocument();
       expect(setItemSizeMock).not.toHaveBeenCalled();
       await act(async () => vi.advanceTimersByTimeAsync(16));
       expect(setItemSizeMock).toHaveBeenCalledWith(assistantItemId, { height: 91, width: 500 });

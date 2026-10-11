@@ -124,7 +124,6 @@ interface PanelState {
    */
   rightPanelFollowsThread: boolean;
   /** Vertical offset (px from the pane's top) of the per-thread tool rail. */
-  threadToolRailOffset: number;
   browserPanelOpen: boolean;
   usagePanelOpen: boolean;
   notesPanelOpen: boolean;
@@ -168,7 +167,6 @@ interface PanelState {
   clearBottomPanelDockTab: (tab: RightPanelTab) => void;
   clearBottomPanelDocks: () => void;
   toggleRightPanelFollowsThread: () => void;
-  setThreadToolRailOffset: (offset: number) => void;
   setBrowserPanelOpen: (v: boolean) => void;
   setUsagePanelOpen: (v: boolean) => void;
   openUsagePanel: () => void;
@@ -248,7 +246,6 @@ const initialPersisted = readPersistedSlice<{
   gitReviewContext: GitReviewContext | null;
   browserOverlayDrawerWidth: number;
   rightPanelFollowsThread?: boolean;
-  threadToolRailOffset?: number;
   threadSortMode?: ThreadSortMode;
   threadListLayout?: ThreadListLayout;
 }>(PERSIST_KEY);
@@ -286,14 +283,6 @@ function releaseClosedTab(state: PanelState, tab: RightPanelTab): Partial<PanelS
   };
 }
 
-/** Default rail offset: below the pane header, near the top of the conversation. */
-const DEFAULT_THREAD_TOOL_RAIL_OFFSET = 56;
-
-function sanitizeRailOffset(value: number): number {
-  if (!Number.isFinite(value)) return DEFAULT_THREAD_TOOL_RAIL_OFFSET;
-  return Math.max(0, Math.round(value));
-}
-
 export const usePanelStore = create<PanelState>()((set) => ({
   gitReviewContext: initialPersisted
     ? (initialPersisted.gitReviewContext ?? null)
@@ -309,9 +298,6 @@ export const usePanelStore = create<PanelState>()((set) => ({
   rightPanelSplit: null,
   bottomPanelDocks: EMPTY_BOTTOM_PANEL_DOCKS,
   rightPanelFollowsThread: initialPersisted?.rightPanelFollowsThread ?? false,
-  threadToolRailOffset: sanitizeRailOffset(
-    initialPersisted?.threadToolRailOffset ?? DEFAULT_THREAD_TOOL_RAIL_OFFSET,
-  ),
   browserPanelOpen: false,
   usagePanelOpen: false,
   notesPanelOpen: false,
@@ -480,13 +466,6 @@ export const usePanelStore = create<PanelState>()((set) => ({
     ),
   toggleRightPanelFollowsThread: () =>
     set((state) => ({ rightPanelFollowsThread: !state.rightPanelFollowsThread })),
-  setThreadToolRailOffset: (offset) =>
-    set((state) => {
-      const clamped = sanitizeRailOffset(offset);
-      // Return `state` (not `{}`) so Zustand's Object.is bailout actually skips
-      // listener notification — this fires on every pointermove frame during drag.
-      return state.threadToolRailOffset === clamped ? state : { threadToolRailOffset: clamped };
-    }),
   // Toggling the docked right-panel browser is independent of the floating
   // overlay (drawer/fullscreen): hiding the panel must NOT tear down an active
   // overlay, otherwise maximizing the browser and then hiding the right panel
@@ -650,7 +629,6 @@ persistStoreSlice(usePanelStore, PERSIST_KEY, (state) => ({
     : null,
   browserOverlayDrawerWidth: state.browserOverlayDrawerWidth,
   rightPanelFollowsThread: state.rightPanelFollowsThread,
-  threadToolRailOffset: state.threadToolRailOffset,
   threadSortMode: state.threadSortMode,
   threadListLayout: state.threadListLayout,
 }));

@@ -215,7 +215,7 @@ describe("SubAgentContent", () => {
 
     render(<SubAgentContent threadId={threadId} parentItemId={parentItem.id} hideHeader />);
 
-    expect(await screen.findByText("Worked for 1m 15s")).toBeInTheDocument();
+    expect(await screen.findByTitle("Worked for 1m 15s")).toBeInTheDocument();
   });
 
   it("splits a Crossagent name and model selection into a two-line route header", () => {

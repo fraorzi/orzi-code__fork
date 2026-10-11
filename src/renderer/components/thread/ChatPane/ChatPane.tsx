@@ -1,6 +1,5 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { PromptChanges } from "./parts/PromptChanges";
-import { chatMessageSurfaceClass } from "./parts/items/chatMessageSurface";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "@lingui/react/macro";
 import { useShallow } from "zustand/react/shallow";
@@ -335,18 +334,19 @@ export function ChatPane(props: ChatPaneProps) {
               ) : isConnecting ? (
                 <ChatConnectingFooter />
               ) : showTailLoader && tailTurn ? (
-                <>
-                  <ChatTurnElapsedFooter turn={tailTurn} isPaused={isTurnPaused} />
-                  {completedTurnCanRenderInTail && mostRecentCompletedTurnAnchor && (
-                    <div className={`mx-auto w-full max-w-[920px] ${chatMessageSurfaceClass}`}>
+                <ChatTurnElapsedFooter
+                  turn={tailTurn}
+                  isPaused={isTurnPaused}
+                  suffix={
+                    completedTurnCanRenderInTail && mostRecentCompletedTurnAnchor ? (
                       <PromptChanges
                         key={mostRecentCompletedTurnAnchor}
                         threadId={threadId}
                         checkpointItemId={mostRecentCompletedTurnAnchor}
                       />
-                    </div>
-                  )}
-                </>
+                    ) : null
+                  }
+                />
               ) : null
             }
             onWheelCapture={(event) => {

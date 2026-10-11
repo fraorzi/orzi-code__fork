@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import "@/renderer/components/providers/bootstrap";
 import type { Thread } from "@/shared/contracts";
@@ -1896,78 +1896,43 @@ describe("ThreadView", () => {
     expect(hasAncestorWithClassFragment(composer, "max-w-[920px]")).toBe(true);
   });
 
-  it("keeps header thread tools open while the pointer crosses into the menu", async () => {
-    vi.useFakeTimers();
-    try {
-      renderThreadView({
-        thread: {
-          id: "thread-split-tool-menu",
-          projectId: "project-1",
-          title: "Split pane thread",
-          agentKind: "codex",
-          config: {
-            model: "gpt-5.4",
-          },
-          status: "idle",
-          attention: "none",
-          canResumeWithConfig: true,
-          archived: false,
-          done: false,
-          starred: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+  it("shows thread tools as header icons after Mark done", () => {
+    renderThreadView({
+      thread: {
+        id: "thread-split-tool-menu",
+        projectId: "project-1",
+        title: "Split pane thread",
+        agentKind: "codex",
+        config: {
+          model: "gpt-5.4",
         },
-        agentStatus: undefined,
-        projectLocation: {
-          kind: "windows",
-          path: "C:\\repo",
-        },
-        paneCount: 2,
-        onMarkDone: () => undefined,
-      });
+        status: "idle",
+        attention: "none",
+        canResumeWithConfig: true,
+        archived: false,
+        done: false,
+        starred: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      agentStatus: undefined,
+      projectLocation: {
+        kind: "windows",
+        path: "C:\\repo",
+      },
+      paneCount: 2,
+      onMarkDone: () => undefined,
+    });
 
-      const headerTrigger = screen.getByRole("button", { name: "Show thread tools" });
-      const headerMenu = headerTrigger.closest("[data-poracode-thread-tool-rail]");
-      const toolMenu = headerMenu?.querySelector("[data-poracode-thread-tool-menu]");
-      const doneButton = screen.getByRole("button", { name: "Mark done" });
-
-      expect(headerMenu).toHaveAttribute("data-placement", "header");
-      expect(headerMenu).not.toHaveClass("invisible");
-      expect(toolMenu).toHaveClass("left-1/2", "w-9", "-translate-x-1/2");
-      expect(toolMenu).toHaveClass("transition-opacity");
-      expect(toolMenu).not.toHaveClass("grid-rows-[0fr]");
-      expect(toolMenu).toHaveClass("invisible");
-      expect(doneButton.nextElementSibling).toBe(headerMenu);
-      expect(hasAncestorWithClassFragment(headerMenu as HTMLElement, "@container")).toBe(true);
-      expect(headerMenu?.querySelector('[aria-label="Git"]')).not.toBeNull();
-      expect(headerMenu?.querySelector('[aria-label="Files"]')).not.toBeNull();
-      expect(headerMenu?.querySelector('[aria-label="Terminal"]')).not.toBeNull();
-      expect(headerMenu?.querySelector('[aria-label="Notes"]')).not.toBeNull();
-
-      fireEvent.pointerEnter(headerMenu as HTMLElement);
-      expect(toolMenu).toHaveClass("pointer-events-auto", "visible", "opacity-100");
-      expect(toolMenu).not.toHaveClass("pointer-events-none", "invisible", "opacity-0");
-
-      fireEvent.pointerLeave(headerMenu as HTMLElement);
-      expect(toolMenu).toHaveClass("visible");
-      fireEvent.pointerEnter(toolMenu as HTMLElement);
-      await act(() => vi.advanceTimersByTimeAsync(300));
-      expect(toolMenu).toHaveClass("visible");
-
-      fireEvent.pointerLeave(headerMenu as HTMLElement);
-      await act(() => vi.advanceTimersByTimeAsync(300));
-      expect(toolMenu).toHaveClass("invisible");
-
-      fireEvent.pointerEnter(headerMenu as HTMLElement);
-      fireEvent.click(headerTrigger);
-      expect(toolMenu).toHaveClass("invisible");
-      fireEvent.pointerLeave(headerMenu as HTMLElement);
-      fireEvent.pointerEnter(headerMenu as HTMLElement);
-      expect(toolMenu).toHaveClass("visible");
-      fireEvent.click(headerTrigger);
-    } finally {
-      vi.useRealTimers();
-    }
+    const doneButton = screen.getByRole("button", { name: "Mark done" });
+    const rail = doneButton.nextElementSibling;
+    expect(rail).toHaveAttribute("data-poracode-thread-tool-rail");
+    expect(within(rail as HTMLElement).getByRole("button", { name: "Git" })).toBeInTheDocument();
+    expect(within(rail as HTMLElement).getByRole("button", { name: "Files" })).toBeInTheDocument();
+    expect(
+      within(rail as HTMLElement).getByRole("button", { name: "Terminal" }),
+    ).toBeInTheDocument();
+    expect(within(rail as HTMLElement).getByRole("button", { name: "Notes" })).toBeInTheDocument();
   });
 
   it("hides base-checkout thread tools while a new worktree is provisioning", async () => {
@@ -1998,7 +1963,7 @@ describe("ThreadView", () => {
     });
     const { rerender } = renderThreadView(props);
 
-    expect(screen.queryByRole("button", { name: "Show thread tools" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Git" })).toBeNull();
     expect(screen.getByText("Creating worktree…")).toBeInTheDocument();
 
     rerender(
@@ -2016,7 +1981,7 @@ describe("ThreadView", () => {
       </AppProvider>,
     );
 
-    expect(screen.getByRole("button", { name: "Show thread tools" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Git" })).toBeInTheDocument();
     expect(screen.queryByText("Creating worktree…")).toBeNull();
   });
 

@@ -217,8 +217,8 @@ describe("ThreadComposer", () => {
     expect(composerToolbar(container)).not.toHaveAttribute("data-width-decreasing");
   });
 
-  it("can collapse permission labels before mode labels", () => {
-    const { container } = renderComposer([
+  it("renders the permission mode as an icon without a label", () => {
+    renderComposer([
       {
         value: "full-access",
         options: [{ id: "full-access", label: "Full access" }],
@@ -235,18 +235,11 @@ describe("ThreadComposer", () => {
         onChange: vi.fn<(selected: boolean) => void>(),
       },
     ]);
-    const controls = container.querySelector<HTMLElement>(".poracode-composer-toolbar > .relative");
-    expect(controls).not.toBeNull();
 
-    setProbeMeasurements(container, [160, 160, 100, 100, 100, 100]);
-
-    act(() => {
-      MockResizeObserver.notify(controls!);
-    });
-
-    expect(composerToolbar(container)).toHaveAttribute("data-wrap-level", "2");
-    expect(visibleText("Full access")).toHaveAttribute("data-collapse-tier", "2");
-    expect(visibleText("Work")).toHaveAttribute("data-collapse-tier", "3");
+    expect(
+      screen.queryAllByText("Full access").filter((element) => element.closest("button")),
+    ).toHaveLength(0);
+    expect(visibleText("Work")).toBeVisible();
   });
 
   it("labels a thinking-only effort context control", () => {

@@ -5,4 +5,5 @@ export const chatMessageSurfaceClass = "w-full rounded-3xl px-3 py-2";
  * prompt). A hairline border delineates them from transparent agent rows in
  * low-elevation themes where the tertiary fill alone is too subtle.
  */
-export const chatPromptSurfaceClass = `${chatMessageSurfaceClass} relative border border-[var(--hairline)]`;
+export const chatPromptSurfaceClass =
+  "relative w-full rounded-[12px] border border-[var(--hairline)] px-3.5 py-2.5";

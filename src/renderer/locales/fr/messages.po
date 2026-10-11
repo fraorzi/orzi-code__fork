@@ -8505,8 +8505,12 @@ msgid "No external skills were found in this scope."
 msgstr "Aucune compétence externe n’a été trouvée dans cette portée."
 
 #: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
-msgid "No file changes in this prompt."
-msgstr "Aucune modification de fichier dans ce prompt."
+msgid "no file changes"
+msgstr "aucune modification de fichier"
+
+#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#~ msgid "No file changes in this prompt."
+#~ msgstr "Aucune modification de fichier dans ce prompt."
 
 #: src/renderer/components/thread/ChatPane/parts/CheckpointRevertControls.tsx
 msgid "No file checkpoint is stored for this message."
@@ -12296,8 +12300,8 @@ msgid "Show the microphone button in the composer."
 msgstr "Afficher le bouton du microphone dans le compositeur."
 
 #: src/renderer/components/thread/ThreadToolRail.tsx
-msgid "Show thread tools"
-msgstr "Afficher les outils du fil de discussion"
+#~ msgid "Show thread tools"
+#~ msgstr "Afficher les outils du fil de discussion"
 
 #: src/renderer/views/SettingsOverlay/parts/AudioSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
