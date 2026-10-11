@@ -406,6 +406,12 @@ export function buildProviderModelItems(input: BuildProviderModelItemsInput): Pr
     else visibleProvidersByKind.set(entry.provider.kind, [entry]);
   }
   const query = search.trim().toLowerCase();
+  const currentProviders = currentAgentKind
+    ? (visibleProvidersByKind.get(currentAgentKind) ?? [])
+    : [];
+  const currentProviderEntry =
+    currentProviders.find(({ cache }) => currentModel && findModelEntry(cache, currentModel)) ??
+    currentProviders[0];
   const isSearching = query.length > 0;
   // While searching, every provider's rows flatten into one list under
   // identical-looking headers. When the same model id is offered by more than
@@ -544,7 +550,7 @@ export function buildProviderModelItems(input: BuildProviderModelItemsInput): Pr
     const cap = provider.capabilities;
     const providerHit = isSearching && searchText.includes(query);
     const currentEntry =
-      currentAgentKind === provider.kind && currentModel && !cache.modelById.has(currentModel)
+      key === currentProviderEntry?.key && currentModel && !findModelEntry(cache, currentModel)
         ? makeModelEntry(currentModel, DEFAULT_LABEL(currentModel), cap)
         : undefined;
     const sourceModelCount = cache.models.length + (currentEntry ? 1 : 0);

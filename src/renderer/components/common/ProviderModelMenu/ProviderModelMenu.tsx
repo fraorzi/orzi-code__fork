@@ -72,9 +72,17 @@ function normalizeCurrentModelForProvider(
 function refsForPresentation(
   refs: readonly ModelRef[],
   presentationMode: ThreadPresentationMode | undefined,
+  alternativeProviders: readonly ProviderModelMenuProvider[],
 ): readonly ModelRef[] {
   if (!presentationMode) return refs;
-  return refs.filter((ref) => ref.presentationMode === presentationMode);
+  return refs.filter(
+    (ref) =>
+      ref.presentationMode === presentationMode ||
+      alternativeProviders.some(
+        (provider) =>
+          provider.kind === ref.agentKind && provider.presentationMode === ref.presentationMode,
+      ),
+  );
 }
 
 export function ProviderModelMenu(props: ProviderModelMenuProps) {
@@ -171,7 +179,11 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
   // cheap as a trigger label lookup.
   const deferredAgentKind = useDeferredValue(currentAgentKind);
   const deferredModel = useDeferredValue(effectiveCurrentModel);
-  const activeFavorites = refsForPresentation(favorites, presentationMode);
+  const activeFavorites = refsForPresentation(
+    favorites,
+    presentationMode,
+    lockedAgentKind ? [] : providers,
+  );
   function buildItemsForSearch(searchValue: string) {
     return buildProviderModelItems({
       providers,

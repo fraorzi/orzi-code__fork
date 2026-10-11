@@ -78,7 +78,8 @@ export function providerLabelForPresentation(provider: ProviderIdentityInput): s
   if (provider.capabilities?.showRuntimeLabelInPicker === false) return label;
   const runtimeLabel =
     provider.presentationMode === "terminal"
-      ? legacySurfaceIdentity[baseAgentKind(provider.kind)]?.terminalRuntimeLabel
+      ? (provider.capabilities?.runtimeLabel ??
+        legacySurfaceIdentity[baseAgentKind(provider.kind)]?.terminalRuntimeLabel)
       : provider.capabilities?.runtimeLabel;
   if (!runtimeLabel) return label;
   // Callers may pass a provider whose label was already qualified by this

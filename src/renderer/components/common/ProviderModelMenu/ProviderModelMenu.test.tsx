@@ -224,6 +224,69 @@ describe("ProviderModelMenu", () => {
     expect(screen.queryByRole("option")).not.toBeInTheDocument();
   });
 
+  it("shows an installed alternative presentation favorite and selects its runtime", () => {
+    const primary = {
+      ...makeNamedProvider("example", "Example", 1),
+      presentationMode: "gui" as const,
+    };
+    const alternative: ProviderModelMenuProvider = {
+      ...makeNamedProvider("example", "Example CLI", 1),
+      presentationMode: "terminal",
+      capabilities: {
+        ...primary.capabilities,
+        models: [{ id: "terminal-only", label: "Terminal model" }],
+      },
+    };
+    useSharedSettings.setState({
+      favoriteModels: [
+        { agentKind: "example", modelId: "terminal-only", presentationMode: "terminal" },
+      ],
+    });
+    const onChange = vi.fn<NonNullable<Parameters<typeof ProviderModelMenu>[0]["onChange"]>>();
+    render(
+      <ProviderModelMenu
+        providers={[primary, alternative]}
+        currentAgentKind="example"
+        currentModel="model-1"
+        presentationMode="gui"
+        onChange={onChange}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(
+      within(screen.getByRole("listbox", { name: "Favorites" })).getByText("Terminal model"),
+    );
+    expect(onChange).toHaveBeenCalledWith({
+      agentKind: "example",
+      model: "terminal-only",
+      presentationMode: "terminal",
+    });
+  });
+
+  it("keeps an active thread locked to its original presentation", () => {
+    const primary = {
+      ...makeNamedProvider("example", "Example", 1),
+      presentationMode: "gui" as const,
+    };
+    useSharedSettings.setState({
+      favoriteModels: [
+        { agentKind: "example", modelId: "terminal-only", presentationMode: "terminal" },
+      ],
+    });
+    render(
+      <ProviderModelMenu
+        providers={[primary, { ...primary, presentationMode: "terminal" }]}
+        currentAgentKind="example"
+        currentModel="model-1"
+        lockedAgentKind="example"
+        presentationMode="gui"
+        onChange={vi.fn<Parameters<typeof ProviderModelMenu>[0]["onChange"]>()}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    expect(screen.queryByRole("option")).not.toBeInTheDocument();
+  });
+
   it("moves across account columns with the keyboard and selects the active favorite", () => {
     useSharedSettings.setState({
       favoriteModels: [

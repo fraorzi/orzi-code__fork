@@ -110,26 +110,58 @@ export function buildProviderModelMenuProviders(
   options?: {
     presentationMode?: ThreadPresentationMode;
     resolvePresentationMode?: (agent: AgentStatus) => ThreadPresentationMode;
+    /** Include installed catalogs for other presentations that selection can route unambiguously. */
+    includeAlternativePresentations?: boolean;
     hiddenModelsByAgent?: Readonly<Record<string, readonly string[] | undefined>>;
     filterAgent?: (agent: AgentStatus) => boolean;
   },
 ): ProviderModelMenuProvider[] {
-  const { presentationMode, resolvePresentationMode, hiddenModelsByAgent, filterAgent } =
-    options ?? {};
+  const {
+    presentationMode,
+    resolvePresentationMode,
+    includeAlternativePresentations,
+    hiddenModelsByAgent,
+    filterAgent,
+  } = options ?? {};
 
   return agents
     .filter((agent) => (filterAgent ? filterAgent(agent) : true))
-    .map((agent) => {
+    .flatMap((agent) => {
       const agentPresentationMode =
         resolvePresentationMode?.(agent) ?? presentationMode ?? agent.capabilities.presentationMode;
-      const menuProvider = makeMenuProvider(agent, agentPresentationMode);
-      return {
+      const runtimeForMode = (mode: ThreadPresentationMode) => {
+        const runtimes = Object.entries(agent.runtimeVariants ?? {}).filter(
+          ([, runtime]) => runtime.presentationMode === mode,
+        );
+        // Selection carries a presentation, so it must identify one installed runtime.
+        return runtimes.length === 1 && runtimes[0]?.[1].installed ? runtimes[0] : undefined;
+      };
+      const providers = [
+        makeMenuProvider(
+          agent,
+          agentPresentationMode,
+          includeAlternativePresentations ? runtimeForMode(agentPresentationMode)?.[0] : undefined,
+        ),
+      ];
+      if (includeAlternativePresentations) {
+        const supported = agent.capabilities.presentationModes ?? [
+          agent.capabilities.presentationMode,
+        ];
+        for (const alternativeMode of supported) {
+          if (alternativeMode === agentPresentationMode) continue;
+          const runtime = runtimeForMode(alternativeMode);
+          if (runtime) {
+            providers.push(makeMenuProvider(agent, alternativeMode, runtime[0]));
+          }
+        }
+      }
+      return providers.map((menuProvider) => ({
         ...menuProvider,
         capabilities: filterHiddenModels(
           menuProvider.capabilities,
           hiddenModelsByAgent?.[providerVisibilityKey(menuProvider)],
         ),
-      };
+      }));
     });
 }
 

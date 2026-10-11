@@ -2,6 +2,16 @@
 
 Data: 2026-10-11. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Claude z Antigravity w menu modeli - 2026-10-11
+
+- Nowy wątek pokazuje także katalogi innych zainstalowanych trybów dostawcy. Ulubiony model CLI jest dostępny przy wybranym Chat; jego wybór zmienia tryb i rozwiązuje konfigurację względem docelowego katalogu. Aktywne wątki nadal zachowują swój tryb. Alternatywa wymaga jednoznacznego przypisania trybu do zainstalowanego runtime. Wspólny kod nie rozpoznaje nazw dostawców.
+- Rzeczywisty katalog zalogowanego Antigravity zawiera Claude Sonnet 5.5 i Claude Opus 5.5. Są oznaczone Antigravity CLI i korzystają z konta Google, a nie bezpośredniej subskrypcji Claude. Chat ACP ma osobny katalog. Wybrany model CLI nie jest dopisywany do katalogu Chat.
+- Realny test Electron w izolowanym projekcie przeszedł od gwiazdek i wyboru Sonnet w dropdownie do uruchomienia PTY z `claude-sonnet-5-5`, `Medium` i odpowiedzi `ORZI_CLAUDE_PICKER_OK`. Katalog, ulubione i przełączenie trybu sprawdzono także w gotowym pakiecie bez dev servera, z zachowaniem wyboru po restarcie QA.
+- Zainstalowano aktualny pakiet w `/Applications/Orzi Code.app`. Bezczynny fork został zamknięty przed podmianą. Oryginalnego Poracode i jego procesów nie zmieniano. Poprzedni bundle oraz cały profil są w `.tmp/previous-install/antigravity-picker/20261011-194125/`. Do istniejących ulubionych dodano obie pozycje Claude przez Antigravity; pozostałe ustawienia i historia są zachowane. Na rzeczywistym profilu odświeżono Antigravity i potwierdzono obie pozycje w kolumnie Antigravity CLI, obok dotychczasowych Claude, Codex i Cursor. Dowody: `.tmp/antigravity-picker-production/{favorites-report.json,favorites.png}`.
+- Build, 129 testów w 5 zestawach, typecheck, zwykły i typowany lint przeszły. Końcowy smoke bez równoległych sesji dev przeszedł wybrane scenariusze i 4 bramki mock, z 0 błędów renderera. Nie dodano tekstów UI wymagających tłumaczeń. Nie zmieniono formatów ustawień, SQLite, cache statusów ani protokołów; istniejące wpisy ulubionych i deklaracje runtime pozostają zgodne.
+- Pakiet: `.tmp/orzi-model-visibility-20261011/mac-arm64/Orzi Code.app`, podpis ad hoc zweryfikowany przed i po instalacji. SHA-256 `app.asar`: `9fc8aac77b2465364a909ce7ff1b63c46e62b22ec211cda8cda2501be062f903`. Zachowano sprawdzony helper computer-use; nie budowano go ponownie ze źródeł. Nie publikowano wydania ani DMG.
+- Dowody: `.tmp/antigravity-picker-live-report.json`, `.tmp/antigravity-picker-package-qa/{picker-report.json,native-favorites.png}`, `.tmp/antigravity-picker-install-report.json` oraz `/private/tmp/orzi-model-visibility-final-smoke-20261011/artifacts/smoke-report.json`. Sesje QA zostały zamknięte. [Zmiany wizualne](redesign-requirements.md) są zapisane do późniejszego wdrożenia.
+
 ## Instalacja i Spotlight - 2026-10-11
 
 - Zgłoszony brak wyniku `orzi code` wynikał z pozostawienia w `/Applications` starszego `Poracode Personal.app`. Gotowy pakiet Orzi Code był wyłącznie w ignorowanym katalogu QA.

@@ -452,6 +452,208 @@ describe("buildProviderModelMenuProviders", () => {
   });
 });
 
+describe("buildProviderModelMenuProviders alternative presentations", () => {
+  const chatCapabilities: AgentCapability = {
+    ...capabilities,
+    presentationMode: "gui",
+    presentationModes: ["gui", "terminal"],
+    runtimeLabel: "ACP",
+    models: [{ id: "chat-model", label: "Chat Model" }],
+  };
+  const cliCapabilities: AgentCapability = {
+    ...capabilities,
+    presentationMode: "terminal",
+    presentationModes: ["terminal"],
+    liveInputMode: "terminal",
+    runtimeLabel: "CLI",
+    models: [
+      { id: "cli-model", label: "CLI Model" },
+      { id: "cli-hidden", label: "CLI Hidden" },
+    ],
+  };
+  const multiRuntimeStatus: AgentStatus = {
+    kind: "generic:multi-runtime",
+    label: "Multi Runtime",
+    installed: true,
+    authState: "authenticated",
+    capabilities: chatCapabilities,
+    runtimeVariants: {
+      acp: {
+        presentationMode: "gui",
+        installed: true,
+        authState: "authenticated",
+        authUsesProviderLogin: true,
+        capabilities: chatCapabilities,
+      },
+      cli: {
+        presentationMode: "terminal",
+        installed: true,
+        authState: "authenticated",
+        authUsesProviderLogin: true,
+        capabilities: cliCapabilities,
+      },
+    },
+  };
+
+  it("keeps only the primary presentation unless alternatives are requested", () => {
+    const primary = buildProviderModelMenuProviders([multiRuntimeStatus], {
+      presentationMode: "gui",
+    });
+    expect(primary).toHaveLength(1);
+    expect(primary[0]).toMatchObject({
+      presentationMode: "gui",
+      runtimeVariant: "acp",
+      capabilities: { models: [{ id: "chat-model", label: "Chat Model" }] },
+    });
+    expect(
+      buildProviderModelMenuProviders([multiRuntimeStatus], {
+        presentationMode: "gui",
+        includeAlternativePresentations: false,
+      }),
+    ).toEqual(primary);
+  });
+
+  it("adds the independent CLI catalog with its own identity and hidden-model preference", () => {
+    const providers = buildProviderModelMenuProviders([multiRuntimeStatus], {
+      presentationMode: "gui",
+      includeAlternativePresentations: true,
+      hiddenModelsByAgent: { "generic:multi-runtime": ["cli-hidden"] },
+    });
+    expect(providers).toMatchObject([
+      {
+        presentationMode: "gui",
+        modelPickerKey: "generic:multi-runtime:gui:acp",
+        hiddenModelsKey: "generic:multi-runtime-acp",
+        capabilities: { models: [{ id: "chat-model", label: "Chat Model" }] },
+      },
+      {
+        presentationMode: "terminal",
+        runtimeVariant: "cli",
+        modelPickerKey: "generic:multi-runtime:terminal:cli",
+        hiddenModelsKey: "generic:multi-runtime",
+        capabilities: { models: [{ id: "cli-model", label: "CLI Model" }] },
+      },
+    ]);
+  });
+
+  it("resolves the primary presentation before adding alternatives", () => {
+    const providers = buildProviderModelMenuProviders([multiRuntimeStatus], {
+      presentationMode: "gui",
+      resolvePresentationMode: () => "terminal",
+      includeAlternativePresentations: true,
+      hiddenModelsByAgent: { "generic:multi-runtime-acp": ["chat-model"] },
+    });
+    expect(providers.map(({ presentationMode }) => presentationMode)).toEqual(["terminal", "gui"]);
+    expect(providers[0]?.capabilities.models).toEqual(cliCapabilities.models);
+    expect(providers[1]?.capabilities.models).toEqual([]);
+  });
+
+  it("does not remove the primary catalog when authentication is missing", () => {
+    expect(
+      buildProviderModelMenuProviders(
+        [{ ...multiRuntimeStatus, authState: "missing", runtimeVariants: {} }],
+        { presentationMode: "gui", includeAlternativePresentations: true },
+      ),
+    ).toMatchObject([{ presentationMode: "gui", capabilities: chatCapabilities }]);
+  });
+
+  it("skips alternatives without a declared installed runtime", () => {
+    for (const runtimeVariants of [
+      undefined,
+      {},
+      {
+        cli: {
+          presentationMode: "terminal",
+          installed: false,
+          authState: "authenticated",
+          authUsesProviderLogin: true,
+          capabilities: cliCapabilities,
+        },
+      } satisfies NonNullable<AgentStatus["runtimeVariants"]>,
+    ]) {
+      expect(
+        buildProviderModelMenuProviders(
+          [
+            {
+              ...multiRuntimeStatus,
+              ...(runtimeVariants ? { runtimeVariants } : { runtimeVariants: {} }),
+            },
+          ],
+          { presentationMode: "gui", includeAlternativePresentations: true },
+        ),
+      ).toHaveLength(1);
+    }
+  });
+
+  it("skips installed runtimes for presentations the provider does not support", () => {
+    expect(
+      buildProviderModelMenuProviders(
+        [
+          {
+            ...multiRuntimeStatus,
+            capabilities: { ...chatCapabilities, presentationModes: ["gui"] },
+          },
+        ],
+        { presentationMode: "gui", includeAlternativePresentations: true },
+      ),
+    ).toHaveLength(1);
+  });
+
+  it("keeps alternative runtimes for the same presentation out of the menu", () => {
+    const providers = buildProviderModelMenuProviders(
+      [
+        {
+          ...multiRuntimeStatus,
+          runtimeVariants: {
+            ...multiRuntimeStatus.runtimeVariants,
+            sdk: {
+              presentationMode: "gui",
+              installed: true,
+              authState: "authenticated",
+              authUsesProviderLogin: false,
+              capabilities: { ...chatCapabilities, runtimeLabel: "SDK" },
+            },
+          },
+        },
+      ],
+      { presentationMode: "gui", includeAlternativePresentations: true },
+    );
+    expect(providers.map(({ runtimeVariant }) => runtimeVariant)).toEqual(["acp", "cli"]);
+  });
+
+  it("skips ambiguous alternative presentations even if only one runtime is installed", () => {
+    const providers = buildProviderModelMenuProviders(
+      [
+        {
+          ...multiRuntimeStatus,
+          runtimeVariants: {
+            ...multiRuntimeStatus.runtimeVariants,
+            secondCli: {
+              presentationMode: "terminal",
+              installed: false,
+              authState: "unknown",
+              authUsesProviderLogin: true,
+              capabilities: cliCapabilities,
+            },
+          },
+        },
+      ],
+      { presentationMode: "gui", includeAlternativePresentations: true },
+    );
+    expect(providers.map(({ runtimeVariant }) => runtimeVariant)).toEqual(["acp"]);
+  });
+
+  it("respects agent filtering before expanding catalogs", () => {
+    expect(
+      buildProviderModelMenuProviders([multiRuntimeStatus], {
+        presentationMode: "gui",
+        includeAlternativePresentations: true,
+        filterAgent: () => false,
+      }),
+    ).toEqual([]);
+  });
+});
+
 describe("buildControls hidden current model", () => {
   const agent = {
     kind: "codex",

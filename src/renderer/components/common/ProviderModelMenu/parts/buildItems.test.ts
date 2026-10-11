@@ -29,6 +29,30 @@ function makeProvider(
 }
 
 describe("buildProviderModelItems", () => {
+  it("does not add a selected terminal model to the GUI catalog of the same provider", () => {
+    const items = buildProviderModelItems({
+      providers: [
+        {
+          ...makeProvider("alpha", "Alpha", [{ id: "chat-model", label: "Chat model" }]),
+          presentationMode: "gui",
+        },
+        {
+          ...makeProvider("alpha", "Alpha", [{ id: "cli-model", label: "CLI model" }]),
+          presentationMode: "terminal",
+        },
+      ],
+      search: "",
+      currentAgentKind: "alpha",
+      currentModel: "cli-model",
+    });
+
+    const rows = items.filter((item) => item.type === "model");
+    expect(rows.map((item) => [item.modelId, item.presentationMode])).toEqual([
+      ["chat-model", "gui"],
+      ["cli-model", "terminal"],
+    ]);
+  });
+
   it("decorates searched rows with the provider label when several providers offer the same model", () => {
     const shared = [{ id: "go/shared-model", label: "Shared Model" }];
     const items = buildProviderModelItems({

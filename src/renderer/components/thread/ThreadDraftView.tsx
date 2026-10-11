@@ -789,6 +789,7 @@ export function ThreadDraftView(props: {
   const providerModelProviders = useMemo(
     () =>
       buildProviderModelMenuProviders(installedAgents, {
+        includeAlternativePresentations: true,
         resolvePresentationMode: (agent) => {
           const supported = agent.capabilities.presentationModes ?? [
             agent.capabilities.presentationMode,
@@ -890,7 +891,7 @@ export function ThreadDraftView(props: {
     if (targetPresentationMode !== presentationMode) {
       setPresentationMode(targetPresentationMode);
     }
-    if (nextKind !== selectedAgent.kind) {
+    if (nextKind !== selectedAgent.kind || targetPresentationMode !== presentationMode) {
       const targetAgent = installedAgents.find((agent) => agent.kind === nextKind);
       if (!targetAgent) return;
       const targetAgentForConfig = agentWithCapabilities(targetAgent, targetPresentationMode);

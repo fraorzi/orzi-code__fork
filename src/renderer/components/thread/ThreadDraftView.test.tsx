@@ -17,6 +17,7 @@ import { useGitStore } from "@/renderer/state/gitStore";
 import { useSharedSettings } from "@/renderer/state/sharedSettingsStore";
 import { useRemoteServersStore } from "@/renderer/state/remoteServersStore";
 import { liveVoice } from "@/renderer/speech/liveVoice";
+import type { ComposerControl } from "./ThreadComposer";
 
 const { composerSpy, launchExperimentMock } = vi.hoisted(() => ({
   composerSpy: vi.fn<(props: unknown) => void>(),
@@ -2556,6 +2557,69 @@ describe("ThreadDraftView", () => {
 
     expect(claudeRenderModels.length).toBeGreaterThan(0);
     expect(claudeRenderModels).toEqual(claudeRenderModels.map(() => "claude-opus-4-7"));
+  });
+
+  it("launches the selected alternate runtime model for the same provider", async () => {
+    const status: AgentStatus = {
+      ...acpGenericStatus,
+      capabilities: {
+        ...acpGenericStatus.capabilities,
+        presentationModes: ["gui", "terminal"],
+        presentationCapabilities: {
+          terminal: { models: [{ id: "terminal-only", label: "Terminal model" }] },
+        },
+      },
+      runtimeVariants: {
+        cli: {
+          installed: true,
+          authState: "authenticated",
+          authUsesProviderLogin: true,
+          presentationMode: "terminal",
+          capabilities: {
+            ...acpGenericStatus.capabilities,
+            models: [{ id: "terminal-only", label: "Terminal model" }],
+            presentationMode: "terminal",
+            presentationModes: ["terminal"],
+          },
+        },
+      },
+    };
+    const onStart = vi.fn<ComponentProps<typeof ThreadDraftView>["onStart"]>();
+    render(<ThreadDraftView project={project} agentStatuses={[status]} onStart={onStart} />);
+    const controls = () => {
+      const call = composerSpy.mock.lastCall;
+      if (!call) throw new Error("Composer was not rendered");
+      return (call[0] as { controls: ComposerControl[] }).controls;
+    };
+    await waitFor(() =>
+      expect(controls().find((control) => control.kind === "provider-model")?.currentModel).toBe(
+        "model-a",
+      ),
+    );
+    const picker = controls().find((control) => control.kind === "provider-model");
+    act(() =>
+      picker?.onChange({
+        agentKind: status.kind,
+        model: "terminal-only",
+        presentationMode: "terminal",
+      }),
+    );
+    await waitFor(() =>
+      expect(controls().find((control) => control.kind === "provider-model")?.currentModel).toBe(
+        "terminal-only",
+      ),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "set-prompt" }));
+    fireEvent.click(screen.getByRole("button", { name: "submit" }));
+    await waitFor(() =>
+      expect(onStart).toHaveBeenCalledWith(
+        expect.objectContaining({
+          agentKind: status.kind,
+          presentationMode: "terminal",
+          config: expect.objectContaining({ model: "terminal-only" }),
+        }),
+      ),
+    );
   });
 
   it("keeps a local plan-mode selection while deferred persistence catches up", async () => {
