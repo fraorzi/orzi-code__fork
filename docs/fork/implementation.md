@@ -2,6 +2,20 @@
 
 Data: 2026-10-11. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Redesign według podglądu HTML - 2026-10-11
+
+Wdrożono [podgląd](design-preview/index.html) w sześciu commitach na `main` (`3826bd97`, `cec3d9ab`, `e0e1eaa5`, `0213ec55`, `267cc370`, `6918bbed`).
+
+- Motyw: domyślny ciemny motyw to czysta czerń (sidebar `#000`, obszar główny `#050505`, karty i menu `#121212`, podziały sekcji 17% bieli, obrysy wewnętrzne 10%, composer i menu 18%). Klucz pre-paint podniesiono do `poracode-boot-v3`. `sidebarTranslucency` ma domyślnie `false`; istniejące profile zachowują zapisaną wartość, więc na profilu z vibrancy trzeba je wyłączyć w Wygląd.
+- Sidebar: górny pasek tylko z Ukryj pasek boczny i Szukaj, jeden wiersz Nowy wątek ze skrótem, sekcja Projekty z Dodaj projekt i opcjami listy po najechaniu, "+" przy projekcie po najechaniu. Stopka to przełącznik workspace oraz ikony z tooltipami (także Przeglądarka). Usunięto stan `footerCollapsed`.
+- Projekty i archiwum: sidebar pokazuje tylko projekty z niearchiwizowanymi wątkami (także Strona główna). Jedno Archiwum otwiera widok `archive` z wyszukiwarką i podfolderami projektów. Zarchiwizowany wątek otwiera się tylko do odczytu: `shouldRelaunchThreadOnOpen` pomija wątki zarchiwizowane, zamiast composera jest pasek Przywróć. Widok `archive` zapisuje się w SQLite jako Home, żeby starsza wersja po rollbacku go nie odtwarzała.
+- Kolory marek: dostawca deklaruje `registerProviderBrandColor`; kolor działa tylko w tonach spoczynkowych ikon, statusy zachowują kolory semantyczne. Zadeklarowano Claude, Antigravity i Gemini; Codex i Cursor pozostają monochromatyczne.
+- Limity: domyślnie jedna linia z najniższym pozostałym procentem na dostawcę; rozwinięcie to wiersz na okno limitu z nazwą planu. Stan zapisuje `sidebarUiStore.limitsExpanded`.
+- Dropdown modeli: wpisywanie szuka we wszystkich modelach, kolumny ulubionych mają 184-216 px, wiersz ma jedną wartość kontekstu i gwiazdkę po najechaniu. Stopka zawiera Dodaj model, Wysiłek i Fast; osobne pigułki wysiłku i Fast zniknęły z composera (kontekst i thinking zostały). Nowe wątki bez zapisanej preferencji zaczynają od High.
+- Wątek: narzędzia (Git, Pliki, Terminal, Notatki) w nagłówku obok chipu projektu, bez pływającej szyny i jej stanu `threadToolRailOffset`. Meta tury w jednej linii, karta wiadomości 12 px, obrazy w wiadomości 96x80, tryb uprawnień jako ikona z tooltipem.
+- Pominięto: kontekst projektu, gałęzi i worktree nad polem draftu (zostaje dotychczasowy układ) oraz diff per wątek w wierszu sidebaru (brak danych dla wątków na gałęzi głównej).
+- Weryfikacja: typecheck, lint zwykły i typowany na zmienionych plikach, testy `src/renderer` i `src/shared`. Pozostałe porażki (13 plików, m.in. MCP, skills, `panelStore`, `SchedulesView`) występują identycznie na `1e178579`. `pnpm i18n:extract`: 0 brakujących we wszystkich 12 katalogach. Każdą fazę obejrzano w izolowanej instancji dev (mock) na zrzutach. Pakietu `/Applications/Orzi Code.app` nie przebudowano.
+
 ## Claude z Antigravity w menu modeli - 2026-10-11
 
 - Nowy wątek pokazuje także katalogi innych zainstalowanych trybów dostawcy. Ulubiony model CLI jest dostępny przy wybranym Chat; jego wybór zmienia tryb i rozwiązuje konfigurację względem docelowego katalogu. Aktywne wątki nadal zachowują swój tryb. Alternatywa wymaga jednoznacznego przypisania trybu do zainstalowanego runtime. Wspólny kod nie rozpoznaje nazw dostawców.

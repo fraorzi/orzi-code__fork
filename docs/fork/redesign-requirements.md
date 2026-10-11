@@ -62,7 +62,7 @@ Uzupełnione 2026-10-11. Poniższe zmiany układu, archiwum, projektów i limit�
 
 ## Podgląd HTML i decyzje z 2026-10-11
 
-[Podgląd](design-preview/index.html) pokazuje proponowany układ: wątek, nowy wątek, dropdown modeli, limity, archiwum oraz porównanie z obecną aplikacją. Uwagi odnoszą się do numerów w podglądzie. Podgląd nie jest jeszcze zatwierdzony w całości; wdrożenie dopiero po akceptacji.
+[Podgląd](design-preview/index.html) pokazuje proponowany układ: wątek, nowy wątek, dropdown modeli, limity, archiwum oraz porównanie z obecną aplikacją. Uwagi odnoszą się do numerów w podglądzie. Podgląd wdrożono 2026-10-11; zakres i pominięcia opisuje [stan implementacji](implementation.md).
 
 Decyzje użytkownika:
 
