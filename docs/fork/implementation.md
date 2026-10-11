@@ -2,6 +2,13 @@
 
 Data: 2026-10-11. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Instalacja i Spotlight - 2026-10-11
+
+- Zgłoszony brak wyniku `orzi code` wynikał z pozostawienia w `/Applications` starszego `Poracode Personal.app`. Gotowy pakiet Orzi Code był wyłącznie w ignorowanym katalogu QA.
+- Zainstalowano wcześniej sprawdzony pakiet `6a18c3f3` jako `/Applications/Orzi Code.app`, z tym samym bundle ID i profilem `.poracode-personal`. Fork był zamknięty. Zachowano poprzedni pakiet i kopię profilu w `.tmp/previous-install/spotlight/20261011-162622/`; nie zmieniano oryginalnego Poracode ani jego procesów.
+- Przed aktywacją sprawdzono `codesign --verify --deep --strict` źródła i kopii oraz zgodność SHA-256 `app.asar`: `d58ca304ac0ac9e938dff21a1277ac2c580a38df3f2244ab0cdeae7503dba236`. Po `lsregister -f` i `mdimport` odczyt `mdls` zwrócił `Orzi Code`, a `mdfind -onlyin /Applications` wskazał `/Applications/Orzi Code.app`.
+- Kontrola okna Spotlight przez Computer Use zakończyła się timeoutem. Potwierdzono rzeczywisty wpis w indeksie, nie interakcję z UI. Pakiet nie został w tej kontroli uruchomiony na produkcyjnym profilu; wcześniejsze testy rozmowy i restartu dotyczyły osobnego QA. Nie publikowano wydania.
+
 ## Lokalny pakiet Orzi Code - 2026-10-11
 
 - Zbudowano kod `6a18c3f3` i DMG macOS ARM64: `.tmp/orzi-ready-20261011/Orzi-Code-1.8.1-arm64.dmg`. Nie podmieniano starszej aplikacji w `/Applications`, nie publikowano wydania ani artefaktu na GitHub. Wersja lokalnego pakietu nadal wynosi 1.8.1; to nie jest nowe stabilne wydanie.
