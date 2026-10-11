@@ -2127,7 +2127,7 @@ describe("ThreadDraftView", () => {
     });
   });
 
-  it("respects a saved CLI choice for dual-mode agents", async () => {
+  it("opens dual-mode agents in Chat even after a saved CLI choice", async () => {
     const onStart = vi.fn<(input: unknown) => void>();
 
     act(() => {
@@ -2141,7 +2141,7 @@ describe("ThreadDraftView", () => {
     );
 
     fireEvent.click(await screen.findByRole("button", { name: "Advanced" }));
-    expect(await screen.findByRole("menuitemradio", { name: "CLI" })).toHaveAttribute(
+    expect(await screen.findByRole("menuitemradio", { name: "Chat" })).toHaveAttribute(
       "aria-checked",
       "true",
     );

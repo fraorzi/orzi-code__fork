@@ -72,20 +72,35 @@ function normalizeCurrentModelForProvider(
     : modelId;
 }
 
+/**
+ * Favorites keep the presentation they were saved under, but a model the
+ * current presentation also offers stays on it: a CLI favorite opens in Chat
+ * when Chat lists the same model. Only models missing from the current
+ * catalog route to the presentation that has them.
+ */
 function refsForPresentation(
   refs: readonly ModelRef[],
   presentationMode: ThreadPresentationMode | undefined,
+  providers: readonly ProviderModelMenuProvider[],
   alternativeProviders: readonly ProviderModelMenuProvider[],
 ): readonly ModelRef[] {
   if (!presentationMode) return refs;
-  return refs.filter(
-    (ref) =>
-      ref.presentationMode === presentationMode ||
-      alternativeProviders.some(
-        (provider) =>
-          provider.kind === ref.agentKind && provider.presentationMode === ref.presentationMode,
-      ),
-  );
+  return refs.flatMap((ref) => {
+    if (ref.presentationMode === presentationMode) return [ref];
+    const current = providers.find(
+      (provider) =>
+        provider.kind === ref.agentKind && provider.presentationMode === presentationMode,
+    );
+    if (current?.capabilities.models.some((model) => model.id === ref.modelId)) {
+      return [{ ...ref, presentationMode }];
+    }
+    return alternativeProviders.some(
+      (provider) =>
+        provider.kind === ref.agentKind && provider.presentationMode === ref.presentationMode,
+    )
+      ? [ref]
+      : [];
+  });
 }
 
 export function ProviderModelMenu(props: ProviderModelMenuProps) {
@@ -123,7 +138,7 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
   const hiddenModels = useSharedSettings((s) => s.hiddenModels);
   const providerModelPreferences = useSharedSettings((s) => s.providerModelPreferences);
   const providerConfigs = useSharedSettings((s) => s.providerConfigs);
-  const toggleFavoriteModel = useSharedSettings((s) => s.toggleFavoriteModel);
+  const toggleFavoriteModel = useSharedSettings((s) => s.toggleFavoriteModelAnyMode);
 
   const currentProvider =
     providers.find(
@@ -186,6 +201,7 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
   const activeFavorites = refsForPresentation(
     favorites,
     presentationMode,
+    providers,
     lockedAgentKind ? [] : providers,
   );
   function buildItemsForSearch(searchValue: string) {

@@ -59,6 +59,20 @@ describe("patchConfigForModelChange", () => {
     });
   });
 
+  it("starts a model without a saved effort at High over the provider default", () => {
+    expect(
+      patchConfigForModelChange(
+        {
+          ...capabilities,
+          modelEfforts: { a: ["low", "medium", "high"] },
+          defaultEffort: "medium",
+        } as AgentCapability,
+        "a",
+        {},
+      ).effort,
+    ).toBe("high");
+  });
+
   it("resets effort when the next model does not support it", () => {
     expect(
       patchConfigForModelChange(capabilities, "b", {

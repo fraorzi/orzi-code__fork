@@ -96,7 +96,7 @@ export function resolveModelValue(agent: AgentStatus, preferred?: string): strin
   return resolveModelSelection(agent.capabilities, preferred);
 }
 
-/** New threads start at this effort when the model offers it and nothing was saved. */
+/** Effort a model starts at when it offers it and nothing was saved for it. */
 export const DEFAULT_DRAFT_EFFORT = "high";
 
 export function resolveEffortValue(agent: AgentStatus, model: string, preferred?: string): string {
@@ -195,9 +195,11 @@ export function resolveInitialPresentationMode(
 ): ThreadPresentationMode {
   if (!agent) return "gui";
   const supported = agent.capabilities.presentationModes ?? [agent.capabilities.presentationMode];
+  // New threads open in Chat whenever the agent offers it; CLI is a per-thread
+  // choice. The remembered mode only matters for agents without Chat.
+  if (supported.includes("gui")) return "gui";
   const last = lastByAgent[agent.kind];
   if (last && supported.includes(last)) return last;
-  if (supported.includes("gui")) return "gui";
   return supported[0] ?? agent.capabilities.presentationMode ?? "gui";
 }
 

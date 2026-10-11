@@ -456,6 +456,37 @@ describe("ProviderModelMenu", () => {
     );
   });
 
+  it("keeps a CLI favorite in Chat when the Chat catalog lists the model", async () => {
+    useSharedSettings.setState({
+      favoriteModels: [{ agentKind: "codex", modelId: "model-2", presentationMode: "terminal" }],
+    });
+    const chat = { ...makeProvider(2), presentationMode: "gui" as const };
+    const cli = { ...makeProvider(2), presentationMode: "terminal" as const };
+    const onChange = vi.fn<(next: { agentKind: string; model: string }) => void>();
+    render(
+      <ProviderModelMenu
+        providers={[chat, cli]}
+        currentAgentKind="codex"
+        currentModel="model-1"
+        presentationMode="gui"
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Select model" }));
+    fireEvent.click(
+      within(await screen.findByRole("listbox", { name: "Favorites" })).getByText("Model 2"),
+    );
+
+    await waitFor(() =>
+      expect(onChange).toHaveBeenCalledWith({
+        agentKind: "codex",
+        model: "model-2",
+        presentationMode: "gui",
+      }),
+    );
+  });
+
   it("selects from the current query when Enter follows typing immediately", async () => {
     useSharedSettings.setState({
       favoriteModels: [1, 2, 3].map((id) => ({

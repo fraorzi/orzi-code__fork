@@ -26,7 +26,11 @@ import {
   withModelVisible,
 } from "@/shared/agentSelection";
 import type { ComposerControl } from "./ThreadComposer";
-import { formatEffortLabel, supportsUsableFastMode } from "./threadDraftViewHelpers";
+import {
+  DEFAULT_DRAFT_EFFORT,
+  formatEffortLabel,
+  supportsUsableFastMode,
+} from "./threadDraftViewHelpers";
 import type { ProviderModelPreference } from "@/shared/settings";
 
 export type ModelPickerConfigPatch = {
@@ -211,7 +215,12 @@ export function patchConfigForModelChange(
   const nextContextDefault = nextContextIds?.[0] ?? capabilities.defaultContextSize;
   return {
     model,
-    effort: effortValid && current.effort ? current.effort : (nextReasoning.default ?? ""),
+    effort:
+      effortValid && current.effort
+        ? current.effort
+        : nextReasoning.values.includes(DEFAULT_DRAFT_EFFORT)
+          ? DEFAULT_DRAFT_EFFORT
+          : (nextReasoning.default ?? ""),
     ...(nextContextDefault ? { contextSize: nextContextDefault } : {}),
     fast: supportsUsableFastMode(capabilities, model) ? (current.fast ?? true) : false,
     thinking: capabilities.thinkingModels?.includes(model) ?? false,
