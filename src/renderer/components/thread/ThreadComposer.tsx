@@ -8,6 +8,7 @@ import type { ButtonProps } from "@/renderer/components/common/Button";
 import { EffortContextMenu } from "@/renderer/components/common/EffortContextMenu/EffortContextMenu";
 import { OptionMenu } from "@/renderer/components/common/OptionMenu";
 import { PixelLoader } from "@/renderer/components/common/PixelLoader";
+import { useResponsiveMenu } from "@/renderer/components/common/ResponsiveMenuSurface";
 import {
   type ModelMenuSettings,
   ProviderModelMenu,
@@ -420,11 +421,18 @@ export function ThreadComposer(props: {
   const customInputClassName = compact
     ? "poracode-composer-custom-input poracode-composer-custom-input--compact"
     : "poracode-composer-custom-input";
-  const toolbarClassName = compact
-    ? "poracode-composer-toolbar poracode-composer-toolbar--compact relative flex items-end justify-between gap-3"
-    : "poracode-composer-toolbar relative flex items-end justify-between gap-3";
+  // Desktop layout: the input, attachments and send live in one rounded pill;
+  // model, mode and permission settings sit as a quiet row under it.
+  const { mobile } = useResponsiveMenu();
+  const pill = !mobile && !toolbarOnly;
+  const toolbarClassName = pill
+    ? "poracode-composer-toolbar poracode-composer-toolbar--below relative flex items-end justify-between gap-3"
+    : compact
+      ? "poracode-composer-toolbar poracode-composer-toolbar--compact relative flex items-end justify-between gap-3"
+      : "poracode-composer-toolbar relative flex items-end justify-between gap-3";
   const shellClassName = [
     "poracode-composer-shell",
+    pill && "poracode-composer-shell--pill",
     variant === "draft" && "poracode-composer-shell--draft",
     variant !== "draft" &&
       preserveDisabledControlStyle &&
@@ -668,7 +676,7 @@ export function ThreadComposer(props: {
       renderProbeControlItem(control, index, targetWrapLevel, forceShowLabels),
     );
 
-  const probeContentCacheKey = `${effectiveToolbarLayoutKey}|compact=${compact}`;
+  const probeContentCacheKey = `${effectiveToolbarLayoutKey}|compact=${compact}|pill=${pill}`;
   if (!probeContentCacheRef.current || probeContentCacheRef.current.key !== probeContentCacheKey) {
     // The hidden probe tree uses cheap geometry stubs for controls instead of
     // mounting full menu/popover trigger trees for every collapse level.
@@ -699,10 +707,12 @@ export function ThreadComposer(props: {
               >
                 {renderProbeControlsList(level)}
               </div>
-              <div className="flex shrink-0 items-end gap-1">
-                {typeof afterControls === "function" ? afterControls(level) : afterControls}
-                {!hideSubmitButton && <div className="size-8 shrink-0" />}
-              </div>
+              {pill ? null : (
+                <div className="flex shrink-0 items-end gap-1">
+                  {typeof afterControls === "function" ? afterControls(level) : afterControls}
+                  {!hideSubmitButton && <div className="size-8 shrink-0" />}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -857,10 +867,12 @@ export function ThreadComposer(props: {
         </div>
       )}
       {renderControls()}
-      <div className="flex shrink-0 items-end gap-1">
-        {typeof afterControls === "function" ? afterControls(0) : afterControls}
-        {renderSendButton()}
-      </div>
+      {pill ? null : (
+        <div className="flex shrink-0 items-end gap-1">
+          {typeof afterControls === "function" ? afterControls(0) : afterControls}
+          {renderSendButton()}
+        </div>
+      )}
       {/* Probes: invisible, each represents a collapse level for the entire toolbar layout. */}
       {probeContent}
     </div>
@@ -889,11 +901,26 @@ export function ThreadComposer(props: {
         ) : null}
         {fixedContent}
         {attachmentBar}
-        <div ref={editorHostRef} data-composer-input-anchor="">
-          {renderEditor()}
-        </div>
-        {toolbar}
+        {pill ? (
+          <div className="flex items-end gap-1">
+            <div ref={editorHostRef} data-composer-input-anchor="" className="min-w-0 flex-1">
+              {renderEditor()}
+            </div>
+            <div className="flex shrink-0 items-end gap-1 pb-[7px] pr-[7px]">
+              {typeof afterControls === "function" ? afterControls(0) : afterControls}
+              {renderSendButton()}
+            </div>
+          </div>
+        ) : (
+          <>
+            <div ref={editorHostRef} data-composer-input-anchor="">
+              {renderEditor()}
+            </div>
+            {toolbar}
+          </>
+        )}
       </div>
+      {pill ? toolbar : null}
     </div>
   );
 }

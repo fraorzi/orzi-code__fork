@@ -2518,6 +2518,36 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
   padding: 0.1rem 0.6rem 0.6rem;
 }
 
+/* Desktop pill composer: input + attach + send in a rounded field, settings
+   as a quiet text row underneath. */
+.poracode-composer-shell--pill {
+  border-radius: 22px;
+}
+
+.poracode-composer-shell--pill .poracode-composer-editor.textarea,
+.poracode-composer-shell--pill .poracode-composer-editor .textarea,
+.poracode-composer-shell--pill .poracode-composer-custom-input {
+  border-radius: 22px 0 0 22px;
+  padding: 0.7rem 0.5rem 0.7rem 1.1rem;
+}
+
+.poracode-composer-toolbar--below {
+  padding: 0.15rem 0.5rem 0;
+}
+
+.poracode-composer-toolbar--below :is(.poracode-composer-menu, .poracode-composer-toggle) {
+  height: 1.75rem !important;
+  color: var(--muted) !important;
+  font-size: 0.75rem !important;
+  font-weight: 400 !important;
+  background: transparent !important;
+}
+
+.poracode-composer-toolbar--below
+  :is(.poracode-composer-menu, .poracode-composer-toggle):is(:hover, [aria-expanded="true"]) {
+  color: var(--foreground) !important;
+}
+
 .poracode-composer-editor.textarea,
 .poracode-composer-editor.input-group,
 .poracode-composer-editor.textarea__input,

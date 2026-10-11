@@ -554,7 +554,7 @@ function GroupSummarySection({
       <section.Icon className="size-3" />
       <code
         ref={shimmerRef}
-        className={`font-mono tabular-nums [word-spacing:-0.25em] !text-[color:var(--muted)] ${
+        className={`bg-transparent p-0 font-sans tabular-nums !text-[color:var(--muted)] ${
           isRunning ? "poracode-thinking-text" : ""
         }`}
         {...(isRunning

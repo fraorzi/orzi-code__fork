@@ -59,6 +59,11 @@ export const NON_ROUTER_PROJECT_PROCEDURES = {
   startThread: "explicit-remote-thread-launch",
   cloneRepo: "remote-projects-use-project-command",
   relocateProject: "explicit-remote-project-command",
+  // Prompt change review and undo hide for remote threads.
+  getFileCheckpointDiff: "remote-control-hidden",
+  getPromptChangesStatus: "remote-control-hidden",
+  revertPromptChanges: "remote-control-hidden",
+  reapplyPromptChanges: "remote-control-hidden",
   extractContext: "remote-control-hidden",
   cancelExtractContext: "remote-control-hidden",
   // Voice signaling and media ownership are limited to the local desktop.
