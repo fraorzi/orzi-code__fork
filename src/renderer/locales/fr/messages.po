@@ -1052,7 +1052,7 @@ msgid "Add profile"
 msgstr "Ajouter un profil"
 
 #: src/mobile/setupEmptyState.tsx
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
 msgid "Add project"
 msgstr "Ajouter un projet"
 
@@ -2094,8 +2094,8 @@ msgstr "Naviguez, inspectez et testez des sites web dans le navigateur intégré
 #: src/renderer/components/plugins/pluginCopy.ts
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/BrowserSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -3048,8 +3048,8 @@ msgstr "Réduire l'erreur"
 #~ msgstr "Réduire l'expérience"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
-msgid "Collapse footer"
-msgstr "Réduire le bas de la barre latérale"
+#~ msgid "Collapse footer"
+#~ msgstr "Réduire le bas de la barre latérale"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabStrip.tsx
@@ -5269,8 +5269,8 @@ msgstr "Développer l'erreur"
 #~ msgstr "Développer l'expérience"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
-msgid "Expand footer"
-msgstr "Développer le bas de la barre latérale"
+#~ msgid "Expand footer"
+#~ msgstr "Développer le bas de la barre latérale"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabStrip.tsx
@@ -6234,8 +6234,8 @@ msgid "Hide all"
 msgstr "Tout cacher"
 
 #: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
-msgid "Hide browser"
-msgstr "Masquer le navigateur"
+#~ msgid "Hide browser"
+#~ msgstr "Masquer le navigateur"
 
 #: src/renderer/components/thread/ThreadView.tsx
 msgid "Hide canonical runtime item inspector"
@@ -6267,7 +6267,7 @@ msgstr "Masquer le panneau de débogage d'exécution"
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsSidebar.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/GitReviewSidebar.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
+#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/SettingsSidebar.tsx
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -7050,7 +7050,7 @@ msgstr "Liée"
 msgid "List"
 msgstr "Liste"
 
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarListOptionsMenu.tsx
 msgid "List options"
 msgstr "Options de liste"
 
@@ -8221,6 +8221,7 @@ msgstr "Nouvel onglet dans le groupe"
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/hooks/useElementPicker.ts
 #: src/renderer/views/MainView/parts/RightPanel/parts/NotesPanel/NotesEditor.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/NewThreadButton.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarNewThreadRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
 msgid "New thread"
@@ -8245,6 +8246,7 @@ msgstr "Nouveau fil de cette tâche"
 #. placeholder {0}: homeProject.name
 #. placeholder {0}: project.name
 #: src/renderer/views/HomeView.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectHeader.tsx
 msgid "New thread in {0}"
 msgstr "Nouveau fil dans {0}"
 
@@ -9017,8 +9019,8 @@ msgid "Open as Panel"
 msgstr "Ouvrir en tant que panneau"
 
 #: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
-msgid "Open browser"
-msgstr "Ouvrir le navigateur"
+#~ msgid "Open browser"
+#~ msgstr "Ouvrir le navigateur"
 
 #: src/renderer/commands/registry.ts
 msgid "Open browser tab"
@@ -10157,6 +10159,7 @@ msgstr "Remplacements spécifiques au projet en plus des paramètres de recherch
 #: src/renderer/components/mcp/McpProjectDestinationDropdown.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectFilter.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 #: src/renderer/views/SettingsOverlay/parts/WorkspacesSettings.tsx
 msgid "Projects"
@@ -13858,7 +13861,7 @@ msgstr "Infos du fil"
 msgid "Thread is already unloaded."
 msgstr "Le fil est déjà déchargé."
 
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarListOptionsMenu.tsx
 msgid "Thread list options"
 msgstr "Options de la liste des fils"
 

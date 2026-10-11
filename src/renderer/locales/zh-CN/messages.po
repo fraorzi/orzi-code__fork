@@ -1052,7 +1052,7 @@ msgid "Add profile"
 msgstr "添加配置文件"
 
 #: src/mobile/setupEmptyState.tsx
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
 msgid "Add project"
 msgstr "添加项目"
 
@@ -2094,8 +2094,8 @@ msgstr "在 Orzi Code 隔离的内置浏览器中浏览、检查并测试网站�
 #: src/renderer/components/plugins/pluginCopy.ts
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/BrowserSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -3048,8 +3048,8 @@ msgstr "折叠错误"
 #~ msgstr "折叠实验"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
-msgid "Collapse footer"
-msgstr "折叠侧边栏底部"
+#~ msgid "Collapse footer"
+#~ msgstr "折叠侧边栏底部"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabStrip.tsx
@@ -5269,8 +5269,8 @@ msgstr "展开错误"
 #~ msgstr "展开实验"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
-msgid "Expand footer"
-msgstr "展开侧边栏底部"
+#~ msgid "Expand footer"
+#~ msgstr "展开侧边栏底部"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabStrip.tsx
@@ -6234,8 +6234,8 @@ msgid "Hide all"
 msgstr "全部隐藏"
 
 #: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
-msgid "Hide browser"
-msgstr "隐藏浏览器"
+#~ msgid "Hide browser"
+#~ msgstr "隐藏浏览器"
 
 #: src/renderer/components/thread/ThreadView.tsx
 msgid "Hide canonical runtime item inspector"
@@ -6267,7 +6267,7 @@ msgstr "隐藏运行时调试面板"
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsSidebar.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/GitReviewSidebar.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
+#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/SettingsSidebar.tsx
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -7050,7 +7050,7 @@ msgstr "已链接"
 msgid "List"
 msgstr "列表"
 
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarListOptionsMenu.tsx
 msgid "List options"
 msgstr "列表选项"
 
@@ -8221,6 +8221,7 @@ msgstr "在分组中新建标签页"
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/hooks/useElementPicker.ts
 #: src/renderer/views/MainView/parts/RightPanel/parts/NotesPanel/NotesEditor.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/NewThreadButton.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarNewThreadRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
 msgid "New thread"
@@ -8245,6 +8246,7 @@ msgstr "基于此待办事项的新线程"
 #. placeholder {0}: homeProject.name
 #. placeholder {0}: project.name
 #: src/renderer/views/HomeView.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectHeader.tsx
 msgid "New thread in {0}"
 msgstr "在 {0} 中新建线程"
 
@@ -9017,8 +9019,8 @@ msgid "Open as Panel"
 msgstr "作为面板打开"
 
 #: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
-msgid "Open browser"
-msgstr "打开浏览器"
+#~ msgid "Open browser"
+#~ msgstr "打开浏览器"
 
 #: src/renderer/commands/registry.ts
 msgid "Open browser tab"
@@ -10157,6 +10159,7 @@ msgstr "在全局搜索设置基础上的项目特定覆盖。"
 #: src/renderer/components/mcp/McpProjectDestinationDropdown.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectFilter.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 #: src/renderer/views/SettingsOverlay/parts/WorkspacesSettings.tsx
 msgid "Projects"
@@ -13858,7 +13861,7 @@ msgstr "线程信息"
 msgid "Thread is already unloaded."
 msgstr "线程已经卸载。"
 
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarListOptionsMenu.tsx
 msgid "Thread list options"
 msgstr "线程列表选项"
 

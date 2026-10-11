@@ -1,4 +1,4 @@
-import { startTransition, useEffect } from "react";
+import { useEffect } from "react";
 import type { AgentStatus } from "@/shared/contracts";
 import { buildPaneLayoutFromLegacy } from "@/shared/paneLayout";
 import { buildWorktreeLocation } from "@/shared/worktree";
@@ -42,7 +42,6 @@ export function MainView(props: {
 }) {
   const { storeHydrated, runtimeSnapshotsReady, loadT0 } = props;
   const view = useAppStore((state) => state.view);
-  const openHome = useAppStore((state) => state.openHome);
   const wslProjectDistrosKey = useAppStore((state) => buildWslProjectDistrosKey(state.projects));
   const homeScopeEnabled = useSharedSettings((state) => state.homeScopeEnabled);
   const sharedSettingsHydrated = useSharedSettings((state) => state.sharedSettingsHydrated);
@@ -137,7 +136,7 @@ export function MainView(props: {
             : buildPaneLayoutFromLegacy(["__placeholder__"])
         }
       >
-        <MainPageLayout onTitleClick={() => startTransition(() => openHome())} />
+        <MainPageLayout />
         <ThreadSearchOverlayHost />
       </AppDndProvider>
       <StalePanelCleanup />

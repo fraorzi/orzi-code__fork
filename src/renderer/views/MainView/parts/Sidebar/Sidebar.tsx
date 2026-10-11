@@ -37,6 +37,8 @@ import {
 } from "@/renderer/hooks/uiSelectors";
 import { useScrollFade } from "@/renderer/hooks/useScrollFade";
 import { useAppStore } from "@/renderer/state/appStore";
+import { SidebarNewThreadRow } from "./parts/SidebarNewThreadRow";
+import { SidebarProjectsHeading } from "./parts/SidebarProjectsHeading";
 import { useIsPanelTabVisible } from "@/renderer/state/panelDockSelectors";
 import { usePanelStore } from "@/renderer/state/panelStore";
 import { useSidebarUiStore } from "@/renderer/state/sidebarUiStore";
@@ -393,7 +395,11 @@ export function Sidebar() {
             className={sidebarBodyScrollClass()}
             style={scrollFadeStyle}
           >
-            <div className="space-y-4">
+            <SidebarNewThreadRow />
+            <div className="mt-1.5">
+              <SidebarProjectsHeading />
+            </div>
+            <div className="space-y-1">
               {homeScopeEnabled && homeProject ? (
                 <section className="space-y-0.5">
                   <SidebarButton

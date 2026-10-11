@@ -3,13 +3,12 @@ import { Input, Label, Modal } from "@heroui/react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type { MessageDescriptor } from "@lingui/core";
 import { Command, Search } from "lucide-react";
-import { readBridge } from "@/renderer/bridge";
 import { useAppStore } from "@/renderer/state/appStore";
 import { useFileEditorStore } from "@/renderer/state/fileEditorStore";
 import { usePanelStore } from "@/renderer/state/panelStore";
 import { useCommandPaletteStore } from "./commandPaletteStore";
 import { useKeybindingStore } from "./keybindingStore";
-import { bindingForPlatform, formatKeybinding } from "./keybindingMatcher";
+import { shortcutForCommand } from "./commandShortcutLabel";
 import {
   buildCommandRegistry,
   buildWhenContext,
@@ -180,14 +179,4 @@ function filterCommands(
       .toLowerCase();
     return terms.every((term) => haystack.includes(term));
   });
-}
-
-function shortcutForCommand(
-  commandId: string,
-  keybindings: readonly { command: string }[],
-): string {
-  const platform = readBridge().platform;
-  const binding = keybindings.find((item) => item.command === commandId);
-  if (!binding) return "";
-  return formatKeybinding(bindingForPlatform(binding, platform), platform);
 }

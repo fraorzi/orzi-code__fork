@@ -130,18 +130,22 @@ describe("SidebarProjectHeader", () => {
     expect(screen.queryByText("sync-status")).not.toBeInTheDocument();
   });
 
-  it("hides the project body while the remote server is offline", () => {
+  it("hides project actions while the remote server is offline", () => {
     seedRemote("offline");
 
     render(<SidebarProjectSection projectId={project.id} projectIndex={0} sortMode="updated" />);
 
-    expect(screen.queryByText("New thread")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: `New thread in ${project.name}` }),
+    ).not.toBeInTheDocument();
   });
 
-  it("shows the project body while the remote server is online", () => {
+  it("shows project actions while the remote server is online", () => {
     render(<SidebarProjectSection projectId={project.id} projectIndex={0} sortMode="updated" />);
 
-    expect(screen.getByText("New thread")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: `New thread in ${project.name}` }),
+    ).toBeInTheDocument();
   });
 
   it("collapses idle files and terminal icons so they reserve no row width", () => {

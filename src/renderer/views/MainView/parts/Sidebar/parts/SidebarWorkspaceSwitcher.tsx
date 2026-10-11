@@ -19,15 +19,6 @@ import {
 import { useSharedSettings } from "@/renderer/state/sharedSettingsStore";
 import { useActiveWorkspaceId, useWorkspaceStore } from "@/renderer/state/workspaceStore";
 
-/**
- * Whether the workspace switcher renders anything at all (it stays hidden
- * with fewer than two workspaces). The collapsed footer nav reads this to
- * keep its overflow math in sync with the switcher's own visibility rule.
- */
-export function useHasSwitchableWorkspaces(): boolean {
-  return useSharedSettings((state) => state.workspaces.length >= 2);
-}
-
 interface MenuEntry {
   key: string;
   label: string;

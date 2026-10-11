@@ -1,19 +1,10 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { ProjectArchive } from "./ProjectArchive";
 import type { Project } from "@/shared/contracts";
-import {
-  useCurrentThreadIdsCount,
-  useHasDraft,
-  useIsCurrentProjectDraft,
-  useLiveBackgroundThreadIds,
-  useProjectThreads,
-} from "@/renderer/hooks/uiSelectors";
-import { useDragSource } from "@/renderer/dnd";
-import { openNewThread, openNewThreadSideBySide } from "@/renderer/actions/threadActions";
+import { useLiveBackgroundThreadIds, useProjectThreads } from "@/renderer/hooks/uiSelectors";
 import { useSidebarUiStore, useThreadListLimit } from "@/renderer/state/sidebarUiStore";
 import { useWorkspaceThreadFilter } from "@/renderer/state/workspaceSelectors";
 import { useExperimentCandidateOrder } from "@/renderer/state/experimentStore";
-import { NewThreadButton } from "./NewThreadButton";
 import { buildSidebarProjectRows } from "./sidebarProjectRows";
 import type { ThreadSortMode } from "./sortMode";
 import { SeeMoreThreadsButton, SidebarThreadRow } from "./SidebarThreadRow";
@@ -29,10 +20,6 @@ export function SidebarProjectThreadList(props: { project: Project; sortMode: Th
   const setEditingThreadId = useSidebarUiStore((s) => s.setEditingThreadId);
   const revealMoreThreads = useSidebarUiStore((s) => s.revealMoreThreads);
   const visibleLimit = useThreadListLimit(project.id);
-  const hasDraft = useHasDraft(project.id);
-  const currentThreadCount = useCurrentThreadIdsCount();
-  const isDraftActive = useIsCurrentProjectDraft(project.id);
-  const source = useDragSource();
   const liveBackgroundThreadIds = useLiveBackgroundThreadIds(projectThreads);
   const rows = buildSidebarProjectRows({
     projectId: project.id,
@@ -46,16 +33,6 @@ export function SidebarProjectThreadList(props: { project: Project; sortMode: Th
 
   return (
     <div className="space-y-0.5">
-      <NewThreadButton
-        projectId={project.id}
-        hasDraft={hasDraft}
-        isActive={isDraftActive}
-        isDraggingAnything={!!source}
-        canOpenAsPanel={currentThreadCount > 0 && currentThreadCount < 3}
-        onPress={() => openNewThread(project.id)}
-        onOpenAsPanel={() => openNewThreadSideBySide(project.id)}
-      />
-
       <div>
         {rows.map((row) =>
           row.kind === "see-more" ? (

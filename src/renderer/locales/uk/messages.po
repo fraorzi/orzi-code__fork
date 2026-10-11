@@ -1052,7 +1052,7 @@ msgid "Add profile"
 msgstr "Додати профіль"
 
 #: src/mobile/setupEmptyState.tsx
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
 msgid "Add project"
 msgstr "Додати проєкт"
 
@@ -2094,8 +2094,8 @@ msgstr "Переглядайте, досліджуйте й тестуйте с�
 #: src/renderer/components/plugins/pluginCopy.ts
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/BrowserSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -3048,8 +3048,8 @@ msgstr "Згорнути помилку"
 #~ msgstr "Згорнути експеримент"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
-msgid "Collapse footer"
-msgstr "Згорнути нижню частину бічної панелі"
+#~ msgid "Collapse footer"
+#~ msgstr "Згорнути нижню частину бічної панелі"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabStrip.tsx
@@ -5269,8 +5269,8 @@ msgstr "Розгорнути помилку"
 #~ msgstr "Розгорнути експеримент"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
-msgid "Expand footer"
-msgstr "Розгорнути нижню частину бічної панелі"
+#~ msgid "Expand footer"
+#~ msgstr "Розгорнути нижню частину бічної панелі"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabStrip.tsx
@@ -6234,8 +6234,8 @@ msgid "Hide all"
 msgstr "Сховати все"
 
 #: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
-msgid "Hide browser"
-msgstr "Сховати браузер"
+#~ msgid "Hide browser"
+#~ msgstr "Сховати браузер"
 
 #: src/renderer/components/thread/ThreadView.tsx
 msgid "Hide canonical runtime item inspector"
@@ -6267,7 +6267,7 @@ msgstr "Сховати панель налагодження середовищ�
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsSidebar.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/GitReviewSidebar.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
+#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/SettingsSidebar.tsx
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -7050,7 +7050,7 @@ msgstr "Зв’язано"
 msgid "List"
 msgstr "Список"
 
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarListOptionsMenu.tsx
 msgid "List options"
 msgstr "Параметри списку"
 
@@ -8222,6 +8222,7 @@ msgstr "Нова вкладка в групі"
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/hooks/useElementPicker.ts
 #: src/renderer/views/MainView/parts/RightPanel/parts/NotesPanel/NotesEditor.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/NewThreadButton.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarNewThreadRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
 msgid "New thread"
@@ -8246,6 +8247,7 @@ msgstr "Новий тред із цієї задачі"
 #. placeholder {0}: homeProject.name
 #. placeholder {0}: project.name
 #: src/renderer/views/HomeView.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectHeader.tsx
 msgid "New thread in {0}"
 msgstr "Новий потік у {0}"
 
@@ -9018,8 +9020,8 @@ msgid "Open as Panel"
 msgstr "Відкрити як панель"
 
 #: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
-msgid "Open browser"
-msgstr "Відкрити браузер"
+#~ msgid "Open browser"
+#~ msgstr "Відкрити браузер"
 
 #: src/renderer/commands/registry.ts
 msgid "Open browser tab"
@@ -10158,6 +10160,7 @@ msgstr "Перевизначення для конкретного проєкт�
 #: src/renderer/components/mcp/McpProjectDestinationDropdown.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectFilter.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 #: src/renderer/views/SettingsOverlay/parts/WorkspacesSettings.tsx
 msgid "Projects"
@@ -13859,7 +13862,7 @@ msgstr "Інформація про потік"
 msgid "Thread is already unloaded."
 msgstr "Тред уже вивантажено."
 
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarListOptionsMenu.tsx
 msgid "Thread list options"
 msgstr "Параметри списку тредів"
 

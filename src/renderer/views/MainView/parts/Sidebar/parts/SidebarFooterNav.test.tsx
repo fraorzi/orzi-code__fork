@@ -4,7 +4,6 @@ import { renderWithI18n as render } from "@/renderer/testUtils/i18n";
 import { usePanelStore } from "@/renderer/state/panelStore";
 import { beginPanelResize, endPanelResize } from "@/renderer/state/panelResizeSignal";
 import { useSharedSettings } from "@/renderer/state/sharedSettingsStore";
-import { useSidebarUiStore } from "@/renderer/state/sidebarUiStore";
 import { SidebarFooterNav } from "./SidebarFooterNav";
 
 const originalResizeObserver = globalThis.ResizeObserver;
@@ -37,7 +36,6 @@ class MockResizeObserver {
 describe("SidebarFooterNav", () => {
   beforeEach(() => {
     localStorage.clear();
-    useSidebarUiStore.setState({ footerCollapsed: false });
     usePanelStore.setState({ settingsOpen: false, settingsSection: "general" });
     useSharedSettings.setState({
       sidebarHiddenShortcuts: ["githubActions"],
@@ -45,70 +43,29 @@ describe("SidebarFooterNav", () => {
     });
   });
 
-  it("shows labeled rows with a collapse toggle by default", () => {
+  it("renders destinations as one row of tooltipped icons", () => {
     render(<SidebarFooterNav remoteAccessStatus="off" />);
 
-    expect(screen.getByText("Pull requests")).toBeInTheDocument();
-    expect(screen.getByText("Schedules")).toBeInTheDocument();
-    expect(screen.getByText("Settings")).toBeInTheDocument();
-    expect(screen.getByText("Hide sidebar")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Collapse footer" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Expand footer" })).not.toBeInTheDocument();
-  });
-
-  it("collapses to an icon row and back via the toggle", () => {
-    render(<SidebarFooterNav remoteAccessStatus="off" />);
-
-    fireEvent.click(screen.getByRole("button", { name: "Collapse footer" }));
-    expect(useSidebarUiStore.getState().footerCollapsed).toBe(true);
-
-    // Icon mode: labels leave the visible text but stay reachable as
-    // aria-labels on the icon buttons.
     expect(screen.queryByText("Settings")).not.toBeInTheDocument();
-    expect(screen.queryByText("Hide sidebar")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Pull requests" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Schedules" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Browser" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Settings" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Remote Access" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Hide sidebar" })).toBeInTheDocument();
-
-    // Hide sidebar anchors the left edge of the row, the expand toggle the
-    // right edge. (HeroUI's Tooltip.Trigger wrapper div also carries
-    // role="button", so filter down to the actual button elements.)
-    const buttons = screen.getAllByRole("button").filter((b) => b.tagName === "BUTTON");
-    expect(buttons[0]).toHaveAccessibleName("Hide sidebar");
-    expect(buttons.at(-1)).toHaveAccessibleName("Expand footer");
-    // The expand toggle is pinned to the row's right edge via an ml-auto
-    // wrapper, so it stays right-aligned even when nothing overflows.
-    expect(
-      screen.getByRole("button", { name: "Expand footer" }).closest(".ml-auto"),
-    ).not.toBeNull();
-
-    fireEvent.click(screen.getByRole("button", { name: "Expand footer" }));
-    expect(useSidebarUiStore.getState().footerCollapsed).toBe(false);
-    expect(screen.getByText("Settings")).toBeInTheDocument();
-  });
-
-  it("starts collapsed when the persisted flag is set", () => {
-    useSidebarUiStore.setState({ footerCollapsed: true });
-
-    render(<SidebarFooterNav remoteAccessStatus="off" />);
-
-    expect(screen.queryByText("Settings")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Expand footer" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Hide sidebar" })).not.toBeInTheDocument();
   });
 
   describe("overflow", () => {
     beforeEach(() => {
       // jsdom measures 0 everywhere (read as "unmeasured" → no overflow), so
-      // force a narrow row: 100px fits two 36px-pitch items, which the pinned
-      // Hide-sidebar / expand buttons already claim.
+      // force a narrow row: 40px fits one 28px-pitch item, which the kebab
+      // claims.
       vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
-        width: 100,
+        width: 40,
         height: 32,
         top: 0,
         left: 0,
-        right: 100,
+        right: 40,
         bottom: 32,
         x: 0,
         y: 0,
@@ -121,13 +78,9 @@ describe("SidebarFooterNav", () => {
     });
 
     it("moves actions that do not fit into a kebab menu", async () => {
-      useSidebarUiStore.setState({ footerCollapsed: true });
-
       render(<SidebarFooterNav remoteAccessStatus="off" />);
 
-      // Pinned buttons stay put; every action icon overflows.
-      expect(screen.getByRole("button", { name: "Hide sidebar" })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Expand footer" })).toBeInTheDocument();
+      // Every action icon overflows.
       expect(screen.queryByRole("button", { name: "Settings" })).not.toBeInTheDocument();
       expect(screen.queryByRole("button", { name: "Pull requests" })).not.toBeInTheDocument();
 
@@ -144,7 +97,6 @@ describe("SidebarFooterNav", () => {
     });
 
     it("marks the kebab active while a hidden destination is the current one", () => {
-      useSidebarUiStore.setState({ footerCollapsed: true });
       // Settings (non-Remote-Access section) is open and overflowed, so the
       // trigger has to stand in for the active icon it hides.
       usePanelStore.setState({ settingsOpen: true, settingsSection: "general" });
@@ -157,8 +109,6 @@ describe("SidebarFooterNav", () => {
     });
 
     it("leaves the kebab inactive when nothing hidden is active", () => {
-      useSidebarUiStore.setState({ footerCollapsed: true });
-
       render(<SidebarFooterNav remoteAccessStatus="off" />);
 
       const trigger = screen.getByRole("button", { name: "More" });
@@ -203,14 +153,13 @@ describe("SidebarFooterNav", () => {
     });
 
     it("hides overflowing actions immediately during a divider drag", () => {
-      useSidebarUiStore.setState({ footerCollapsed: true });
       render(<SidebarFooterNav remoteAccessStatus="off" />);
 
       // 350px fits everything, so there is no kebab yet.
       expect(screen.queryByRole("button", { name: "More" })).not.toBeInTheDocument();
 
       beginPanelResize();
-      rowWidth = 100;
+      rowWidth = 40;
       act(() => MockResizeObserver.notifyAll());
 
       // No debounce while dragging: the kebab appears in the same frame.
@@ -219,10 +168,9 @@ describe("SidebarFooterNav", () => {
     });
 
     it("debounces width changes when no drag is in progress", async () => {
-      useSidebarUiStore.setState({ footerCollapsed: true });
       render(<SidebarFooterNav remoteAccessStatus="off" />);
 
-      rowWidth = 100;
+      rowWidth = 40;
       act(() => MockResizeObserver.notifyAll());
 
       // Animation/window-resize path: the row keeps its settled layout until

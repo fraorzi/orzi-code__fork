@@ -56,6 +56,7 @@ function SidebarHeaderRow(props: {
   title: string;
   titleNode?: ReactNode | undefined;
   onTitleClick?: () => void;
+  titleHidden?: boolean;
   children?: ReactNode;
 }) {
   const { isCollapsed, closingOverlay } = useSidebar();
@@ -105,7 +106,7 @@ function SidebarHeaderRow(props: {
           <SidebarHeaderWordmark
             title={props.title}
             titleNode={props.titleNode}
-            hideWordmark={false}
+            hideWordmark={props.titleHidden === true}
           />
         )}
         {showHeaderActions ? props.children : null}
@@ -117,7 +118,7 @@ function SidebarHeaderRow(props: {
       >
         {isMac() && <div className={macosTrafficLightGutterClass} />}
         {showHeaderActions ? (
-          hideWordmark && props.onTitleClick ? (
+          hideWordmark && props.onTitleClick && !props.titleHidden ? (
             <Tooltip delay={150}>
               <Tooltip.Trigger>
                 <Button
@@ -138,7 +139,7 @@ function SidebarHeaderRow(props: {
               title={props.title}
               titleNode={props.titleNode}
               {...(props.onTitleClick != null ? { onTitleClick: props.onTitleClick } : {})}
-              hideWordmark={hideWordmark}
+              hideWordmark={hideWordmark || props.titleHidden === true}
             />
           )
         ) : null}
@@ -157,6 +158,7 @@ export function PageLayout(props: {
   title: string;
   titleNode?: ReactNode | undefined;
   onTitleClick?: () => void;
+  sidebarTitleHidden?: boolean;
   sidebarHeaderChildren?: ReactNode;
   contentHeaderChildren?: ReactNode;
   sidebar: ReactNode;
@@ -174,6 +176,7 @@ export function PageLayout(props: {
     title,
     titleNode,
     onTitleClick,
+    sidebarTitleHidden,
     sidebarHeaderChildren,
     contentHeaderChildren,
     sidebar,
@@ -193,6 +196,7 @@ export function PageLayout(props: {
       title={title}
       titleNode={titleNode}
       {...(onTitleClick != null ? { onTitleClick } : {})}
+      {...(sidebarTitleHidden != null ? { titleHidden: sidebarTitleHidden } : {})}
     >
       {sidebarHeaderChildren}
     </SidebarHeaderRow>

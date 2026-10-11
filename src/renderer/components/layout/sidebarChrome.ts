@@ -111,7 +111,7 @@ export function gitReviewSidebarListScrollClass() {
  * @see {sidebarColumnLayoutClass}
  */
 export const sidebarFooterNavClass =
-  "shrink-0 space-y-1 border-t border-[var(--hairline)] pt-2 pb-2";
+  "-mx-2 shrink-0 space-y-1 border-t border-[var(--separator)] px-2 py-1.5";
 
 /**
  * Collapsed icon rail: bottom block (pr keeps icons off the right edge in the narrow column).

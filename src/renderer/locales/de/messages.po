@@ -1052,7 +1052,7 @@ msgid "Add profile"
 msgstr "Profil hinzufügen"
 
 #: src/mobile/setupEmptyState.tsx
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
 msgid "Add project"
 msgstr "Projekt hinzufügen"
 
@@ -2094,8 +2094,8 @@ msgstr "Websites im isolierten In-App-Browser von Orzi Code ansehen, prüfen und
 #: src/renderer/components/plugins/pluginCopy.ts
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/BrowserSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/ProviderMcpServersSection.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -3048,8 +3048,8 @@ msgstr "Fehler einklappen"
 #~ msgstr "Experiment einklappen"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
-msgid "Collapse footer"
-msgstr "Fußzeile einklappen"
+#~ msgid "Collapse footer"
+#~ msgstr "Fußzeile einklappen"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabStrip.tsx
@@ -5269,8 +5269,8 @@ msgstr "Fehler erweitern"
 #~ msgstr "Experiment ausklappen"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
-msgid "Expand footer"
-msgstr "Fußzeile ausklappen"
+#~ msgid "Expand footer"
+#~ msgstr "Fußzeile ausklappen"
 
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabGroupMenu.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/parts/BrowserTabStrip.tsx
@@ -6234,8 +6234,8 @@ msgid "Hide all"
 msgstr "Alles ausblenden"
 
 #: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
-msgid "Hide browser"
-msgstr "Browser ausblenden"
+#~ msgid "Hide browser"
+#~ msgstr "Browser ausblenden"
 
 #: src/renderer/components/thread/ThreadView.tsx
 msgid "Hide canonical runtime item inspector"
@@ -6267,7 +6267,7 @@ msgstr "Laufzeit-Debug-Panel ausblenden"
 
 #: src/renderer/views/GitHubActionsView/GitHubActionsSidebar.tsx
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/GitReviewSidebar.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarFooterNav.tsx
+#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 #: src/renderer/views/ProjectSettingsOverlay/parts/SettingsSidebar.tsx
 #: src/renderer/views/PrReviewOverlay/parts/PrReviewSidebar.tsx
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
@@ -7050,7 +7050,7 @@ msgstr "Verknüpft"
 msgid "List"
 msgstr "Liste"
 
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarListOptionsMenu.tsx
 msgid "List options"
 msgstr "Listenoptionen"
 
@@ -8222,6 +8222,7 @@ msgstr "Neuer Tab in Gruppe"
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/hooks/useElementPicker.ts
 #: src/renderer/views/MainView/parts/RightPanel/parts/NotesPanel/NotesEditor.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/NewThreadButton.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarNewThreadRow.tsx
 #: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
 msgid "New thread"
@@ -8246,6 +8247,7 @@ msgstr "Neuer Thread von dieser Aufgabe"
 #. placeholder {0}: homeProject.name
 #. placeholder {0}: project.name
 #: src/renderer/views/HomeView.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectHeader.tsx
 msgid "New thread in {0}"
 msgstr "Neuer Thread in {0}"
 
@@ -9018,8 +9020,8 @@ msgid "Open as Panel"
 msgstr "Als Panel öffnen"
 
 #: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
-msgid "Open browser"
-msgstr "Browser öffnen"
+#~ msgid "Open browser"
+#~ msgstr "Browser öffnen"
 
 #: src/renderer/commands/registry.ts
 msgid "Open browser tab"
@@ -10158,6 +10160,7 @@ msgstr "Projektspezifische Überschreibungen zusätzlich zu den globalen Suchein
 #: src/renderer/components/mcp/McpProjectDestinationDropdown.tsx
 #: src/renderer/views/HomeView.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectFilter.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
 #: src/renderer/views/PullRequestsView/PullRequestsView.tsx
 #: src/renderer/views/SettingsOverlay/parts/WorkspacesSettings.tsx
 msgid "Projects"
@@ -13859,7 +13862,7 @@ msgstr "Thread-Info"
 msgid "Thread is already unloaded."
 msgstr "Thread ist bereits entladen."
 
-#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarListOptionsMenu.tsx
 msgid "Thread list options"
 msgstr "Optionen der Thread-Liste"
 

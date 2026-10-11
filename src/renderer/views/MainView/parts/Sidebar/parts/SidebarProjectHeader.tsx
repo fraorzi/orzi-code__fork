@@ -1,4 +1,5 @@
-import { ChevronRight, FolderOpen } from "lucide-react";
+import { ChevronRight, FolderOpen, Plus } from "lucide-react";
+import { openNewThread } from "@/renderer/actions/threadActions";
 import { useLingui } from "@lingui/react/macro";
 import type { Project } from "@/shared/contracts";
 import { TuxIcon } from "@/renderer/components/common/TuxIcon";
@@ -104,6 +105,25 @@ export function SidebarProjectHeader(props: {
         suffix={
           isUnavailable ? null : (
             <>
+              <div
+                role="button"
+                tabIndex={0}
+                aria-label={t`New thread in ${project.name}`}
+                className={`${panelButtonBaseClass} cursor-default text-muted/60 ${hiddenPanelButtonClass}`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  openNewThread(project.id);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openNewThread(project.id);
+                  }
+                }}
+              >
+                <Plus className="size-3.5" />
+              </div>
               <SidebarPanelDragButton
                 panel="files"
                 projectId={project.id}
