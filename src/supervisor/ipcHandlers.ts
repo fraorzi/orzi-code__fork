@@ -118,6 +118,9 @@ export function createSupervisorIpcHandlers(runtime: SupervisorRuntime): Supervi
       return { events: await readWorkflowAgentChatEvents(payload) };
     },
     getFileCheckpointDiff: (payload) => checkpoints.diff(payload),
+    getPromptChangesStatus: (payload) => checkpoints.promptStatus(payload),
+    revertPromptChanges: (payload) => checkpoints.revertPrompt(payload),
+    reapplyPromptChanges: (payload) => checkpoints.reapplyPrompt(payload),
     createFileCheckpoint: async (payload) => ({
       checkpoint: await checkpoints.create(payload),
     }),

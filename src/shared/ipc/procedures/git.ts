@@ -42,8 +42,10 @@ import {
   gitWatchWorktreesPayloadSchema,
   gitWorktreeStatusBatchPayloadSchema,
   listFileCheckpointsPayloadSchema,
+  promptChangesPayloadSchema,
   relocateProjectPayloadSchema,
   restoreFileCheckpointPayloadSchema,
+  revertPromptChangesPayloadSchema,
 } from "../../contracts";
 import type {
   CreateFileCheckpointPayload,
@@ -112,9 +114,12 @@ import type {
   GitWorktreeStatusBatchResult,
   ListFileCheckpointsPayload,
   ListFileCheckpointsResult,
+  PromptChangesPayload,
+  PromptChangesStatusResult,
   RelocateProjectPayload,
   RelocateProjectResult,
   RestoreFileCheckpointPayload,
+  RevertPromptChangesPayload,
 } from "../../contracts";
 import { definePayloadProcedure } from "../core";
 
@@ -124,6 +129,21 @@ export const gitProcedures = {
     GitDiffResult,
     "supervisor"
   >("getFileCheckpointDiff", "supervisor", getFileCheckpointDiffPayloadSchema),
+  getPromptChangesStatus: definePayloadProcedure<
+    PromptChangesPayload,
+    PromptChangesStatusResult,
+    "supervisor"
+  >("getPromptChangesStatus", "supervisor", promptChangesPayloadSchema),
+  revertPromptChanges: definePayloadProcedure<
+    RevertPromptChangesPayload,
+    PromptChangesStatusResult,
+    "supervisor"
+  >("revertPromptChanges", "supervisor", revertPromptChangesPayloadSchema),
+  reapplyPromptChanges: definePayloadProcedure<
+    RevertPromptChangesPayload,
+    PromptChangesStatusResult,
+    "supervisor"
+  >("reapplyPromptChanges", "supervisor", revertPromptChangesPayloadSchema),
   createFileCheckpoint: definePayloadProcedure<
     CreateFileCheckpointPayload,
     CreateFileCheckpointResult,

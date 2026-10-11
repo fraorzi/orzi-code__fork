@@ -9,6 +9,10 @@ import type {
   FileCheckpointRecord,
   FileCheckpointTurn,
   ProjectLocation,
+  PromptChangesPayload,
+  PromptChangesStatusResult,
+  PromptFileChangeState,
+  RevertPromptChangesPayload,
 } from "@/shared/contracts";
 import type { WslBridgeClient } from "../wsl/bridge/client";
 import { execGit, removeWslPathViaBridge } from "./exec";
@@ -133,6 +137,75 @@ export class GitCheckpointService {
         ...(file ? [...(file.oldPath ? [file.oldPath] : []), file.path] : []),
       ]),
     };
+  }
+
+  /**
+   * Per-file state of one prompt's changes in the working tree: `applied` while
+   * the file still matches what the prompt produced, `reverted` once it matches
+   * the pre-prompt snapshot again, and `conflict` when later edits changed it.
+   */
+  async promptStatus(input: PromptChangesPayload): Promise<PromptChangesStatusResult> {
+    const turn = await this.readPromptTurn(input);
+    const files: PromptChangesStatusResult["files"] = [];
+    for (const file of turn.changedFiles) {
+      files.push({
+        path: file.path,
+        state: await fileChangeState(input.projectLocation, turn, file),
+      });
+    }
+    return { files };
+  }
+
+  /** Undo one prompt's changes (optionally only some files) without touching the conversation. */
+  async revertPrompt(input: RevertPromptChangesPayload): Promise<PromptChangesStatusResult> {
+    return this.movePrompt(input, "applied");
+  }
+
+  /** Put back changes that `revertPrompt` removed. */
+  async reapplyPrompt(input: RevertPromptChangesPayload): Promise<PromptChangesStatusResult> {
+    return this.movePrompt(input, "reverted");
+  }
+
+  private async movePrompt(
+    input: RevertPromptChangesPayload,
+    from: Exclude<PromptFileChangeState, "conflict">,
+  ): Promise<PromptChangesStatusResult> {
+    const turn = await this.readPromptTurn(input);
+    const status = await this.promptStatus(input);
+    const requested = input.paths ? new Set(input.paths) : undefined;
+    const targets = status.files.filter((file) => !requested || requested.has(file.path));
+    if (requested && targets.length !== requested.size) {
+      throw new Error("File is not part of this prompt.");
+    }
+    const conflicts = targets.filter((file) => file.state === "conflict");
+    if (conflicts.length > 0) {
+      throw new Error(
+        `Later changes touched ${conflicts.map((file) => file.path).join(", ")} after this prompt.`,
+      );
+    }
+    for (const target of targets) {
+      if (target.state !== from) continue;
+      const file = turn.changedFiles.find((entry) => entry.path === target.path)!;
+      if (from === "applied") {
+        if (file.oldPath)
+          await restoreWorktreePath(input.projectLocation, turn.baseRef, file.oldPath);
+        await restoreWorktreePath(input.projectLocation, turn.baseRef, file.path);
+      } else {
+        await restoreWorktreePath(input.projectLocation, turn.ref, file.path);
+        if (file.oldPath) await restoreWorktreePath(input.projectLocation, turn.ref, file.oldPath);
+      }
+    }
+    return this.promptStatus(input);
+  }
+
+  private async readPromptTurn(input: {
+    threadId: string;
+    checkpointItemId: string;
+    projectLocation: ProjectLocation;
+  }): Promise<FileCheckpointTurn> {
+    const checkpoint = await this.readCheckpoint(input.projectLocation, input);
+    if (!("baseRef" in checkpoint)) throw new Error("No completed prompt snapshot is available.");
+    return checkpoint;
   }
 
   async list(input: {
@@ -271,6 +344,80 @@ export class GitCheckpointService {
     } catch {
       return null;
     }
+  }
+}
+
+async function fileChangeState(
+  projectLocation: ProjectLocation,
+  turn: FileCheckpointTurn,
+  file: FileCheckpointChangedFile,
+): Promise<PromptFileChangeState> {
+  const current = await worktreeBlob(projectLocation, file.path);
+  const after = await snapshotBlob(projectLocation, turn.ref, file.path);
+  if (current === after) return "applied";
+  const before = await snapshotBlob(projectLocation, turn.baseRef, file.oldPath ?? file.path);
+  const beforeAtPath = file.oldPath ? null : before;
+  return current === beforeAtPath ? "reverted" : "conflict";
+}
+
+/** Blob id of a working-tree file (clean filters applied), or null when it is absent. */
+async function worktreeBlob(
+  projectLocation: ProjectLocation,
+  path: string,
+): Promise<string | null> {
+  const output = await execGit(projectLocation, ["hash-object", "--", path], {
+    acceptedExitCodes: [128],
+  });
+  return output.trim() || null;
+}
+
+/** Blob id of `path` in a checkpoint snapshot, or null when the snapshot has no such file. */
+async function snapshotBlob(
+  projectLocation: ProjectLocation,
+  ref: string,
+  path: string,
+): Promise<string | null> {
+  const output = await execGit(
+    projectLocation,
+    ["rev-parse", "--verify", "--quiet", `${ref}:${path}`],
+    { acceptedExitCodes: [1, 128] },
+  );
+  return output.trim() || null;
+}
+
+/**
+ * Make one working-tree path match a snapshot, leaving the index alone. A path
+ * the snapshot lacks is removed: tracked paths through `restore`, files the
+ * prompt created (untracked) through `clean`.
+ */
+async function restoreWorktreePath(
+  projectLocation: ProjectLocation,
+  ref: string,
+  path: string,
+): Promise<void> {
+  if ((await snapshotBlob(projectLocation, ref, path)) !== null) {
+    await execGit(projectLocation, [
+      "--literal-pathspecs",
+      "restore",
+      `--source=${ref}`,
+      "--worktree",
+      "--",
+      path,
+    ]);
+    return;
+  }
+  const tracked = await execGit(projectLocation, ["--literal-pathspecs", "ls-files", "--", path]);
+  if (tracked.trim()) {
+    await execGit(projectLocation, [
+      "--literal-pathspecs",
+      "restore",
+      `--source=${ref}`,
+      "--worktree",
+      "--",
+      path,
+    ]);
+  } else {
+    await execGit(projectLocation, ["--literal-pathspecs", "clean", "-f", "-q", "--", path]);
   }
 }
 

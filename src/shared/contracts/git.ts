@@ -119,6 +119,29 @@ export const getFileCheckpointDiffPayloadSchema = z.object({
 });
 export type GetFileCheckpointDiffPayload = z.infer<typeof getFileCheckpointDiffPayloadSchema>;
 
+/**
+ * Where one prompt's change to a file stands in the working tree: still
+ * `applied`, already `reverted`, or `conflict` when later edits overlap it.
+ */
+export type PromptFileChangeState = "applied" | "reverted" | "conflict";
+
+export const promptChangesPayloadSchema = z.object({
+  threadId: z.string().min(1),
+  checkpointItemId: z.string().min(1),
+  projectLocation: projectLocationSchema,
+});
+export type PromptChangesPayload = z.infer<typeof promptChangesPayloadSchema>;
+
+export interface PromptChangesStatusResult {
+  files: { path: string; state: PromptFileChangeState }[];
+}
+
+export const revertPromptChangesPayloadSchema = promptChangesPayloadSchema.extend({
+  /** Limit to these changed files; all of the prompt's files when omitted. */
+  paths: z.array(z.string().min(1)).optional(),
+});
+export type RevertPromptChangesPayload = z.infer<typeof revertPromptChangesPayloadSchema>;
+
 export const listFileCheckpointsPayloadSchema = z.object({
   threadId: z.string().min(1),
   projectLocation: projectLocationSchema,
