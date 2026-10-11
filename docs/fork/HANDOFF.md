@@ -24,7 +24,9 @@ Użytkownik polecił kontynuować, poprosił o listę prac przed pełną gotowo�
 
 Wdrożono zarządzane kompletne instalacje npm, pin i rollback dla deklarującego tę możliwość Codex na macOS/Linux. Zmiana wersji jest blokowana przez istniejący koordynator aktywnych sesji i launchów. GUI/PTY oraz wykrywanie używają wspólnej ścieżki. Test realnych pakietów 0.160.1 i 0.160.0, rollback i ponowny start tego samego profilu QA przeszły. Naprawiono ujawnioną kolejność inicjalizacji oraz cache po przerwanej aktywacji. Nie mylić tego z obsługą wszystkich dostawców, SDK ani WSL/Windows. Szczegóły i wersje magazynów są na początku [stanu implementacji](implementation.md).
 
-`agy models` ponownie sprawdzono 2026-10-11. Nadal wymaga logowania. Produkcyjnego konta/CLI ani profilu użytkownika nie zmieniano. Zainstalowany pakiet nadal jest starszy. Kontynuować deklaracje i weryfikację zarządzanych wersji pozostałych dostawców, testy kont oraz końcowy pakiet desktopu. Publikacja podpisanego wydania pozostaje osobną decyzją.
+Nowy lokalny DMG macOS ARM64 z kodem `6a18c3f3` jest w `.tmp/orzi-ready-20261011/Orzi-Code-1.8.1-arm64.dmg`. Rzeczywisty pakiet przeszedł start bez dev servera, rozmowę Codex 6.1 Sol na ChatGPT Plus z obrazem, follow-up oraz wznowienie tej samej sesji po restarcie. Pin 0.160.1, ulubiony model i historia przetrwały restart. Procesy QA są zamknięte. Szczegóły podpisu ad hoc, helpera i dowodów są na początku [stanu implementacji](implementation.md). Nie podmieniano `/Applications/Poracode Personal.app` ani jego profilu. Przed podmianą zakończyć aktywne zadania; nie uruchamiać dwóch pakietów równocześnie na profilu produkcyjnym.
+
+`agy models` ponownie sprawdzono 2026-10-11. Nadal wymaga logowania. Produkcyjnego konta/CLI ani profilu użytkownika nie zmieniano. Kontynuować deklaracje i weryfikację zarządzanych wersji pozostałych dostawców, testy kont oraz instalację nowego pakietu desktopu. Publikacja podpisanego wydania pozostaje osobną decyzją.
 
 ## Aktualizacja z 2026-10-09
 

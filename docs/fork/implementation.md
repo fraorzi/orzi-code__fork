@@ -2,6 +2,16 @@
 
 Data: 2026-10-11. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Lokalny pakiet Orzi Code - 2026-10-11
+
+- Zbudowano kod `6a18c3f3` i DMG macOS ARM64: `.tmp/orzi-ready-20261011/Orzi-Code-1.8.1-arm64.dmg`. Nie podmieniano starszej aplikacji w `/Applications`, nie publikowano wydania ani artefaktu na GitHub. Wersja lokalnego pakietu nadal wynosi 1.8.1; to nie jest nowe stabilne wydanie.
+- Rzeczywisty bundle uruchomiono przez Launch Services w tle bez dev servera, z własnym `PORACODE_BASE_DIR`, userData i testowym repozytorium. Potwierdzono nazwę Orzi Code, polski renderer, IPC bazy i kontrolki wersji Codexa. Realny test zachowuje prawdziwy `HOME` wyłącznie dla istniejącego logowania dostawcy, bez kopiowania poświadczeń.
+- Codex 6.1 Sol na ChatGPT Plus odpowiedział z kompletnej prywatnej instalacji CLI 0.160.1, przypiętej przez IPC pakietu. Obraz wklejony do composera miał większy, zdekodowany podgląd. Asystent prawidłowo rozpoznał zielone tło i czerwony kształt. Follow-up oraz odpowiedź po pełnym restarcie przeszły. Trzy pary user/assistant pozostały bez duplikatów, z tą samą tożsamością sesji. Ulubiony model i pin przetrwały restart.
+- Zmiana CLI przy otwartej sesji została odrzucona. Odczyt rzeczywistych procesów potwierdził uruchomienie zarządzanej ścieżki. Po zamknięciu testowego wątku powrót do systemowego CLI przeszedł. Zamknięto wszystkie procesy należące do obu uruchomień QA; globalnego CLI i historii użytkownika nie zmieniano.
+- Kontrola `hdiutil verify`, montowanie DMG tylko do odczytu, porównanie SHA-256 `app.asar` i `codesign --verify --deep --strict` przeszły. SHA-256 DMG: `8a0b0b5bc81ce45a1bc5e3813d5b806cec8d23973de132e17c19c98740906ffe`. Podpis jest ad hoc, bez Developer ID/notarizacji. Zawarty `app-update.yml` wskazuje własny feed forka. DMG bez updater ZIP nie jest kompletem do automatycznej aktualizacji.
+- Build JS/renderer i pakowanie przeszły. Helper computer-use jest zachowanym, niezmienionym artefaktem macOS, zweryfikowanym przy pakowaniu. Nadal brak Rust, więc nie deklarujemy nowego buildu helpera ze źródeł.
+- Dowody: `.tmp/orzi-package-qa-20261011/native-report.json`, `native-{attachment-draft,first-turn,follow-up,resume,version-controls}.png`, `restart-state.json` i raporty zamknięcia. Podczas obserwowanych czynności live wystąpiło 0 błędów renderera; pierwszy load przed podpięciem obserwacji nie jest objęty tym licznikiem. To odbiór pakietu dla obrazu/rozmowy/wznowienia Codexa, nie pełna macierz wszystkich narzędzi i dostawców. Google images, Grok, własny OAuth Figma, instalacja produkcyjna i podpisane aktualizacje pozostają osobnymi bramkami.
+
 ## Zarządzane wersje Codex - 2026-10-11
 
 - Ustawienia deklarującego tę możliwość agenta zawierają instalację dokładnej wersji CLI, pin, przywrócenie poprzedniej wersji i powrót do systemowej instalacji. Początkowym dostawcą jest Codex na macOS/Linux. Profile tej samej instalacji współdzielą pakiet. To nie jest pin modelu ani biblioteki SDK; nie deklarujemy obsługi pozostałych dystrybucji lub WSL/Windows.
