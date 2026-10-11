@@ -19,6 +19,7 @@ export function ModelMenuRow({
   modelFastEnabled,
   toggleFavorite,
   onPointerMove,
+  variant = "list",
 }: Pick<
   ModelListProps,
   "domIdPrefix" | "modelRowHeight" | "onSelect" | "modelFastEnabled" | "toggleFavorite"
@@ -27,8 +28,61 @@ export function ModelMenuRow({
   isSelected: boolean;
   isActive: boolean;
   onPointerMove?: PointerEventHandler<HTMLDivElement>;
+  /** `column`: favorites grid row with one context value and a hover-only star. */
+  variant?: "list" | "column";
 }) {
   const { t } = useLingui();
+  if (variant === "column") {
+    const { name, hint } = splitModelLabel(item.label);
+    const details = [hint, item.subProviderLabel, item.contextDescription]
+      .filter(Boolean)
+      .join(" · ");
+    const meta = item.contextDescription?.split(/\s*[/·]\s*/)[0];
+    return (
+      <div
+        id={`${domIdPrefix}-${item.id}`}
+        role="option"
+        aria-selected={isSelected}
+        data-active={isActive ? "true" : undefined}
+        title={details ? `${name} · ${details}` : name}
+        className="poracode-menu-item group mx-1.5 flex cursor-default items-center gap-1.5 text-foreground"
+        style={{ height: modelRowHeight }}
+        onPointerMove={onPointerMove}
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={() => onSelect(item.id)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onSelect(item.id);
+          }
+        }}
+        tabIndex={-1}
+      >
+        <Check
+          className={`size-3 shrink-0 transition-opacity ${isSelected ? "opacity-100" : "opacity-0"}`}
+        />
+        <span className="min-w-0 flex-1 truncate">{name}</span>
+        {meta ? (
+          <span className="max-w-[40%] shrink truncate font-mono text-[10.5px] text-muted/60 group-hover:hidden">
+            {meta}
+          </span>
+        ) : null}
+        <button
+          type="button"
+          aria-label={item.isFavorite ? t`Remove from favorites` : t`Add to favorites`}
+          className="hidden size-5 shrink-0 items-center justify-center rounded text-muted hover:text-foreground group-hover:flex"
+          onPointerDown={(event) => event.stopPropagation()}
+          onPointerUp={(event) => event.stopPropagation()}
+          onClick={(event) => {
+            event.stopPropagation();
+            toggleFavorite(item.providerKind, item.modelId, item.presentationMode);
+          }}
+        >
+          <Star className="size-3.5" fill={item.isFavorite ? "currentColor" : "none"} />
+        </button>
+      </div>
+    );
+  }
   return (
     <div
       id={`${domIdPrefix}-${item.id}`}

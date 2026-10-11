@@ -1,6 +1,6 @@
 import { startTransition, useDeferredValue, useEffect, useId, useRef, useState } from "react";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { ArrowLeft, ChevronDown, Plus, Search } from "lucide-react";
+import { ArrowLeft, ChevronDown, Search } from "lucide-react";
 import { Tooltip } from "@heroui/react";
 import { ProviderIcon } from "@/renderer/components/providers/ProviderIcon";
 import { ResponsiveMenuSurface, useResponsiveMenu } from "../ResponsiveMenuSurface";
@@ -20,12 +20,13 @@ import { providerMenuKey } from "./parts/providerIdentity";
 import type { ProviderModelItem } from "./parts/types";
 import { WindowedProviderModelList, type ModelListHandle } from "./parts/WindowedProviderModelList";
 import { FavoriteModelColumns } from "./parts/FavoriteModelColumns";
+import { ModelMenuFooter, type ModelMenuSettings } from "./parts/ModelMenuFooter";
 import { splitModelLabel } from "./parts/splitModelLabel";
 
 const MODEL_MENU_ROW_HEIGHT = 28;
 const MODEL_MENU_ROW_HEIGHT_MOBILE = 44;
 
-export type { ProviderModelMenuProvider };
+export type { ModelMenuSettings, ProviderModelMenuProvider };
 
 export interface ProviderModelMenuProps {
   /** Providers to surface (typically all installed agents for draft, locked-only otherwise). */
@@ -45,6 +46,8 @@ export interface ProviderModelMenuProps {
   forceHideLabel?: boolean;
   collapseTier?: number;
   openSignal?: number;
+  /** Effort and Fast for the current model, shown in the menu footer. */
+  settings?: ModelMenuSettings;
   onChange: (next: {
     agentKind: string;
     model: string;
@@ -97,6 +100,7 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
     forceHideLabel = false,
     collapseTier,
     openSignal,
+    settings,
     onChange,
     onOpenChange,
   } = props;
@@ -192,15 +196,21 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
       currentAgentKind: deferredAgentKind,
       currentModel: deferredModel,
       favoriteStateRefs: activeFavorites,
-      favorites: catalogOpen ? [] : activeFavorites,
-      favoritesOnly: !catalogOpen,
+      favorites: catalogOpen || searchValue.trim() ? [] : activeFavorites,
+      favoritesOnly: !catalogOpen && !searchValue.trim(),
       hiddenModels,
       providerOrder,
     });
   }
 
   const items = isOpen ? buildItemsForSearch(deferredSearch) : [];
-  const FavoriteOrCatalogList = catalogOpen ? WindowedProviderModelList : FavoriteModelColumns;
+  // Typing searches every model, not just favorites; the catalog (opened by
+  // "Add model") is the same list where activating a row favorites it.
+  const showFullList = catalogOpen || deferredSearch.trim().length > 0;
+  const FavoriteOrCatalogList = showFullList ? WindowedProviderModelList : FavoriteModelColumns;
+  const currentEffortLabel = settings?.efforts.find(
+    (effort) => effort.id === settings.effortValue,
+  )?.label;
 
   // Highlight the current model wherever it appears (provider section, favorites, recents).
   const selectedKeys = new Set<string>([
@@ -285,6 +295,9 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
       >
         <span className="max-w-full truncate leading-tight">
           {currentLabelParts.name || t`Select model`}
+          {currentEffortLabel ? (
+            <span className="ml-1 font-normal text-muted">{currentEffortLabel}</span>
+          ) : null}
         </span>
         {currentSubProvider ? (
           <span className="max-w-full truncate text-[10px] font-medium leading-tight text-muted/70">
@@ -305,8 +318,8 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
 
   const renderContent = ({ expanded }: { readonly expanded: boolean }) => (
     <>
-      <div className="flex items-center justify-between gap-2 border-b border-border px-2 py-1.5">
-        {catalogOpen ? (
+      {catalogOpen ? (
+        <div className="flex items-center gap-2 border-b border-border px-2 py-1.5">
           <Button
             variant="ghost"
             size="sm"
@@ -318,31 +331,14 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
             <ArrowLeft className="size-3.5" />
             <Trans>Favorites</Trans>
           </Button>
-        ) : (
-          <span className="px-1 text-xs text-muted">
-            <Trans>Favorites</Trans>
-          </span>
-        )}
-        {!catalogOpen ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            onPress={() => {
-              setCatalogOpen(true);
-              setSearch("");
-            }}
-          >
-            <Plus className="size-3.5" />
-            <Trans>Add to favorites</Trans>
-          </Button>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
       <div className="poracode-model-menu-search flex items-center gap-2 border-b border-border px-3 py-2">
         <Search className="size-3.5 shrink-0 text-muted" />
         <input
           ref={searchRef}
           className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted outline-none"
-          placeholder={t`Search models...`}
+          placeholder={t`Search models`}
           role="combobox"
           aria-autocomplete="list"
           aria-controls={`${listboxDomIdPrefix}-listbox`}
@@ -410,6 +406,15 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
           onSelect={handleSelect}
         />
       )}
+      {catalogOpen ? null : (
+        <ModelMenuFooter
+          settings={settings}
+          onAddModel={() => {
+            setCatalogOpen(true);
+            setSearch("");
+          }}
+        />
+      )}
     </>
   );
 
@@ -431,7 +436,7 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
         )
       }
       placement="top start"
-      contentClassName={catalogOpen ? "w-96 p-0" : "w-auto max-w-[calc(100vw-2rem)] p-0"}
+      contentClassName={showFullList ? "w-96 p-0" : "w-auto max-w-[calc(100vw-2rem)] p-0"}
       dialogClassName="flex max-h-[28rem] flex-col overflow-hidden !p-0"
     >
       {renderContent}

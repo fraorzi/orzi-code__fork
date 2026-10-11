@@ -997,7 +997,7 @@ describe("ThreadSlashCommands", () => {
     fireEvent.keyDown(editor, { key: "Enter" });
     fireEvent.keyDown(editor, { key: "Enter" });
 
-    expect(await screen.findByPlaceholderText("Search models...")).toBeInTheDocument();
+    expect(await screen.findByPlaceholderText("Search models")).toBeInTheDocument();
     expect(onConfigChange).not.toHaveBeenCalled();
   });
 

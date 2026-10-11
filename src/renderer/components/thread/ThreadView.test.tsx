@@ -1159,7 +1159,6 @@ describe("ThreadView", () => {
     expect(screen.getAllByText("5.4").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Medium").length).toBeGreaterThan(0);
     expect(screen.queryByText("Normal")).not.toBeInTheDocument();
-    expect(screen.getAllByLabelText("Fast").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Work").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Default permissions").length).toBeGreaterThan(0);
     expect(screen.queryByLabelText("Collapse composer")).not.toBeInTheDocument();

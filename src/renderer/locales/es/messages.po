@@ -1031,6 +1031,7 @@ msgstr "Añadir carpeta"
 msgid "Add MCP server"
 msgstr "Añadir servidor MCP"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuFooter.tsx
 #: src/renderer/views/SettingsOverlay/parts/ClaudeProfileSettings.tsx
 msgid "Add model"
 msgstr "Añadir modelo"
@@ -1102,7 +1103,6 @@ msgid "Add to composer"
 msgstr "Agregar al composer"
 
 #: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Add to favorites"
 msgstr "Agregar a favoritos"
 
@@ -4931,9 +4931,9 @@ msgstr "Pestañas del editor"
 msgid "Edits the paired desktop and syncs back to it."
 msgstr "Edita el escritorio emparejado y vuelve a sincronizar con él."
 
-#: src/renderer/views/RemoteProjectModal/RemoteProjectModal.tsx
-#~ msgid "Effort"
-#~ msgstr "Esfuerzo"
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuFooter.tsx
+msgid "Effort"
+msgstr "Esfuerzo"
 
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
 msgid "Effort and context"
@@ -5512,9 +5512,9 @@ msgstr "Modelos alternativos"
 msgid "Fallbacks run only if a worker fails to start its task."
 msgstr "Los modelos alternativos se ejecutan solo si un ejecutor no puede iniciar su tarea."
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuFooter.tsx
 #: src/renderer/components/experiment/ExperimentDraftTargets.tsx
 #: src/renderer/components/providers/modelDisplay.ts
-#: src/renderer/components/thread/buildModelPickerControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRankedRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
@@ -5522,6 +5522,7 @@ msgstr "Los modelos alternativos se ejecutan solo si un ejecutor no puede inicia
 msgid "Fast"
 msgstr "Rápido"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuFooter.tsx
 #: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/ProfileOverlay/parts/ActivityInsights.tsx
 msgid "Fast mode"
@@ -11806,12 +11807,12 @@ msgstr "Buscar servidores MCP"
 msgid "Search MCP servers..."
 msgstr "Buscar servidores MCP..."
 
+#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Search models"
 msgstr "Buscar modelos"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Search models..."

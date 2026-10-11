@@ -186,7 +186,7 @@ describe("ProviderModelMenu", () => {
     const trigger = screen.getByRole("button", { name: "Select model" });
     fireEvent.click(trigger);
     expect(screen.queryByRole("option")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
     fireEvent.click(within(screen.getByRole("listbox", { name: "Models" })).getByText("Model 2"));
     expect(useSharedSettings.getState().favoriteModels).toContainEqual({
       agentKind: "codex",
@@ -368,7 +368,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(listbox).toHaveClass("no-scrollbar");
@@ -394,7 +394,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     const fixedWidthPopover = listbox.closest(".w-96");
@@ -426,7 +426,7 @@ describe("ProviderModelMenu", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
 
-    const search = await screen.findByPlaceholderText("Search models...");
+    const search = await screen.findByPlaceholderText("Search models");
     const listbox = screen.getByRole("listbox", { name: "Favorites" });
     await waitFor(() => expect(search).toHaveFocus());
 
@@ -442,17 +442,18 @@ describe("ProviderModelMenu", () => {
     expect(search).toHaveFocus();
     expect(listbox).toHaveAttribute("aria-activedescendant", expect.stringContaining("model-1"));
 
+    // Typing searches every model, so results move to the full list.
     fireEvent.change(search, { target: { value: "Model 3" } });
-    await waitFor(() => expect(within(listbox).getAllByRole("option")).toHaveLength(1));
+    await waitFor(() =>
+      expect(within(screen.getByRole("listbox")).getAllByRole("option")).toHaveLength(1),
+    );
     expect(search).toHaveFocus();
 
     fireEvent.keyDown(search, { key: "Enter" });
 
-    expect(onChange).toHaveBeenCalledWith({
-      agentKind: "codex",
-      model: "model-3",
-      presentationMode: "terminal",
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ agentKind: "codex", model: "model-3" }),
+    );
   });
 
   it("selects from the current query when Enter follows typing immediately", async () => {
@@ -474,7 +475,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    const search = await screen.findByPlaceholderText("Search models...");
+    const search = await screen.findByPlaceholderText("Search models");
 
     fireEvent.change(search, { target: { value: "No match" } });
     await screen.findByText("No models found");
@@ -483,11 +484,9 @@ describe("ProviderModelMenu", () => {
     fireEvent.change(search, { target: { value: "Model 3" } });
     fireEvent.keyDown(search, { key: "Enter" });
 
-    expect(onChange).toHaveBeenCalledWith({
-      agentKind: "codex",
-      model: "model-3",
-      presentationMode: "terminal",
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ agentKind: "codex", model: "model-3" }),
+    );
   });
 
   it("renders normalized model rate descriptions as muted row hints", async () => {
@@ -510,7 +509,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     expect(await screen.findByRole("option", { name: /Opus/u })).toHaveTextContent("· 2x");
   });
@@ -537,7 +536,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(listbox).getByRole("img", { name: "Supports Fast mode" })).toBeInTheDocument();
@@ -562,7 +561,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(listbox).getByRole("img", { name: "Fast mode" })).toBeInTheDocument();
@@ -588,7 +587,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     expect(await screen.findByRole("option", { name: /Opus/u })).toHaveTextContent("Opus");
     expect(screen.getByRole("option", { name: /Opus/u })).not.toHaveTextContent("Factory");
@@ -615,7 +614,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
     const row = await screen.findByRole("option", { name: /Opus/u });
     expect(row).toHaveTextContent("· 2x");
     expect(screen.queryByText("2x Factory token rate")).not.toBeInTheDocument();
@@ -635,7 +634,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     fireEvent.scroll(listbox, { target: { scrollTop: 220 * 28 } });
@@ -657,7 +656,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     fireEvent.scroll(listbox, { target: { scrollTop: 32 + 3 * 28 - 1 } });
@@ -718,7 +717,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     fireEvent.scroll(listbox, { target: { scrollTop: 8 * 28 } });
@@ -746,8 +745,8 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
-    fireEvent.change(await screen.findByPlaceholderText("Search models..."), {
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
+    fireEvent.change(await screen.findByPlaceholderText("Search models"), {
       target: { value: "model 500" },
     });
 
@@ -766,7 +765,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(listbox).toHaveClass("no-scrollbar");
@@ -815,7 +814,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     fireEvent.scroll(listbox, { target: { scrollTop: 500 * 28 } });
@@ -882,7 +881,7 @@ describe("ProviderModelMenu", () => {
     expect(within(trigger).getByText("GPT-5.5")).toBeInTheDocument();
 
     fireEvent.click(trigger);
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(listbox).getByText("GPT-5.5")).toBeInTheDocument();
@@ -943,7 +942,7 @@ describe("ProviderModelMenu", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Select model" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(listbox).getByText("Composer 2")).toBeInTheDocument();
@@ -964,7 +963,7 @@ describe("ProviderModelMenu", () => {
     expect(within(trigger).getByText("Codex 5.1 Max")).toBeInTheDocument();
 
     fireEvent.click(trigger);
-    fireEvent.click(screen.getByRole("button", { name: "Add to favorites" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add model" }));
 
     const listbox = await screen.findByRole("listbox", { name: "Models" });
     expect(within(listbox).getByText("Codex 5.1 Max")).toBeInTheDocument();

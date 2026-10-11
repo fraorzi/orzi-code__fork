@@ -221,17 +221,20 @@ describe("buildModelPickerControls fast toggle", () => {
       ...baseInput,
       capabilities: { ...capabilities, fastDisabledReason: "no fast for you" } as AgentCapability,
     });
-    const fastToggle = controls.find((c) => c.kind === "toggle" && c.label === "Fast");
+    const modelControl = controls.find((c) => c.kind === "provider-model");
     expect(
-      fastToggle && "disabledReason" in fastToggle ? fastToggle.disabledReason : undefined,
+      modelControl?.kind === "provider-model" ? modelControl.settings?.fast?.disabledReason : null,
     ).toBe("no fast for you");
   });
 
   it("leaves the Fast toggle enabled when fast mode is available", () => {
     const controls = buildModelPickerControls({ ...baseInput, capabilities });
-    const fastToggle = controls.find((c) => c.kind === "toggle" && c.label === "Fast");
+    const modelControl = controls.find((c) => c.kind === "provider-model");
+    expect(modelControl?.kind === "provider-model" ? modelControl.settings?.fast : null).toEqual(
+      expect.objectContaining({ isSelected: expect.any(Boolean) }),
+    );
     expect(
-      fastToggle && "disabledReason" in fastToggle ? fastToggle.disabledReason : undefined,
+      modelControl?.kind === "provider-model" ? modelControl.settings?.fast?.disabledReason : null,
     ).toBe(undefined);
   });
 });

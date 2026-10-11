@@ -113,6 +113,7 @@ vi.mock("@/renderer/components/common", () => ({
 vi.mock("@/renderer/components/providers/ProviderIcon", () => ({
   ProviderIcon: (props: { fallbackLabel?: string }) => <span>{props.fallbackLabel}</span>,
   registerProviderIcon: vi.fn<() => void>(),
+  registerProviderBrandColor: vi.fn<() => void>(),
 }));
 
 import { AcpRegistrySettings } from "./AcpRegistrySettings";

@@ -9,6 +9,7 @@ import { EffortContextMenu } from "@/renderer/components/common/EffortContextMen
 import { OptionMenu } from "@/renderer/components/common/OptionMenu";
 import { PixelLoader } from "@/renderer/components/common/PixelLoader";
 import {
+  type ModelMenuSettings,
   ProviderModelMenu,
   type ProviderModelMenuProvider,
 } from "@/renderer/components/common/ProviderModelMenu/ProviderModelMenu";
@@ -88,6 +89,7 @@ export type ComposerControl =
       isDisabled?: boolean;
       hideLabelOnWrap?: boolean;
       openSignal?: number;
+      settings?: ModelMenuSettings;
       onChange: (next: {
         agentKind: string;
         model: string;
@@ -448,6 +450,7 @@ export function ThreadComposer(props: {
           {...(control.presentationMode ? { presentationMode: control.presentationMode } : {})}
           {...(control.isDisabled !== undefined ? { isDisabled: control.isDisabled } : {})}
           {...(control.openSignal !== undefined ? { openSignal: control.openSignal } : {})}
+          {...(control.settings ? { settings: control.settings } : {})}
           {...(hideOnWrap || shouldHideLabel
             ? {
                 hideLabelOnWrap: true,

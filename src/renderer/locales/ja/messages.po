@@ -1030,6 +1030,7 @@ msgstr "フォルダーを追加"
 msgid "Add MCP server"
 msgstr "MCPサーバーを追加"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuFooter.tsx
 #: src/renderer/views/SettingsOverlay/parts/ClaudeProfileSettings.tsx
 msgid "Add model"
 msgstr "モデルを追加"
@@ -1101,7 +1102,6 @@ msgid "Add to composer"
 msgstr "コンポーザーに追加"
 
 #: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 msgid "Add to favorites"
 msgstr "お気に入りに追加"
 
@@ -4930,9 +4930,9 @@ msgstr "エディターのタブ"
 msgid "Edits the paired desktop and syncs back to it."
 msgstr "ペアリング済みデスクトップを編集し、そこへ同期します。"
 
-#: src/renderer/views/RemoteProjectModal/RemoteProjectModal.tsx
-#~ msgid "Effort"
-#~ msgstr "エフォート"
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuFooter.tsx
+msgid "Effort"
+msgstr "エフォート"
 
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
 msgid "Effort and context"
@@ -5511,9 +5511,9 @@ msgstr "代替モデル"
 msgid "Fallbacks run only if a worker fails to start its task."
 msgstr "ワーカーがタスクを開始できなかった場合のみ、代替モデルが実行されます。"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuFooter.tsx
 #: src/renderer/components/experiment/ExperimentDraftTargets.tsx
 #: src/renderer/components/providers/modelDisplay.ts
-#: src/renderer/components/thread/buildModelPickerControls.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentMemorySection.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRankedRow.tsx
 #: src/renderer/views/SettingsOverlay/parts/crossagent/CrossagentRoleSelection.tsx
@@ -5521,6 +5521,7 @@ msgstr "ワーカーがタスクを開始できなかった場合のみ、代替
 msgid "Fast"
 msgstr "速い"
 
+#: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuFooter.tsx
 #: src/renderer/components/common/ProviderModelMenu/parts/ModelMenuRow.tsx
 #: src/renderer/views/ProfileOverlay/parts/ActivityInsights.tsx
 msgid "Fast mode"
@@ -11804,12 +11805,12 @@ msgstr "MCPサーバーを検索"
 msgid "Search MCP servers..."
 msgstr "MCPサーバーを検索..."
 
+#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Search models"
 msgstr "モデルを検索する"
 
-#: src/renderer/components/common/ProviderModelMenu/ProviderModelMenu.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilitySection.tsx
 msgid "Search models..."

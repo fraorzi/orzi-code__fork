@@ -96,8 +96,16 @@ export function resolveModelValue(agent: AgentStatus, preferred?: string): strin
   return resolveModelSelection(agent.capabilities, preferred);
 }
 
+/** New threads start at this effort when the model offers it and nothing was saved. */
+export const DEFAULT_DRAFT_EFFORT = "high";
+
 export function resolveEffortValue(agent: AgentStatus, model: string, preferred?: string): string {
-  return resolveReasoningSelection(agent.capabilities, model, preferred);
+  const reasoning = modelSelectionFor(agent.capabilities, model).reasoning;
+  return resolveReasoningSelection(
+    agent.capabilities,
+    model,
+    preferred && reasoning.values.includes(preferred) ? preferred : DEFAULT_DRAFT_EFFORT,
+  );
 }
 
 export function resolveContextSizeValue(

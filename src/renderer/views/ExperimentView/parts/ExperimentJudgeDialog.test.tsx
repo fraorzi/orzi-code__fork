@@ -110,11 +110,13 @@ describe("ExperimentJudgeDialog", () => {
     );
 
     const controls = composerSpy.mock.lastCall?.[0] ?? [];
-    expect(controls.some((control) => control.kind === "provider-model")).toBe(true);
-    expect(controls.some((control) => control.kind === "effort-context")).toBe(true);
-    expect(controls.some((control) => control.kind === "toggle" && control.label === "Fast")).toBe(
-      true,
-    );
+    const modelControl = controls.find((control) => control.kind === "provider-model");
+    expect(
+      modelControl?.kind === "provider-model" ? modelControl.settings?.effortValue : null,
+    ).toBe("high");
+    expect(
+      modelControl?.kind === "provider-model" ? modelControl.settings?.fast : null,
+    ).toBeDefined();
     expect(
       screen.getByText(/compares snapshots of each candidate's changes under anonymous labels/i),
     ).toBeInTheDocument();

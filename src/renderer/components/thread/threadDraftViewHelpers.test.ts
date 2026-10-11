@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { AgentCapability, AgentStatus } from "@/shared/contracts";
 import {
   resolveApprovalPolicyValue,
+  resolveEffortValue,
   resolveFastValue,
   resolveProviderDraftConfig,
   resolveSavedProviderDraftConfig,
@@ -211,5 +212,29 @@ describe("resolveApprovalPolicyValue", () => {
 
   it("stays empty for a provider that advertises no policies", () => {
     expect(resolveApprovalPolicyValue(agentWith(), "yolo")).toBe("");
+  });
+});
+
+describe("resolveEffortValue", () => {
+  const agent = agentWith({
+    modelEfforts: { "fast-capable": ["low", "medium", "high"] },
+    defaultEffort: "medium",
+  });
+
+  it("starts new threads at High when nothing valid was saved", () => {
+    expect(resolveEffortValue(agent, "fast-capable")).toBe("high");
+    expect(resolveEffortValue(agent, "fast-capable", "extreme")).toBe("high");
+  });
+
+  it("keeps a saved effort", () => {
+    expect(resolveEffortValue(agent, "fast-capable", "low")).toBe("low");
+  });
+
+  it("falls back to the provider default when High is not offered", () => {
+    const lowOnly = agentWith({
+      modelEfforts: { plain: ["low", "medium"] },
+      defaultEffort: "medium",
+    });
+    expect(resolveEffortValue(lowOnly, "plain")).toBe("medium");
   });
 });

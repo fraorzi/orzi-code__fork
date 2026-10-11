@@ -1,5 +1,3 @@
-import { Zap } from "lucide-react";
-import { msg } from "@lingui/core/macro";
 import type {
   AgentCapability,
   AgentStatus,
@@ -20,7 +18,7 @@ import {
   providerVisibilityKey,
 } from "@/renderer/components/common/ProviderModelMenu/parts/providerIdentity";
 import { getComposerControls } from "@/renderer/components/providers/providerComposer";
-import { EffortIcon } from "@/renderer/components/providers/EffortIcon";
+import type { ModelMenuSettings } from "@/renderer/components/common/ProviderModelMenu/parts/ModelMenuFooter";
 import {
   capabilitiesForPresentation,
   filterHiddenModels,
@@ -268,6 +266,25 @@ export function buildModelPickerControls(input: BuildModelPickerControlsInput): 
   const supportsFast = includeFastToggle && modelSelection.fast.supported;
   const supportsThinking = filteredCaps.thinkingModels?.includes(model) ?? false;
 
+  const fastDisabledReason = modelSelection.fast.disabledReason;
+  const settings: ModelMenuSettings | undefined =
+    selectableEfforts.length > 0 || supportsFast
+      ? {
+          efforts: selectableEfforts,
+          ...(selectableEfforts.length > 0 && effort ? { effortValue: effort } : {}),
+          onEffortChange: (value) => onConfigPatch({ effort: value }),
+          ...(supportsFast
+            ? {
+                fast: {
+                  isSelected: fast === true,
+                  ...(fastDisabledReason ? { disabledReason: fastDisabledReason } : {}),
+                  onChange: (selected: boolean) => onConfigPatch({ fast: selected }),
+                },
+              }
+            : {}),
+        }
+      : undefined;
+
   const controls: ComposerControl[] = [
     {
       kind: "provider-model",
@@ -278,18 +295,19 @@ export function buildModelPickerControls(input: BuildModelPickerControlsInput): 
       ...(machineKey ? { machineKey } : {}),
       ...(presentationMode ? { presentationMode } : {}),
       ...(isDisabled !== undefined ? { isDisabled } : {}),
+      ...(settings ? { settings } : {}),
       hideLabelOnWrap,
       tier: 5,
       onChange: onProviderModelChange,
     },
   ];
 
-  if (selectableEfforts.length > 0 || selectableContextSizes.length > 0 || supportsThinking) {
+  // Effort and Fast live in the model menu footer; the separate pill remains
+  // only for context-window and thinking choices.
+  if (selectableContextSizes.length > 0 || supportsThinking) {
     controls.push({
       kind: "effort-context",
-      efforts: selectableEfforts,
-      ...(selectableEfforts.length > 0 && effort ? { effortValue: effort } : {}),
-      onEffortChange: (value) => onConfigPatch({ effort: value }),
+      efforts: [],
       contextSizes: selectableContextSizes,
       ...(selectableContextSizes.length > 0 && contextSize ? { contextValue: contextSize } : {}),
       onContextChange: (value) => onConfigPatch({ contextSize: value }),
@@ -299,32 +317,6 @@ export function buildModelPickerControls(input: BuildModelPickerControlsInput): 
       ...(isDisabled !== undefined ? { isDisabled } : {}),
       hideLabelOnWrap,
       tier: 4,
-      icon:
-        selectableEfforts.length > 0 ? (
-          <EffortIcon
-            className="poracode-composer-effort-icon size-4 text-foreground"
-            effort={effort ?? ""}
-            efforts={selectableEfforts.map((entry) => entry.id)}
-          />
-        ) : undefined,
-    });
-  }
-
-  if (supportsFast) {
-    const fastDisabledReason = modelSelection.fast.disabledReason;
-    controls.push({
-      kind: "toggle",
-      label: "Fast",
-      displayLabel: msg`Fast`,
-      icon: <Zap className="size-3.5" />,
-      iconKind: "fast",
-      iconOnly: true,
-      fillIconOnSelect: true,
-      tier: 3,
-      isSelected: fast === true,
-      ...(isDisabled !== undefined ? { isDisabled } : {}),
-      ...(fastDisabledReason ? { disabledReason: fastDisabledReason } : {}),
-      onChange: (selected) => onConfigPatch({ fast: selected }),
     });
   }
 

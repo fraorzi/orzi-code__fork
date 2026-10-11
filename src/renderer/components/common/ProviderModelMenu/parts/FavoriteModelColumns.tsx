@@ -77,7 +77,7 @@ export const FavoriteModelColumns = forwardRef<ModelListHandle, ModelListProps>(
       >
         {[...groups].map(([kind, models]) => (
           <div key={kind} role="group" aria-label={models[0]?.providerLabel} className="min-w-0">
-            <div className="flex h-9 items-center gap-2 border-b border-border px-3 text-xs text-muted">
+            <div className="flex h-8 items-center gap-2 px-3 text-xs font-medium text-muted">
               <ProviderIcon
                 kind={kind}
                 className="size-3.5"
@@ -90,7 +90,8 @@ export const FavoriteModelColumns = forwardRef<ModelListHandle, ModelListProps>(
                 key={item.id}
                 item={item}
                 domIdPrefix={props.domIdPrefix}
-                modelRowHeight={props.mobile ? 44 : 36}
+                modelRowHeight={props.mobile ? 44 : 28}
+                variant="column"
                 isSelected={props.selectedKeys.has(item.id)}
                 isActive={item.id === active?.id}
                 onSelect={props.onSelect}

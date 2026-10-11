@@ -3001,7 +3001,8 @@ button.poracode-thread-mention-chip:active {
 .poracode-favorite-model-columns {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 15rem;
+  grid-auto-columns: minmax(11.5rem, 13.5rem);
+  padding-bottom: 0.25rem;
   width: max-content;
   max-width: min(60rem, calc(100vw - 2rem));
   min-width: min(20rem, calc(100vw - 2rem));

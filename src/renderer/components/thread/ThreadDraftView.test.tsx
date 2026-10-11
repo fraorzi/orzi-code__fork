@@ -52,6 +52,23 @@ vi.mock("@/renderer/actions/experimentActions", () => ({
 import "@/renderer/components/providers/bootstrap";
 import { ThreadDraftView } from "./ThreadDraftView";
 
+function modelSettingsOf(
+  controls: readonly unknown[],
+): { effortValue?: string; fast?: { isSelected: boolean } } | undefined {
+  const control = controls.find(
+    (candidate) => (candidate as { kind?: string }).kind === "provider-model",
+  ) as { settings?: { effortValue?: string; fast?: { isSelected: boolean } } } | undefined;
+  return control?.settings;
+}
+
+function effortValueOf(controls: readonly unknown[]): string | undefined {
+  return modelSettingsOf(controls)?.effortValue;
+}
+
+function fastSelectedOf(controls: readonly unknown[]): boolean | undefined {
+  return modelSettingsOf(controls)?.fast?.isSelected;
+}
+
 const project: Project = {
   id: "project-1",
   name: "Repo",
@@ -1479,8 +1496,7 @@ describe("ThreadDraftView", () => {
       const providerModel = props.controls.find((c) => c.kind === "provider-model");
       expect(providerModel?.currentAgentKind).toBe("codex");
       expect(providerModel?.currentModel).toBe("gpt-5.4");
-      const effortContext = props.controls.find((c) => c.kind === "effort-context");
-      expect(effortContext?.effortValue).toBe("high");
+      expect(effortValueOf(props.controls)).toBe("high");
       const permission = props.controls.find((control) => control.value === "auto-review");
       expect(permission?.options?.some((option) => option.label === "Auto-review")).toBe(true);
     });
@@ -1519,12 +1535,12 @@ describe("ThreadDraftView", () => {
     });
 
     const initialProps = composerSpy.mock.lastCall?.[0] as {
-      controls: Array<{ kind?: string; onEffortChange?: (value: string) => void }>;
+      controls: Array<{ kind?: string; settings?: { onEffortChange: (value: string) => void } }>;
     };
-    const initialEffortContext = initialProps.controls.find(
-      (control) => control.kind === "effort-context",
+    const initialModelControl = initialProps.controls.find(
+      (control) => control.kind === "provider-model",
     );
-    act(() => initialEffortContext?.onEffortChange?.("xhigh"));
+    act(() => initialModelControl?.settings?.onEffortChange("xhigh"));
 
     act(() => {
       useSharedSettings.setState({
@@ -1549,7 +1565,7 @@ describe("ThreadDraftView", () => {
       };
       const effortContext = props.controls.find((control) => control.kind === "effort-context");
       expect(effortContext?.contextValue).toBe("400k");
-      expect(effortContext?.effortValue).toBe("xhigh");
+      expect(effortValueOf(props.controls)).toBe("xhigh");
     });
 
     fireEvent.click(screen.getByText("set-prompt"));
@@ -2141,8 +2157,7 @@ describe("ThreadDraftView", () => {
       const props = composerSpy.mock.lastCall?.[0] as {
         controls: Array<{ kind?: string; effortValue?: string; currentModel?: string }>;
       };
-      const effortContext = props.controls.find((c) => c.kind === "effort-context");
-      expect(effortContext?.effortValue).toBe("high");
+      expect(effortValueOf(props.controls)).toBe("high");
     });
 
     act(() => {
@@ -2166,9 +2181,8 @@ describe("ThreadDraftView", () => {
         controls: Array<{ kind?: string; effortValue?: string; currentModel?: string }>;
       };
       const providerModel = props.controls.find((c) => c.kind === "provider-model");
-      const effortContext = props.controls.find((c) => c.kind === "effort-context");
       expect(providerModel?.currentModel).toBe("gpt-5.4");
-      expect(effortContext?.effortValue).toBe("medium");
+      expect(effortValueOf(props.controls)).toBe("medium");
     });
   });
 
@@ -2225,10 +2239,8 @@ describe("ThreadDraftView", () => {
         expect(controls.find((control) => control.kind === "provider-model")?.currentModel).toBe(
           model,
         );
-        expect(controls.find((control) => control.kind === "effort-context")?.effortValue).toBe(
-          effort,
-        );
-        expect(controls.find((control) => control.label === "Fast")?.isSelected).toBe(fast);
+        expect(effortValueOf(controls)).toBe(effort);
+        expect(fastSelectedOf(controls)).toBe(fast);
       });
     };
 
@@ -2324,10 +2336,9 @@ describe("ThreadDraftView", () => {
         }>;
       };
       const providerModel = props.controls.find((c) => c.kind === "provider-model");
-      const fast = props.controls.find((control) => control.label === "Fast");
       expect(providerModel?.currentModel).toBe("composer-2");
       expect(props.controls.some((control) => control.kind === "effort-context")).toBe(false);
-      expect(fast?.iconOnly).toBe(true);
+      expect(fastSelectedOf(props.controls)).toBeDefined();
     });
   });
 
@@ -2358,9 +2369,8 @@ describe("ThreadDraftView", () => {
         }>;
       };
       const providerModel = props.controls.find((c) => c.kind === "provider-model");
-      const effortContext = props.controls.find((c) => c.kind === "effort-context");
       expect(providerModel?.currentModel).toBe("gpt-5.5");
-      expect(effortContext?.effortValue).toBe("high");
+      expect(effortValueOf(props.controls)).toBe("high");
     });
   });
 
@@ -2470,7 +2480,7 @@ describe("ThreadDraftView", () => {
       const effortContext = props.controls.find((c) => c.kind === "effort-context");
       expect(providerModel?.currentModel).toBe("claude-4.6-sonnet");
       expect(effortContext?.efforts).toEqual([]);
-      expect(effortContext?.effortValue).toBeUndefined();
+      expect(effortValueOf(props.controls)).toBeUndefined();
       expect(effortContext?.contextSizes).toEqual([
         { id: "200k", label: "200K" },
         { id: "1m", label: "1M" },
