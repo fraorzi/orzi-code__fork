@@ -2,6 +2,17 @@
 
 Data: 2026-10-11. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Chat GUI i cofanie zmian promptu - 2026-10-12
+
+Wdrożono wybrane warianty z [podglądu v2](design-preview/chat.html): composer B, odpowiedź A, karta zmian promptu. Commity `4364581b`, `2b895f04`, `42d39504`, `331fd2f7`.
+
+- Domyślnie Chat: nowy wątek otwiera się w Chat, gdy agent go obsługuje; zapamiętany tryb dotyczy tylko agentów bez Chatu. Ulubiony zapisany jako CLI zostaje w Chat, jeśli katalog Chat ma ten model; gwiazdka w menu usuwa ulubiony we wszystkich trybach.
+- Domyślnie High: model bez zapisanego wysiłku zaczyna od High (także przy zmianie modelu), z powrotem do domyślnego dostawcy, gdy High nie istnieje. Instalator czyści zapisane wysiłki w `settings.json` i `projects.last_draft_config` (z kopią profilu).
+- Cofanie promptu: `GitCheckpointService.promptStatus/revertPrompt/reapplyPrompt` porównuje blob pliku w drzewie roboczym z migawkami przed i po prompcie i przywraca pliki przez `git restore --source --worktree` lub `git clean` dla plików utworzonych przez prompt. Indeks i rozmowa bez zmian. Plik zmieniony później jest konfliktem i blokuje pełne cofnięcie. Bez stdin, więc działa też dla WSL (nietestowane na WSL). Procedury IPC są lokalne (ukryte dla sterowania zdalnym pulpitem).
+- Karta zmian: pod odpowiedzią, liczba plików i +/-, Przejrzyj z diffem pliku, Otwórz, Cofnij i Przywróć per plik, Cofnij całość bez potwierdzenia, stan „cofnięte” z Przywróć zmiany, konflikt z cofnięciem pozostałych plików. Akcja na wiadomości nazywa się teraz „Cofnij rozmowę do tego miejsca”.
+- Composer: na desktopie pigułka (pole, załączniki, wyślij/stop) i wyciszony rząd ustawień pod nią; układ telefonu bez zmian. Podsumowanie kroków narzędzi zwykłą czcionką.
+- Weryfikacja: testy serwisu na prawdziwym repo git, testy karty, menu, draftu, composera; typecheck, lint, 0 brakujących tłumaczeń. Na żywo w instancji dev: prawdziwy checkpoint w repo testowym, Cofnij przywrócił pliki na dysku, Przywróć nałożył je ponownie, przegląd pokazał diff pliku. Pozostałe porażki testów (MCP, skills, `panelStore`, `SchedulesView` i inne) są identyczne z `1e178579`; test routingu procedur zdalnych został przy okazji naprawiony.
+
 ## Redesign według podglądu HTML - 2026-10-11
 
 Wdrożono [podgląd](design-preview/index.html) w sześciu commitach na `main` (`3826bd97`, `cec3d9ab`, `e0e1eaa5`, `0213ec55`, `267cc370`, `6918bbed`).
