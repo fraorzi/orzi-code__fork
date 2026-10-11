@@ -59,3 +59,15 @@ Uzupełnione 2026-10-11. Poniższe zmiany układu, archiwum, projektów i limit�
 - Wszystkie nowe i zmienione teksty interfejsu przetłumaczyć we wszystkich katalogach aplikacji.
 - Sprawdzić pustą listę projektów, pierwszy prompt w projekcie, kilka aktywnych chatów, archiwizację ostatniego chatu, ogólne archiwum z kilkoma projektami oraz przywrócenie chatu.
 - Sprawdzić kolory logotypów i zwijanie limitów w jasnym i ciemnym motywie.
+
+## Podgląd HTML i decyzje z 2026-10-11
+
+[Podgląd](design-preview/index.html) pokazuje proponowany układ: wątek, nowy wątek, dropdown modeli, limity, archiwum oraz porównanie z obecną aplikacją. Uwagi odnoszą się do numerów w podglądzie. Podgląd nie jest jeszcze zatwierdzony w całości; wdrożenie dopiero po akceptacji.
+
+Decyzje użytkownika:
+
+- Jeden ciemny motyw "czysta czerń": sidebar `#000000`, obszar główny `#050505`, karty i menu `#121212`. Wyraźniejsze obrysy: podziały sekcji (sidebar / chat, nagłówek, limity, stopka) 17% bieli, obrysy wewnętrzne 10%, composer i menu 18%.
+- Vibrancy macOS wyłączone; obecnie przez przezroczystość okna sidebar wygląda na szary.
+- Wysiłek i Fast przechodzą do stopki dropdownu modelu. Domyślny wysiłek: High.
+- Codex i Cursor zachowują monochromatyczne znaki.
+- Bez jasnego motywu i bez prac nad innymi motywami. Warunki sprawdzania jasnego motywu powyżej przestają obowiązywać.

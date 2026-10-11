@@ -1,0 +1,2164 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Orzi Code - podgląd redesignu v1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Hallmark - pre-emit critique: P4 H5 E4 S5 R5 V4. Tokeny bazowe z cursor-dark-color-theme.json (Cursor.app). -->
+    <style>
+      :root {
+        --font: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+        --mono: "Geist Mono", ui-monospace, monospace;
+        --ok: #3fb950;
+        --warn: #d29922;
+        --bad: #f85149;
+        --brand-claude: #d97757;
+        --brand-codex: #f0f0f0;
+        --brand-cursor: #f0f0f0;
+        --brand-agy: #4c8df6;
+        --brand-gemini: #8e7ff0;
+        --pin: #ff5c8a;
+        --r-sm: 6px;
+        --r-md: 8px;
+        --r-lg: 12px;
+      }
+      /* Warianty czerni. "cursor" = dokładne wartości Cursor Dark. */
+      [data-theme="cursor"] {
+        --bg-side: #141414;
+        --bg-app: #181818;
+        --bg-elev: #1f1f1f;
+        --bg-page: #0c0c0c;
+      }
+      [data-theme="deep"] {
+        --bg-side: #0b0b0b;
+        --bg-app: #0f0f0f;
+        --bg-elev: #171717;
+        --bg-page: #1a1a1a;
+      }
+      [data-theme="black"] {
+        --bg-side: #000000;
+        --bg-app: #050505;
+        --bg-elev: #121212;
+        --bg-page: #1a1a1a;
+      }
+      [data-theme] {
+        --fg: #f0f0f0;
+        --fg-2: rgba(240, 240, 240, 0.62);
+        --fg-3: rgba(240, 240, 240, 0.38);
+        --input: rgba(240, 240, 240, 0.04);
+        --hover: rgba(240, 240, 240, 0.06);
+        --active: rgba(240, 240, 240, 0.1);
+        --border: rgba(240, 240, 240, 0.075);
+        --border-2: rgba(240, 240, 240, 0.14);
+        --divider: rgba(240, 240, 240, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        overflow-x: clip;
+      }
+      body {
+        background: #161616;
+        color: #f0f0f0;
+        font: 13px/1.45 var(--font);
+        -webkit-font-smoothing: antialiased;
+      }
+      [data-theme] {
+        color: var(--fg);
+      }
+      main[data-theme="black"] {
+        --border: rgba(240, 240, 240, 0.1);
+        --border-2: rgba(240, 240, 240, 0.18);
+        --divider: rgba(240, 240, 240, 0.17);
+      }
+      .menu .pin,
+      .head .pin {
+        top: 4px;
+        right: 4px;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        background: none;
+        border: 0;
+        cursor: pointer;
+      }
+      svg {
+        width: 16px;
+        height: 16px;
+        flex: none;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      svg.fill {
+        fill: currentColor;
+        stroke: none;
+      }
+      .sm svg,
+      svg.sm {
+        width: 14px;
+        height: 14px;
+      }
+
+      /* ---------- toolbar podglądu (nie jest częścią aplikacji) ---------- */
+      .bar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 20px;
+        align-items: center;
+        padding: 12px 24px;
+        background: #1a1a1a;
+        border-bottom: 1px solid #2a2a2a;
+      }
+      .bar h1 {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .bar h1 span {
+        color: #888;
+        font-weight: 400;
+      }
+      .seg {
+        display: inline-flex;
+        padding: 2px;
+        border-radius: 8px;
+        background: #262626;
+      }
+      .seg button {
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: #aaa;
+        white-space: nowrap;
+      }
+      .seg button[aria-pressed="true"] {
+        background: #3a3a3a;
+        color: #fff;
+      }
+      .bar label {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        color: #aaa;
+      }
+      .spacer {
+        flex: 1;
+      }
+
+      .screen {
+        display: none;
+        padding: 28px 24px 64px;
+        max-width: 1360px;
+        margin: 0 auto;
+      }
+      .screen.on {
+        display: block;
+      }
+      .screen > h2 {
+        margin: 0 0 4px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .screen > p.lead {
+        margin: 0 0 20px;
+        color: #9a9a9a;
+        max-width: 72ch;
+      }
+
+      /* ---------- ramka aplikacji ---------- */
+      .app {
+        display: grid;
+        grid-template-columns: 248px minmax(0, 1fr);
+        height: 760px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #2c2c2c;
+        background: var(--bg-app);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+      }
+      .side {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        background: var(--bg-side);
+        border-right: 1px solid var(--divider);
+      }
+      .main {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 0;
+        background: var(--bg-app);
+      }
+
+      /* sidebar */
+      .side-top {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 2px;
+        padding: 0 8px 0 78px;
+      }
+      .ib {
+        width: 26px;
+        height: 26px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: var(--r-sm);
+        color: var(--fg-2);
+      }
+      .ib:hover {
+        background: var(--hover);
+        color: var(--fg);
+      }
+      .side-scroll {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 4px 8px 8px;
+      }
+      .row {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 28px;
+        padding: 0 8px;
+        border-radius: var(--r-sm);
+        color: var(--fg-2);
+        white-space: nowrap;
+        cursor: default;
+      }
+      .row:hover {
+        background: var(--hover);
+        color: var(--fg);
+      }
+      .row.sel {
+        background: var(--active);
+        color: var(--fg);
+      }
+      .row .t {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .row .k {
+        color: var(--fg-3);
+        font-size: 11px;
+        font-family: var(--mono);
+      }
+      .row .hover-only {
+        display: none;
+      }
+      .row:hover .hover-only {
+        display: inline-grid;
+      }
+      .row:hover .hide-on-hover {
+        display: none;
+      }
+      .new-row {
+        color: var(--fg);
+        margin-bottom: 6px;
+      }
+      .sec {
+        display: flex;
+        align-items: center;
+        height: 26px;
+        padding: 0 8px;
+        margin-top: 10px;
+        color: var(--fg-3);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+      }
+      .proj {
+        color: var(--fg);
+        font-weight: 500;
+      }
+      .proj .chev {
+        transition: transform 0.15s;
+        color: var(--fg-3);
+      }
+      .proj.closed .chev {
+        transform: rotate(-90deg);
+      }
+      .proj.closed + .kids {
+        display: none;
+      }
+      .kids .row {
+        padding-left: 26px;
+      }
+      .prov {
+        width: 14px;
+        height: 14px;
+      }
+      .diff {
+        font-family: var(--mono);
+        font-size: 10.5px;
+      }
+      .diff b {
+        color: var(--ok);
+        font-weight: 400;
+      }
+      .diff i {
+        color: var(--bad);
+        font-style: normal;
+      }
+      .spin {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 1.5px solid var(--fg-3);
+        border-top-color: var(--fg);
+        animation: sp 1s linear infinite;
+      }
+      @keyframes sp {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .side-empty {
+        margin: 18px 8px;
+        padding: 14px;
+        border: 1px dashed var(--border-2);
+        border-radius: var(--r-md);
+        color: var(--fg-3);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      /* limity */
+      .limits {
+        border-top: 1px solid var(--divider);
+        padding: 6px 8px;
+      }
+      .lim-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 28px;
+        padding: 0 8px;
+        border-radius: var(--r-sm);
+        color: var(--fg-2);
+        width: 100%;
+      }
+      .lim-head:hover {
+        background: var(--hover);
+      }
+      .lim-chips {
+        display: flex;
+        gap: 10px;
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--fg-2);
+      }
+      .lim-chips em {
+        font-style: normal;
+      }
+      .lim-chips .bad {
+        color: var(--bad);
+      }
+      .lim-chips .warn {
+        color: var(--warn);
+      }
+      .lim-chips span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .lim-body {
+        display: none;
+        padding: 4px 8px 6px;
+      }
+      .limits.open .lim-body {
+        display: block;
+      }
+      .limits.open .lim-chips {
+        display: none;
+      }
+      .limits.open .lim-head .chev {
+        transform: rotate(180deg);
+      }
+      .lp {
+        margin-top: 8px;
+      }
+      .lp-name {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+      .lp-name .k {
+        margin-left: auto;
+        font-weight: 400;
+        color: var(--fg-3);
+        font-size: 10.5px;
+      }
+      .meter {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr) 32px 44px;
+        align-items: center;
+        gap: 6px;
+        height: 18px;
+        font-size: 11px;
+        color: var(--fg-3);
+      }
+      .meter .track {
+        height: 3px;
+        border-radius: 2px;
+        background: var(--active);
+        overflow: hidden;
+      }
+      .meter .fill {
+        display: block;
+        height: 100%;
+        background: var(--fg-2);
+        border-radius: 2px;
+      }
+      .meter .fill.warn {
+        background: var(--warn);
+      }
+      .meter .fill.bad {
+        background: var(--bad);
+      }
+      .meter .v {
+        color: var(--fg);
+        text-align: right;
+        font-family: var(--mono);
+      }
+      .meter .r {
+        text-align: right;
+        font-family: var(--mono);
+      }
+      .lp-note {
+        font-size: 11px;
+        color: var(--fg-3);
+        margin-top: 2px;
+      }
+
+      .side-foot {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 6px 8px;
+        border-top: 1px solid var(--divider);
+      }
+      .ws {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 26px;
+        padding: 0 8px;
+        border-radius: var(--r-sm);
+        color: var(--fg-2);
+        margin-right: auto;
+      }
+      .ws:hover {
+        background: var(--hover);
+        color: var(--fg);
+      }
+
+      /* main */
+      .head {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 12px 0 20px;
+        border-bottom: 1px solid var(--divider);
+      }
+      .head .title {
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        height: 22px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: var(--input);
+        border: 1px solid var(--border);
+        color: var(--fg-2);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .head .acts {
+        margin-left: auto;
+        display: flex;
+        gap: 2px;
+      }
+      .thread {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 28px 24px 12px;
+      }
+      .col {
+        max-width: 720px;
+        margin: 0 auto;
+      }
+      .msg-u {
+        position: relative;
+        padding: 10px 14px;
+        border-radius: var(--r-lg);
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        margin: 0 0 18px;
+      }
+      .msg-a {
+        position: relative;
+        margin: 0 0 6px;
+        padding: 0 2px;
+        font-size: 13.5px;
+        line-height: 1.6;
+      }
+      .meta {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 6px 2px 26px;
+        color: var(--fg-3);
+        font-size: 11.5px;
+      }
+      .meta .dot::before {
+        content: "·";
+      }
+      .thumb {
+        width: 96px;
+        height: 80px;
+        border-radius: var(--r-md);
+        border: 1px solid var(--border);
+        background: #222 center/contain no-repeat;
+        margin-bottom: 8px;
+        display: grid;
+        place-items: center;
+      }
+      .thumb i {
+        width: 46px;
+        height: 46px;
+        background: #3a9d3a;
+        border-radius: 6px;
+        position: relative;
+      }
+      .thumb i::after {
+        content: "";
+        position: absolute;
+        right: 6px;
+        top: 16px;
+        width: 10px;
+        height: 10px;
+        background: #d33;
+      }
+
+      /* composer */
+      .composer-wrap {
+        padding: 8px 24px 20px;
+      }
+      .composer {
+        position: relative;
+        max-width: 720px;
+        margin: 0 auto;
+        border-radius: var(--r-lg);
+        background: var(--bg-elev);
+        border: 1px solid var(--border-2);
+      }
+      .composer .ctx {
+        display: flex;
+        gap: 6px;
+        padding: 10px 12px 0;
+      }
+      .composer .ph {
+        padding: 10px 14px 6px;
+        min-height: 44px;
+        color: var(--fg-3);
+        font-size: 13.5px;
+      }
+      .composer .ctrls {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 8px 8px;
+      }
+      .pill {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 26px;
+        padding: 0 8px;
+        border-radius: var(--r-sm);
+        color: var(--fg-2);
+        white-space: nowrap;
+      }
+      .pill:hover {
+        background: var(--hover);
+        color: var(--fg);
+      }
+      .pill .muted {
+        color: var(--fg-3);
+      }
+      .pill.open {
+        background: var(--active);
+        color: var(--fg);
+      }
+      .send {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--fg);
+        color: var(--bg-app);
+        margin-left: 4px;
+      }
+      .send.off {
+        background: var(--active);
+        color: var(--fg-3);
+      }
+      .ring {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: conic-gradient(var(--fg-2) 0 32%, var(--active) 32% 100%);
+        -webkit-mask: radial-gradient(circle, transparent 5px, #000 5.5px);
+      }
+
+      /* nowy wątek */
+      .draft {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 24px 80px;
+      }
+      .draft .mark {
+        width: 36px;
+        height: 36px;
+        margin: 0 auto 22px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--border-2);
+        color: var(--fg-2);
+        font-weight: 600;
+      }
+
+      /* dropdown modeli */
+      .menu {
+        position: absolute;
+        z-index: 5;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 132px;
+        width: max-content;
+        max-width: calc(100% - 48px);
+        border-radius: var(--r-lg);
+        background: var(--bg-elev);
+        border: 1px solid var(--border-2);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+        overflow: hidden;
+      }
+      .menu-search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 38px;
+        padding: 0 12px;
+        border-bottom: 1px solid var(--border);
+        color: var(--fg-3);
+      }
+      .menu-search .k {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+      .cols {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(184px, 216px);
+      }
+      .mcol {
+        padding: 6px;
+        border-right: 1px solid var(--border);
+      }
+      .mcol:last-child {
+        border-right: 0;
+      }
+      .mcol h4 {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        height: 26px;
+        padding: 0 8px;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--fg-3);
+      }
+      .mrow {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 28px;
+        padding: 0 8px;
+        border-radius: var(--r-sm);
+        color: var(--fg);
+      }
+      .mrow:hover {
+        background: var(--hover);
+      }
+      .mrow.sel {
+        background: var(--active);
+      }
+      .mrow .ck {
+        width: 14px;
+        color: var(--fg);
+        visibility: hidden;
+      }
+      .mrow.sel .ck {
+        visibility: visible;
+      }
+      .mrow .n {
+        flex: 0 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .mrow .m {
+        flex: 0 100 auto;
+        min-width: 0;
+        margin-left: auto;
+        overflow: hidden;
+        white-space: nowrap;
+        color: var(--fg-3);
+        font-family: var(--mono);
+        font-size: 10.5px;
+      }
+      .mrow .star {
+        display: none;
+        color: var(--fg-3);
+      }
+      .mrow:hover .star {
+        display: inline-grid;
+      }
+      .mrow:hover .m {
+        display: none;
+      }
+      .menu-foot {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 40px;
+        padding: 0 8px 0 6px;
+        border-top: 1px solid var(--border);
+        color: var(--fg-2);
+      }
+      .menu-foot .seg2 {
+        display: inline-flex;
+        gap: 2px;
+        padding: 2px;
+        border-radius: var(--r-sm);
+        background: var(--input);
+      }
+      .menu-foot .seg2 span {
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        color: var(--fg-3);
+      }
+      .menu-foot .seg2 span.on {
+        background: var(--active);
+        color: var(--fg);
+      }
+      .toggle {
+        width: 26px;
+        height: 15px;
+        border-radius: 99px;
+        background: var(--active);
+        position: relative;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--fg-2);
+      }
+      .toggle.on {
+        background: var(--fg);
+      }
+      .toggle.on::after {
+        left: 13px;
+        background: var(--bg-app);
+      }
+
+      /* archiwum */
+      .arch {
+        flex: 1;
+        overflow: auto;
+        padding: 28px 24px;
+      }
+      .arch .col {
+        max-width: 760px;
+      }
+      .arch h3 {
+        margin: 0 0 14px;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .arch .search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 32px;
+        padding: 0 10px;
+        border-radius: var(--r-md);
+        background: var(--input);
+        border: 1px solid var(--border);
+        color: var(--fg-3);
+        margin-bottom: 16px;
+      }
+      .arow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 34px;
+        padding: 0 10px 0 28px;
+        border-radius: var(--r-sm);
+        color: var(--fg-2);
+      }
+      .arow:hover {
+        background: var(--hover);
+        color: var(--fg);
+      }
+      .arow .t {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .arow .d {
+        color: var(--fg-3);
+        font-size: 11.5px;
+        font-family: var(--mono);
+      }
+      .arow .btn {
+        display: none;
+        height: 24px;
+        padding: 0 8px;
+        border-radius: var(--r-sm);
+        border: 1px solid var(--border-2);
+        font-size: 12px;
+        align-items: center;
+        gap: 5px;
+        color: var(--fg);
+      }
+      .arow:hover .btn {
+        display: inline-flex;
+      }
+      .arow:hover .d {
+        display: none;
+      }
+
+      /* pinezki z numerami uwag */
+      .pin {
+        position: absolute;
+        z-index: 9;
+        top: -7px;
+        right: -7px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 4px;
+        border-radius: 9px;
+        background: var(--pin);
+        color: #fff;
+        font: 600 10.5px/18px var(--font);
+        text-align: center;
+        font-style: normal;
+        box-shadow: 0 0 0 2px var(--bg-app);
+        pointer-events: none;
+      }
+      .pin.l {
+        right: auto;
+        left: -7px;
+      }
+      body.nopins .pin {
+        display: none;
+      }
+      .rel {
+        position: relative;
+      }
+
+      /* notatki */
+      .notes {
+        margin-top: 22px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+        gap: 10px 28px;
+        counter-reset: n;
+        padding: 0;
+        list-style: none;
+      }
+      .notes li {
+        position: relative;
+        padding-left: 30px;
+        color: #c8c8c8;
+        line-height: 1.55;
+      }
+      .notes li::before {
+        counter-increment: n;
+        content: counter(n);
+        position: absolute;
+        left: 0;
+        top: 1px;
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--pin);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        display: grid;
+        place-items: center;
+      }
+      .notes b {
+        color: #fff;
+        font-weight: 600;
+      }
+
+      /* przed / po */
+      .grid2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr));
+        gap: 20px;
+      }
+      figure {
+        margin: 0;
+      }
+      figure img {
+        width: 100%;
+        display: block;
+        border-radius: 8px;
+        border: 1px solid #2c2c2c;
+      }
+      figcaption {
+        color: #9a9a9a;
+        font-size: 12px;
+        margin-top: 8px;
+        line-height: 1.5;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        font-size: 12.5px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 1px solid #2a2a2a;
+        vertical-align: top;
+      }
+      th {
+        color: #8a8a8a;
+        font-weight: 500;
+      }
+      td code {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: #ddd;
+      }
+      .sw {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        border: 1px solid #444;
+        vertical-align: -2px;
+        margin-right: 6px;
+      }
+      h3.sub {
+        margin: 36px 0 4px;
+        font-size: 15px;
+      }
+      .q {
+        color: #c8c8c8;
+        line-height: 1.6;
+        padding-left: 18px;
+      }
+      .q li {
+        margin-bottom: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-pen" viewBox="0 0 24 24">
+        <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+        <path d="M18.4 2.6a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </symbol>
+      <symbol id="i-panel" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="M9 3v18" />
+      </symbol>
+      <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+      <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol>
+      <symbol id="i-chev-u" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6" /></symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24">
+        <path
+          d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"
+        />
+      </symbol>
+      <symbol id="i-archive" viewBox="0 0 24 24">
+        <rect width="20" height="5" x="2" y="3" rx="1" />
+        <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" />
+        <path d="M10 12h4" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14" /></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24">
+        <path d="M21 5h-7M10 5H3M21 12h-9M8 12H3M21 19h-5M12 19H3M14 3v4M8 10v4M16 17v4" />
+      </symbol>
+      <symbol id="i-pr" viewBox="0 0 24 24">
+        <circle cx="18" cy="18" r="3" />
+        <circle cx="6" cy="6" r="3" />
+        <path d="M13 6h3a2 2 0 0 1 2 2v7M6 9v12" />
+      </symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+      </symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24">
+        <path d="M10.3 21a2 2 0 0 0 3.4 0" />
+        <path
+          d="M3.3 15.3A1 1 0 0 0 4 17h16a1 1 0 0 0 .7-1.7C19.4 14 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.4 6-2.7 7.3"
+        />
+      </symbol>
+      <symbol id="i-mic" viewBox="0 0 24 24">
+        <path d="M12 19v3M19 10v2a7 7 0 0 1-14 0v-2" />
+        <rect x="9" y="2" width="6" height="13" rx="3" />
+      </symbol>
+      <symbol id="i-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7M12 19V5" /></symbol>
+      <symbol id="i-image" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <circle cx="9" cy="9" r="2" />
+        <path d="m21 15-3-3a2 2 0 0 0-2.8 0L6 21" />
+      </symbol>
+      <symbol id="i-star" viewBox="0 0 24 24">
+        <path d="m12 2.5 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.3l-5.8 3.1 1.1-6.5L2.6 9.3l6.5-.9z" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+      <symbol id="i-inf" viewBox="0 0 24 24">
+        <path d="M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8" />
+      </symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="M12 22s8-3.5 8-10V5.5L12 2.5 4 5.5V12c0 6.5 8 10 8 10" />
+        <path d="m9 12 2 2 4-4" />
+      </symbol>
+      <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></symbol>
+      <symbol id="i-diff" viewBox="0 0 24 24">
+        <circle cx="18" cy="18" r="3" />
+        <circle cx="6" cy="6" r="3" />
+        <path d="M13 6h3a2 2 0 0 1 2 2v7M11 18H8a2 2 0 0 1-2-2V9" />
+      </symbol>
+      <symbol id="i-term" viewBox="0 0 24 24"><path d="m4 17 6-6-6-6M12 19h8" /></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24">
+        <circle cx="5" cy="12" r="1" />
+        <circle cx="12" cy="12" r="1" />
+        <circle cx="19" cy="12" r="1" />
+      </symbol>
+      <symbol id="i-restore" viewBox="0 0 24 24">
+        <path d="M3 12a9 9 0 1 0 9-9 9.8 9.8 0 0 0-6.7 2.7L3 8" />
+        <path d="M3 3v5h5" />
+      </symbol>
+      <symbol id="i-brief" viewBox="0 0 24 24">
+        <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+        <rect width="20" height="14" x="2" y="6" rx="2" />
+      </symbol>
+      <symbol id="i-gauge" viewBox="0 0 24 24">
+        <path d="m12 14 4-4" />
+        <path d="M3.3 19a10 10 0 1 1 17.4 0" />
+      </symbol>
+      <symbol id="i-branch" viewBox="0 0 24 24">
+        <circle cx="6" cy="6" r="2.5" />
+        <circle cx="6" cy="18" r="2.5" />
+        <circle cx="18" cy="8" r="2.5" />
+        <path d="M6 8.5v7M18 10.5c0 4-6 3-11 5.5" />
+      </symbol>
+      <!-- uproszczone znaki dostawców (w aplikacji zostają oryginalne SVG) -->
+      <symbol id="p-claude" viewBox="0 0 24 24">
+        <path
+          stroke-width="2.6"
+          d="M12 3v5.5M12 15.5V21M3 12h5.5M15.5 12H21M5.6 5.6l3.9 3.9M14.5 14.5l3.9 3.9M18.4 5.6l-3.9 3.9M9.5 14.5l-3.9 3.9"
+        />
+      </symbol>
+      <symbol id="p-codex" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9.5" fill="currentColor" stroke="none" />
+        <path d="m8 9.5 2.6 2.5L8 14.5M12.5 15h3.5" stroke="#111" stroke-width="2" />
+      </symbol>
+      <symbol id="p-cursor" viewBox="0 0 24 24">
+        <path d="M12 2.5 20.5 7v10L12 21.5 3.5 17V7z" />
+        <path d="M12 21.5V12L3.5 7M12 12l8.5-5" />
+      </symbol>
+      <symbol id="p-agy" viewBox="0 0 24 24">
+        <path stroke-width="3" d="M4 20.5C6 14 8.2 5 12 5s6 9 8 15.5" />
+      </symbol>
+    </svg>
+
+    <div class="bar">
+      <h1>Orzi Code <span>- podgląd redesignu v1 - do uwag</span></h1>
+      <div class="seg" id="tabs">
+        <button data-s="chat" aria-pressed="true">Wątek</button>
+        <button data-s="draft">Nowy wątek</button>
+        <button data-s="models">Dropdown modeli</button>
+        <button data-s="limits">Limity</button>
+        <button data-s="archive">Archiwum</button>
+        <button data-s="compare">Przed / po + tokeny</button>
+      </div>
+      <span class="spacer"></span>
+      <div class="seg" id="theme" title="Wariant czerni">
+        <button data-t="cursor">Cursor Dark</button>
+        <button data-t="deep">Głęboka czerń</button>
+        <button data-t="black" aria-pressed="true">Czysta czerń (wybrana)</button>
+      </div>
+      <label><input type="checkbox" id="pins" checked /> numery uwag</label>
+    </div>
+
+    <main data-theme="black" id="root">
+      <!-- =============== 1. WĄTEK =============== -->
+      <section class="screen on" id="s-chat">
+        <h2>Wątek - główny widok</h2>
+        <p class="lead">
+          Ten sam układ co dziś, z mniejszą liczbą elementów. Sidebar ma tylko nawigację po wątkach,
+          limity zwijają się do jednej linii, a narzędzia wątku przechodzą do nagłówka. Najedź na
+          wiersze, żeby zobaczyć akcje pokazywane dopiero po najechaniu.
+        </p>
+        <div class="app">
+          <aside class="side">
+            <div class="side-top rel">
+              <button class="ib" title="Ukryj pasek boczny">
+                <svg><use href="#i-panel" /></svg>
+              </button>
+              <button class="ib" title="Szukaj">
+                <svg><use href="#i-search" /></svg>
+              </button>
+              <i class="pin">1</i>
+            </div>
+            <div class="side-scroll">
+              <div class="row new-row rel">
+                <svg><use href="#i-pen" /></svg><span class="t">Nowy wątek</span
+                ><span class="k">⌘N</span><i class="pin">2</i>
+              </div>
+
+              <div class="sec">Projekty</div>
+              <div class="row proj rel" data-toggle>
+                <svg class="sm chev"><use href="#i-chev-d" /></svg
+                ><span class="t">orzi-code__fork</span
+                ><button class="ib hover-only" title="Nowy wątek w projekcie">
+                  <svg class="sm"><use href="#i-plus" /></svg></button
+                ><i class="pin">3</i>
+              </div>
+              <div class="kids">
+                <div class="row">
+                  <svg class="prov" style="color: var(--brand-claude)"><use href="#p-claude" /></svg
+                  ><span class="t">Redesign UI w stylu Cursora</span><span class="spin"></span>
+                </div>
+                <div class="row sel rel">
+                  <svg class="prov" style="color: var(--brand-codex)"><use href="#p-codex" /></svg
+                  ><span class="t">Nazwij kolory tła i kształtu</span
+                  ><span class="diff hide-on-hover"><b>+452</b> <i>-11</i></span
+                  ><span class="k hover-only">1m</span><i class="pin">4</i>
+                </div>
+                <div class="row">
+                  <svg class="prov" style="color: var(--brand-agy)"><use href="#p-agy" /></svg
+                  ><span class="t">Smoke testy pakietu DMG</span><span class="k">1d</span>
+                </div>
+              </div>
+              <div class="row proj closed" data-toggle>
+                <svg class="sm chev"><use href="#i-chev-d" /></svg
+                ><span class="t">db-tapety__nextjs</span><span class="k">2</span>
+              </div>
+              <div class="kids">
+                <div class="row">
+                  <svg class="prov" style="color: var(--brand-claude)"><use href="#p-claude" /></svg
+                  ><span class="t">Migracja na App Router</span><span class="k">3d</span>
+                </div>
+                <div class="row">
+                  <svg class="prov" style="color: var(--brand-codex)"><use href="#p-codex" /></svg
+                  ><span class="t">Filtry kolorów</span><span class="k">4d</span>
+                </div>
+              </div>
+              <div class="row proj" data-toggle>
+                <svg class="sm chev"><use href="#i-chev-d" /></svg><span class="t">BIZNES</span>
+              </div>
+              <div class="kids">
+                <div class="row">
+                  <svg class="prov" style="color: var(--brand-claude)"><use href="#p-claude" /></svg
+                  ><span class="t">Co dalej poza 9to5 i na czym stanęliśmy?</span
+                  ><span class="k">6d</span>
+                </div>
+              </div>
+
+              <div class="row rel" style="margin-top: 10px">
+                <svg><use href="#i-archive" /></svg><span class="t">Archiwum</span
+                ><span class="k">36</span><i class="pin">5</i>
+              </div>
+            </div>
+
+            <div class="limits rel" data-limits>
+              <button class="lim-head">
+                <svg><use href="#i-gauge" /></svg><span>Limity</span>
+                <span class="lim-chips"
+                  ><span
+                    ><svg class="sm" style="color: var(--brand-claude)">
+                      <use href="#p-claude" /></svg
+                    ><em class="bad">5%</em></span
+                  ><span
+                    ><svg class="sm" style="color: var(--brand-codex)"><use href="#p-codex" /></svg
+                    ><em class="warn">23%</em></span
+                  ></span
+                >
+                <svg class="sm chev"><use href="#i-chev-u" /></svg>
+              </button>
+              <div class="lim-body"></div>
+              <i class="pin">6</i>
+            </div>
+            <div class="side-foot rel">
+              <button class="ws">
+                <svg class="sm"><use href="#i-brief" /></svg>Praca<svg class="sm">
+                  <use href="#i-chev-d" />
+                </svg>
+              </button>
+              <button class="ib" title="Nowości">
+                <svg><use href="#i-bell" /></svg>
+              </button>
+              <button class="ib" title="Żądania ściągnięcia">
+                <svg><use href="#i-pr" /></svg>
+              </button>
+              <button class="ib" title="Harmonogramy">
+                <svg><use href="#i-clock" /></svg>
+              </button>
+              <button class="ib" title="Ustawienia">
+                <svg><use href="#i-settings" /></svg>
+              </button>
+              <i class="pin">7</i>
+            </div>
+          </aside>
+
+          <section class="main">
+            <div class="head rel">
+              <svg class="prov" style="color: var(--brand-codex)"><use href="#p-codex" /></svg>
+              <span class="title">Nazwij kolory tła i kształtu na obrazie</span>
+              <span class="chip"
+                ><svg class="sm"><use href="#i-folder" /></svg>orzi-code__fork</span
+              >
+              <div class="acts">
+                <button class="ib" title="Zmiany">
+                  <svg><use href="#i-diff" /></svg>
+                </button>
+                <button class="ib" title="Terminal">
+                  <svg><use href="#i-term" /></svg>
+                </button>
+                <button class="ib" title="Pliki">
+                  <svg><use href="#i-folder" /></svg>
+                </button>
+                <button class="ib" title="Więcej">
+                  <svg><use href="#i-more" /></svg>
+                </button>
+              </div>
+              <i class="pin">8</i>
+            </div>
+            <div class="thread">
+              <div class="col">
+                <div class="msg-u">
+                  <div class="thumb rel">
+                    <i></i><b class="pin" style="font-style: normal">9</b>
+                  </div>
+                  Start with ORZI_NATIVE_FIRST_OK, then name the background colour and the shape
+                  colour in the attached image. Do not run tools or modify files.
+                </div>
+                <div class="msg-a">ORZI_NATIVE_FIRST_OK: Background: green. Shape: red.</div>
+                <div class="meta">
+                  <span>6 s</span><span class="dot"></span><span>bez zmian w plikach</span
+                  ><i
+                    class="pin l"
+                    style="left: auto; right: auto; position: relative; top: 0; margin-left: 6px"
+                    >10</i
+                  >
+                </div>
+                <div class="msg-u">
+                  Reply with exactly ORZI_NATIVE_FOLLOWUP_OK. Do not run tools or modify files.
+                </div>
+                <div class="msg-a">ORZI_NATIVE_FOLLOWUP_OK</div>
+                <div class="meta">
+                  <span>1 s</span><span class="dot"></span><span>bez zmian w plikach</span>
+                </div>
+              </div>
+            </div>
+            <div class="composer-wrap">
+              <div class="composer rel">
+                <div class="ph">Zapytaj Codex o cokolwiek w tym projekcie</div>
+                <div class="ctrls">
+                  <button class="pill rel">
+                    <svg class="sm"><use href="#i-inf" /></svg>Praca<svg class="sm">
+                      <use href="#i-chev-d" />
+                    </svg>
+                  </button>
+                  <button class="pill rel">
+                    <svg class="sm" style="color: var(--brand-codex)"><use href="#p-codex" /></svg
+                    >6.1 Sol <span class="muted">High</span
+                    ><svg class="sm"><use href="#i-chev-d" /></svg><i class="pin">11</i>
+                  </button>
+                  <button class="pill rel" title="Automatyczny przegląd">
+                    <svg class="sm"><use href="#i-shield" /></svg><i class="pin">12</i>
+                  </button>
+                  <span class="spacer"></span>
+                  <button class="ib" title="Kontekst: 32% z 400k">
+                    <span class="ring"></span>
+                  </button>
+                  <button class="ib" title="Dodaj obraz lub plik">
+                    <svg><use href="#i-image" /></svg>
+                  </button>
+                  <button class="ib" title="Dyktowanie">
+                    <svg><use href="#i-mic" /></svg>
+                  </button>
+                  <button class="send off">
+                    <svg class="sm"><use href="#i-up" /></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <ol class="notes">
+          <li>
+            <b>Górny pasek sidebaru</b> - bez napisu "Orzi Code" i czterech ikon. Zostają: zwiń
+            sidebar i szukaj. Import projektu i sortowanie przechodzą do menu "+" przy sekcji
+            Projekty i do selektora projektu.
+          </li>
+          <li>
+            <b>Jeden "Nowy wątek"</b> na górze, ze skrótem. Znikają powtórzenia "Nowy wątek" pod
+            każdym projektem.
+          </li>
+          <li>
+            <b>Projekty</b> - tylko te z niearchiwizowanymi wątkami. "+" przy nazwie projektu
+            pojawia się dopiero po najechaniu. Ikony folderów i chevronów jak w Cursorze.
+          </li>
+          <li>
+            <b>Wiersz wątku</b> - ikona dostawcy w kolorze marki, tytuł, po prawej jedna informacja:
+            spinner, diff albo wiek. Diff zamienia się na czas po najechaniu.
+          </li>
+          <li>
+            <b>Jedno Archiwum</b> zamiast "Zarchiwizowane wątki" pod każdym projektem. Otwiera widok
+            w obszarze głównym (zakładka Archiwum).
+          </li>
+          <li>
+            <b>Limity zwinięte do jednej linii</b>: najniższy pozostały % na dostawcę. Kliknij, żeby
+            rozwinąć (zakładka Limity). Stan zwinięcia jest zapamiętywany.
+          </li>
+          <li>
+            <b>Stopka</b> - przełącznik profilu i ikony Nowości / PR / Harmonogramy / Ustawienia z
+            tooltipami, zamiast listy 6 wierszy tekstu.
+          </li>
+          <li>
+            <b>Nagłówek wątku</b> przejmuje pływającą szynę narzędzi z prawej krawędzi (zmiany,
+            terminal, pliki). Projekt jako cichy chip.
+          </li>
+          <li><b>Wiadomość użytkownika</b> - lżejsza karta, obraz 96 x 80 zgodnie z DESIGN.md.</li>
+          <li>
+            <b>Meta tury w jednej linii</b>: "6 s · bez zmian w plikach" zamiast dwóch osobnych
+            wierszy "Pracował przez 6s" i "Brak zmian w plikach w tym prompcie".
+          </li>
+          <li>
+            <b>Model i wysiłek w jednej pigułce</b> ("6.1 Sol High"). Fast i rozmiar kontekstu
+            przechodzą do dropdownu modelu (zakładka Dropdown modeli).
+          </li>
+          <li>
+            <b>Tryb uprawnień jako ikona</b> z tooltipem i menu, zamiast długiego "Automatyczny
+            przegląd". Kontekst jako mały pierścień zamiast tekstu.
+          </li>
+        </ol>
+      </section>
+
+      <!-- =============== 2. NOWY WĄTEK =============== -->
+      <section class="screen" id="s-draft">
+        <h2>Nowy wątek - pusty sidebar i wybór projektu w composerze</h2>
+        <p class="lead">
+          Workflow z wymagań: pusty sidebar, projekt wybierany nad polem wiadomości, po pierwszym
+          prompcie wątek pojawia się w folderze projektu po lewej.
+        </p>
+        <div class="app">
+          <aside class="side">
+            <div class="side-top">
+              <button class="ib">
+                <svg><use href="#i-panel" /></svg></button
+              ><button class="ib">
+                <svg><use href="#i-search" /></svg>
+              </button>
+            </div>
+            <div class="side-scroll">
+              <div class="row new-row sel">
+                <svg><use href="#i-pen" /></svg><span class="t">Nowy wątek</span
+                ><span class="k">⌘N</span>
+              </div>
+              <div class="side-empty rel">
+                Brak aktywnych wątków. Wyślij pierwszy prompt, a projekt pojawi się tutaj.<i
+                  class="pin"
+                  >1</i
+                >
+              </div>
+              <div class="row" style="margin-top: 10px">
+                <svg><use href="#i-archive" /></svg><span class="t">Archiwum</span
+                ><span class="k">36</span>
+              </div>
+            </div>
+            <div class="limits" data-limits>
+              <button class="lim-head">
+                <svg><use href="#i-gauge" /></svg><span>Limity</span
+                ><span class="lim-chips"
+                  ><span
+                    ><svg class="sm" style="color: var(--brand-claude)">
+                      <use href="#p-claude" /></svg
+                    ><em class="bad">5%</em></span
+                  ><span
+                    ><svg class="sm" style="color: var(--brand-codex)"><use href="#p-codex" /></svg
+                    ><em class="warn">23%</em></span
+                  ></span
+                ><svg class="sm chev"><use href="#i-chev-u" /></svg>
+              </button>
+              <div class="lim-body"></div>
+            </div>
+            <div class="side-foot">
+              <button class="ws">
+                <svg class="sm"><use href="#i-brief" /></svg>Praca<svg class="sm">
+                  <use href="#i-chev-d" />
+                </svg></button
+              ><button class="ib">
+                <svg><use href="#i-bell" /></svg></button
+              ><button class="ib">
+                <svg><use href="#i-pr" /></svg></button
+              ><button class="ib">
+                <svg><use href="#i-clock" /></svg></button
+              ><button class="ib">
+                <svg><use href="#i-settings" /></svg>
+              </button>
+            </div>
+          </aside>
+          <section class="main">
+            <div class="draft">
+              <div class="mark">O</div>
+              <div class="composer rel" style="width: 100%">
+                <div class="ctx rel">
+                  <span class="chip"
+                    ><svg class="sm"><use href="#i-folder" /></svg>orzi-code__fork<svg class="sm">
+                      <use href="#i-chev-d" /></svg
+                  ></span>
+                  <span class="chip"
+                    ><svg class="sm"><use href="#i-branch" /></svg>main</span
+                  >
+                  <span class="chip" style="color: var(--fg-3)"
+                    >Lokalnie<svg class="sm"><use href="#i-chev-d" /></svg
+                  ></span>
+                  <i class="pin l">2</i>
+                </div>
+                <div class="ph">Opisz zadanie...</div>
+                <div class="ctrls">
+                  <button class="pill">
+                    <svg class="sm"><use href="#i-inf" /></svg>Praca<svg class="sm">
+                      <use href="#i-chev-d" />
+                    </svg>
+                  </button>
+                  <button class="pill">
+                    <svg class="sm" style="color: var(--brand-claude)"><use href="#p-claude" /></svg
+                    >Opus 5.5 <span class="muted">High</span
+                    ><svg class="sm"><use href="#i-chev-d" /></svg>
+                  </button>
+                  <button class="pill rel">
+                    <svg class="sm"><use href="#i-shield" /></svg>
+                  </button>
+                  <span class="spacer"></span>
+                  <button class="ib rel">
+                    <svg><use href="#i-image" /></svg><i class="pin">3</i>
+                  </button>
+                  <button class="ib">
+                    <svg><use href="#i-mic" /></svg>
+                  </button>
+                  <button class="send off">
+                    <svg class="sm"><use href="#i-up" /></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <ol class="notes">
+          <li>
+            <b>Pusty stan</b> zamiast listy wszystkich dodanych projektów. Projekty bez aktywnych
+            wątków nadal są w selektorze.
+          </li>
+          <li>
+            <b>Kontekst nad polem</b> jak w Cursorze: projekt, gałąź, tryb worktree. Dziś te
+            kontrolki są rozrzucone po nagłówku draftu.
+          </li>
+          <li><b>Załączniki</b> pod jedną ikoną. Drag and drop i wklejanie bez zmian.</li>
+        </ol>
+      </section>
+
+      <!-- =============== 3. DROPDOWN MODELI =============== -->
+      <section class="screen" id="s-models">
+        <h2>Dropdown modeli - węższe kolumny, nazwa nigdy nie jest ucinana przez kontekst</h2>
+        <p class="lead">
+          Kolumny mają 184-216 px zamiast rozciągania na całą szerokość okna. Nazwa modelu ma
+          pierwszeństwo: przy braku miejsca najpierw znika metadana. Najedź na wiersz, żeby zobaczyć
+          gwiazdkę.
+        </p>
+        <div class="app">
+          <aside class="side">
+            <div class="side-top">
+              <button class="ib">
+                <svg><use href="#i-panel" /></svg></button
+              ><button class="ib">
+                <svg><use href="#i-search" /></svg>
+              </button>
+            </div>
+            <div class="side-scroll">
+              <div class="row new-row sel">
+                <svg><use href="#i-pen" /></svg><span class="t">Nowy wątek</span
+                ><span class="k">⌘N</span>
+              </div>
+            </div>
+          </aside>
+          <section class="main">
+            <div class="draft">
+              <div class="mark">O</div>
+              <div class="composer" style="width: 100%">
+                <div class="ctx">
+                  <span class="chip"
+                    ><svg class="sm"><use href="#i-folder" /></svg>orzi-code__fork<svg class="sm">
+                      <use href="#i-chev-d" /></svg
+                  ></span>
+                </div>
+                <div class="ph">Opisz zadanie...</div>
+                <div class="ctrls">
+                  <button class="pill">
+                    <svg class="sm"><use href="#i-inf" /></svg>Praca<svg class="sm">
+                      <use href="#i-chev-d" />
+                    </svg>
+                  </button>
+                  <button class="pill open">
+                    <svg class="sm" style="color: var(--brand-claude)"><use href="#p-claude" /></svg
+                    >Opus 5.5 <span class="muted">High</span
+                    ><svg class="sm"><use href="#i-chev-d" /></svg>
+                  </button>
+                  <span class="spacer"></span>
+                  <button class="ib">
+                    <svg><use href="#i-image" /></svg>
+                  </button>
+                  <button class="send off">
+                    <svg class="sm"><use href="#i-up" /></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="menu">
+              <div class="menu-search rel">
+                <svg><use href="#i-search" /></svg><span>Szukaj modelu</span
+                ><span class="k">⌘/</span><i class="pin">1</i>
+              </div>
+              <div class="cols rel">
+                <div class="mcol">
+                  <h4>
+                    <svg class="sm" style="color: var(--brand-claude)"><use href="#p-claude" /></svg
+                    >Claude Code
+                  </h4>
+                  <div class="mrow sel">
+                    <svg class="sm ck"><use href="#i-check" /></svg><span class="n">Opus 5.5</span
+                    ><span class="m">1M</span
+                    ><button class="ib star" title="Usuń z ulubionych">
+                      <svg class="sm fill"><use href="#i-star" /></svg>
+                    </button>
+                  </div>
+                  <div class="mrow">
+                    <svg class="sm ck"><use href="#i-check" /></svg><span class="n">Sonnet 5.5</span
+                    ><span class="m">1M</span
+                    ><button class="ib star">
+                      <svg class="sm fill"><use href="#i-star" /></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="mcol rel">
+                  <h4>
+                    <svg class="sm" style="color: var(--brand-codex)"><use href="#p-codex" /></svg
+                    >Codex
+                  </h4>
+                  <div class="mrow rel">
+                    <svg class="sm ck"><use href="#i-check" /></svg
+                    ><span class="n">GPT-6.1 Sol</span><span class="m">400k</span
+                    ><button class="ib star">
+                      <svg class="sm fill"><use href="#i-star" /></svg></button
+                    ><i class="pin">2</i>
+                  </div>
+                  <div class="mrow">
+                    <svg class="sm ck"><use href="#i-check" /></svg
+                    ><span class="n">GPT-6.1 Codex Mini</span><span class="m">272k</span
+                    ><button class="ib star">
+                      <svg class="sm fill"><use href="#i-star" /></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="mcol">
+                  <h4>
+                    <svg class="sm" style="color: var(--brand-cursor)"><use href="#p-cursor" /></svg
+                    >Cursor
+                  </h4>
+                  <div class="mrow">
+                    <svg class="sm ck"><use href="#i-check" /></svg><span class="n">Composer 2</span
+                    ><span class="m">256k</span
+                    ><button class="ib star">
+                      <svg class="sm fill"><use href="#i-star" /></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="mcol rel">
+                  <h4>
+                    <svg class="sm" style="color: var(--brand-agy)"><use href="#p-agy" /></svg
+                    >Antigravity
+                  </h4>
+                  <div class="mrow">
+                    <svg class="sm ck"><use href="#i-check" /></svg
+                    ><span class="n">Claude Sonnet 5.5</span
+                    ><button class="ib star">
+                      <svg class="sm fill"><use href="#i-star" /></svg>
+                    </button>
+                  </div>
+                  <div class="mrow">
+                    <svg class="sm ck"><use href="#i-check" /></svg
+                    ><span class="n">Claude Opus 5.5</span
+                    ><button class="ib star">
+                      <svg class="sm fill"><use href="#i-star" /></svg>
+                    </button>
+                  </div>
+                  <i class="pin">3</i>
+                </div>
+              </div>
+              <div class="menu-foot rel">
+                <button class="pill">
+                  <svg class="sm"><use href="#i-plus" /></svg>Dodaj model
+                </button>
+                <span class="spacer"></span>
+                <span style="color: var(--fg-3); font-size: 12px">Wysiłek</span>
+                <span class="seg2"
+                  ><span>Low</span><span>Medium</span><span class="on">High</span></span
+                >
+                <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px"
+                  ><svg class="sm"><use href="#i-zap" /></svg>Fast <span class="toggle"></span
+                ></span>
+                <i class="pin">4</i>
+              </div>
+            </div>
+          </section>
+        </div>
+        <ol class="notes">
+          <li>
+            <b>Wyszukiwarka zamiast nagłówka "Ulubione"</b>. Wpisanie tekstu szuka też poza
+            ulubionymi, więc osobny przycisk "Dodaj do ulubionych" na górze nie jest potrzebny.
+          </li>
+          <li>
+            <b>Wiersz: znacznik wyboru, nazwa, jedna wartość kontekstu</b>. Zamiast "400k / 272k /
+            1M" pokazujemy domyślny kontekst, a pełną listę w tooltipie. Znika powtórzona ikona
+            dostawcy w wierszu i ikona Fast. Gwiazdka tylko po najechaniu, w miejscu metadanej.
+          </li>
+          <li>
+            <b>Kolumny według subskrypcji</b>, nagłówek z kolorowym znakiem marki. Kolumna ma
+            szerokość treści (184-216 px), więc menu ma ok. 820 px zamiast całej szerokości okna.
+          </li>
+          <li>
+            <b>Stopka</b>: "+ Dodaj model" otwiera katalog. Wysiłek i Fast przechodzą tutaj z paska
+            composera, bo dotyczą wybranego modelu. Pokazywane tylko gdy model je deklaruje.
+          </li>
+        </ol>
+        <h3 class="sub">Dziś</h3>
+        <figure>
+          <img src="before-models.png" alt="Obecny dropdown modeli" />
+          <figcaption>
+            Kolumny rozciągnięte na całe okno. W kolumnie Codex nazwa skrócona do "GPT..." przez
+            "400k / 272k / 1M", w Cursor ACP widać tylko "G". Ikona dostawcy powtarza się w każdym
+            wierszu.
+          </figcaption>
+        </figure>
+      </section>
+
+      <!-- =============== 4. LIMITY =============== -->
+      <section class="screen" id="s-limits">
+        <h2>Limity - zwinięte i rozwinięte</h2>
+        <p class="lead">
+          Dziś limity zajmują ok. 40% wysokości sidebaru. Propozycja: domyślnie jedna linia, po
+          rozwinięciu jeden wiersz na okno limitu.
+        </p>
+        <div
+          class="grid2"
+          style="grid-template-columns: repeat(auto-fit, minmax(260px, 280px)); gap: 28px"
+        >
+          <div>
+            <div style="color: #9a9a9a; font-size: 12px; margin-bottom: 8px">
+              Zwinięte (domyślnie)
+            </div>
+            <div class="side" style="border: 1px solid #2c2c2c; border-radius: 10px; width: 248px">
+              <div class="limits rel" style="border-top: 0">
+                <button class="lim-head">
+                  <svg><use href="#i-gauge" /></svg><span>Limity</span
+                  ><span class="lim-chips"
+                    ><span
+                      ><svg class="sm" style="color: var(--brand-claude)">
+                        <use href="#p-claude" /></svg
+                      ><em class="bad">5%</em></span
+                    ><span
+                      ><svg class="sm" style="color: var(--brand-codex)">
+                        <use href="#p-codex" /></svg
+                      ><em class="warn">23%</em></span
+                    ><span
+                      ><svg class="sm" style="color: var(--brand-agy)"><use href="#p-agy" /></svg
+                      >-</span
+                    ></span
+                  ><svg class="sm chev"><use href="#i-chev-u" /></svg></button
+                ><i class="pin">1</i>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style="color: #9a9a9a; font-size: 12px; margin-bottom: 8px">Rozwinięte</div>
+            <div class="side" style="border: 1px solid #2c2c2c; border-radius: 10px; width: 248px">
+              <div class="limits open" data-limits style="border-top: 0">
+                <button class="lim-head">
+                  <svg><use href="#i-gauge" /></svg><span>Limity</span
+                  ><span class="lim-chips"></span
+                  ><svg class="sm chev"><use href="#i-chev-u" /></svg>
+                </button>
+                <div class="lim-body" id="lim-full">
+                  <div class="lp rel">
+                    <div class="lp-name">
+                      <svg class="sm" style="color: var(--brand-claude)">
+                        <use href="#p-claude" /></svg
+                      >Claude<span class="k">Max</span>
+                    </div>
+                    <div class="meter">
+                      <span>Sesja</span
+                      ><span class="track"><span class="fill" style="width: 71%"></span></span
+                      ><span class="v">71%</span><span class="r">4h 37m</span>
+                    </div>
+                    <div class="meter">
+                      <span>Tydzień</span
+                      ><span class="track"><span class="fill bad" style="width: 5%"></span></span
+                      ><span class="v">5%</span><span class="r">3d 2h</span>
+                    </div>
+                    <div class="lp-note">Resety: na stronie dostawcy</div>
+                    <i class="pin">2</i>
+                  </div>
+                  <div class="lp">
+                    <div class="lp-name">
+                      <svg class="sm" style="color: var(--brand-codex)"><use href="#p-codex" /></svg
+                      >Codex<span class="k">Plus</span>
+                    </div>
+                    <div class="meter">
+                      <span>Sesja</span
+                      ><span class="track"><span class="fill" style="width: 44%"></span></span
+                      ><span class="v">44%</span><span class="r">4h 46m</span>
+                    </div>
+                    <div class="meter">
+                      <span>Tydzień</span
+                      ><span class="track"><span class="fill warn" style="width: 23%"></span></span
+                      ><span class="v">23%</span><span class="r">6d 18h</span>
+                    </div>
+                    <div class="lp-note">1 dodatkowy reset, ważny do 29.10</div>
+                  </div>
+                  <div class="lp rel">
+                    <div class="lp-name">
+                      <svg class="sm" style="color: var(--brand-agy)"><use href="#p-agy" /></svg
+                      >Antigravity
+                    </div>
+                    <div class="lp-note">Zaloguj się w agy, żeby zobaczyć limity</div>
+                    <i class="pin">3</i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ol class="notes">
+          <li>
+            <b>Jedna linia</b>: znak marki + najniższy pozostały procent na dostawcę. Kolor procentu
+            robi się bursztynowy / czerwony przy niskim stanie.
+          </li>
+          <li>
+            <b>Wiersz na okno</b>: etykieta, pasek 3 px, % pozostały, czas do resetu. Dziś każde
+            okno to 3 wiersze (etykieta+%, pasek, czas). Nazwa planu (Max / Plus) zamiast nagłówka
+            "Pozostałe limity".
+          </li>
+          <li>
+            <b>Kolory marek</b> tylko na znakach dostawców. Paski zachowują semantykę: neutralny /
+            bursztynowy / czerwony. Codex i Cursor mają monochromatyczne logotypy, więc zostają
+            jasne.
+          </li>
+        </ol>
+      </section>
+
+      <!-- =============== 5. ARCHIWUM =============== -->
+      <section class="screen" id="s-archive">
+        <h2>Archiwum - jeden folder, podfoldery projektów</h2>
+        <p class="lead">
+          Archiwum otwiera się w obszarze głównym, bo jest używane rzadko i nie powinno zajmować
+          miejsca w sidebarze. Najedź na wiersz, żeby zobaczyć akcje.
+        </p>
+        <div class="app">
+          <aside class="side">
+            <div class="side-top">
+              <button class="ib">
+                <svg><use href="#i-panel" /></svg></button
+              ><button class="ib">
+                <svg><use href="#i-search" /></svg>
+              </button>
+            </div>
+            <div class="side-scroll">
+              <div class="row new-row">
+                <svg><use href="#i-pen" /></svg><span class="t">Nowy wątek</span
+                ><span class="k">⌘N</span>
+              </div>
+              <div class="sec">Projekty</div>
+              <div class="row proj closed" data-toggle>
+                <svg class="sm chev"><use href="#i-chev-d" /></svg
+                ><span class="t">orzi-code__fork</span><span class="k">3</span>
+              </div>
+              <div class="kids"></div>
+              <div class="row proj closed" data-toggle>
+                <svg class="sm chev"><use href="#i-chev-d" /></svg><span class="t">BIZNES</span
+                ><span class="k">1</span>
+              </div>
+              <div class="kids"></div>
+              <div class="row sel" style="margin-top: 10px">
+                <svg><use href="#i-archive" /></svg><span class="t">Archiwum</span
+                ><span class="k">36</span>
+              </div>
+            </div>
+            <div class="side-foot">
+              <button class="ws">
+                <svg class="sm"><use href="#i-brief" /></svg>Praca<svg class="sm">
+                  <use href="#i-chev-d" />
+                </svg></button
+              ><button class="ib">
+                <svg><use href="#i-settings" /></svg>
+              </button>
+            </div>
+          </aside>
+          <section class="main">
+            <div class="arch">
+              <div class="col">
+                <h3>
+                  <svg><use href="#i-archive" /></svg>Archiwum
+                  <span
+                    class="k"
+                    style="
+                      color: var(--fg-3);
+                      font-weight: 400;
+                      font-size: 12px;
+                      font-family: var(--mono);
+                    "
+                    >36</span
+                  >
+                </h3>
+                <div class="search rel">
+                  <svg><use href="#i-search" /></svg>Szukaj w archiwum<i class="pin">1</i>
+                </div>
+                <div class="row proj rel" data-toggle>
+                  <svg class="sm chev"><use href="#i-chev-d" /></svg
+                  ><svg class="sm"><use href="#i-folder" /></svg
+                  ><span class="t">orzi-code__fork</span><span class="k">26</span
+                  ><i class="pin">2</i>
+                </div>
+                <div class="kids">
+                  <div class="arow rel">
+                    <svg class="prov" style="color: var(--brand-codex)"><use href="#p-codex" /></svg
+                    ><span class="t">Importer historii z backupem</span><span class="d">07.10</span
+                    ><button class="btn">
+                      <svg class="sm"><use href="#i-restore" /></svg>Przywróć</button
+                    ><i class="pin">3</i>
+                  </div>
+                  <div class="arow">
+                    <svg class="prov" style="color: var(--brand-claude)">
+                      <use href="#p-claude" /></svg
+                    ><span class="t">Kolejka follow-upów po restarcie</span
+                    ><span class="d">07.10</span
+                    ><button class="btn">
+                      <svg class="sm"><use href="#i-restore" /></svg>Przywróć
+                    </button>
+                  </div>
+                  <div class="arow">
+                    <svg class="prov" style="color: var(--brand-claude)">
+                      <use href="#p-claude" /></svg
+                    ><span class="t">Edytor ról Crossagents</span><span class="d">06.10</span
+                    ><button class="btn">
+                      <svg class="sm"><use href="#i-restore" /></svg>Przywróć
+                    </button>
+                  </div>
+                </div>
+                <div class="row proj closed" data-toggle>
+                  <svg class="sm chev"><use href="#i-chev-d" /></svg
+                  ><svg class="sm"><use href="#i-folder" /></svg
+                  ><span class="t">db-tapety__nextjs</span><span class="k">9</span>
+                </div>
+                <div class="kids">
+                  <div class="arow">
+                    <svg class="prov" style="color: var(--brand-codex)"><use href="#p-codex" /></svg
+                    ><span class="t">SEO kategorii</span><span class="d">28.09</span
+                    ><button class="btn">Przywróć</button>
+                  </div>
+                </div>
+                <div class="row proj closed" data-toggle>
+                  <svg class="sm chev"><use href="#i-chev-d" /></svg
+                  ><svg class="sm"><use href="#i-folder" /></svg><span class="t">BIZNES</span
+                  ><span class="k">1</span>
+                </div>
+                <div class="kids">
+                  <div class="arow">
+                    <svg class="prov" style="color: var(--brand-claude)">
+                      <use href="#p-claude" /></svg
+                    ><span class="t">Plan Q4</span><span class="d">15.09</span
+                    ><button class="btn">Przywróć</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <ol class="notes">
+          <li><b>Wyszukiwanie</b> w całym archiwum, przez wszystkie projekty.</li>
+          <li>
+            <b>Podfolder na projekt</b>, zwijany, z licznikiem. Projekty bez aktywnych wątków są
+            tylko tutaj.
+          </li>
+          <li>
+            <b>Kliknięcie otwiera wątek</b> tylko do odczytu. "Przywróć" pojawia się po najechaniu i
+            przenosi wątek z powrotem do sidebaru.
+          </li>
+        </ol>
+      </section>
+
+      <!-- =============== 6. PRZED / PO =============== -->
+      <section class="screen" id="s-compare">
+        <h2>Przed / po, tokeny i otwarte pytania</h2>
+        <p class="lead">
+          Zrzuty z ostatniego QA pakietu (11.10). Wartości Cursora odczytane z
+          <code>Cursor.app/.../theme-cursor/themes/cursor-dark-color-theme.json</code>.
+        </p>
+        <div class="grid2">
+          <figure>
+            <img src="before-chat.png" alt="Obecny widok wątku" />
+            <figcaption>
+              Sidebar jest szary, bo okno macOS ma vibrancy (<code>vibrancy: "sidebar"</code>) i
+              prześwituje tapeta. Limity i 6 wierszy nawigacji zajmują ponad połowę wysokości. Szyna
+              narzędzi pływa przy prawej krawędzi.
+            </figcaption>
+          </figure>
+          <figure>
+            <img src="before-models.png" alt="Obecny dropdown" />
+            <figcaption>
+              "Nowy wątek" i "Zarchiwizowane wątki" powtarzają się w każdym projekcie. Dropdown ma
+              kolumny na całą szerokość okna, a nazwy modeli są ucinane.
+            </figcaption>
+          </figure>
+        </div>
+
+        <h3 class="sub">Tokeny ciemnego motywu</h3>
+        <table>
+          <tr>
+            <th>Rola</th>
+            <th>Dziś (Orzi Code)</th>
+            <th>Cursor Dark</th>
+            <th>Wybrane: Czysta czerń</th>
+          </tr>
+          <tr>
+            <td>Sidebar</td>
+            <td>
+              <span class="sw" style="background: #232323"></span><code>#232323</code> + vibrancy
+              (na ekranie ok. #6b6b6b)
+            </td>
+            <td><span class="sw" style="background: #141414"></span><code>#141414</code></td>
+            <td>
+              <span class="sw" style="background: #000"></span><code>#000000</code>, bez vibrancy
+            </td>
+          </tr>
+          <tr>
+            <td>Obszar główny</td>
+            <td><span class="sw" style="background: #191919"></span><code>#191919</code></td>
+            <td><span class="sw" style="background: #181818"></span><code>#181818</code></td>
+            <td><span class="sw" style="background: #050505"></span><code>#050505</code></td>
+          </tr>
+          <tr>
+            <td>Karty, composer, menu</td>
+            <td><span class="sw" style="background: #232323"></span><code>#232323</code></td>
+            <td><span class="sw" style="background: #1f1f1f"></span>ok. <code>#1f1f1f</code></td>
+            <td><span class="sw" style="background: #121212"></span><code>#121212</code></td>
+          </tr>
+          <tr>
+            <td>Obrys</td>
+            <td>
+              <span class="sw" style="background: #3d3d3d"></span><code>#3d3d3d</code> (pełny)
+            </td>
+            <td><code>#F0F0F013</code> (7,5% bieli)</td>
+            <td>
+              podziały sekcji <code>.17</code>, wewnętrzne <code>.10</code>, composer / menu
+              <code>.18</code>
+            </td>
+          </tr>
+          <tr>
+            <td>Tekst / drugorzędny / trzeciorzędny</td>
+            <td><code>#d4d4d4</code> / mieszane</td>
+            <td><code>#F0F0F0</code></td>
+            <td><code>#f0f0f0</code> / 62% / 38%</td>
+          </tr>
+          <tr>
+            <td>Hover / zaznaczenie</td>
+            <td>szare tła</td>
+            <td><code>#F0F0F011</code> / <code>#F0F0F01E</code></td>
+            <td>6% / 10% bieli</td>
+          </tr>
+        </table>
+
+        <h3 class="sub">Pokrycie wymagań z redesign-requirements.md (uzupełnienie 11.10)</h3>
+        <table>
+          <tr>
+            <th>Wymaganie</th>
+            <th>Gdzie w podglądzie</th>
+          </tr>
+          <tr>
+            <td>Rozdzielenie obszarów UI, mniej chaosu w sidebarze</td>
+            <td>Wątek #1-#7</td>
+          </tr>
+          <tr>
+            <td>Ikony folderów, rozwijania i zwijania jak w Cursorze</td>
+            <td>Wątek #3, Archiwum #2 (Lucide, linia 1,6 px, chevron obracany o 90°)</td>
+          </tr>
+          <tr>
+            <td>Sidebar tylko z projektami z niearchiwizowanymi chatami, pusty start</td>
+            <td>Nowy wątek #1, #2</td>
+          </tr>
+          <tr>
+            <td>Jedno Archiwum z podfolderami projektów, przywracanie</td>
+            <td>Archiwum #1-#3</td>
+          </tr>
+          <tr>
+            <td>Firmowe kolory logotypów w limitach</td>
+            <td>Limity #3</td>
+          </tr>
+          <tr>
+            <td>Zwijanie listy limitów</td>
+            <td>Limity #1, #2</td>
+          </tr>
+          <tr>
+            <td>Ulubione w kolumnach subskrypcji, reszta pod plusem</td>
+            <td>Dropdown modeli #1-#4</td>
+          </tr>
+          <tr>
+            <td>Większe zdjęcia w inpucie (96 x 80)</td>
+            <td>Wątek #9</td>
+          </tr>
+        </table>
+
+        <h3 class="sub">Decyzje (11.10)</h3>
+        <ol class="q">
+          <li>
+            Czysta czerń: sidebar <code>#000000</code>, obszar główny <code>#050505</code>, karty i
+            menu <code>#121212</code>. Wyraźniejsze obrysy: podziały sekcji (sidebar / chat,
+            nagłówek, limity, stopka) 17% bieli, obrysy wewnętrzne 10%, composer i menu 18%.
+          </li>
+          <li>Vibrancy macOS wyłączone.</li>
+          <li>Wysiłek i Fast w stopce dropdownu modelu. Domyślny wysiłek: High.</li>
+          <li>Codex i Cursor zostają z monochromatycznymi znakami.</li>
+          <li>Bez jasnego motywu i bez prac nad innymi motywami. Jeden ciemny motyw.</li>
+        </ol>
+      </section>
+    </main>
+
+    <script>
+      const root = document.getElementById("root");
+      // klonowanie rozwiniętych limitów do sidebarów
+      const full = document
+        .getElementById("lim-full")
+        .innerHTML.replace(/<i class="pin">\d+<\/i>/g, "");
+      document
+        .querySelectorAll("[data-limits] .lim-body:not(#lim-full)")
+        .forEach((b) => (b.innerHTML = full));
+      document
+        .querySelectorAll("[data-limits] .lim-head")
+        .forEach((h) =>
+          h.addEventListener("click", () => h.parentElement.classList.toggle("open")),
+        );
+      document.querySelectorAll("[data-toggle]").forEach((r) =>
+        r.addEventListener("click", (e) => {
+          if (!e.target.closest(".ib")) r.classList.toggle("closed");
+        }),
+      );
+      function seg(id, attr, fn) {
+        const el = document.getElementById(id);
+        el.addEventListener("click", (e) => {
+          const b = e.target.closest("button");
+          if (!b) return;
+          el.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+          fn(b.dataset[attr]);
+        });
+      }
+      seg("tabs", "s", (s) => {
+        document
+          .querySelectorAll(".screen")
+          .forEach((x) => x.classList.toggle("on", x.id === "s-" + s));
+        location.hash = s;
+      });
+      seg("theme", "t", (t) => (root.dataset.theme = t));
+      document
+        .getElementById("pins")
+        .addEventListener("change", (e) =>
+          document.body.classList.toggle("nopins", !e.target.checked),
+        );
+      const h = location.hash.slice(1);
+      if (h) document.querySelector(`#tabs [data-s="${h}"]`)?.click();
+    </script>
+  </body>
+</html>
