@@ -3069,6 +3069,10 @@ msgstr "折叠分组"
 msgid "Collapse images"
 msgstr "折叠图像"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Collapse limits"
+msgstr "收起限额"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Collapse terminal composer"
@@ -5290,6 +5294,10 @@ msgstr "展开分组"
 msgid "Expand images"
 msgstr "展开图像"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Expand limits"
+msgstr "展开限额"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Expand to review or revoke access."
 msgstr "展开以查看或撤销访问权限。"
@@ -7046,6 +7054,10 @@ msgstr "浅色"
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Lightcode data import is unavailable with a custom data folder."
 msgstr "使用自定义数据文件夹时无法导入 Lightcode 数据。"
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Limits"
+msgstr "限额"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Link to source"
@@ -10657,8 +10669,8 @@ msgid "Reload browser page"
 msgstr "重新加载浏览器页面"
 
 #: src/renderer/components/providers/ProviderUsageRows.tsx
-msgid "Remaining limits"
-msgstr "剩余额度"
+#~ msgid "Remaining limits"
+#~ msgstr "剩余额度"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx

@@ -3069,6 +3069,10 @@ msgstr "그룹 접기"
 msgid "Collapse images"
 msgstr "이미지 접기"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Collapse limits"
+msgstr "한도 접기"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Collapse terminal composer"
@@ -5290,6 +5294,10 @@ msgstr "그룹 펼치기"
 msgid "Expand images"
 msgstr "이미지 펼치기"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Expand limits"
+msgstr "한도 펼치기"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Expand to review or revoke access."
 msgstr "펼쳐서 액세스를 검토하거나 취소합니다."
@@ -7046,6 +7054,10 @@ msgstr "라이트"
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Lightcode data import is unavailable with a custom data folder."
 msgstr "사용자 지정 데이터 폴더에서는 Lightcode 데이터를 가져올 수 없습니다."
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Limits"
+msgstr "한도"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Link to source"
@@ -10658,8 +10670,8 @@ msgid "Reload browser page"
 msgstr "브라우저 페이지 새로고침"
 
 #: src/renderer/components/providers/ProviderUsageRows.tsx
-msgid "Remaining limits"
-msgstr "남은 사용량"
+#~ msgid "Remaining limits"
+#~ msgstr "남은 사용량"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx

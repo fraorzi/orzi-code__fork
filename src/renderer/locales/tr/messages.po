@@ -3069,6 +3069,10 @@ msgstr "Grubu daralt"
 msgid "Collapse images"
 msgstr "Görüntüleri daralt"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Collapse limits"
+msgstr "Limitleri daralt"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Collapse terminal composer"
@@ -5290,6 +5294,10 @@ msgstr "Grubu genişlet"
 msgid "Expand images"
 msgstr "Görüntüleri genişlet"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Expand limits"
+msgstr "Limitleri genişlet"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Expand to review or revoke access."
 msgstr "Erişimi incelemek veya iptal etmek için genişletin."
@@ -7046,6 +7054,10 @@ msgstr "Açık"
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Lightcode data import is unavailable with a custom data folder."
 msgstr "Özel veri klasörü kullanılırken Lightcode verileri içe aktarılamaz."
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Limits"
+msgstr "Limitler"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Link to source"
@@ -10658,8 +10670,8 @@ msgid "Reload browser page"
 msgstr "Tarayıcı sayfasını yeniden yükle"
 
 #: src/renderer/components/providers/ProviderUsageRows.tsx
-msgid "Remaining limits"
-msgstr "Kalan kotalar"
+#~ msgid "Remaining limits"
+#~ msgstr "Kalan kotalar"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx

@@ -27,6 +27,12 @@ interface SidebarUiState {
    * version stays 1.
    */
   flatListProjectFilter: string[] | null;
+  /**
+   * Whether the sidebar limits section shows every usage window instead of
+   * the one-line summary. Persisted; additive to the v1 envelope like
+   * `flatListProjectFilter`, so the store version stays 1.
+   */
+  limitsExpanded: boolean;
   editingThreadId: string | null;
   setProjectCollapsed: (projectId: string, collapsed: boolean) => void;
   toggleProjectCollapsed: (projectId: string) => void;
@@ -36,6 +42,7 @@ interface SidebarUiState {
   revealMoreThreads: (projectId: string, pageSize?: number) => void;
   setFlatListProjectFilter: (projectIds: string[] | null) => void;
   setEditingThreadId: (id: string | null) => void;
+  toggleLimitsExpanded: () => void;
 }
 
 function readCollapsedProjects(): Record<string, boolean> {
@@ -62,6 +69,7 @@ export const useSidebarUiStore = create<SidebarUiState>()(
       collapsedWorktrees: {},
       threadListLimits: {},
       flatListProjectFilter: null,
+      limitsExpanded: false,
       editingThreadId: null,
 
       setProjectCollapsed: (projectId, collapsed) =>
@@ -138,6 +146,7 @@ export const useSidebarUiStore = create<SidebarUiState>()(
           return { flatListProjectFilter: next };
         }),
       setEditingThreadId: (editingThreadId) => set({ editingThreadId }),
+      toggleLimitsExpanded: () => set((state) => ({ limitsExpanded: !state.limitsExpanded })),
     }),
     {
       name: PERSIST_KEY,
@@ -149,6 +158,7 @@ export const useSidebarUiStore = create<SidebarUiState>()(
         collapsedProjects: state.collapsedProjects,
         pinnedGitHubWorkflows: state.pinnedGitHubWorkflows,
         flatListProjectFilter: state.flatListProjectFilter,
+        limitsExpanded: state.limitsExpanded,
       }),
     },
   ),

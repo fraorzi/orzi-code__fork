@@ -3069,6 +3069,10 @@ msgstr "Réduire le groupe"
 msgid "Collapse images"
 msgstr "Réduire les images"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Collapse limits"
+msgstr "Réduire les limites"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Collapse terminal composer"
@@ -5290,6 +5294,10 @@ msgstr "Développer le groupe"
 msgid "Expand images"
 msgstr "Développer les images"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Expand limits"
+msgstr "Développer les limites"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Expand to review or revoke access."
 msgstr "Développez pour vérifier ou révoquer l’accès."
@@ -7046,6 +7054,10 @@ msgstr "Clair"
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Lightcode data import is unavailable with a custom data folder."
 msgstr "L’importation des données Lightcode n’est pas disponible avec un dossier de données personnalisé."
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Limits"
+msgstr "Limites"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Link to source"
@@ -10657,8 +10669,8 @@ msgid "Reload browser page"
 msgstr "Recharger la page du navigateur"
 
 #: src/renderer/components/providers/ProviderUsageRows.tsx
-msgid "Remaining limits"
-msgstr "Quotas restants"
+#~ msgid "Remaining limits"
+#~ msgstr "Quotas restants"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx

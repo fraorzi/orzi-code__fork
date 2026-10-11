@@ -3069,6 +3069,10 @@ msgstr "Свернуть группу"
 msgid "Collapse images"
 msgstr "Свернуть изображения"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Collapse limits"
+msgstr "Свернуть лимиты"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Collapse terminal composer"
@@ -5290,6 +5294,10 @@ msgstr "Развернуть группу"
 msgid "Expand images"
 msgstr "Развернуть изображения"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Expand limits"
+msgstr "Развернуть лимиты"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Expand to review or revoke access."
 msgstr "Разверните, чтобы проверить или отозвать доступ."
@@ -7046,6 +7054,10 @@ msgstr "Светлая"
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Lightcode data import is unavailable with a custom data folder."
 msgstr "Импорт данных Lightcode недоступен при использовании пользовательской папки данных."
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Limits"
+msgstr "Лимиты"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Link to source"
@@ -10658,8 +10670,8 @@ msgid "Reload browser page"
 msgstr "Перезагрузить страницу браузера"
 
 #: src/renderer/components/providers/ProviderUsageRows.tsx
-msgid "Remaining limits"
-msgstr "Оставшиеся лимиты"
+#~ msgid "Remaining limits"
+#~ msgstr "Оставшиеся лимиты"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx

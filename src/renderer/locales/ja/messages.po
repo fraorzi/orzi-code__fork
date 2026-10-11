@@ -3068,6 +3068,10 @@ msgstr "グループを折りたたむ"
 msgid "Collapse images"
 msgstr "画像を折りたたむ"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Collapse limits"
+msgstr "上限を折りたたむ"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
 #: src/renderer/views/SettingsOverlay/parts/TerminalSettings.tsx
 msgid "Collapse terminal composer"
@@ -5289,6 +5293,10 @@ msgstr "グループを展開"
 msgid "Expand images"
 msgstr "画像を展開"
 
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Expand limits"
+msgstr "上限を展開"
+
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Expand to review or revoke access."
 msgstr "展開してアクセスを確認または取り消します。"
@@ -7045,6 +7053,10 @@ msgstr "ライト"
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Lightcode data import is unavailable with a custom data folder."
 msgstr "カスタムデータフォルダーでは Lightcode データをインポートできません。"
+
+#: src/renderer/components/providers/ProviderUsageRows.tsx
+msgid "Limits"
+msgstr "上限"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 msgid "Link to source"
@@ -10656,8 +10668,8 @@ msgid "Reload browser page"
 msgstr "ブラウザのページをリロード"
 
 #: src/renderer/components/providers/ProviderUsageRows.tsx
-msgid "Remaining limits"
-msgstr "残りの利用枠"
+#~ msgid "Remaining limits"
+#~ msgstr "残りの利用枠"
 
 #: src/renderer/components/common/BranchSelector/parts/useBranchList.ts
 #: src/renderer/views/SettingsOverlay/parts/SettingsSidebar.tsx
