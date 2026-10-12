@@ -6813,7 +6813,6 @@ msgid "Install the package to add its API key."
 msgstr "Cài đặt gói để thêm khóa API của nó."
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "Cài đặt bản cập nhật"
@@ -6828,8 +6827,8 @@ msgid "Install v{0}"
 msgstr "Cài đặt v{0}"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
-msgid "Install v{updateVersion}"
-msgstr "Cài đặt v{updateVersion}"
+#~ msgid "Install v{updateVersion}"
+#~ msgstr "Cài đặt v{updateVersion}"
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
@@ -14758,7 +14757,7 @@ msgstr "Cập nhật {0} lên {updateLabel}"
 msgid "Update all ({outdatedCount})"
 msgstr "Cập nhật tất cả ({outdatedCount})"
 
-#: src/renderer/state/updateStatusSync.ts
+#: src/renderer/views/MainView/parts/AppUpdateButton.tsx
 msgid "Update and restart"
 msgstr "Cập nhật và khởi động lại"
 
@@ -14812,8 +14811,8 @@ msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "Cập nhật Orzi Code trên máy tính của bạn để sử dụng tính năng chuyển tiếp cổng."
 
 #: src/renderer/state/updateStatusSync.ts
-msgid "Update ready"
-msgstr "Bản cập nhật đã sẵn sàng"
+#~ msgid "Update ready"
+#~ msgstr "Bản cập nhật đã sẵn sàng"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

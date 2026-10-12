@@ -6813,7 +6813,6 @@ msgid "Install the package to add its API key."
 msgstr "Installez le paquet pour ajouter sa clé API."
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "Installer la mise à jour"
@@ -6828,8 +6827,8 @@ msgid "Install v{0}"
 msgstr "Installer v{0}"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
-msgid "Install v{updateVersion}"
-msgstr "Installer v{updateVersion}"
+#~ msgid "Install v{updateVersion}"
+#~ msgstr "Installer v{updateVersion}"
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
@@ -14757,7 +14756,7 @@ msgstr "Mettre à jour {0} vers {updateLabel}"
 msgid "Update all ({outdatedCount})"
 msgstr "Tout mettre à jour ({outdatedCount})"
 
-#: src/renderer/state/updateStatusSync.ts
+#: src/renderer/views/MainView/parts/AppUpdateButton.tsx
 msgid "Update and restart"
 msgstr "Mettre à jour et redémarrer"
 
@@ -14811,8 +14810,8 @@ msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "Mettez à jour Orzi Code sur votre bureau pour utiliser le transfert de port."
 
 #: src/renderer/state/updateStatusSync.ts
-msgid "Update ready"
-msgstr "Mise à jour prête"
+#~ msgid "Update ready"
+#~ msgstr "Mise à jour prête"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

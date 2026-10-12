@@ -6813,7 +6813,6 @@ msgid "Install the package to add its API key."
 msgstr "API anahtarını eklemek için paketi yükleyin."
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "Güncellemeyi yükle"
@@ -6828,8 +6827,8 @@ msgid "Install v{0}"
 msgstr "v{0} sürümünü yükle"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
-msgid "Install v{updateVersion}"
-msgstr "v{updateVersion} sürümünü yükle"
+#~ msgid "Install v{updateVersion}"
+#~ msgstr "v{updateVersion} sürümünü yükle"
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
@@ -14758,7 +14757,7 @@ msgstr "{0} öğesini {updateLabel} olarak güncelleyin"
 msgid "Update all ({outdatedCount})"
 msgstr "Tümünü güncelle ({outdatedCount})"
 
-#: src/renderer/state/updateStatusSync.ts
+#: src/renderer/views/MainView/parts/AppUpdateButton.tsx
 msgid "Update and restart"
 msgstr "Güncelle ve yeniden başlat"
 
@@ -14812,8 +14811,8 @@ msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "Port yönlendirmeyi kullanmak için masaüstünüzdeki Orzi Code'u güncelleyin."
 
 #: src/renderer/state/updateStatusSync.ts
-msgid "Update ready"
-msgstr "Güncelleme hazır"
+#~ msgid "Update ready"
+#~ msgstr "Güncelleme hazır"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

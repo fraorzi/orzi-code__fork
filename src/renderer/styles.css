@@ -2803,6 +2803,17 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
   background: color-mix(in oklab, var(--danger) 22%, var(--surface));
 }
 
+.button.poracode-app-update {
+  color: var(--success);
+  background: color-mix(in oklab, var(--success) 18%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--success) 35%, transparent);
+}
+
+.button.poracode-app-update:hover,
+.button.poracode-app-update[data-hovered="true"] {
+  background: color-mix(in oklab, var(--success) 28%, var(--surface));
+}
+
 .poracode-composer-send[aria-disabled="true"] {
   background: color-mix(in oklab, var(--surface) 88%, transparent);
   color: var(--muted);

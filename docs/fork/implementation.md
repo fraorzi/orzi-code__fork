@@ -2,6 +2,15 @@
 
 Data: 2026-10-13. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Zielony przycisk aktualizacji zamiast toastu - 2026-10-13
+
+- Gotowa aktualizacja ma zielony przycisk z ikoną RefreshCw w górnym nagłówku sidebaru. Przy zwiniętym sidebarze jest pierwszą akcją raila. Lokalizowany tooltip i aria-label: "Update and restart", po polsku "Zaktualizuj i uruchom ponownie". Przycisk jest widoczny tylko przy downloaded, znika po utracie gotowości. Używa istniejącego installUpdate. O aplikacji pozostaje alternatywną ścieżką instalacji.
+- Usunięto toast gotowej aktualizacji i jego osobny cache identyfikatora buildu. Błędy nadal mają toast, a dolny pasek pokazuje wyłącznie postęp pobierania. Synchronizacja snapshot/live i natywny updater z blokadą aktywnej pracy, backupem i rollbackiem pozostają.
+- 39 testów w 3 zestawach PASS: AppUpdateButton, App, AboutSettings. Typecheck, typowany lint i format PASS. Lingui: 0 missing we wszystkich 12 katalogach, użyto istniejącego przetłumaczonego komunikatu. Nie zmieniono formatów stanu, cache, IPC ani manifestu, nie jest potrzebna migracja.
+- Smoke zmienionych powierzchni PASS: welcome, baseline, settings, control-geometry, mock-integrations i trzy bramki mock. Błędy console/runtime: 0. Dowody `/private/tmp/orzi-update-header-20261013/artifacts/smoke-report.json`.
+- Kontrola rzeczywistego Electron: brak przycisku w idle i downloading, przycisk po gotowym snapshot z tą samą wersją, 0 toastów, kolor identyczny z success, 26 px szerokości, 6 px od góry; rail po zwinięciu: 32 px od góry, prawidłowy hit test. Tooltip na hover potwierdzony po polsku. Klikano obie widoczne kontrolki. Wywołanie instalatora sprawdza test komponentu; QA dev nie miało paczki do instalacji. Dowód `update-header-report.json` i zrzuty w tym samym katalogu. Pierwsze próby skryptu QA błędnie zakładały mutowalność preload oraz wybierały ukrytą kopię headera w overlayu; poprawny skrypt wybiera widoczną kontrolkę przez hit test. Nie zmieniano kodu aplikacji dla tych błędów inspekcji.
+- Internet potwierdzony przed buildem, build PASS. Helper 0.4.3/protokół 3 sprawdzony przez --check, bez Rust. Pakiet `.tmp/orzi-update-header-20261013/mac-arm64/Orzi Code.app` przygotowany jako lokalna aktualizacja w profilu produkcyjnym. Podpis `codesign --verify --deep --strict` PASS, hash źródła i stagingu zgodny z ready.json: `05c9c45629b3ca0db569844357e87216562c9ebb8b5c3a3c79487f759c395f75`. Produkcyjnego bundle nie podmieniano. Sesję QA zresetowano i zamknięto. Logi `.tmp/update-header-{tests,typecheck,lint,i18n,smoke,build,helper,package}.log`.
+
 ## Wdrożenie zaakceptowanych akcentów i przeglądu zmian - 2026-10-13
 
 - Użytkownik zaakceptował pełny zakres podglądu i poprosił o ciemniejszy, wyraźniejszy szafir. Domyślne główne akcje i Wyślij mają `#2D4FA8` z białą ikoną; tekst akcentowy `#A4B6EA` pozostaje czytelny na czerni. Stop ma czerwony kolor, delikatne czerwone tło i obrys. Bazowe powierzchnie `#000000` / `#050505` / `#121212` pozostają. Podgląd HTML pokazuje przyjęty odcień.

@@ -3,6 +3,7 @@ import { Button, Tooltip } from "@heroui/react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { usePanelStore } from "@/renderer/state/panelStore";
 import { useSidebar } from "@/renderer/views/MainView/parts/AppShell/AppShell";
+import { AppUpdateButton } from "./AppUpdateButton";
 
 export function SidebarHeaderControls() {
   const { t } = useLingui();
@@ -10,6 +11,7 @@ export function SidebarHeaderControls() {
 
   return (
     <div className="poracode-overlay-header__controls flex grow-[999] items-center justify-end gap-0.5">
+      <AppUpdateButton />
       <Tooltip delay={150}>
         <Tooltip.Trigger>
           <Button

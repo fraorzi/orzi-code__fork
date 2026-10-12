@@ -6813,7 +6813,6 @@ msgid "Install the package to add its API key."
 msgstr "Установите пакет, чтобы добавить его API-ключ."
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "Установить обновление"
@@ -6828,8 +6827,8 @@ msgid "Install v{0}"
 msgstr "Установить v{0}"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
-msgid "Install v{updateVersion}"
-msgstr "Установить v{updateVersion}"
+#~ msgid "Install v{updateVersion}"
+#~ msgstr "Установить v{updateVersion}"
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
@@ -14758,7 +14757,7 @@ msgstr "Обновить {0} до {updateLabel}"
 msgid "Update all ({outdatedCount})"
 msgstr "Обновить все ({outdatedCount})"
 
-#: src/renderer/state/updateStatusSync.ts
+#: src/renderer/views/MainView/parts/AppUpdateButton.tsx
 msgid "Update and restart"
 msgstr "Обновить и перезапустить"
 
@@ -14812,8 +14811,8 @@ msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "Обновите Orzi Code на десктопе, чтобы использовать перенаправление портов."
 
 #: src/renderer/state/updateStatusSync.ts
-msgid "Update ready"
-msgstr "Обновление готово"
+#~ msgid "Update ready"
+#~ msgstr "Обновление готово"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

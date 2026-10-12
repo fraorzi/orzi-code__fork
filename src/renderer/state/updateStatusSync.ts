@@ -1,13 +1,8 @@
 import { toast } from "@heroui/react";
-import { msg as linguiMsg } from "@lingui/core/macro";
-import { i18n } from "@/renderer/i18n/i18n";
 import { readBridge } from "@/renderer/bridge";
 import { msg } from "@/shared/messages";
 import type { UpdateStatus } from "@/shared/ipc";
 import { useUpdateStore } from "./updateStore";
-
-let updateToastId: string | undefined;
-let lastUpdateToastBuild: string | undefined;
 
 function handleUpdateStatus(status: UpdateStatus, notifyError = true): void {
   const store = useUpdateStore.getState();
@@ -30,17 +25,6 @@ function handleUpdateStatus(status: UpdateStatus, notifyError = true): void {
       break;
     case "downloaded":
       store.setDownloaded(status.version);
-      if (lastUpdateToastBuild !== (status.buildId ?? status.version)) {
-        if (updateToastId !== undefined) toast.close(updateToastId);
-        lastUpdateToastBuild = status.buildId ?? status.version;
-        updateToastId = toast(i18n._(linguiMsg`Update ready`), {
-          timeout: 0,
-          actionProps: {
-            children: i18n._(linguiMsg`Update and restart`),
-            onPress: () => void readBridge().installUpdate(),
-          },
-        });
-      }
       break;
     case "error": {
       const detail = status.messageKey ? msg(status.messageKey) : status.message;

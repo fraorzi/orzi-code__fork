@@ -6813,7 +6813,6 @@ msgid "Install the package to add its API key."
 msgstr "安装该包后即可添加其 API 密钥。"
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "安装更新"
@@ -6828,8 +6827,8 @@ msgid "Install v{0}"
 msgstr "安装 v{0}"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
-msgid "Install v{updateVersion}"
-msgstr "安装 v{updateVersion}"
+#~ msgid "Install v{updateVersion}"
+#~ msgstr "安装 v{updateVersion}"
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
@@ -14757,7 +14756,7 @@ msgstr "将{0}更新为{updateLabel}"
 msgid "Update all ({outdatedCount})"
 msgstr "全部更新（{outdatedCount}）"
 
-#: src/renderer/state/updateStatusSync.ts
+#: src/renderer/views/MainView/parts/AppUpdateButton.tsx
 msgid "Update and restart"
 msgstr "更新并重启"
 
@@ -14811,8 +14810,8 @@ msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "请在桌面端更新 Orzi Code 以使用端口转发。"
 
 #: src/renderer/state/updateStatusSync.ts
-msgid "Update ready"
-msgstr "更新已就绪"
+#~ msgid "Update ready"
+#~ msgstr "更新已就绪"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

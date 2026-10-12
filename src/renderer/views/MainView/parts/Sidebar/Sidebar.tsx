@@ -54,6 +54,7 @@ import { SidebarFlatThreadList } from "./parts/SidebarFlatThreadList";
 import { SidebarFooterNav } from "./parts/SidebarFooterNav";
 import { SidebarProjectThreadList } from "./parts/SidebarProjectThreadList";
 import { UpdateButtons } from "./parts/UpdateButtons";
+import { AppUpdateButton } from "../AppUpdateButton";
 import { useSidebarShortcuts } from "./parts/sidebarShortcuts";
 import { WhatsNewButton } from "./parts/WhatsNewButton";
 import {
@@ -297,6 +298,7 @@ export function Sidebar() {
           }`}
         >
           <div className="flex shrink-0 flex-col gap-0.5">
+            <AppUpdateButton tooltipPlacement="right" />
             <SidebarButton
               iconOnly
               icon={<House className="size-3.5" />}

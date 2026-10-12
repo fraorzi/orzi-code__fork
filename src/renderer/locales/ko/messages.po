@@ -6813,7 +6813,6 @@ msgid "Install the package to add its API key."
 msgstr "패키지를 설치한 후 API 키를 추가하세요."
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
-#: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
 msgid "Install update"
 msgstr "업데이트 설치"
@@ -6828,8 +6827,8 @@ msgid "Install v{0}"
 msgstr "v{0} 설치"
 
 #: src/renderer/views/MainView/parts/Sidebar/parts/UpdateButtons.tsx
-msgid "Install v{updateVersion}"
-msgstr "v{updateVersion} 설치"
+#~ msgid "Install v{updateVersion}"
+#~ msgstr "v{updateVersion} 설치"
 
 #: src/renderer/components/startup/StartupRecoveryScreen.tsx
 #: src/renderer/views/SettingsOverlay/parts/AboutSettings.tsx
@@ -14758,7 +14757,7 @@ msgstr "{0}을(를) {updateLabel}(으)로 업데이트"
 msgid "Update all ({outdatedCount})"
 msgstr "모두 업데이트({outdatedCount})"
 
-#: src/renderer/state/updateStatusSync.ts
+#: src/renderer/views/MainView/parts/AppUpdateButton.tsx
 msgid "Update and restart"
 msgstr "업데이트 후 다시 시작"
 
@@ -14812,8 +14811,8 @@ msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "포트 포워딩을 사용하려면 데스크톱의 Orzi Code를 업데이트하세요."
 
 #: src/renderer/state/updateStatusSync.ts
-msgid "Update ready"
-msgstr "업데이트 준비 완료"
+#~ msgid "Update ready"
+#~ msgstr "업데이트 준비 완료"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"
