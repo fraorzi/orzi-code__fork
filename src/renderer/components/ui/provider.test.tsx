@@ -83,7 +83,7 @@ describe("AppProvider", () => {
       const region = document.querySelector('[data-slot="toast-region"]');
       expect(region).toHaveClass("lc-toast-region");
       expect(region).toHaveStyle({
-        "--toast-width": "min(32rem, calc(100vw - 2rem))",
+        "--toast-width": "min(24rem, calc(100vw - 2rem))",
       });
     });
   });

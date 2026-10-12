@@ -16,6 +16,12 @@ Widoczna referencja ma neutralne ciemne tło, nieco jaśniejszy sidebar, cienkie
 - Ulubione modele są w kolumnach według konta uruchamiającego model. Katalog otwiera osobna opcja z plusem. Dodanie ulubionego nie zmienia aktywnego modelu. Nawigacja klawiaturą i zwijanie menu pozostają dostępne.
 - Zdjęcia w composerze mają osobne podglądy 96 x 80 px, pełny kadr przez `object-fit: contain` i stale dostępny przycisk usuwania. Kliknięcie podglądu otwiera istniejący lightbox. Pliki i elementy strony zachowują podpisane chipy.
 
+## Akcenty zaakceptowane 2026-10-13
+
+Domyślny ciemny motyw zachowuje głęboką czerń. Wysyłka i główne akcje mają szafir `#2D4FA8` z białą ikoną, a tekst akcentowy czytelniejszy `#A4B6EA`. Stop ma czerwony kolor i subtelne czerwone tło. Toasty są kompaktowe, w prawym górnym rogu, z ikoną bez kolorowego koła i akcją tekstową. Przywróć zmiany ma neutralny obrys i strzałkę ponownego nałożenia.
+
+Cały nagłówek zmian i wiersz pliku rozwijają lub zwijają zawartość. Diff jest bezpośrednio pod plikiem. Zmiana pliku uruchamia równoczesne animacje 160 ms; preferencja ograniczenia ruchu je wyłącza. Przyciski ikonowe w tym obszarze mają lokalizowane tooltipy.
+
 ## Tokeny i sprawdzanie
 
 Kolorystyka jest adaptacją obserwowanego widoku, nie deklaracją dokładnie pobranych wartości Cursora. Źródłem wartości dla aplikacji pozostają `src/renderer/styles.css` i `src/renderer/theme/themePresets.ts`; komponenty odwołują się do tych tokenów.

@@ -623,7 +623,7 @@
    slots inline by default, so the description must be a block for max-height
    and overflow scrolling to take effect. */
 .lc-toast-region {
-  width: min(32rem, calc(100vw - 2rem));
+  width: min(24rem, calc(100vw - 2rem));
   min-width: 0;
   max-width: calc(100vw - 2rem);
 }
@@ -635,11 +635,10 @@
 
   max-height: calc(100dvh - 2rem);
   overflow: hidden;
-  box-shadow:
-    0 0 1px rgba(0, 0, 0, 0.1),
-    0 2px 4px rgba(0, 0, 0, 0.05),
-    0 12px 24px -4px rgba(0, 0, 0, 0.2),
-    0 20px 48px -8px rgba(0, 0, 0, 0.3);
+  border-radius: 9px;
+  border: 1px solid var(--hairline-strong);
+  background: var(--overlay);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   filter: opacity(var(--lc-toast-swipe-opacity));
   /* Preserve upward finger drags that scroll long descriptions down; downward
      and horizontal finger drags belong to swipe dismissal. */
@@ -662,18 +661,42 @@
     filter 0.16s ease-in;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .lc-toast:hover {
-    transform: translate3d(var(--lc-toast-swipe-x), var(--lc-toast-swipe-y), 0) translateY(-2px);
-  }
+.lc-toast .toast__indicator {
+  padding: 0;
+  margin-top: 2px;
+  background: transparent;
+  color: var(--accent);
 }
 
-.lc-toast:hover {
-  box-shadow:
-    0 0 1px rgba(0, 0, 0, 0.1),
-    0 4px 8px rgba(0, 0, 0, 0.1),
-    0 16px 32px -4px rgba(0, 0, 0, 0.25),
-    0 24px 64px -8px rgba(0, 0, 0, 0.35);
+.lc-toast.toast--success .toast__indicator {
+  color: var(--success);
+}
+.lc-toast.toast--warning .toast__indicator {
+  color: var(--warning);
+}
+.lc-toast.toast--danger .toast__indicator {
+  color: var(--danger);
+}
+
+.lc-toast .lc-toast-action {
+  height: auto;
+  min-height: 0;
+  align-self: flex-start;
+  justify-content: flex-start;
+  padding: 0;
+  margin-top: 8px;
+  border-radius: 3px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 400;
+  white-space: normal;
+  text-align: left;
+}
+
+.lc-toast .lc-toast-action:hover,
+.lc-toast .lc-toast-action[data-hovered="true"] {
+  background: transparent;
+  color: var(--foreground);
 }
 
 .toast__content {
@@ -962,6 +985,8 @@
     --field-radius: calc(var(--radius) * 2);
     --link: var(--accent);
     --focus: var(--foreground);
+    --action-background: var(--accent);
+    --action-foreground: var(--accent-foreground);
 
     /* Soft-accent text remains available for explicitly accent-tinted controls
        such as selected toggles, badges, and chips. Neutral buttons override
@@ -1070,7 +1095,7 @@
   .dark,
   [data-theme="dark"] {
     color-scheme: dark;
-    /* Orzi Code: pure black surfaces, light primary controls. */
+    /* Orzi Code: pure black surfaces and sapphire action accents. */
     --background: #050505;
     --foreground: #f0f0f0;
     --surface: #121212;
@@ -1086,8 +1111,8 @@
     --muted: #979797;
     --scrollbar: #3a3a3a;
     --default: #1f1f1f;
-    --accent: #e6e6e6;
-    --accent-foreground: #191919;
+    --accent: #a4b6ea;
+    --accent-foreground: #131d35;
     --danger: oklch(0.64 0.2 24.63);
     --danger-foreground: var(--snow);
     /* Same project-icon hues, lifted for dark surfaces (see the light block). */
@@ -1105,7 +1130,7 @@
     --segment: #1a1a1a;
     --border: color-mix(in oklab, var(--foreground) 10%, transparent);
     --separator: color-mix(in oklab, var(--foreground) 17%, transparent);
-    --row-active: color-mix(in oklab, var(--foreground) 10%, transparent);
+    --row-active: color-mix(in oklab, var(--accent) 14%, transparent);
     --hairline: color-mix(in oklab, var(--foreground) 10%, transparent);
     --hairline-strong: color-mix(in oklab, var(--foreground) 18%, transparent);
 
@@ -2745,21 +2770,42 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
   color: var(--muted);
 }
 
+:root[data-theme-preset="default"] {
+  --action-background: #2d4fa8;
+  --action-foreground: #ffffff;
+}
+
+.button--primary,
+.poracode-composer-send {
+  background: var(--action-background);
+  color: var(--action-foreground);
+}
+
 .poracode-composer-send {
   border-radius: 50%;
   height: 2.25rem;
   width: 2.25rem;
-  background: color-mix(in oklab, var(--accent) 18%, var(--surface));
-  color: var(--foreground);
 }
 
 .poracode-composer-send:hover,
 .poracode-composer-send[data-hovered="true"] {
-  background: color-mix(in oklab, var(--accent) 28%, var(--surface));
+  background: color-mix(in oklab, var(--action-background) 87%, var(--foreground));
+}
+
+.poracode-composer-stop {
+  color: var(--danger);
+  background: color-mix(in oklab, var(--danger) 14%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--danger) 30%, transparent);
+}
+
+.poracode-composer-stop:hover,
+.poracode-composer-stop[data-hovered="true"] {
+  background: color-mix(in oklab, var(--danger) 22%, var(--surface));
 }
 
 .poracode-composer-send[aria-disabled="true"] {
   background: color-mix(in oklab, var(--surface) 88%, transparent);
+  color: var(--muted);
 }
 
 .poracode-composer-shell--preserve-disabled-controls

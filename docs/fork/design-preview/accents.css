@@ -43,8 +43,8 @@
   --transparent: transparent;
 }
 body[data-blue="sapphire"] {
-  --action: #3458b2;
-  --action-hover: #4167c6;
+  --action: #2d4fa8;
+  --action-hover: #375fbb;
   --active: #a8b7e9;
   --active-bg: #171d35;
   --active-border: #343f69;
@@ -1066,7 +1066,7 @@ body[data-state="working"] .stop-square {
 }
 :root {
   --ink-sample: #315b9f;
-  --sapphire-sample: #3458b2;
+  --sapphire-sample: #2d4fa8;
   --steel-sample: #3b617e;
 }
 .ink {

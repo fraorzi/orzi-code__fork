@@ -472,8 +472,8 @@ msgid "{envOrAgentLabel} needs authentication."
 msgstr "{envOrAgentLabel}에는 인증이 필요합니다."
 
 #: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
-msgid "{fileCount, plural, one {# file restored} other {# files restored}}"
-msgstr "{fileCount, plural, one {파일 #개 복원됨} other {파일 #개 복원됨}}"
+#~ msgid "{fileCount, plural, one {# file restored} other {# files restored}}"
+#~ msgstr "{fileCount, plural, one {파일 #개 복원됨} other {파일 #개 복원됨}}"
 
 #: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 msgid "{fileCount, plural, one {# file} other {# files}}"
@@ -2376,7 +2376,7 @@ msgstr "단축키 변경"
 msgid "Change User"
 msgstr "사용자 변경"
 
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 msgid "Changed after this prompt"
 msgstr "이 프롬프트 이후 변경됨"
 
@@ -2816,6 +2816,7 @@ msgstr "복제 중…"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 #: src/renderer/components/skills/SkillViewModal.tsx
 #: src/renderer/components/thread/ThreadBackgroundTasksDock.tsx
+#: src/renderer/components/ui/provider.tsx
 #: src/renderer/views/ExperimentView/parts/ExperimentJudgeRunDialog.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
@@ -3715,7 +3716,7 @@ msgstr "기록을 가져올 수 없습니다. 기존 기록은 보존되었습�
 msgid "Could not load pull requests for {0}."
 msgstr "{0}의 풀 리퀘스트를 불러올 수 없습니다."
 
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 msgid "Could not load this diff."
 msgstr "이 변경 내역을 불러오지 못했습니다."
 
@@ -7230,7 +7231,7 @@ msgstr "워크플로 입력 불러오는 중"
 msgid "Loading workflow runs"
 msgstr "워크플로 실행 불러오는 중"
 
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 msgid "Loading..."
 msgstr "불러오는 중..."
 
@@ -9049,9 +9050,9 @@ msgid "Open"
 msgstr "열기"
 
 #. placeholder {0}: entry.name
-#. placeholder {0}: file.path
+#. placeholder {0}: props.path
 #: src/renderer/components/plugins/PluginMarketplace.tsx
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 msgid "Open {0}"
 msgstr "{0} 열기"
 
@@ -11221,9 +11222,9 @@ msgstr "Orzi Code 다시 시작"
 msgid "Restore"
 msgstr "복원"
 
-#. placeholder {0}: file.path
+#. placeholder {0}: props.path
 #. placeholder {0}: state.previous
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
 msgid "Restore {0}"
 msgstr "{0} 복원"
@@ -14575,8 +14576,8 @@ msgstr "선택 해제한 공급자와 모델은 Crossagents 자동 라우팅에�
 msgid "Undo"
 msgstr "되돌리기"
 
-#. placeholder {0}: file.path
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#. placeholder {0}: props.path
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 msgid "Undo {0}"
 msgstr "{0} 되돌리기"
 

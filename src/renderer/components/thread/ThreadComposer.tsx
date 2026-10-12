@@ -804,7 +804,7 @@ export function ThreadComposer(props: {
             <Button
               isIconOnly
               aria-label={t`Stop response`}
-              className="poracode-composer-send"
+              className="poracode-composer-send poracode-composer-stop"
               isDisabled={stopPending}
               isPending={stopPending}
               onPress={onStop}
@@ -823,20 +823,29 @@ export function ThreadComposer(props: {
     }
     if (submitControl) return submitControl;
     return (
-      <Button
-        isIconOnly={!submitContent}
-        aria-label={submitLabel}
-        className={submitContent ? "h-9 px-3" : "poracode-composer-send"}
-        isDisabled={submitDisabled || promptDisabled}
-        isPending={submitPending}
-        onPress={onSubmit}
-        size="sm"
-        {...(submitVariant ? { variant: submitVariant } : {})}
-      >
-        {({ isPending }) =>
-          isPending ? <PixelLoader size="xs" /> : (submitContent ?? <ArrowUp className="size-4" />)
-        }
-      </Button>
+      <Tooltip delay={180} isDisabled={!!submitContent}>
+        <Tooltip.Trigger>
+          <Button
+            isIconOnly={!submitContent}
+            aria-label={submitLabel}
+            className={submitContent ? "h-9 px-3" : "poracode-composer-send"}
+            isDisabled={submitDisabled || promptDisabled}
+            isPending={submitPending}
+            onPress={onSubmit}
+            size="sm"
+            {...(submitVariant ? { variant: submitVariant } : {})}
+          >
+            {({ isPending }) =>
+              isPending ? (
+                <PixelLoader size="xs" />
+              ) : (
+                (submitContent ?? <ArrowUp className="size-4" />)
+              )
+            }
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content>{submitLabel}</Tooltip.Content>
+      </Tooltip>
     );
   };
 

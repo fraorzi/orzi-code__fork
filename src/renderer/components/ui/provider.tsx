@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { Toast, toast as heroToast } from "@heroui/react";
+import { Toast, Tooltip, toast as heroToast } from "@heroui/react";
+import { msg } from "@lingui/core/macro";
 import { I18nProvider } from "@lingui/react";
 import { Copy } from "lucide-react";
 import { resolveThemeMode } from "@/shared/themeMode";
@@ -60,9 +61,8 @@ function ToastAction({ actionProps, actionLabel, isCopyAction }: ToastActionProp
     <Toast.ActionButton
       size="sm"
       variant="ghost"
-      fullWidth
       {...rest}
-      className={`w-full justify-center text-[color:var(--overlay-foreground)] ${className ?? ""}`}
+      className={`lc-toast-action ${className ?? ""}`}
     />
   );
 }
@@ -199,7 +199,7 @@ export function AppProvider(props: {
           className="lc-toast-region"
           placement="top end"
           maxVisibleToasts={5}
-          width="min(32rem, calc(100vw - 2rem))"
+          width="min(24rem, calc(100vw - 2rem))"
         >
           {({ toast: toastItem }) => {
             const content = toastItem.content;
@@ -231,11 +231,11 @@ export function AppProvider(props: {
               <SwipeDismissToast
                 toast={toastItem}
                 variant={variant}
-                className={`lc-toast relative w-full border border-border/40 ${isToastPressable ? "cursor-pointer" : ""}`}
+                className={`lc-toast relative w-full ${isToastPressable ? "cursor-pointer" : ""}`}
               >
                 {isToastPressable ? (
                   <div
-                    className="flex w-full items-start gap-3 p-3"
+                    className="flex w-full items-start gap-3 p-3.5"
                     onClick={onPress}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
@@ -261,7 +261,7 @@ export function AppProvider(props: {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex w-full flex-col gap-3 p-3">
+                  <div className="flex w-full p-3.5">
                     <div className="flex min-w-0 flex-1 items-start gap-3">
                       <Toast.Indicator variant={variant} />
                       <Toast.Content
@@ -275,16 +275,26 @@ export function AppProvider(props: {
                             {description}
                           </Toast.Description>
                         )}
+                        <ToastAction
+                          actionProps={actionProps}
+                          actionLabel={actionLabel}
+                          isCopyAction={isCopyAction}
+                        />
                       </Toast.Content>
                     </div>
-                    <ToastAction
-                      actionProps={actionProps}
-                      actionLabel={actionLabel}
-                      isCopyAction={isCopyAction}
-                    />
                   </div>
                 )}
-                <Toast.CloseButton className="absolute top-3 right-3" />
+                <div className="absolute top-2 right-2">
+                  <Tooltip delay={180}>
+                    <Tooltip.Trigger>
+                      <Toast.CloseButton
+                        aria-label={i18n._(msg`Close`)}
+                        className="static size-5 min-w-0"
+                      />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>{i18n._(msg`Close`)}</Tooltip.Content>
+                  </Tooltip>
+                </div>
               </SwipeDismissToast>
             );
           }}

@@ -472,8 +472,8 @@ msgid "{envOrAgentLabel} needs authentication."
 msgstr "{envOrAgentLabel}需要身份验证。"
 
 #: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
-msgid "{fileCount, plural, one {# file restored} other {# files restored}}"
-msgstr "{fileCount, plural, one {已恢复 # 个文件} other {已恢复 # 个文件}}"
+#~ msgid "{fileCount, plural, one {# file restored} other {# files restored}}"
+#~ msgstr "{fileCount, plural, one {已恢复 # 个文件} other {已恢复 # 个文件}}"
 
 #: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
 msgid "{fileCount, plural, one {# file} other {# files}}"
@@ -2376,7 +2376,7 @@ msgstr "更改快捷键"
 msgid "Change User"
 msgstr "更改用户"
 
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 msgid "Changed after this prompt"
 msgstr "在此提示之后被修改"
 
@@ -2816,6 +2816,7 @@ msgstr "克隆…"
 #: src/renderer/components/providers/opencode2/OpenCode2PluginsSettings.tsx
 #: src/renderer/components/skills/SkillViewModal.tsx
 #: src/renderer/components/thread/ThreadBackgroundTasksDock.tsx
+#: src/renderer/components/ui/provider.tsx
 #: src/renderer/views/ExperimentView/parts/ExperimentJudgeRunDialog.tsx
 #: src/renderer/views/MainView/parts/RightPanel/parts/BrowserPanel/BrowserPanel.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
@@ -3715,7 +3716,7 @@ msgstr "无法导入历史记录。现有历史记录已保留。"
 msgid "Could not load pull requests for {0}."
 msgstr "无法加载 {0} 的拉取请求。"
 
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 msgid "Could not load this diff."
 msgstr "无法加载此差异。"
 
@@ -7230,7 +7231,7 @@ msgstr "正在加载工作流输入"
 msgid "Loading workflow runs"
 msgstr "正在加载工作流运行记录"
 
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 msgid "Loading..."
 msgstr "正在加载..."
 
@@ -9048,9 +9049,9 @@ msgid "Open"
 msgstr "打开"
 
 #. placeholder {0}: entry.name
-#. placeholder {0}: file.path
+#. placeholder {0}: props.path
 #: src/renderer/components/plugins/PluginMarketplace.tsx
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 msgid "Open {0}"
 msgstr "打开 {0}"
 
@@ -11220,9 +11221,9 @@ msgstr "重新启动 Orzi Code"
 msgid "Restore"
 msgstr "恢复"
 
-#. placeholder {0}: file.path
+#. placeholder {0}: props.path
 #. placeholder {0}: state.previous
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 #: src/renderer/views/SettingsOverlay/parts/SingleAgentSettings/parts/AgentVersions.tsx
 msgid "Restore {0}"
 msgstr "恢复 {0}"
@@ -14574,8 +14575,8 @@ msgstr "未选中的提供商和模型不会参与 Crossagents 自动路由，�
 msgid "Undo"
 msgstr "撤销"
 
-#. placeholder {0}: file.path
-#: src/renderer/components/thread/ChatPane/parts/PromptChanges.tsx
+#. placeholder {0}: props.path
+#: src/renderer/components/thread/ChatPane/parts/PromptChangesFile.tsx
 msgid "Undo {0}"
 msgstr "撤销 {0}"
 

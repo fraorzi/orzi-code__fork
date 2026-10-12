@@ -1,0 +1,40 @@
+.lc-prompt-disclosure {
+  height: 0;
+  min-width: 0;
+  overflow: hidden;
+  transition: height 160ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.lc-prompt-chevron {
+  transition: transform 160ms ease-out;
+}
+
+.lc-prompt-file + .lc-prompt-file {
+  border-top: 1px solid var(--hairline);
+}
+
+.lc-prompt-changes .lc-prompt-summary,
+.lc-prompt-changes .lc-prompt-file-trigger {
+  border-radius: 4px;
+}
+
+.lc-prompt-summary {
+  flex-wrap: wrap;
+}
+
+.lc-prompt-changes .lc-prompt-restore {
+  border: 1px solid var(--hairline-strong);
+  border-radius: 6px;
+  color: var(--foreground);
+}
+
+.lc-prompt-restore svg {
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-prompt-disclosure,
+  .lc-prompt-chevron {
+    transition: none;
+  }
+}
