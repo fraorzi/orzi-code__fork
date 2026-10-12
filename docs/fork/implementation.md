@@ -2,13 +2,27 @@
 
 Data: 2026-10-11. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Audyt wizualny composera i karty zmian - 2026-10-12
+
+Audyt w izolowanej instancji dev (tryb real, mock Keychain przez `PORACODE_USE_MOCK_KEYCHAIN=1`, bo inaczej Electron czeka na systemowe okno Keychain). Prompty: Sonnet 5.5 (sam tekst) i Codex 6.1 Sol (edycja `hello.txt`), resize sidebara 232-492 px, wąski draft 440 px.
+
+- Composer: edytor miał podwójny padding (wrapper i `poracode-mention-input`), a przyciski były wyrównane do dołu. Pigułka ma teraz 46 px, przyciski 32 px wyśrodkowane. Zawinięty prompt otwiera pigułkę w pole z przyciskami pod tekstem, więc tekst zajmuje pełną szerokość; wraca do pigułki po wyczyszczeniu.
+- Pod draftem jeden wiersz: gałąź i tryb worktree po lewej (`footerLeading` w `ThreadComposer`), model, tryb i uprawnienia po prawej. Menu modelu w pigułce otwiera się do prawej krawędzi wyzwalacza.
+- Hover modelu podświetla też wysiłek. Kolumny ulubionych 136-160 px, stopka menu zawija się i nie poszerza menu.
+- Praca zespołowa: przełącznik z ikoną w obrysowanej pigułce; włączona ma jasny obrys, tło i wypełniony przełącznik.
+- Fokus draftu: obrót poświaty kończy się wygaszeniem, zostaje zwykły obrys bez przerw u góry i u dołu.
+- Limity w wąskim sidebarze (poniżej 18rem) chowają ikonę i etykietę, więc wszystkie znaki dostawców się mieszczą.
+- Karta zmian: `promptStatus` liczy bieżące bloby przez tymczasowy indeks (`add -A` po ścieżkach promptu), zamiast `git hash-object`, który nie obsługuje symlinków. Symlink utworzony przez prompt był pokazywany jako cofnięty. Test regresji w `checkpointService.promptRevert.test.ts`.
+- Otwarte: projekcja skilli (`SkillsService.prepareForLaunch`) tworzy symlink `.claude/skills/<skill>` po migawce „przed”, więc pierwszy prompt w projekcie z niezprojektowanymi skillami pokazuje 1 plik zmian. Podsumowanie kroków („2 commands · 1 thought”) jest po angielsku w upstreamie, etykiety służą też do parsowania zapisanych podsumowań. Composer w aktywnym wątku jest o 11 px szerszy od kolumny wiadomości przez `scrollbar-gutter: stable` listy.
+- Weryfikacja: typecheck, oxlint i oxfmt dotkniętych plików; porażki `vitest run src/renderer src/mobile` identyczne z bazą `9a2a9710` (16 wcześniejszych); `src/supervisor/git` zielone.
+
 ## Chat GUI i cofanie zmian promptu - 2026-10-12
 
 Wdrożono wybrane warianty z [podglądu v2](design-preview/chat.html): composer B, odpowiedź A, karta zmian promptu. Commity `4364581b`, `2b895f04`, `42d39504`, `331fd2f7`.
 
 - Domyślnie Chat: nowy wątek otwiera się w Chat, gdy agent go obsługuje; zapamiętany tryb dotyczy tylko agentów bez Chatu. Ulubiony zapisany jako CLI zostaje w Chat, jeśli katalog Chat ma ten model; gwiazdka w menu usuwa ulubiony we wszystkich trybach.
 - Domyślnie High: model bez zapisanego wysiłku zaczyna od High (także przy zmianie modelu), z powrotem do domyślnego dostawcy, gdy High nie istnieje. Instalator czyści zapisane wysiłki w `settings.json` i `projects.last_draft_config` (z kopią profilu).
-- Cofanie promptu: `GitCheckpointService.promptStatus/revertPrompt/reapplyPrompt` porównuje blob pliku w drzewie roboczym z migawkami przed i po prompcie i przywraca pliki przez `git restore --source --worktree` lub `git clean` dla plików utworzonych przez prompt. Indeks i rozmowa bez zmian. Plik zmieniony później jest konfliktem i blokuje pełne cofnięcie. Bez stdin, więc działa też dla WSL (nietestowane na WSL). Procedury IPC są lokalne (ukryte dla sterowania zdalnym pulpitem).
+- Cofanie promptu: `GitCheckpointService.promptStatus/revertPrompt/reapplyPrompt` porównuje blob pliku w drzewie roboczym z migawkami przed i po prompcie i przywraca pliki przez `git restore --source --worktree` lub `git clean` dla plików utworzonych przez prompt. Indeks i rozmowa bez zmian. Plik zmieniony później jest konfliktem i blokuje pełne cofnięcie. Status czyta stdin tak jak tworzenie migawek (nietestowane na WSL). Procedury IPC są lokalne (ukryte dla sterowania zdalnym pulpitem).
 - Karta zmian: pod odpowiedzią, liczba plików i +/-, Przejrzyj z diffem pliku, Otwórz, Cofnij i Przywróć per plik, Cofnij całość bez potwierdzenia, stan „cofnięte” z Przywróć zmiany, konflikt z cofnięciem pozostałych plików. Akcja na wiadomości nazywa się teraz „Cofnij rozmowę do tego miejsca”.
 - Composer: na desktopie pigułka (pole, załączniki, wyślij/stop) i wyciszony rząd ustawień pod nią; układ telefonu bez zmian. Podsumowanie kroków narzędzi zwykłą czcionką.
 - Weryfikacja: testy serwisu na prawdziwym repo git, testy karty, menu, draftu, composera; typecheck, lint, 0 brakujących tłumaczeń. Na żywo w instancji dev: prawdziwy checkpoint w repo testowym, Cofnij przywrócił pliki na dysku, Przywróć nałożył je ponownie, przegląd pokazał diff pliku. Pozostałe porażki testów (MCP, skills, `panelStore`, `SchedulesView` i inne) są identyczne z `1e178579`; test routingu procedur zdalnych został przy okazji naprawiony.
