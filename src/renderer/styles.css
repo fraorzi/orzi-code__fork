@@ -712,7 +712,12 @@
 
 /* HeroUI component overrides */
 [data-react-aria-pressable] {
-  cursor: default;
+  cursor: var(--interactive-cursor);
+}
+
+.button,
+.toggle-button {
+  border-radius: 9999px;
 }
 
 /* Buttons use neutral foregrounds across every app theme. HeroUI's stock
@@ -996,8 +1001,8 @@
     --window-header-background: var(--sidebar-background);
     --window-overlay-background: rgba(0, 0, 0, 0);
     --composer-surface: var(--surface);
-    --interactive-cursor: default;
-    --cursor-interactive: default;
+    --interactive-cursor: pointer;
+    --cursor-interactive: pointer;
 
     /* Theme-adaptive interaction overlays. Derived from --foreground so they
        invert per theme: a light wash on dark themes (matching the old
@@ -1181,8 +1186,21 @@ textarea:focus-visible {
 }
 
 button,
-[role="button"] {
+[role="button"],
+a[href],
+[role="menuitem"],
+[role="option"],
+label:has(input[type="checkbox"]),
+label:has(input[type="radio"]) {
   cursor: var(--interactive-cursor);
+}
+
+:is(button, [role="button"], [role="menuitem"], [role="option"], [data-react-aria-pressable]):is(
+  :disabled,
+  [aria-disabled="true"],
+  [data-disabled="true"]
+) {
+  cursor: default;
 }
 
 html,
@@ -2728,6 +2746,7 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
 }
 
 .poracode-composer-send {
+  border-radius: 50%;
   height: 2.25rem;
   width: 2.25rem;
   background: color-mix(in oklab, var(--accent) 18%, var(--surface));

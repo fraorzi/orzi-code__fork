@@ -84,6 +84,7 @@ export function createGeminiAdapter(): AgentAdapter {
 
   return {
     kind: geminiDetectionSpec.kind,
+    usageProviderId: "gemini",
     label: geminiDetectionSpec.label,
     binary: geminiDetectionSpec.binary,
     skillSupport: {

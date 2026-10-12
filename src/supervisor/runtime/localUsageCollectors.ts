@@ -18,6 +18,7 @@ export interface LocalUsageCollector {
 }
 
 export interface LocalUsageCollectorsOptions {
+  cacheDir?: string;
   getActiveAntigravityWslDistros?: () => readonly string[];
 }
 
@@ -29,7 +30,13 @@ export function createLocalUsageCollectors(
     {
       id: "antigravity",
       collect: (nowMs, host) =>
-        scanAntigravityUsage(nowMs, options.getActiveAntigravityWslDistros?.() ?? [], host),
+        scanAntigravityUsage(
+          nowMs,
+          options.getActiveAntigravityWslDistros?.() ?? [],
+          host,
+          undefined,
+          options.cacheDir,
+        ),
     },
   ];
 }

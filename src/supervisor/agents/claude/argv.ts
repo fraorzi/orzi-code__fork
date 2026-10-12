@@ -82,10 +82,10 @@ export async function rewriteClaudeLaunchArgsForConfig(
 ): Promise<string[]> {
   const flags: Record<string, unknown> = {};
   if (config.effort === "ultracode") flags.ultracode = true;
-  if (config.fast === true) flags.fastMode = true;
+  flags.fastMode = false;
   if (Object.keys(flags).length === 0) return args;
   const idx = args.findIndex((arg, i) => arg === "--settings" && i + 1 < args.length);
-  if (idx < 0) return args;
+  if (idx < 0) return [...args, "--settings", JSON.stringify(flags)];
   const originalPath = args[idx + 1];
   if (!originalPath) return args;
   const rewritten = await prepareClaudeMergedSettingsFile(originalPath, projectLocation, flags);

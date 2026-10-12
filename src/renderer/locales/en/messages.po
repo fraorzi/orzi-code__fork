@@ -1486,8 +1486,12 @@ msgstr "Antigravity ACP"
 #~ msgstr "Antigravity updated to v{version}."
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
-msgstr "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
+#~ msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
+#~ msgstr "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Anything currently unavailable, such as a provider, model, or reasoning level, is skipped automatically. Unchecked providers and models are skipped until re-checked."
+msgstr "Anything currently unavailable, such as a provider, model, or reasoning level, is skipped automatically. Unchecked providers and models are skipped until re-checked."
 
 #: src/renderer/views/SettingsOverlay/parts/CursorSdkRuntimeSetup.tsx
 msgid "API key"
@@ -4875,8 +4879,12 @@ msgid "e.g. 512k or 1m"
 msgstr "e.g. 512k or 1m"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
-msgstr "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
+msgid "e.g. Codex for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for complex tasks."
+msgstr "e.g. Codex for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for complex tasks."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#~ msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
+#~ msgstr "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
 
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
 msgid "e.g. Work"
@@ -5690,6 +5698,10 @@ msgstr "Find in diff"
 #: src/renderer/components/terminal/XTermSurface.tsx
 msgid "Find in terminal"
 msgstr "Find in terminal"
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Finish active tasks before installing the update."
+msgstr "Finish active tasks before installing the update."
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Finish your review"
@@ -14041,8 +14053,8 @@ msgstr "Toggle browser panel"
 
 #: src/renderer/commands/composerCommands.ts
 #: src/renderer/components/providers/standardGuiSlashCommands.ts
-msgid "Toggle Fast mode"
-msgstr "Toggle Fast mode"
+#~ msgid "Toggle Fast mode"
+#~ msgstr "Toggle Fast mode"
 
 #: src/renderer/commands/registry.ts
 msgid "Toggle File Tree"
@@ -14767,6 +14779,10 @@ msgstr "Update {0} to {updateLabel}"
 msgid "Update all ({outdatedCount})"
 msgstr "Update all ({outdatedCount})"
 
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update and restart"
+msgstr "Update and restart"
+
 #: src/renderer/views/SettingsOverlay/parts/antigravityRuntimeInstall.ts
 #~ msgid "Update Antigravity"
 #~ msgstr "Update Antigravity"
@@ -14819,6 +14835,10 @@ msgstr "Update Orzi Code on your desktop to use port forwarding."
 #: src/mobile/views/PortsView.tsx
 #~ msgid "Update Poracode on your desktop to use port forwarding."
 #~ msgstr "Update Poracode on your desktop to use port forwarding."
+
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update ready"
+msgstr "Update ready"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

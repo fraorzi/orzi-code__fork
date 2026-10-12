@@ -7,13 +7,8 @@ import { Trans } from "@lingui/react/macro";
 import { Suspense, useEffect, useState } from "react";
 import { PixelLoader } from "./components/common/PixelLoader";
 import { StartupRecoveryScreen } from "./components/startup/StartupRecoveryScreen";
-import { msg } from "@/shared/messages";
 import type { RuntimeEvent } from "@/shared/contracts";
-import {
-  isAgentStatusSupervisorEvent,
-  type SupervisorEvent,
-  type UpdateStatus,
-} from "@/shared/ipc";
+import { isAgentStatusSupervisorEvent, type SupervisorEvent } from "@/shared/ipc";
 import { readBridge } from "./bridge";
 import {
   handleThreadStateNotification,
@@ -45,7 +40,8 @@ import { useDevTerminalStore } from "./state/devTerminalStore";
 import { useThreadOutputStore } from "./state/threadOutputStore";
 import { applyAgentStatusSupervisorEvent } from "./state/agentStatusesStore";
 import { useProviderUsageStore } from "./state/providerUsageStore";
-import { useUpdateStore } from "./state/updateStore";
+import { installUpdateStatusSync } from "./state/updateStatusSync";
+export { installUpdateStatusSync } from "./state/updateStatusSync";
 import { clearRuntimeItemStoreSelectorCacheForThread } from "./components/thread/ChatPane/chatPaneSelectors";
 import { evictOversizedInactiveThreadRuntimeItems } from "./state/chatRuntimePersister";
 
@@ -307,60 +303,6 @@ function installThreadOutputPruning(): () => void {
   return () => {
     unsubscribeThreads();
     unsubscribeTerminals();
-  };
-}
-
-function handleUpdateStatus(status: UpdateStatus, notifyError = true): void {
-  const store = useUpdateStore.getState();
-  switch (status.type) {
-    case "checking":
-      store.setChecking();
-      break;
-    case "update-available":
-      store.beginUpdateDownload(status.version);
-      break;
-    case "update-not-available":
-      store.setNotAvailable();
-      break;
-    case "downloading":
-      store.setDownloading(status.percent, {
-        transferred: status.transferred,
-        total: status.total,
-        bytesPerSecond: status.bytesPerSecond,
-      });
-      break;
-    case "downloaded":
-      store.setDownloaded(status.version);
-      break;
-    case "error": {
-      const detail = status.messageKey ? msg(status.messageKey) : status.message;
-      store.setError(detail);
-      if (notifyError) toast.danger(msg("update.error", { detail }));
-      break;
-    }
-  }
-}
-
-export function installUpdateStatusSync(
-  bridge: Pick<ReturnType<typeof readBridge>, "getUpdateStatus" | "onUpdateStatus"> = readBridge(),
-): () => void {
-  let disposed = false;
-  let receivedLiveStatus = false;
-  const unsubscribe = bridge.onUpdateStatus((status) => {
-    receivedLiveStatus = true;
-    handleUpdateStatus(status);
-  });
-  void bridge
-    .getUpdateStatus()
-    .then((status) => {
-      if (!disposed && !receivedLiveStatus && status) handleUpdateStatus(status, false);
-    })
-    .catch((error: unknown) => {
-      if (!disposed) console.error("[poracode][updates] get-update-status failed", error);
-    });
-  return () => {
-    disposed = true;
-    unsubscribe();
   };
 }
 

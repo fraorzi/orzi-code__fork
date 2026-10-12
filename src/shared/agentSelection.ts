@@ -288,18 +288,14 @@ export function modelSelectionFor(
     : reasoningValues.includes(capabilities.defaultEffort ?? "")
       ? capabilities.defaultEffort
       : reasoningValues[0];
-  const fastSupported = capabilities.fastModels?.includes(model) === true;
   return {
     reasoning: {
       values: reasoningValues,
       ...(defaultReasoning ? { default: defaultReasoning } : {}),
     },
     fast: {
-      supported: fastSupported,
-      available: fastSupported && capabilities.fastDisabledReason === undefined,
-      ...(fastSupported && capabilities.fastDisabledReason
-        ? { disabledReason: capabilities.fastDisabledReason }
-        : {}),
+      supported: false,
+      available: false,
     },
   };
 }

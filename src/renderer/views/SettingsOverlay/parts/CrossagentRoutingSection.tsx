@@ -155,7 +155,7 @@ export function CrossagentRoutingSection() {
         ) : null}
         <p className="text-xs text-muted">
           <Trans>
-            Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is
+            Anything currently unavailable, such as a provider, model, or reasoning level, is
             skipped automatically. Unchecked providers and models are skipped until re-checked.
           </Trans>
         </p>
@@ -175,7 +175,7 @@ export function CrossagentRoutingSection() {
           aria-label={t`Crossagent routing guide`}
           className="w-full text-xs"
           rows={4}
-          placeholder={t`e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle.`}
+          placeholder={t`e.g. Codex for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for complex tasks.`}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onBlur={() => setCrossagentRoutingGuide(draft.trim())}

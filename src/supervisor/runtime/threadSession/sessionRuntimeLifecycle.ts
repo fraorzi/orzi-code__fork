@@ -16,6 +16,7 @@ import type { StructuredInterruptWatchdog } from "./structuredInterruptWatchdog"
 import type { FollowUpQueueCoordinator } from "./followUpQueueCoordinator";
 
 export interface SessionRuntimeLifecycleContext {
+  onUsageSnapshot?: ThreadSessionManagerOptions["onUsageSnapshot"];
   sessions: Map<string, SessionRuntime>;
   sessionsBySessionId: Map<string, SessionRuntime>;
   ptyLifecycle: Pick<PtyLifecycle, "track" | "resolveExit" | "kill">;
@@ -79,6 +80,10 @@ export class SessionRuntimeLifecycle {
 
   private bindStructuredSession(session: SessionRuntime): void {
     session.structuredSession?.setListener({
+      onUsageSnapshot: (snapshot) => {
+        if (!this.canHandleStructuredEvent(session)) return;
+        this.context.onUsageSnapshot?.(snapshot);
+      },
       onClose: () => {
         if (!this.canHandleStructuredEvent(session)) return;
         this.handleStructuredSessionClosed(session);

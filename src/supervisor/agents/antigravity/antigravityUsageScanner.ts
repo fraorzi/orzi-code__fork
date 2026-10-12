@@ -117,10 +117,15 @@ export async function scanAntigravityUsage(
   wslDistros: readonly string[] = [],
   host: HostPort,
   deps: AntigravityUsageScannerDeps = defaultDeps,
+  cacheDir?: string,
 ): Promise<UsageSnapshot> {
   const ls = await deps.scanLanguageServer(nowMs, wslDistros).catch(() => undefined);
   if (ls && ls.windows.length > 0) return ls;
-  const credentials = await deps.resolveAcpCredentials().catch(() => undefined);
+  const credentials = await (
+    deps === defaultDeps
+      ? resolveAntigravityAcpCredentialsCached(undefined, cacheDir)
+      : deps.resolveAcpCredentials()
+  ).catch(() => undefined);
   if (!credentials) {
     return { providerId: "antigravity", status: "app-not-running", windows: [], fetchedAt: nowMs };
   }

@@ -432,6 +432,8 @@ export class SupervisorRuntime {
     });
 
     this.threadSessionManager = new ThreadSessionManager({
+      onUsageSnapshot: (snapshot) => this.usageService.acceptLiveSnapshot(snapshot),
+      onUsageRefresh: (providerId) => this.usageService.refreshAfterTurn(providerId),
       acquireAgentLaunch: () => this.agentRegistryService.updates.acquireLaunch(),
       emit,
       isDev: this.isDev,
@@ -544,6 +546,7 @@ export class SupervisorRuntime {
       cacheDir: paths.cacheDir,
       settingsPath: this.settingsPath,
       localCollectors: createLocalUsageCollectors({
+        cacheDir: paths.cacheDir,
         getActiveAntigravityWslDistros: () => this.getActiveAntigravityWslDistros(),
       }),
     });

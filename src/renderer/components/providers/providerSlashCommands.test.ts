@@ -20,7 +20,7 @@ describe("provider slash-command registry", () => {
     ).toEqual(["model", "plan", "agent", "goal"]);
     expect(
       registration?.buildCommands({ hasEffort: true, supportsFast: true }).map(({ id }) => id),
-    ).toEqual(["model", "plan", "agent", "goal", "effort", "fast"]);
+    ).toEqual(["model", "plan", "agent", "goal", "effort"]);
   });
 
   it("builds Cursor commands from the active control capabilities", () => {
@@ -32,7 +32,7 @@ describe("provider slash-command registry", () => {
     ).toEqual(["model", "plan", "agent"]);
     expect(
       registration?.buildCommands({ hasEffort: true, supportsFast: true }).map(({ id }) => id),
-    ).toEqual(["model", "plan", "agent", "effort", "fast"]);
+    ).toEqual(["model", "plan", "agent", "effort"]);
   });
 
   it("builds Muse commands without unsupported plan or goal modes", () => {

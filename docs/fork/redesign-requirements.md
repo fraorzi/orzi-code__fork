@@ -68,6 +68,6 @@ Decyzje użytkownika:
 
 - Jeden ciemny motyw "czysta czerń": sidebar `#000000`, obszar główny `#050505`, karty i menu `#121212`. Wyraźniejsze obrysy: podziały sekcji (sidebar / chat, nagłówek, limity, stopka) 17% bieli, obrysy wewnętrzne 10%, composer i menu 18%.
 - Vibrancy macOS wyłączone; obecnie przez przezroczystość okna sidebar wygląda na szary.
-- Wysiłek i Fast przechodzą do stopki dropdownu modelu. Domyślny wysiłek: High.
+- Wysiłek przechodzi do stopki dropdownu modelu. Domyślny wysiłek: High. Decyzja z 2026-10-12: Fast / Szybki jest wyłączony dla wszystkich modeli, także w zapisanych konfiguracjach; zastępuje wcześniejszy wybór pokazywania Fast.
 - Codex i Cursor zachowują monochromatyczne znaki.
 - Bez jasnego motywu i bez prac nad innymi motywami. Warunki sprawdzania jasnego motywu powyżej przestają obowiązywać.

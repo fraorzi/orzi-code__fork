@@ -12,6 +12,13 @@ export const productionRoots = [
 
 export const functionalAreas = [
   {
+    id: "local-desktop-updates",
+    title: "Staged local builds, persistent update toast, safe install and restart",
+    patterns: [/localUpdater/, /shared\/localUpdate/, /updateStatusSync/],
+    automated: ["baseline", "settings"],
+    manual: ["changed-surface", "native-auth-update"],
+  },
+  {
     id: "agent-versions",
     title: "Managed runtime version pinning, rollback and system fallback",
     patterns: [
@@ -272,7 +279,8 @@ export const manualGates = {
     "Exercise one real renderer-to-main/supervisor round-trip per changed IPC family.",
   "mcp-extension":
     "Start the changed MCP/hook/extension path and verify one request-response cycle.",
-  "native-auth-update": "Verify changed native login/update/notification flows on the target OS.",
+  "native-auth-update":
+    "Verify changed native login/update/notification flows on the target OS. For local builds, use an isolated macOS profile: stage a signed same-version build, verify its persistent toast, install and acknowledge restart; check active-work refusal, checksum refusal, and launch-failure rollback with native installer fixtures.",
   "project-mutations":
     "Create or select an isolated project/worktree and verify persistence after reload.",
   "quick-composer":

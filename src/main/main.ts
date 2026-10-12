@@ -1,7 +1,7 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
-import { watch } from "node:fs";
+import { existsSync, watch } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 import {
   app,
   BrowserWindow,
@@ -58,6 +58,7 @@ import {
 } from "./computer-use";
 import { SupervisorClient } from "./supervisor/SupervisorClient";
 import { createAutoUpdaterController } from "./updates/autoUpdater";
+import { withLocalUpdates } from "./updates/localUpdater";
 import { showOsNotification } from "./osNotifications";
 import { createMainWindow } from "./window/createMainWindow";
 import { requestTrackedRendererReload } from "./window/windowHardening";
@@ -78,7 +79,7 @@ import {
   upsertCrossagentRoutingOverride,
 } from "@/shared/crossagentRanking";
 import { getAppName } from "@/shared/appName";
-import { electronAppNameFor, resolvePoracodeChannel } from "@/shared/channel";
+import { appIdFor, electronAppNameFor, resolvePoracodeChannel } from "@/shared/channel";
 import {
   IPC_EVENT_CHANNELS,
   IPC_WINDOW_CHANNELS,
@@ -1004,17 +1005,40 @@ if (!hasSingleInstanceLock) {
         },
       });
 
-      const autoUpdaterController = createAutoUpdaterController(
+      const releaseUpdater = createAutoUpdaterController(
         (status) => {
+          const local = autoUpdaterController.getStatus();
+          if (local?.type === "downloaded" && local.buildId) return;
           mainWindow?.webContents.send(IPC_EVENT_CHANNELS.updateStatus, status);
         },
         channel,
-        isDev,
+        // Directory-only local packages have no release feed. Their staged
+        // builds are handled below without a failing GitHub updater check.
+        isDev || (app.isPackaged && !existsSync(join(process.resourcesPath, "app-update.yml"))),
         captureMainException,
         () => {
           isQuitting = true;
         },
       );
+
+      const autoUpdaterController = withLocalUpdates({
+        release: releaseUpdater,
+        baseDir: paths.baseDir,
+        targetBundle: dirname(dirname(dirname(process.execPath))),
+        installerPath: join(process.resourcesPath, "local-update/install.py"),
+        appId: appIdFor(channel),
+        enabled: app.isPackaged && process.platform === "darwin",
+        onStatus: (status) => mainWindow?.webContents.send(IPC_EVENT_CHANNELS.updateStatus, status),
+        isBusy: async () =>
+          (await supervisorClient.call("getThreadSnapshots", {})).some(
+            (thread) =>
+              thread.status === "launching" ||
+              thread.status === "working" ||
+              thread.status === "needs_approval" ||
+              thread.status === "needs_reply",
+          ),
+        quit: () => app.quit(),
+      });
 
       browserPanelManager = new BrowserPanelManager(paths, browserUserAgent, {
         isExtracted: () => browserExtractWindow !== null && !browserExtractWindow.isDestroyed(),

@@ -1,5 +1,6 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { z } from "zod";
+import { fastModeSchema } from "./fastModePolicy";
 import { allUsageProviderDescriptors } from "@poracode/agents-usage/providers";
 import {
   agentInstanceConfigMapSchema,
@@ -67,7 +68,7 @@ export type AgentSelectionUsageEntry = z.infer<typeof agentSelectionUsageEntrySc
 
 export const providerModelPreferenceSchema = z.object({
   effort: z.string().optional(),
-  fast: z.boolean().optional(),
+  fast: fastModeSchema.optional(),
 });
 export type ProviderModelPreference = z.infer<typeof providerModelPreferenceSchema>;
 
@@ -114,7 +115,7 @@ export const crossagentRoutingSelectionSchema = z.object({
   agentKind: z.string().min(1).max(MAX_CROSSAGENT_SELECTION_VALUE_LENGTH),
   modelId: z.string().min(1).max(MAX_CROSSAGENT_SELECTION_VALUE_LENGTH).optional(),
   effort: z.string().min(1).max(MAX_CROSSAGENT_SELECTION_VALUE_LENGTH).optional(),
-  fast: z.boolean().optional(),
+  fast: fastModeSchema.optional(),
 });
 export type CrossagentRoutingSelection = z.infer<typeof crossagentRoutingSelectionSchema>;
 

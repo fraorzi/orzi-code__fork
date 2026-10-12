@@ -5,6 +5,7 @@ import type {
 } from "@/shared/contracts/liveVoice";
 import { msg } from "@/shared/messages";
 import { CodexLiveVoice } from "./liveVoice";
+import { normalizeCodexLiveUsage } from "./liveUsage";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import {
@@ -1317,6 +1318,8 @@ export class CodexStructuredSession implements StructuredSessionHandle {
     }
 
     if (method === "account/rateLimits/updated" && params && "rateLimits" in params) {
+      const snapshot = normalizeCodexLiveUsage(params, Date.now());
+      if (snapshot) this.listener?.onUsageSnapshot?.(snapshot);
       return;
     }
 

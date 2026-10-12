@@ -83,6 +83,8 @@ export interface StructuredSessionUpdate {
 }
 
 export interface StructuredSessionListener {
+  /** Account limits normalized at the provider boundary, independent of turn state. */
+  onUsageSnapshot?(snapshot: import("@poracode/agents-usage").UsageSnapshot): void;
   onClose(): void;
   onError(errorMessage: string): void;
   onUpdate(update: StructuredSessionUpdate): void;
@@ -808,6 +810,8 @@ export interface AgentAdapter
     Partial<AgentAcpAuth>,
     Partial<AgentCliHookPluginSupport>,
     Partial<AgentNativePluginSupport> {
+  /** Account usage collector to refresh after a completed turn, including real PTY turns. */
+  usageProviderId?: string;
   /** Manage native provider package plugins in the selected execution environment. */
   managePlugins?(
     input: Omit<ManageAgentPluginsPayload, "agentKind">,

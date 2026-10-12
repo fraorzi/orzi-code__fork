@@ -1486,8 +1486,12 @@ msgstr "Antigravity ACP"
 #~ msgstr "Antigravity a été mis à jour vers la v{version}."
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
-msgstr "Tout ce qui est actuellement indisponible — un fournisseur, un modèle, un niveau de raisonnement ou un mode Fast — est ignoré automatiquement. Les fournisseurs et modèles décochés sont ignorés jusqu'à ce qu'ils soient à nouveau cochés."
+#~ msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
+#~ msgstr "Tout ce qui est actuellement indisponible — un fournisseur, un modèle, un niveau de raisonnement ou un mode Fast — est ignoré automatiquement. Les fournisseurs et modèles décochés sont ignorés jusqu'à ce qu'ils soient à nouveau cochés."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Anything currently unavailable, such as a provider, model, or reasoning level, is skipped automatically. Unchecked providers and models are skipped until re-checked."
+msgstr "Les fournisseurs, modèles ou niveaux de raisonnement indisponibles sont ignorés automatiquement. Les fournisseurs et modèles décochés sont ignorés jusqu’à leur prochaine sélection."
 
 #: src/renderer/views/SettingsOverlay/parts/CursorSdkRuntimeSetup.tsx
 msgid "API key"
@@ -4867,8 +4871,12 @@ msgid "e.g. 512k or 1m"
 msgstr "p. ex. 512k ou 1m"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
-msgstr "par ex. Codex GPT-5.5 fast pour les recherches rapides, OpenCode GLM pour les refactorisations en masse, Claude Opus pour tout ce qui est subtil."
+msgid "e.g. Codex for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for complex tasks."
+msgstr "p. ex. Codex pour les recherches rapides, OpenCode GLM pour les refactorisations importantes, Claude Opus pour les tâches complexes."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#~ msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
+#~ msgstr "par ex. Codex GPT-5.5 fast pour les recherches rapides, OpenCode GLM pour les refactorisations en masse, Claude Opus pour tout ce qui est subtil."
 
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
 msgid "e.g. Work"
@@ -5682,6 +5690,10 @@ msgstr "Rechercher dans la différence"
 #: src/renderer/components/terminal/XTermSurface.tsx
 msgid "Find in terminal"
 msgstr "Rechercher dans le terminal"
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Finish active tasks before installing the update."
+msgstr "Terminez les tâches actives avant de procéder à la mise à jour."
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Finish your review"
@@ -14016,8 +14028,8 @@ msgstr "Basculer le panneau du navigateur"
 
 #: src/renderer/commands/composerCommands.ts
 #: src/renderer/components/providers/standardGuiSlashCommands.ts
-msgid "Toggle Fast mode"
-msgstr "Activer/désactiver le mode rapide"
+#~ msgid "Toggle Fast mode"
+#~ msgstr "Activer/désactiver le mode rapide"
 
 #: src/renderer/commands/registry.ts
 msgid "Toggle File Tree"
@@ -14738,6 +14750,10 @@ msgstr "Mettre à jour {0} vers {updateLabel}"
 msgid "Update all ({outdatedCount})"
 msgstr "Tout mettre à jour ({outdatedCount})"
 
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update and restart"
+msgstr "Mettre à jour et redémarrer"
+
 #: src/renderer/views/SettingsOverlay/parts/antigravityRuntimeInstall.ts
 #~ msgid "Update Antigravity"
 #~ msgstr "Mettre à jour Antigravity"
@@ -14786,6 +14802,10 @@ msgstr "Méthode de mise à jour"
 #: src/mobile/views/PortsView.tsx
 msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "Mettez à jour Orzi Code sur votre bureau pour utiliser le transfert de port."
+
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update ready"
+msgstr "Mise à jour prête"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

@@ -1015,6 +1015,29 @@ describe("CodexStructuredSession", () => {
     ).handleNotification(message.method, message.params);
   }
 
+  it("delivers live account limits through the provider-neutral session listener", () => {
+    const session = makeStructuredSession([]);
+    const onUsageSnapshot =
+      vi.fn<(snapshot: import("@poracode/agents-usage").UsageSnapshot) => void>();
+    session.setListener({ onClose() {}, onError() {}, onUpdate() {}, onUsageSnapshot });
+    dispatchNotification(session, {
+      method: "account/rateLimits/updated",
+      params: {
+        rateLimits: {
+          limitId: "codex",
+          primary: { usedPercent: 42, windowDurationMins: 300, resetsAt: null },
+          secondary: null,
+        },
+      },
+    });
+    expect(onUsageSnapshot).toHaveBeenCalledWith(
+      expect.objectContaining({
+        providerId: "codex",
+        windows: [expect.objectContaining({ usedPercent: 42 })],
+      }),
+    );
+  });
+
   it("exposes provider-thread ownership for shared Crossagents routing", () => {
     const structuredSession = makeStructuredSession([]);
 
@@ -1785,7 +1808,7 @@ describe("CodexStructuredSession", () => {
     });
   });
 
-  it("forces serviceTier each turn: null when Fast is off (incl. the first turn), 'fast' when on", async () => {
+  it("disables priority service on every turn, including legacy Fast opt-ins", async () => {
     const requests: Array<{ method: string; params: Record<string, unknown> }> = [];
     const structuredSession = makeStructuredSession(requests);
 
@@ -1794,9 +1817,9 @@ describe("CodexStructuredSession", () => {
     expect(requests[0]?.method).toBe("turn/start");
     expect(requests[0]?.params?.serviceTier).toBeNull();
 
-    // On → force "fast".
+    // A legacy opt-in still uses the ordinary tier.
     await structuredSession.startTurn("go fast", { model: "gpt-5.4", fast: true });
-    expect(requests[1]?.params?.serviceTier).toBe("fast");
+    expect(requests[1]?.params?.serviceTier).toBeNull();
 
     // Back off → force null again to clear the sticky server-side override.
     await structuredSession.startTurn("back to normal", { model: "gpt-5.4", fast: false });
@@ -1959,7 +1982,7 @@ describe("CodexStructuredSession", () => {
             mode: "default",
             settings: expect.objectContaining({ model: "gpt-5.6-sol", reasoning_effort: "medium" }),
           }),
-          serviceTier: "fast",
+          serviceTier: null,
         },
         timeoutMs: 3_000,
       },

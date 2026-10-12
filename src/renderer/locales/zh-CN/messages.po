@@ -1486,8 +1486,12 @@ msgstr "Antigravity ACP"
 #~ msgstr "Antigravity 已更新至 v{version}。"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
-msgstr "当前不可用的任何内容 — 提供商、模型、推理级别或 Fast 模式 — 都会被自动跳过。未选中的提供商和模型将被跳过，直到重新选中。"
+#~ msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
+#~ msgstr "当前不可用的任何内容 — 提供商、模型、推理级别或 Fast 模式 — 都会被自动跳过。未选中的提供商和模型将被跳过，直到重新选中。"
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Anything currently unavailable, such as a provider, model, or reasoning level, is skipped automatically. Unchecked providers and models are skipped until re-checked."
+msgstr "不可用的提供商、模型或推理级别会被自动跳过。取消勾选的提供商和模型将被跳过，直到重新勾选。"
 
 #: src/renderer/views/SettingsOverlay/parts/CursorSdkRuntimeSetup.tsx
 msgid "API key"
@@ -4867,8 +4871,12 @@ msgid "e.g. 512k or 1m"
 msgstr "例如 512k 或 1m"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
-msgstr "例如：Codex GPT-5.5 fast 用于快速查询，OpenCode GLM 用于批量重构，Claude Opus 用于任何微妙的任务。"
+msgid "e.g. Codex for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for complex tasks."
+msgstr "例如：用 Codex 进行快速查询，用 OpenCode GLM 进行批量重构，用 Claude Opus 处理复杂任务。"
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#~ msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
+#~ msgstr "例如：Codex GPT-5.5 fast 用于快速查询，OpenCode GLM 用于批量重构，Claude Opus 用于任何微妙的任务。"
 
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
 msgid "e.g. Work"
@@ -5682,6 +5690,10 @@ msgstr "在差异中查找"
 #: src/renderer/components/terminal/XTermSurface.tsx
 msgid "Find in terminal"
 msgstr "在终端中查找"
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Finish active tasks before installing the update."
+msgstr "请先完成正在运行的任务，再安装更新。"
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Finish your review"
@@ -14016,8 +14028,8 @@ msgstr "切换浏览器面板"
 
 #: src/renderer/commands/composerCommands.ts
 #: src/renderer/components/providers/standardGuiSlashCommands.ts
-msgid "Toggle Fast mode"
-msgstr "切换快速模式"
+#~ msgid "Toggle Fast mode"
+#~ msgstr "切换快速模式"
 
 #: src/renderer/commands/registry.ts
 msgid "Toggle File Tree"
@@ -14738,6 +14750,10 @@ msgstr "将{0}更新为{updateLabel}"
 msgid "Update all ({outdatedCount})"
 msgstr "全部更新（{outdatedCount}）"
 
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update and restart"
+msgstr "更新并重启"
+
 #: src/renderer/views/SettingsOverlay/parts/antigravityRuntimeInstall.ts
 #~ msgid "Update Antigravity"
 #~ msgstr "更新 Antigravity"
@@ -14786,6 +14802,10 @@ msgstr "更新方法"
 #: src/mobile/views/PortsView.tsx
 msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "请在桌面端更新 Orzi Code 以使用端口转发。"
+
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update ready"
+msgstr "更新已就绪"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

@@ -61,7 +61,7 @@ describe("shared settings defaults", () => {
     expect(normalizeSharedSettings({ followUpBehavior: "steer" }).followUpBehavior).toBe("steer");
   });
 
-  it("preserves global provider and model effort/Fast preferences", () => {
+  it("preserves effort preferences and disables legacy Fast opt-ins", () => {
     expect(
       normalizeSharedSettings({
         providerModelPreferences: {
@@ -73,7 +73,7 @@ describe("shared settings defaults", () => {
       }).providerModelPreferences,
     ).toEqual({
       codex: {
-        "gpt-5.6-luna": { effort: "max", fast: true },
+        "gpt-5.6-luna": { effort: "max", fast: false },
         "gpt-5.6-sol": { effort: "high", fast: false },
       },
     });
@@ -240,7 +240,7 @@ describe("shared settings defaults", () => {
     expect(migrated.providerConfigs["claude:qwen"]?.model).toBe("qwen3.8-max-preview");
     expect(migrated.providerModelPreferences).toMatchObject({
       qwen: { "qwen3.8-max": { effort: "xhigh", fast: false } },
-      "claude:qwen": { "qwen3.8-max-preview": { effort: "high", fast: true } },
+      "claude:qwen": { "qwen3.8-max-preview": { effort: "high", fast: false } },
     });
     expect(migrated.commitGenModel).toBe("qwen3.8-max");
     expect(migrated.favoriteModels).toEqual([
@@ -383,7 +383,7 @@ describe("shared settings defaults", () => {
       effort: "High",
     });
     expect(migrated.providerModelPreferences.antigravity).toEqual({
-      "gemini-3.5-flash": { effort: "High", fast: true },
+      "gemini-3.5-flash": { effort: "High", fast: false },
       "gemini-3.5-flash-low": { fast: false },
     });
     expect(migrated.hiddenModels.antigravity).toEqual(["gemini-3.1-pro"]);

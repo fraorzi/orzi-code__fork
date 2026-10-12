@@ -3,6 +3,8 @@ import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { coalesceByKey } from "@/shared/coalesce";
+import { getUsageSecret, setUsageSecret, clearUsageSecret } from "@/shared/usageSecretStore";
 import { readAntigravityAcpCredsFromWsl } from "../../runtime/wslCredentials";
 
 const execFileAsync = promisify(execFile);
@@ -36,6 +38,12 @@ const KEYCHAIN_TIMEOUT_MS = 120_000;
 const AUTH_DENIED_BACKOFF_MS = 60_000;
 
 let keychainAuthBackoffUntil = 0;
+const credentialsInFlight = new Map<
+  AntigravityAcpCredentialDeps,
+  Promise<AntigravityAcpCredentials | undefined>
+>();
+let credentialGeneration = 0;
+let persistedCacheDir: string | undefined;
 let cachedCredentials: AntigravityAcpCredentials | undefined;
 
 export interface AntigravityAcpCredentials {
@@ -168,20 +176,59 @@ export async function resolveAntigravityAcpCredentials(
  */
 export async function resolveAntigravityAcpCredentialsCached(
   deps: AntigravityAcpCredentialDeps = defaultDeps,
+  cacheDir?: string,
 ): Promise<AntigravityAcpCredentials | undefined> {
   if (cachedCredentials) return cachedCredentials;
-  const credentials = await resolveAntigravityAcpCredentials(deps);
-  if (credentials) cachedCredentials = credentials;
-  return credentials;
+  return coalesceByKey(credentialsInFlight, deps, async () => {
+    const generation = credentialGeneration;
+    // Retain the authorized artifact in this app's encrypted store. Rebuilds
+    // and later launches no longer read the other application's keychain ACL.
+    const saved =
+      deps === defaultDeps && cacheDir
+        ? getUsageSecret(cacheDir, "antigravity", "acp-oauth")
+        : undefined;
+    const credentials =
+      (saved ? parseAntigravityAcpCredentials(saved) : undefined) ??
+      (await resolveAntigravityAcpCredentials(deps));
+    if (credentials && generation === credentialGeneration) {
+      cachedCredentials = credentials;
+      if (deps === defaultDeps) persistedCacheDir = cacheDir;
+      if (deps === defaultDeps && cacheDir && !saved) {
+        try {
+          setUsageSecret(
+            cacheDir,
+            "antigravity",
+            "acp-oauth",
+            JSON.stringify({
+              client_id: credentials.clientId,
+              client_secret: credentials.clientSecret,
+              refresh_token: credentials.refreshToken,
+              token_uri: ANTIGRAVITY_GOOGLE_TOKEN_URI,
+            }),
+          );
+        } catch {
+          // OS encryption may be session-only; keep the in-memory result.
+        }
+      }
+    }
+    return credentials;
+  });
 }
 
 /** Drop the cached credentials so the next resolve re-reads the OS stores. */
 export function invalidateAntigravityAcpCredentialsCache(): void {
   cachedCredentials = undefined;
+  credentialGeneration += 1;
+  credentialsInFlight.clear();
+  if (persistedCacheDir) clearUsageSecret(persistedCacheDir, "antigravity", "acp-oauth");
+  persistedCacheDir = undefined;
 }
 
 /** Clear process-local credential state between deterministic tests. */
 export function resetAntigravityAcpCredentialStateForTests(): void {
   cachedCredentials = undefined;
   keychainAuthBackoffUntil = 0;
+  persistedCacheDir = undefined;
+  credentialGeneration += 1;
+  credentialsInFlight.clear();
 }

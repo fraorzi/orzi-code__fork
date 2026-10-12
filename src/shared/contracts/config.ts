@@ -1,12 +1,13 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { z } from "zod";
+import { fastModeSchema } from "../fastModePolicy";
 import { agentKindSchema, threadModeSchema } from "./common";
 
 const threadConfigShape = {
   model: z.string().min(1),
   effort: z.string().optional(),
   contextSize: z.string().optional(),
-  fast: z.boolean().optional(),
+  fast: fastModeSchema.optional(),
   thinking: z.boolean().optional(),
   mode: threadModeSchema.optional(),
   approvalPolicy: z.string().optional(),

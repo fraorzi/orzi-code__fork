@@ -252,7 +252,7 @@ export function composeResolvedMcpServers(
     ...snapshot.mcpServers,
     http("browser", browserMcp),
     http("crossagents", crossagentMcp, 300_000, "approve"),
-    http("computer-use", computerUseMcp),
+    http("computer-use", computerUseMcp, DEFAULT_MCP_SERVER_TIMEOUT_MS, "approve"),
     http("chrome", chromeMcp),
     http("app-controls", appControlsMcp),
   ].filter((server): server is ResolvedMcpServer => server !== undefined);

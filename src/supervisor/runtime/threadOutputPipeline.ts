@@ -31,6 +31,7 @@ function isPoracodeOscDebugEnabled(): boolean {
 }
 
 export interface ThreadOutputPipelineOptions extends ThreadOutputPipelineCallbacks {
+  onTurnSettled?(session: SessionRuntime): void;
   emit(event: import("@/shared/ipc").SupervisorEvent): void;
   isDev: boolean;
   logWriter: BufferedLogWriter;
@@ -219,10 +220,13 @@ export class ThreadOutputPipeline {
       session.workingSilenceTimer = undefined;
     }
 
+    const turnSettled =
+      session.status === "working" && (status === "idle" || status === "finished");
     session.status = status;
     session.attention = attention;
     session.lastStatusChangeAt = Date.now();
     this.emitState(session, errorMessage, options);
+    if (turnSettled) this.options.onTurnSettled?.(session);
   }
 
   /**

@@ -243,6 +243,7 @@ const SHARED_MESSAGE_DESCRIPTORS: Record<MessageKey, MessageDescriptor> = {
     message: "The update service is temporarily unavailable.",
   }),
   "update.operationFailed": msg({ message: "The update operation failed." }),
+  "update.activeTasks": msg({ message: "Finish active tasks before installing the update." }),
   "update.devUnavailable": msg({
     message: "Update checks are not available in development mode.",
   }),

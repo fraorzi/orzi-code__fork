@@ -1486,8 +1486,12 @@ msgstr "Antigravity ACP"
 #~ msgstr "Đã cập nhật Antigravity lên v{version}."
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
-msgstr "Mọi thứ hiện không khả dụng — nhà cung cấp, mô hình, mức suy luận hoặc chế độ Fast — sẽ tự động được bỏ qua. Nhà cung cấp và mô hình không được chọn sẽ bị bỏ qua cho đến khi được chọn lại."
+#~ msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
+#~ msgstr "Mọi thứ hiện không khả dụng — nhà cung cấp, mô hình, mức suy luận hoặc chế độ Fast — sẽ tự động được bỏ qua. Nhà cung cấp và mô hình không được chọn sẽ bị bỏ qua cho đến khi được chọn lại."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Anything currently unavailable, such as a provider, model, or reasoning level, is skipped automatically. Unchecked providers and models are skipped until re-checked."
+msgstr "Nhà cung cấp, mô hình hoặc mức suy luận không khả dụng sẽ tự động bị bỏ qua. Nhà cung cấp và mô hình bị bỏ chọn sẽ bị bỏ qua cho đến khi được chọn lại."
 
 #: src/renderer/views/SettingsOverlay/parts/CursorSdkRuntimeSetup.tsx
 msgid "API key"
@@ -4867,8 +4871,12 @@ msgid "e.g. 512k or 1m"
 msgstr "vd. 512k hoặc 1m"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
-msgstr "ví dụ: Codex GPT-5.5 fast cho các tra cứu nhanh, OpenCode GLM cho tái cấu trúc hàng loạt, Claude Opus cho những việc tinh tế."
+msgid "e.g. Codex for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for complex tasks."
+msgstr "ví dụ: Codex cho tra cứu nhanh, OpenCode GLM cho tái cấu trúc hàng loạt, Claude Opus cho tác vụ phức tạp."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#~ msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
+#~ msgstr "ví dụ: Codex GPT-5.5 fast cho các tra cứu nhanh, OpenCode GLM cho tái cấu trúc hàng loạt, Claude Opus cho những việc tinh tế."
 
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
 msgid "e.g. Work"
@@ -5682,6 +5690,10 @@ msgstr "Tìm trong diff"
 #: src/renderer/components/terminal/XTermSurface.tsx
 msgid "Find in terminal"
 msgstr "Tìm trong terminal"
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Finish active tasks before installing the update."
+msgstr "Hoàn thành các tác vụ đang chạy trước khi cài đặt bản cập nhật."
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Finish your review"
@@ -14017,8 +14029,8 @@ msgstr "Bật/tắt bảng điều khiển trình duyệt"
 
 #: src/renderer/commands/composerCommands.ts
 #: src/renderer/components/providers/standardGuiSlashCommands.ts
-msgid "Toggle Fast mode"
-msgstr "Chuyển đổi chế độ Nhanh"
+#~ msgid "Toggle Fast mode"
+#~ msgstr "Chuyển đổi chế độ Nhanh"
 
 #: src/renderer/commands/registry.ts
 msgid "Toggle File Tree"
@@ -14739,6 +14751,10 @@ msgstr "Cập nhật {0} lên {updateLabel}"
 msgid "Update all ({outdatedCount})"
 msgstr "Cập nhật tất cả ({outdatedCount})"
 
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update and restart"
+msgstr "Cập nhật và khởi động lại"
+
 #: src/renderer/views/SettingsOverlay/parts/antigravityRuntimeInstall.ts
 #~ msgid "Update Antigravity"
 #~ msgstr "Cập nhật Antigravity"
@@ -14787,6 +14803,10 @@ msgstr "Phương thức cập nhật"
 #: src/mobile/views/PortsView.tsx
 msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "Cập nhật Orzi Code trên máy tính của bạn để sử dụng tính năng chuyển tiếp cổng."
+
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update ready"
+msgstr "Bản cập nhật đã sẵn sàng"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

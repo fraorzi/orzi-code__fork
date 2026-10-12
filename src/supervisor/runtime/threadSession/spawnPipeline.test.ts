@@ -295,12 +295,20 @@ describe("composeResolvedMcpServers", () => {
       },
       { url: "http://browser/mcp", token: "b", headers: { Authorization: "Bearer b" } },
       { url: "http://agents/mcp", token: "a", headers: { Authorization: "Bearer a" } },
-      undefined,
+      { url: "http://computer/mcp", token: "c", headers: { Authorization: "Bearer c" } },
       undefined,
       undefined,
     );
 
-    expect(servers.map((server) => server.name)).toEqual(["custom", "browser", "crossagents"]);
+    expect(servers.map((server) => server.name)).toEqual([
+      "custom",
+      "browser",
+      "crossagents",
+      "computer_use",
+    ]);
     expect(servers[2]).toMatchObject({ timeoutMs: 300_000, approvalMode: "approve" });
+    expect(servers[3]).toMatchObject({ approvalMode: "approve" });
+    expect(servers[0]).not.toHaveProperty("approvalMode");
+    expect(servers[1]).not.toHaveProperty("approvalMode");
   });
 });

@@ -100,11 +100,15 @@ export class UsageService {
   private readonly refreshesInFlight = new Map<string, Promise<ProviderUsageResponse>>();
   private autoRefreshTimer: NodeJS.Timeout | undefined;
   private stopped = false;
+  private readonly turnRefreshTimers = new Map<string, NodeJS.Timeout>();
 
   constructor(private readonly options: UsageServiceOptions) {
     this.host = options.host ?? createNodeUsageHost(options.cacheDir, options.settingsPath);
     this.localCollectors = new Map(
-      (options.localCollectors ?? createLocalUsageCollectors()).map((c) => [c.id, c]),
+      (
+        options.localCollectors ??
+        createLocalUsageCollectors(options.cacheDir ? { cacheDir: options.cacheDir } : {})
+      ).map((c) => [c.id, c]),
     );
     this.loadCache();
   }
@@ -240,52 +244,36 @@ export class UsageService {
     const cursorSdkProfile = readCursorSdkUsageProfile(this.readSharedSettings());
     const cursorProfiles = this.cursorUsageProfiles();
     const showEstimatedCost = this.readUsageSettings().showEstimatedCost;
-    const registryIds = ids.filter(
-      (id) => this.registry.has(id) && !(id === "cursor" && cursorSdkProfile),
+    // Publish each provider as soon as it completes. A slow credential lookup or
+    // endpoint must not hold every other provider's fresh result behind a batch.
+    const snapshots = await Promise.all(
+      ids.map(async (id) => {
+        const claudeProfile = claudeProfiles.get(id);
+        const cursorProfile =
+          cursorProfiles.get(id) ?? (id === "cursor" ? cursorSdkProfile : undefined);
+        let snapshot = this.preserveOnTransientFailure(
+          claudeProfile
+            ? await collectClaudeProfile(claudeProfile, this.host)
+            : cursorProfile
+              ? await collectCursorProfile(cursorProfile, this.host)
+              : this.localCollectors.has(id)
+                ? await this.collectLocal(id)
+                : await this.registry.collect(id, this.host),
+        );
+        if (showEstimatedCost) {
+          snapshot = await withClaudeEstimatedCost(snapshot, claudeProfiles, this.host.now());
+        }
+        // A runtime notification can arrive while the HTTP request is in flight.
+        const current = this.snapshots.get(id);
+        if (current && current.fetchedAt > snapshot.fetchedAt) snapshot = current;
+        this.snapshots.set(id, snapshot);
+        this.options.emit({
+          type: "provider-usage",
+          snapshot: showEstimatedCost ? snapshot : withoutEstimatedCost(snapshot),
+        });
+        return snapshot;
+      }),
     );
-    const localIds = ids.filter((id) => this.localCollectors.has(id));
-    const claudeProfileIds = ids.filter((id) => claudeProfiles.has(id));
-    const cursorProfileIds = ids.filter((id) => cursorProfiles.has(id));
-    const collectCursorSdk = cursorSdkProfile && ids.includes("cursor");
-    // The registry HTTP batch and the supervisor-local collectors are independent
-    // of each other, so run both groups concurrently rather than waiting out the
-    // (rate-limited, slow) HTTP batch before starting the local scans.
-    const [registrySnaps, localSnaps, claudeProfileSnaps, cursorProfileSnaps, cursorSdkSnapshot] =
-      await Promise.all([
-        this.registry.collectAll(registryIds, this.host),
-        Promise.all(localIds.map((id) => this.collectLocal(id))),
-        Promise.all(
-          claudeProfileIds.flatMap((id) => {
-            const profile = claudeProfiles.get(id);
-            return profile ? [collectClaudeProfile(profile, this.host)] : [];
-          }),
-        ),
-        Promise.all(
-          cursorProfileIds.flatMap((id) => {
-            const profile = cursorProfiles.get(id);
-            return profile ? [collectCursorProfile(profile, this.host)] : [];
-          }),
-        ),
-        collectCursorSdk ? collectCursorProfile(cursorSdkProfile, this.host) : undefined,
-      ]);
-    let snapshots = [
-      ...registrySnaps,
-      ...localSnaps,
-      ...claudeProfileSnaps,
-      ...cursorProfileSnaps,
-      ...(cursorSdkSnapshot ? [cursorSdkSnapshot] : []),
-    ].map((snap) => this.preserveOnTransientFailure(snap));
-    // Keep collector estimates cached so toggling their visibility needs no refresh.
-    if (showEstimatedCost) {
-      snapshots = await this.withEstimatedCost(snapshots, claudeProfiles);
-    }
-    for (const snapshot of snapshots) {
-      this.snapshots.set(snapshot.providerId, snapshot);
-      this.options.emit({
-        type: "provider-usage",
-        snapshot: showEstimatedCost ? snapshot : withoutEstimatedCost(snapshot),
-      });
-    }
     const all = [...this.snapshots.values()];
     this.options.emit({
       type: "provider-usage-all",
@@ -347,17 +335,37 @@ export class UsageService {
     return { providerId: id, status: "error", windows: [], fetchedAt: now };
   }
 
-  /**
-   * Merge estimated 30-day cost + tokens (from local logs at API rates) into
-   * Claude snapshots. Best-effort and cached; never throws into the refresh.
-   */
-  private async withEstimatedCost(
-    snapshots: UsageSnapshot[],
-    profiles: Map<string, ClaudeUsageProfile>,
-  ): Promise<UsageSnapshot[]> {
-    return Promise.all(
-      snapshots.map((snapshot) => withClaudeEstimatedCost(snapshot, profiles, this.host.now())),
-    );
+  /** Provider-native live events are normalized by the adapter before arriving here. */
+  acceptLiveSnapshot(snapshot: UsageSnapshot): void {
+    const previous = this.snapshots.get(snapshot.providerId);
+    if (previous && previous.fetchedAt > snapshot.fetchedAt) return;
+    const windows = new Map(previous?.windows.map((window) => [window.id, window]));
+    for (const window of snapshot.windows) windows.set(window.id, window);
+    const merged = { ...previous, ...snapshot, windows: [...windows.values()] };
+    this.snapshots.set(snapshot.providerId, merged);
+    this.options.emit({
+      type: "provider-usage",
+      snapshot: this.readUsageSettings().showEstimatedCost ? merged : withoutEstimatedCost(merged),
+    });
+    this.writeCache();
+  }
+
+  /** Refresh just the account that completed work, with burst coalescing and 429 backoff. */
+  refreshAfterTurn(providerId: string): void {
+    if (this.stopped || this.turnRefreshTimers.has(providerId) || !this.isSupported(providerId))
+      return;
+    const settings = this.readUsageSettings();
+    if (!settings.autoRefresh || settings.disabledProviders.includes(providerId)) return;
+    const snapshot = this.snapshots.get(providerId);
+    const now = this.host.now();
+    if (this.isRateLimited(snapshot, now) || (snapshot && now - snapshot.fetchedAt < 30_000))
+      return;
+    const timer = setTimeout(() => {
+      this.turnRefreshTimers.delete(providerId);
+      void this.refreshProviderUsage({ providerIds: [providerId] }).catch(() => {});
+    }, 1500);
+    timer.unref();
+    this.turnRefreshTimers.set(providerId, timer);
   }
 
   /**
@@ -376,6 +384,8 @@ export class UsageService {
     this.stopped = true;
     if (this.autoRefreshTimer) clearTimeout(this.autoRefreshTimer);
     this.autoRefreshTimer = undefined;
+    for (const timer of this.turnRefreshTimers.values()) clearTimeout(timer);
+    this.turnRefreshTimers.clear();
   }
 
   /** Global default cadence (minutes → ms), floored at the rate-limit minimum. */

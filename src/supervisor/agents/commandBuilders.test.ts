@@ -439,6 +439,8 @@ describe("agent command builders", () => {
         "-m",
         "gpt-5.4-mini",
         "-c",
+        'service_tier="default"',
+        "-c",
         'model_reasoning_effort="low"',
         "-",
       ],
@@ -458,6 +460,8 @@ describe("agent command builders", () => {
         "--no-session-persistence",
         "--effort",
         "low",
+        "--settings",
+        '{"fastMode":false}',
       ],
       stdin: "",
     });
@@ -515,6 +519,8 @@ describe("agent command builders", () => {
         "--strict-mcp-config",
         "--effort",
         "high",
+        "--settings",
+        '{"fastMode":false}',
       ],
       stdin: "",
     });
@@ -551,6 +557,8 @@ describe("agent command builders", () => {
         "--strict-mcp-config",
         "--effort",
         "high",
+        "--settings",
+        '{"fastMode":false}',
       ],
       stdin: "",
     });
@@ -581,7 +589,7 @@ describe("agent command builders", () => {
     );
   });
 
-  it("appends fast-mode settings to the Claude one-shot command when fast is set", () => {
+  it("disables fast mode for Claude one-shots even with a legacy opt-in", () => {
     expect(
       createClaudeAdapter().buildOneShotCommand?.(
         "claude-opus-4-8",
@@ -603,17 +611,17 @@ describe("agent command builders", () => {
         "--effort",
         "high",
         "--settings",
-        '{"fastMode":true}',
+        '{"fastMode":false}',
       ],
       stdin: "",
     });
 
-    // Without the flag the command is unchanged (no stray --settings).
+    // A global CLI opt-in is also overridden when the argument is omitted.
     expect(
       createClaudeAdapter()
         .buildOneShotCommand?.("claude-opus-4-8", "high", "Summarize this diff")
         ?.args.includes("--settings"),
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it.skipIf(process.platform !== "win32")(

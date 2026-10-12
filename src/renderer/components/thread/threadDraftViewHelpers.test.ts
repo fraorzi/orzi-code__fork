@@ -41,14 +41,14 @@ function agentWith(overrides?: Partial<AgentCapability>): AgentStatus {
 }
 
 describe("resolveProviderDraftConfig fast mode", () => {
-  it("turns Fast on for a supported model when nothing was saved", () => {
-    expect(resolveProviderDraftConfig(agentWith(), { model: "fast-capable" }).fast).toBe(true);
+  it("does not expose Fast for an advertised model", () => {
+    expect(resolveProviderDraftConfig(agentWith(), { model: "fast-capable" }).fast).toBeUndefined();
   });
 
   it("keeps Fast off when the saved draft explicitly disabled it", () => {
     expect(
       resolveProviderDraftConfig(agentWith(), { model: "fast-capable", fast: false }).fast,
-    ).toBe(false);
+    ).toBeUndefined();
   });
 
   it("leaves Fast off for a model that does not support it", () => {
@@ -80,7 +80,6 @@ describe("resolveProviderDraftConfig fast mode", () => {
     ).toMatchObject({
       model: "gpt-5.1-codex-max",
       effort: "high",
-      fast: true,
       thinking: true,
     });
   });
@@ -93,8 +92,8 @@ describe("resolveFastValue", () => {
     expect(resolveFastValue(agentWith(), "fast-capable")).toBe(false);
   });
 
-  it("honours an explicit preference for a supported model", () => {
-    expect(resolveFastValue(agentWith(), "fast-capable", true)).toBe(true);
+  it("refuses legacy Fast preferences for supported models", () => {
+    expect(resolveFastValue(agentWith(), "fast-capable", true)).toBe(false);
   });
 
   it("refuses an explicit preference for an unsupported model", () => {

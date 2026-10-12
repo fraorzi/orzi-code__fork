@@ -1486,8 +1486,12 @@ msgstr "Antigravity ACP"
 #~ msgstr "Antigravity wurde auf v{version} aktualisiert."
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
-msgstr "Alles derzeit nicht Verfügbare — ein Anbieter, Modell, eine Schlussfolgerungsstufe oder ein Fast-Modus — wird automatisch übersprungen. Nicht markierte Anbieter und Modelle werden übersprungen, bis sie wieder markiert werden."
+#~ msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
+#~ msgstr "Alles derzeit nicht Verfügbare — ein Anbieter, Modell, eine Schlussfolgerungsstufe oder ein Fast-Modus — wird automatisch übersprungen. Nicht markierte Anbieter und Modelle werden übersprungen, bis sie wieder markiert werden."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Anything currently unavailable, such as a provider, model, or reasoning level, is skipped automatically. Unchecked providers and models are skipped until re-checked."
+msgstr "Nicht verfügbare Anbieter, Modelle oder Denkstufen werden automatisch übersprungen. Abgewählte Anbieter und Modelle werden bis zur erneuten Auswahl übersprungen."
 
 #: src/renderer/views/SettingsOverlay/parts/CursorSdkRuntimeSetup.tsx
 msgid "API key"
@@ -4867,8 +4871,12 @@ msgid "e.g. 512k or 1m"
 msgstr "z. B. 512k oder 1m"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
-msgstr "z. B. Codex GPT-5.5 fast für schnelle Recherchen, OpenCode GLM für umfangreiche Refactorings, Claude Opus für alles Kniffelige."
+msgid "e.g. Codex for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for complex tasks."
+msgstr "z. B. Codex für schnelle Abfragen, OpenCode GLM für umfangreiche Refaktorierungen, Claude Opus für komplexe Aufgaben."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#~ msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
+#~ msgstr "z. B. Codex GPT-5.5 fast für schnelle Recherchen, OpenCode GLM für umfangreiche Refactorings, Claude Opus für alles Kniffelige."
 
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
 msgid "e.g. Work"
@@ -5682,6 +5690,10 @@ msgstr "Im Diff suchen"
 #: src/renderer/components/terminal/XTermSurface.tsx
 msgid "Find in terminal"
 msgstr "Im Terminal suchen"
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Finish active tasks before installing the update."
+msgstr "Beende aktive Aufgaben, bevor du das Update installierst."
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Finish your review"
@@ -14017,8 +14029,8 @@ msgstr "Browser-Panel umschalten"
 
 #: src/renderer/commands/composerCommands.ts
 #: src/renderer/components/providers/standardGuiSlashCommands.ts
-msgid "Toggle Fast mode"
-msgstr "Schnellmodus umschalten"
+#~ msgid "Toggle Fast mode"
+#~ msgstr "Schnellmodus umschalten"
 
 #: src/renderer/commands/registry.ts
 msgid "Toggle File Tree"
@@ -14739,6 +14751,10 @@ msgstr "Aktualisieren Sie {0} auf {updateLabel}"
 msgid "Update all ({outdatedCount})"
 msgstr "Alle aktualisieren ({outdatedCount})"
 
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update and restart"
+msgstr "Aktualisieren und neu starten"
+
 #: src/renderer/views/SettingsOverlay/parts/antigravityRuntimeInstall.ts
 #~ msgid "Update Antigravity"
 #~ msgstr "Antigravity aktualisieren"
@@ -14787,6 +14803,10 @@ msgstr "Update-Methode"
 #: src/mobile/views/PortsView.tsx
 msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "Aktualisieren Sie Orzi Code auf Ihrem Desktop, um die Portweiterleitung zu nutzen."
+
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update ready"
+msgstr "Update bereit"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

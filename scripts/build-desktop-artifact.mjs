@@ -294,6 +294,18 @@ async function main() {
   const outputDir = resolve(repoRoot, args["output-dir"] ?? "release");
   const keepStage = Boolean(args["keep-stage"]);
   const releaseSigning = Boolean(args["release-signing"]);
+  const localSigningPath = join(repoRoot, ".tmp/local-signing/config.json");
+  if (platform === "mac" && !releaseSigning && existsSync(localSigningPath)) {
+    const signing = JSON.parse(readFileSync(localSigningPath, "utf8"));
+    if (
+      typeof signing.identity !== "string" ||
+      typeof signing.keychain !== "string" ||
+      typeof signing.passwordFile !== "string"
+    )
+      throw new Error("Invalid local signing configuration.");
+    process.env.CSC_KEYCHAIN = signing.keychain;
+    process.env.ORZI_LOCAL_SIGNING_IDENTITY = signing.identity;
+  }
   validateReleaseSigning(platform, releaseSigning, process.env);
 
   if (!PLATFORM_FLAG[platform]) {
@@ -304,6 +316,8 @@ async function main() {
       "macOS update metadata is finalized after packaging. Use --publish never and upload the completed release artifacts separately.",
     );
   }
+
+  let originalSigningKeychains;
 
   // 1. Build dist artifacts unless caller already did it.
   if (!skipBuild) {
@@ -381,6 +395,35 @@ async function main() {
     // SQLite and node-pty ship N-API prebuilds; afterPack keeps the target architecture.
     const targetArches = arch ? [arch] : DEFAULT_TARGET_ARCHES[platform];
 
+    if (process.env.ORZI_LOCAL_SIGNING_IDENTITY) {
+      const signing = JSON.parse(readFileSync(localSigningPath, "utf8"));
+      const existing = spawnSync("/usr/bin/security", ["list-keychains", "-d", "user"], {
+        encoding: "utf8",
+      });
+      if (existing.status !== 0)
+        throw new Error("Unable to inspect the signing keychain search list.");
+      originalSigningKeychains = [...existing.stdout.matchAll(/"([^"]+)"/g)].map(
+        (match) => match[1],
+      );
+      const search = spawnSync(
+        "/usr/bin/security",
+        ["list-keychains", "-d", "user", "-s", ...originalSigningKeychains, signing.keychain],
+        { stdio: "pipe" },
+      );
+      if (search.status !== 0) throw new Error("Unable to activate the local signing keychain.");
+      const unlock = spawnSync(
+        "/usr/bin/security",
+        [
+          "unlock-keychain",
+          "-p",
+          readFileSync(signing.passwordFile, "utf8").trim(),
+          signing.keychain,
+        ],
+        { stdio: "pipe" },
+      );
+      if (unlock.status !== 0) throw new Error("Unable to unlock the local signing keychain.");
+    }
+
     // 7. Run electron-builder against the stage.
     const electronBuilderBin = join(
       stageRoot,
@@ -433,7 +476,33 @@ async function main() {
     const copied = copyArtifactsBack(join(stageRoot, "release"), outputDir);
     console.log(`\n[stage] artifacts:`);
     for (const a of copied) console.log(`  ${a}`);
+    if (args["stage-local-update"]) {
+      if (platform !== "mac" || arch !== "arm64")
+        throw new Error("Local update staging currently supports macOS arm64 only.");
+      run(
+        "node",
+        [
+          "scripts/stage-local-update.mjs",
+          join(
+            outputDir,
+            "mac-arm64",
+            `${channelTable.productNameFor(channelTable.normalizeChannel(process.env.PORACODE_CHANNEL))}.app`,
+          ),
+        ],
+        { cwd: repoRoot },
+      );
+    }
   } finally {
+    if (originalSigningKeychains) {
+      spawnSync("/usr/bin/security", ["lock-keychain", process.env.CSC_KEYCHAIN], {
+        stdio: "pipe",
+      });
+      spawnSync(
+        "/usr/bin/security",
+        ["list-keychains", "-d", "user", "-s", ...originalSigningKeychains],
+        { stdio: "pipe" },
+      );
+    }
     if (keepStage) {
       console.log(`[stage] kept staging dir at ${stageRoot}`);
     } else {
@@ -491,6 +560,10 @@ ${packagedDistFilesYaml}
   - "!node_modules/{better-sqlite3,node-pty}/build/**/*.{iobj,ipdb,lib,pdb,exp}"
 
 extraResources:
+  - from: resources/local-update
+    to: local-update
+    filter:
+      - "**/*.py"
   - from: resources/computer-use-helper
     to: computer-use-helper
     filter:
@@ -586,7 +659,7 @@ mac:
     NSMicrophoneUsageDescription: Orzi Code uses the microphone for local voice input in the composer.
   entitlements: ${macEntitlements}
   entitlementsInherit: ${macEntitlementsInherit}
-${macSigningYaml(releaseSigning)}
+${macSigningYaml(releaseSigning, process.env.ORZI_LOCAL_SIGNING_IDENTITY)}
 
 npmRebuild: false
 `;

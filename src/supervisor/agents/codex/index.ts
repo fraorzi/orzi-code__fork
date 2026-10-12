@@ -111,6 +111,7 @@ export function createCodexAdapter(): AgentAdapter {
 
   return {
     kind: codexDetectionSpec.kind,
+    usageProviderId: "codex",
     label: codexDetectionSpec.label,
     binary: codexDetectionSpec.binary,
     managedVersions: {
@@ -323,7 +324,7 @@ export function createCodexAdapter(): AgentAdapter {
       // directories not on codex's trust list. Title generation only reads
       // the user's prompt from stdin and emits a short string — it never
       // touches the repo, so the trust gate is just noise here.
-      const args = ["exec", "--skip-git-repo-check", "-m", model];
+      const args = ["exec", "--skip-git-repo-check", "-m", model, "-c", 'service_tier="default"'];
       if (effort) {
         args.push("-c", `model_reasoning_effort="${effort}"`);
       }

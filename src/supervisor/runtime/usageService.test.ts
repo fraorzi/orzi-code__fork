@@ -1,7 +1,7 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   CURSOR_API_KEY_EXCHANGE_ENDPOINT,
   CURSOR_PERIOD_USAGE_ENDPOINT,
@@ -66,6 +66,122 @@ afterEach(() => {
 });
 
 describe("UsageService", () => {
+  it("coalesces turn refreshes, respects recent results and cancels work on stop", async () => {
+    vi.useFakeTimers();
+    let now = NOW;
+    const collect = vi.fn<(fetchedAt: number) => Promise<UsageSnapshot>>(async (fetchedAt) => ({
+      providerId: "turn-provider",
+      status: "ok",
+      windows: [],
+      fetchedAt,
+    }));
+    const service = new UsageService({
+      emit: () => {},
+      host: { ...makeHost({}), now: () => now },
+      cachePath: tempCachePath(),
+      localCollectors: [{ id: "turn-provider", collect }],
+    });
+    try {
+      service.refreshAfterTurn("turn-provider");
+      service.refreshAfterTurn("turn-provider");
+      await vi.advanceTimersByTimeAsync(1499);
+      expect(collect).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(1);
+      expect(collect).toHaveBeenCalledTimes(1);
+      service.refreshAfterTurn("turn-provider");
+      await vi.advanceTimersByTimeAsync(1500);
+      expect(collect).toHaveBeenCalledTimes(1);
+      now += 30_000;
+      service.refreshAfterTurn("turn-provider");
+      service.stop();
+      await vi.advanceTimersByTimeAsync(1500);
+      expect(collect).toHaveBeenCalledTimes(1);
+    } finally {
+      service.stop();
+      vi.useRealTimers();
+    }
+  });
+
+  it("publishes a completed provider while a sibling is still collecting", async () => {
+    let releaseSlow: () => void = () => {};
+    const gate = new Promise<void>((resolve) => {
+      releaseSlow = resolve;
+    });
+    const events: SupervisorEvent[] = [];
+    const service = new UsageService({
+      emit: (event) => events.push(event),
+      cachePath: tempCachePath(),
+      host: makeHost({}),
+      providerIds: ["fast-provider", "slow-provider"],
+      localCollectors: [
+        {
+          id: "fast-provider",
+          collect: async (now) => ({
+            providerId: "fast-provider",
+            status: "ok",
+            fetchedAt: now,
+            windows: [],
+          }),
+        },
+        {
+          id: "slow-provider",
+          collect: async (now) => {
+            await gate;
+            return { providerId: "slow-provider", status: "ok", fetchedAt: now, windows: [] };
+          },
+        },
+      ],
+    });
+    const refresh = service.refreshProviderUsage({});
+    await vi.waitFor(() =>
+      expect(
+        events.some(
+          (event) =>
+            event.type === "provider-usage" && event.snapshot.providerId === "fast-provider",
+        ),
+      ).toBe(true),
+    );
+    expect(events.some((event) => event.type === "provider-usage-all")).toBe(false);
+    releaseSlow();
+    await refresh;
+    service.stop();
+  });
+
+  it("merges sparse live windows into cached account metadata and rejects older data", async () => {
+    const events: SupervisorEvent[] = [];
+    const service = new UsageService({
+      emit: (event) => events.push(event),
+      cachePath: tempCachePath(),
+      host: makeHost({}),
+      localCollectors: [],
+    });
+    service.acceptLiveSnapshot({
+      providerId: "account",
+      status: "ok",
+      plan: "Plan",
+      fetchedAt: NOW,
+      windows: [{ id: "weekly", label: "Weekly", unit: "percent", usedPercent: 10 }],
+    });
+    service.acceptLiveSnapshot({
+      providerId: "account",
+      status: "ok",
+      fetchedAt: NOW + 1,
+      windows: [{ id: "session-5h", label: "Session", unit: "percent", usedPercent: 20 }],
+    });
+    service.acceptLiveSnapshot({
+      providerId: "account",
+      status: "ok",
+      fetchedAt: NOW - 1,
+      windows: [],
+    });
+    expect(events).toHaveLength(2);
+    expect(events.at(-1)).toMatchObject({
+      type: "provider-usage",
+      snapshot: { plan: "Plan", windows: [{ usedPercent: 10 }, { usedPercent: 20 }] },
+    });
+    service.stop();
+  });
+
   it("discards older caches that still label the first-party window Auto + Composer", async () => {
     const cachePath = tempCachePath();
     writeFileSync(

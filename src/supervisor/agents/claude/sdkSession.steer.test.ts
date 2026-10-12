@@ -163,7 +163,7 @@ it.each([
   expect(h.setPermissionMode).toHaveBeenLastCalledWith(permission);
   expect(h.setModel).toHaveBeenLastCalledWith("opus");
   expect(h.applyFlagSettings).toHaveBeenCalledWith({ ultracode: true });
-  expect(h.applyFlagSettings).toHaveBeenCalledWith({ fastMode: true });
+  expect(h.applyFlagSettings).toHaveBeenCalledWith({ fastMode: false });
   expect(delivered.value?.message.content).toEqual([
     { type: "text", text: "second" },
     { type: "text", text: "private instructions" },

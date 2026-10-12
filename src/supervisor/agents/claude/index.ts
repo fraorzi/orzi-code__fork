@@ -216,7 +216,7 @@ export function createClaudeAdapter(options: ClaudeAdapterOptions = {}): AgentAd
     effort: string | undefined,
     prompt: string | undefined,
     location: ProjectLocation | undefined,
-    fast: boolean | undefined,
+    _fast: boolean | undefined,
     extraArgs: readonly string[] = [],
   ) {
     if (!prompt) return undefined;
@@ -235,12 +235,7 @@ export function createClaudeAdapter(options: ClaudeAdapterOptions = {}): AgentAd
       ...extraArgs,
     ];
     if (effort) args.push("--effort", effort);
-    if (fast) {
-      // Fast mode is a session flag, not a model/effort value. On the CLI it
-      // rides on --settings JSON (the SDK path uses applyFlagSettings). One-shot
-      // calls pass no other --settings, so a single inline flag is safe here.
-      args.push("--settings", JSON.stringify({ fastMode: true }));
-    }
+    args.push("--settings", JSON.stringify({ fastMode: false }));
     const env = location ? profileEnv(location) : undefined;
     return {
       command: "claude",
@@ -253,6 +248,7 @@ export function createClaudeAdapter(options: ClaudeAdapterOptions = {}): AgentAd
   return {
     kind,
     label,
+    usageProviderId: kind,
     binary: claudeDetectionSpec.binary,
     mcpRequiresStdioCwdProxy: true,
     skillSupport: {

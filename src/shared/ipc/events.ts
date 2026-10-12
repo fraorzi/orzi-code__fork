@@ -237,6 +237,6 @@ export type UpdateStatus =
       transferred: number;
       total: number;
     }
-  | { type: "downloaded"; version: string }
+  | { type: "downloaded"; version: string; buildId?: string }
   | { type: "error"; message: string; messageKey?: never }
   | { type: "error"; messageKey: MessageKey; message?: never };

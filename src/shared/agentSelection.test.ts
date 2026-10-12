@@ -51,9 +51,8 @@ describe("agent selection", () => {
     expect(modelSelectionFor(gui, "chat-model")).toEqual({
       reasoning: { values: ["high", "xhigh"], default: "high" },
       fast: {
-        supported: true,
+        supported: false,
         available: false,
-        disabledReason: "Fast is unavailable for this account",
       },
     });
   });
@@ -134,7 +133,7 @@ describe("agent selection", () => {
       }),
     ).toBeUndefined();
     expect(validateAgentModelSelection(gui, { model: "chat-model", fast: true })).toBe(
-      "Fast is unavailable for this account",
+      "Fast is not supported by chat-model",
     );
   });
 

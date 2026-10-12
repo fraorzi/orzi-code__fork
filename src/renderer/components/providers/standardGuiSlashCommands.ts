@@ -17,7 +17,7 @@ export const guiSlashCommand = (id: string, description: string): AgentSlashComm
  * `/goal`) insert after the mode commands and before effort/fast.
  */
 export function buildStandardGuiSlashCommands(
-  { hasEffort, supportsFast }: GuiSlashCommandContext,
+  { hasEffort }: GuiSlashCommandContext,
   extras: readonly AgentSlashCommand[] = [],
 ): AgentSlashCommand[] {
   return [
@@ -26,7 +26,6 @@ export function buildStandardGuiSlashCommands(
     guiSlashCommand("agent", i18n._(msg`Switch this chat to agent mode`)),
     ...extras,
     ...(hasEffort ? [guiSlashCommand("effort", i18n._(msg`Open the effort picker`))] : []),
-    ...(supportsFast ? [guiSlashCommand("fast", i18n._(msg`Toggle Fast mode`))] : []),
   ];
 }
 

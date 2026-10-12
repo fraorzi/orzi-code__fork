@@ -167,6 +167,7 @@ const messages = {
   "update.error": "Update error: {detail}",
   "update.serviceUnavailable": "The update service is temporarily unavailable.",
   "update.operationFailed": "The update operation failed.",
+  "update.activeTasks": "Finish active tasks before installing the update.",
   "update.devUnavailable": "Update checks are not available in development mode.",
 
   // ── Remote hosts ─────────────────────────────────────────

@@ -150,7 +150,7 @@ export function buildCodexTurnSettingsOverrides(config: ThreadConfig): CodexTurn
       ? { sandboxPolicy: sandboxPolicy as NonNullable<TurnStartParams["sandboxPolicy"]> }
       : {}),
     collaborationMode: buildCodexCollaborationMode(config),
-    serviceTier: config.fast === true ? "fast" : null,
+    serviceTier: null,
   };
 }
 

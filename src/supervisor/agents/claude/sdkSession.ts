@@ -115,7 +115,7 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
   private appliedModel: string | undefined;
   private appliedPermissionMode: PermissionMode | undefined;
   private appliedUltracode = false;
-  private appliedFast = false;
+  private appliedFast: boolean | undefined;
   private currentStatus: ThreadStatus = "idle";
   private currentAttention: ThreadAttention = "none";
   private currentSlashCommands: AgentSlashCommand[] | undefined;
@@ -408,17 +408,12 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
     }
   }
 
-  /**
-   * Fast mode is a session flag (`fastMode`), not a model-level setting. Apply
-   * it through the flag-settings layer when the user enabled the Fast toggle.
-   * When the account can't use fast mode the toggle is gated off upstream, so
-   * `config.fast` is never true here in that case.
-   */
+  /** Explicitly turn off a global or resumed priority-billing opt-in. */
   private async syncFastMode(runtime: Query): Promise<void> {
-    const wantFast = this.currentConfig.fast === true;
+    const wantFast = false;
     if (wantFast === this.appliedFast) return;
     try {
-      await runtime.applyFlagSettings({ fastMode: wantFast ? true : null });
+      await runtime.applyFlagSettings({ fastMode: false });
       this.appliedFast = wantFast;
     } catch {
       // Older CLIs ignore the flag; fast mode simply stays off.
@@ -461,7 +456,7 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
     this.appliedModel = undefined;
     this.appliedPermissionMode = undefined;
     this.appliedUltracode = false;
-    this.appliedFast = false;
+    this.appliedFast = undefined;
     this.startQuery(this.sessionId, resumeSessionAt);
     await this.requireQuery();
 

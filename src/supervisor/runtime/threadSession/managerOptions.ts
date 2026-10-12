@@ -16,6 +16,8 @@ import type { AgentAdapter, AgentNativePlugin } from "../../agents/base";
 import type { WindowsShellPreference } from "../../shellPreference";
 
 export interface ThreadSessionManagerOptions {
+  onUsageSnapshot?(snapshot: import("@poracode/agents-usage").UsageSnapshot): void;
+  onUsageRefresh?(providerId: string): void;
   acquireAgentLaunch?: () => Promise<() => void>;
   emit(event: SupervisorEvent): void;
   isDev: boolean;

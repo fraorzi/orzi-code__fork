@@ -51,12 +51,6 @@ export const COMPOSER_CONTROL_COMMANDS: readonly ComposerControlCommand[] = [
     description: msg`Composer controls`,
   },
   {
-    id: "composer.toggle-fast",
-    action: "toggle-fast",
-    title: msg`Toggle Fast mode`,
-    description: msg`Composer controls`,
-  },
-  {
     id: "composer.cycle-permission",
     action: "cycle-permission",
     title: msg`Cycle permission mode`,

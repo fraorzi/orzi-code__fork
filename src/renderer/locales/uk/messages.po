@@ -1486,8 +1486,12 @@ msgstr "Antigravity ACP"
 #~ msgstr "Antigravity оновлено до v{version}."
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
-msgstr "Усе, що зараз недоступне — провайдер, модель, рівень міркування чи режим Fast — автоматично пропускається. Непозначені провайдери та моделі пропускаються, доки їх знову не позначать."
+#~ msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
+#~ msgstr "Усе, що зараз недоступне — провайдер, модель, рівень міркування чи режим Fast — автоматично пропускається. Непозначені провайдери та моделі пропускаються, доки їх знову не позначать."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Anything currently unavailable, such as a provider, model, or reasoning level, is skipped automatically. Unchecked providers and models are skipped until re-checked."
+msgstr "Недоступні провайдери, моделі та рівні міркування пропускаються автоматично. Провайдери й моделі зі знятою позначкою пропускаються до повторного вибору."
 
 #: src/renderer/views/SettingsOverlay/parts/CursorSdkRuntimeSetup.tsx
 msgid "API key"
@@ -4867,8 +4871,12 @@ msgid "e.g. 512k or 1m"
 msgstr "напр. 512k або 1m"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
-msgstr "напр., Codex GPT-5.5 fast для швидких запитів, OpenCode GLM для масових рефакторингів, Claude Opus для всього тонкого."
+msgid "e.g. Codex for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for complex tasks."
+msgstr "наприклад, Codex для швидкого пошуку, OpenCode GLM для масового рефакторингу, Claude Opus для складних завдань."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#~ msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
+#~ msgstr "напр., Codex GPT-5.5 fast для швидких запитів, OpenCode GLM для масових рефакторингів, Claude Opus для всього тонкого."
 
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
 msgid "e.g. Work"
@@ -5682,6 +5690,10 @@ msgstr "Пошук у diff"
 #: src/renderer/components/terminal/XTermSurface.tsx
 msgid "Find in terminal"
 msgstr "Пошук у терміналі"
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Finish active tasks before installing the update."
+msgstr "Завершіть активні завдання перед установленням оновлення."
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Finish your review"
@@ -14017,8 +14029,8 @@ msgstr "Перемкнути панель браузера"
 
 #: src/renderer/commands/composerCommands.ts
 #: src/renderer/components/providers/standardGuiSlashCommands.ts
-msgid "Toggle Fast mode"
-msgstr "Перемкнути швидкий режим"
+#~ msgid "Toggle Fast mode"
+#~ msgstr "Перемкнути швидкий режим"
 
 #: src/renderer/commands/registry.ts
 msgid "Toggle File Tree"
@@ -14739,6 +14751,10 @@ msgstr "Оновити {0} до {updateLabel}"
 msgid "Update all ({outdatedCount})"
 msgstr "Оновити все ({outdatedCount})"
 
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update and restart"
+msgstr "Оновити й перезапустити"
+
 #: src/renderer/views/SettingsOverlay/parts/antigravityRuntimeInstall.ts
 #~ msgid "Update Antigravity"
 #~ msgstr "Оновити Antigravity"
@@ -14787,6 +14803,10 @@ msgstr "Спосіб оновлення"
 #: src/mobile/views/PortsView.tsx
 msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "Оновіть Orzi Code на комп'ютері, щоб використовувати переспрямування портів."
+
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update ready"
+msgstr "Оновлення готове"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

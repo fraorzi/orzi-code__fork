@@ -1486,8 +1486,12 @@ msgstr "Antigravity ACP"
 #~ msgstr "Antigravity v{version} sürümüne güncellendi."
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
-msgstr "Şu anda kullanılamayan her şey — bir sağlayıcı, model, akıl yürütme düzeyi veya Fast modu — otomatik olarak atlanır. İşaretlenmemiş sağlayıcılar ve modeller yeniden işaretlenene kadar atlanır."
+#~ msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
+#~ msgstr "Şu anda kullanılamayan her şey — bir sağlayıcı, model, akıl yürütme düzeyi veya Fast modu — otomatik olarak atlanır. İşaretlenmemiş sağlayıcılar ve modeller yeniden işaretlenene kadar atlanır."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Anything currently unavailable, such as a provider, model, or reasoning level, is skipped automatically. Unchecked providers and models are skipped until re-checked."
+msgstr "Kullanılamayan sağlayıcılar, modeller veya akıl yürütme düzeyleri otomatik olarak atlanır. Seçimi kaldırılan sağlayıcılar ve modeller yeniden seçilene kadar atlanır."
 
 #: src/renderer/views/SettingsOverlay/parts/CursorSdkRuntimeSetup.tsx
 msgid "API key"
@@ -4867,8 +4871,12 @@ msgid "e.g. 512k or 1m"
 msgstr "örn. 512k veya 1m"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
-msgstr "örn. hızlı aramalar için Codex GPT-5.5 fast, toplu yeniden düzenlemeler için OpenCode GLM, ince işler için Claude Opus."
+msgid "e.g. Codex for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for complex tasks."
+msgstr "ör. hızlı aramalar için Codex, toplu yeniden düzenlemeler için OpenCode GLM, karmaşık görevler için Claude Opus."
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#~ msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
+#~ msgstr "örn. hızlı aramalar için Codex GPT-5.5 fast, toplu yeniden düzenlemeler için OpenCode GLM, ince işler için Claude Opus."
 
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
 msgid "e.g. Work"
@@ -5682,6 +5690,10 @@ msgstr "Farkta bul"
 #: src/renderer/components/terminal/XTermSurface.tsx
 msgid "Find in terminal"
 msgstr "Terminalde bul"
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Finish active tasks before installing the update."
+msgstr "Güncellemeyi yüklemeden önce etkin görevleri tamamlayın."
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Finish your review"
@@ -14017,8 +14029,8 @@ msgstr "Tarayıcı panelini aç/kapat"
 
 #: src/renderer/commands/composerCommands.ts
 #: src/renderer/components/providers/standardGuiSlashCommands.ts
-msgid "Toggle Fast mode"
-msgstr "Hızlı modu aç/kapat"
+#~ msgid "Toggle Fast mode"
+#~ msgstr "Hızlı modu aç/kapat"
 
 #: src/renderer/commands/registry.ts
 msgid "Toggle File Tree"
@@ -14739,6 +14751,10 @@ msgstr "{0} öğesini {updateLabel} olarak güncelleyin"
 msgid "Update all ({outdatedCount})"
 msgstr "Tümünü güncelle ({outdatedCount})"
 
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update and restart"
+msgstr "Güncelle ve yeniden başlat"
+
 #: src/renderer/views/SettingsOverlay/parts/antigravityRuntimeInstall.ts
 #~ msgid "Update Antigravity"
 #~ msgstr "Antigravity'yi güncelle"
@@ -14787,6 +14803,10 @@ msgstr "Güncelleme yöntemi"
 #: src/mobile/views/PortsView.tsx
 msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "Port yönlendirmeyi kullanmak için masaüstünüzdeki Orzi Code'u güncelleyin."
+
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update ready"
+msgstr "Güncelleme hazır"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

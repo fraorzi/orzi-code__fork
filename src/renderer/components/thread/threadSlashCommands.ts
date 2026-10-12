@@ -68,6 +68,7 @@ function dedupeBaseCommands(
   const seen = new Set(skills.map((skill) => (skill.skillName ?? skill.id).toLowerCase()));
   return withoutSkillCommands(commands).filter((command) => {
     const id = command.id.toLowerCase();
+    if (id === "fast" || id === "/fast") return false;
     if (seen.has(id)) return false;
     seen.add(id);
     return true;

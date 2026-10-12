@@ -118,6 +118,7 @@ export function createCursorAdapter(options: CursorAdapterOptions = {}): AgentAd
   const detectionSpec = isProfile ? { ...cursorDetectionSpec, kind, label } : cursorDetectionSpec;
   const profileKeyEnv = options.apiKey ? { CURSOR_API_KEY: options.apiKey } : undefined;
   return {
+    usageProviderId: kind,
     kind,
     label,
     binary: detectionSpec.binary,

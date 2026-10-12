@@ -1,6 +1,6 @@
 # Przekazanie Orzi Code
 
-Stan na 2026-10-11. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
+Stan na 2026-10-12. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
 
 ## Zacznij tutaj
 
@@ -17,6 +17,14 @@ Stan na 2026-10-11. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Integracja zmian wykonawców jest automatyczna. Użytkownik wyraźnie wykluczył zatwierdzanie każdego scalenia. Nie należy ponownie otwierać tej decyzji.
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
+
+## Aktualizacja z 2026-10-12
+
+Wdrożono bieżącą listę: szybsze limity, przekazywanie zgody wbudowanego Computer Use, współdzielone i szyfrowane poświadczenia Gemini ACP, stały lokalny podpis, pointer na akcjach, okrągłe przyciski oraz lokalny updater z trwałym toastem, backupem i rollbackiem. Użytkownik wykluczył Fast / Szybki dla wszystkich modeli, także w starych zapisach; ta decyzja zastępuje wcześniejszą. Szczegóły, granice zgodności i dowody są na początku [stanu implementacji](implementation.md).
+
+Aktualizacja z toastu przeszła na pełnej paczce Electron w izolowanym profilu: kliknięcie, backup, podmiana paczki z tą samą wersją 1.8.1, ponowny start i zachowanie profilu. Produkcyjna aplikacja nadal działa ze starszego bundle. Pierwsze przejście: użytkownik kończy zadania, zamyka Orzi Code i otwiera `.tmp/local-update-launcher/Zaktualizuj Orzi Code.app`. Agent już przygotowuje zweryfikowaną paczkę w profilu. Kolejne zmiany: po testach agent uruchamia `pnpm run update:local`; użytkownik otrzymuje toast. Nie podmieniać bundle podczas aktywnych sesji. Zachować prywatny `.tmp/local-signing/`, ponieważ utrata certyfikatu zmienia tożsamość Keychain.
+
+Pełny smoke ma trzy wcześniejsze porażki, identyczne na bazie `eb7bca5b`; nie deklarować pełnego PASS. Nie testowano produkcyjnych dialogów Keychain ani osobnej rzeczywistej rozmowy Codex z Computer Use. Oryginalny Poracode nie jest zależnością forka i nie został odinstalowany. Szczegóły są w stanie implementacji oraz [workflow aktualizacji](desktop-updates.md).
 
 ## Aktualizacja z 2026-10-11
 

@@ -54,6 +54,7 @@
     "clean:sourcemaps": "node scripts/clean-sourcemaps.mjs",
     "codex-protocol:gen": "pnpm --filter @poracode/codex-protocol run generate",
     "dist": "node scripts/build-desktop-artifact.mjs",
+    "update:local": "node scripts/build-desktop-artifact.mjs --platform mac --target dir --arch arm64 --stage-local-update",
     "dist:win": "node scripts/build-desktop-artifact.mjs --platform win --target nsis --arch x64",
     "dist:win:all": "node scripts/build-desktop-artifact.mjs --platform win",
     "dist:linux": "node scripts/build-desktop-artifact.mjs --platform linux",

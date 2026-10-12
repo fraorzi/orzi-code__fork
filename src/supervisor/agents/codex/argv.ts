@@ -62,10 +62,8 @@ function buildCodexArgs(opts: BuildCodexArgsOptions): string[] {
     if (config.effort) {
       args.push("-c", `model_reasoning_effort="${config.effort}"`);
     }
-    if (config.fast) {
-      // Codex's `service_tier="fast"` selects the priority lane on supported models.
-      args.push("-c", 'service_tier="fast"');
-    }
+    // Override a global CLI opt-in as well as legacy saved thread preferences.
+    args.push("-c", 'service_tier="default"');
     const contextWindow = codexContextWindowOverrides(config.contextSize);
     args.push(
       "-c",

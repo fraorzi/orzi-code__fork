@@ -1485,8 +1485,12 @@ msgstr "Antigravity ACP"
 #~ msgstr "Antigravity を v{version} に更新しました。"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
-msgstr "現在利用できないもの — プロバイダー、モデル、推論レベル、Fast モード — は自動的にスキップされます。チェックを外したプロバイダーとモデルは、再度チェックするまでスキップされます。"
+#~ msgid "Anything currently unavailable — a provider, model, reasoning level, or Fast mode — is skipped automatically. Unchecked providers and models are skipped until re-checked."
+#~ msgstr "現在利用できないもの — プロバイダー、モデル、推論レベル、Fast モード — は自動的にスキップされます。チェックを外したプロバイダーとモデルは、再度チェックするまでスキップされます。"
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+msgid "Anything currently unavailable, such as a provider, model, or reasoning level, is skipped automatically. Unchecked providers and models are skipped until re-checked."
+msgstr "利用できないプロバイダー、モデル、推論レベルは自動的にスキップされます。選択を解除したプロバイダーとモデルは、再選択するまでスキップされます。"
 
 #: src/renderer/views/SettingsOverlay/parts/CursorSdkRuntimeSetup.tsx
 msgid "API key"
@@ -4866,8 +4870,12 @@ msgid "e.g. 512k or 1m"
 msgstr "例: 512k または 1m"
 
 #: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
-msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
-msgstr "例：クイックな調査には Codex GPT-5.5 fast、大量のリファクタリングには OpenCode GLM、繊細な作業には Claude Opus。"
+msgid "e.g. Codex for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for complex tasks."
+msgstr "例：簡単な調査には Codex、大規模なリファクタリングには OpenCode GLM、複雑なタスクには Claude Opus。"
+
+#: src/renderer/views/SettingsOverlay/parts/CrossagentRoutingSection.tsx
+#~ msgid "e.g. Codex GPT-5.5 fast for quick lookups, OpenCode GLM for bulk refactors, Claude Opus for anything subtle."
+#~ msgstr "例：クイックな調査には Codex GPT-5.5 fast、大量のリファクタリングには OpenCode GLM、繊細な作業には Claude Opus。"
 
 #: src/renderer/views/SettingsOverlay/parts/AgentProfileList.tsx
 msgid "e.g. Work"
@@ -5681,6 +5689,10 @@ msgstr "差分内を検索"
 #: src/renderer/components/terminal/XTermSurface.tsx
 msgid "Find in terminal"
 msgstr "ターミナル内を検索"
+
+#: src/renderer/i18n/sharedMessages.ts
+msgid "Finish active tasks before installing the update."
+msgstr "更新をインストールする前に、実行中のタスクを終了してください。"
 
 #: src/renderer/views/PrReviewOverlay/parts/SubmitReviewPopover.tsx
 msgid "Finish your review"
@@ -14015,8 +14027,8 @@ msgstr "ブラウザパネルの切り替え"
 
 #: src/renderer/commands/composerCommands.ts
 #: src/renderer/components/providers/standardGuiSlashCommands.ts
-msgid "Toggle Fast mode"
-msgstr "高速モードの切り替え"
+#~ msgid "Toggle Fast mode"
+#~ msgstr "高速モードの切り替え"
 
 #: src/renderer/commands/registry.ts
 msgid "Toggle File Tree"
@@ -14737,6 +14749,10 @@ msgstr "{0}を{updateLabel}に更新します"
 msgid "Update all ({outdatedCount})"
 msgstr "すべて更新（{outdatedCount}）"
 
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update and restart"
+msgstr "更新して再起動"
+
 #: src/renderer/views/SettingsOverlay/parts/antigravityRuntimeInstall.ts
 #~ msgid "Update Antigravity"
 #~ msgstr "Antigravity を更新"
@@ -14785,6 +14801,10 @@ msgstr "更新方法"
 #: src/mobile/views/PortsView.tsx
 msgid "Update Orzi Code on your desktop to use port forwarding."
 msgstr "ポート転送を使用するには、デスクトップの Orzi Code を更新してください。"
+
+#: src/renderer/state/updateStatusSync.ts
+msgid "Update ready"
+msgstr "更新の準備ができました"
 
 #: src/renderer/views/SettingsOverlay/parts/cursorRuntimeInstall.ts
 msgid "Update SDK"

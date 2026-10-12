@@ -1,3 +1,6 @@
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   ANTIGRAVITY_GOOGLE_TOKEN_URI,
@@ -195,6 +198,55 @@ describe("resolveAntigravityAcpCredentialsCached", () => {
     await expect(resolveAntigravityAcpCredentialsCached(deps)).resolves.toEqual(expected);
     await expect(resolveAntigravityAcpCredentialsCached(deps)).resolves.toEqual(expected);
     expect(readKeychain).toHaveBeenCalledOnce();
+  });
+
+  it("coalesces simultaneous startup reads into one authorization dialog", async () => {
+    let resolveRead: (value: string) => void = () => {};
+    const readKeychain = vi.fn<() => Promise<string>>(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveRead = resolve;
+        }),
+    );
+    const deps = {
+      readKeychain,
+      readNative: async () => undefined,
+      readWsl: async () => undefined,
+    };
+    const first = resolveAntigravityAcpCredentialsCached(deps);
+    const second = resolveAntigravityAcpCredentialsCached(deps);
+    expect(readKeychain).toHaveBeenCalledOnce();
+    resolveRead(VALID);
+    await expect(Promise.all([first, second])).resolves.toEqual([
+      parseAntigravityAcpCredentials(VALID),
+      parseAntigravityAcpCredentials(VALID),
+    ]);
+  });
+
+  it("keeps an authorized artifact sealed in the active profile across process restarts", async () => {
+    const cacheDir = mkdtempSync(join(tmpdir(), "orzi-acp-sealed-"));
+    execFileMock.mockImplementation((_file, _args, _options, callback) =>
+      callback(null, VALID, ""),
+    );
+    try {
+      const first = await resolveAntigravityAcpCredentialsCached(undefined, cacheDir);
+      expect(first).toEqual(parseAntigravityAcpCredentials(VALID));
+      const sealed = readFileSync(join(cacheDir, "provider-secrets.json"), "utf8");
+      expect(sealed).not.toContain("refresh-token");
+      resetAntigravityAcpCredentialStateForTests();
+      execFileMock.mockClear();
+      await expect(resolveAntigravityAcpCredentialsCached(undefined, cacheDir)).resolves.toEqual(
+        first,
+      );
+      expect(execFileMock).not.toHaveBeenCalled();
+      invalidateAntigravityAcpCredentialsCache();
+      expect(readFileSync(join(cacheDir, "provider-secrets.json"), "utf8")).not.toContain(
+        "acp-oauth",
+      );
+    } finally {
+      resetAntigravityAcpCredentialStateForTests();
+      rmSync(cacheDir, { recursive: true, force: true });
+    }
   });
 
   it("re-reads the OS stores after an invalidation", async () => {

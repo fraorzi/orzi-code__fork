@@ -135,6 +135,10 @@ export class ThreadSessionManager {
   constructor(private readonly options: ThreadSessionManagerOptions) {
     this.runtimeEventRouter = new RuntimeEventRouter(options.emit);
     this.outputPipeline = new ThreadOutputPipeline({
+      onTurnSettled: (session) => {
+        if (session.adapter.usageProviderId)
+          this.options.onUsageRefresh?.(session.adapter.usageProviderId);
+      },
       emit: options.emit,
       isDev: options.isDev,
       logWriter: this.logWriter,
@@ -205,6 +209,7 @@ export class ThreadSessionManager {
       indexSessionRef: (session, prevId) => this.indexSessionRef(session, prevId),
     });
     const sessionRuntimeLifecycle = new SessionRuntimeLifecycle({
+      ...(options.onUsageSnapshot ? { onUsageSnapshot: options.onUsageSnapshot } : {}),
       sessions: this.sessions,
       sessionsBySessionId: this.sessionsBySessionId,
       ptyLifecycle: this.ptyLifecycle,

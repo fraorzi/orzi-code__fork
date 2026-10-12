@@ -25,12 +25,12 @@ function validateReleaseSigning(platform, releaseSigning, env) {
   }
 }
 
-function macSigningYaml(releaseSigning) {
-  // Local packages stay ad-hoc. Release CI must resolve a Developer ID and
-  // notarize successfully rather than silently falling back to ad-hoc signing.
+function macSigningYaml(releaseSigning, localIdentity) {
+  // Local packages reuse the personal certificate when configured. Release CI
+  // must use Developer ID and notarization; never substitute the local identity.
   return releaseSigning
     ? "  forceCodeSigning: true\n  notarize: true"
-    : '  identity: "-"\n  notarize: false';
+    : `${localIdentity ? '  forceCodeSigning: true\n  timestamp: "none"\n' : ""}  identity: ${JSON.stringify(localIdentity ?? "-")}\n  notarize: false`;
 }
 
 module.exports = { releasePublishYaml, validateReleaseSigning, macSigningYaml };

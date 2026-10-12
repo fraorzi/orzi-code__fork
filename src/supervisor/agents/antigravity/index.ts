@@ -82,6 +82,7 @@ export function createAntigravityAdapter(acpInstance?: AgentInstanceConfig): Age
     subscriptionImages: antigravitySubscriptionImages(),
     nativeMcpConfig: (ctx) => (ctx.envKind === "wsl" ? undefined : antigravityNativeMcpConfig()),
     kind: detectionSpec.kind,
+    usageProviderId: "antigravity",
     label: detectionSpec.label,
     binary: detectionSpec.binary,
     firstClassAcpRegistryId: ANTIGRAVITY_ACP_REGISTRY_ID,
