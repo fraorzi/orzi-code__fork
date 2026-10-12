@@ -146,11 +146,17 @@ export class GitCheckpointService {
    */
   async promptStatus(input: PromptChangesPayload): Promise<PromptChangesStatusResult> {
     const turn = await this.readPromptTurn(input);
+    const current = await worktreeBlobs(input.projectLocation, turn);
     const files: PromptChangesStatusResult["files"] = [];
     for (const file of turn.changedFiles) {
       files.push({
         path: file.path,
-        state: await fileChangeState(input.projectLocation, turn, file),
+        state: await fileChangeState(
+          input.projectLocation,
+          turn,
+          file,
+          current.get(file.path) ?? null,
+        ),
       });
     }
     return { files };
@@ -351,8 +357,8 @@ async function fileChangeState(
   projectLocation: ProjectLocation,
   turn: FileCheckpointTurn,
   file: FileCheckpointChangedFile,
+  current: string | null,
 ): Promise<PromptFileChangeState> {
-  const current = await worktreeBlob(projectLocation, file.path);
   const after = await snapshotBlob(projectLocation, turn.ref, file.path);
   if (current === after) return "applied";
   const before = await snapshotBlob(projectLocation, turn.baseRef, file.oldPath ?? file.path);
@@ -360,15 +366,51 @@ async function fileChangeState(
   return current === beforeAtPath ? "reverted" : "conflict";
 }
 
-/** Blob id of a working-tree file (clean filters applied), or null when it is absent. */
-async function worktreeBlob(
+async function worktreeBlobs(
   projectLocation: ProjectLocation,
-  path: string,
-): Promise<string | null> {
-  const output = await execGit(projectLocation, ["hash-object", "--", path], {
-    acceptedExitCodes: [128],
-  });
-  return output.trim() || null;
+  turn: FileCheckpointTurn,
+): Promise<Map<string, string>> {
+  const paths = turn.changedFiles.map((file) => file.path);
+  const blobs = new Map<string, string>();
+  if (paths.length === 0) return blobs;
+  const tempIndex = await createTempIndexPath(projectLocation);
+  const env = { GIT_INDEX_FILE: tempIndex };
+  try {
+    await execGit(projectLocation, ["read-tree", turn.ref], { env });
+    const deleted = turn.changedFiles
+      .filter((file) => file.status.startsWith("D"))
+      .map((file) => file.path);
+    if (deleted.length > 0) {
+      const entries = await execGit(projectLocation, [
+        "--literal-pathspecs",
+        "ls-tree",
+        "-z",
+        turn.baseRef,
+        "--",
+        ...deleted,
+      ]);
+      await execGit(projectLocation, ["update-index", "-z", "--index-info"], {
+        env,
+        input: entries,
+      });
+    }
+    await execGit(
+      projectLocation,
+      ["--literal-pathspecs", "add", "-A", "--pathspec-from-file=-", "--pathspec-file-nul"],
+      { env, input: paths.join("\0") },
+    );
+    const wanted = new Set(paths);
+    const listed = await execGit(projectLocation, ["ls-files", "-s", "-z"], { env });
+    for (const entry of listed.split("\0")) {
+      const tab = entry.indexOf("\t");
+      const path = entry.slice(tab + 1);
+      const blob = entry.slice(0, tab).split(" ")[1];
+      if (tab > 0 && blob && wanted.has(path)) blobs.set(path, blob);
+    }
+    return blobs;
+  } finally {
+    await removeTempIndex(projectLocation, tempIndex);
+  }
 }
 
 /** Blob id of `path` in a checkpoint snapshot, or null when the snapshot has no such file. */

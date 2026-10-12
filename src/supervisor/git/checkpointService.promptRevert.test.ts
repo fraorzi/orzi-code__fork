@@ -1,5 +1,14 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { rm } from "node:fs/promises";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -100,6 +109,33 @@ describe.skipIf(!hasGit() || process.platform === "win32")("prompt change revert
       "[c].txt": "reverted",
     });
     expect(read(dir, "a.txt")).toBe("three\n");
+  });
+
+  it("tracks symlinks the prompt created, including links to directories", async () => {
+    const { dir, service, prompt } = await repoWithPrompt();
+    mkdirSync(join(dir, "skills"));
+    writeFileSync(join(dir, "skills", "SKILL.md"), "skill\n");
+    git(dir, "add", "skills");
+    git(dir, "commit", "--quiet", "-m", "skills");
+    const ids = { threadId: prompt.threadId, projectLocation: prompt.projectLocation };
+    await service.create({ ...ids, checkpointItemId: "user-2" });
+    symlinkSync(join(dir, "skills"), join(dir, "linked-skills"), "dir");
+    symlinkSync("a.txt", join(dir, "a-link"));
+    await service.finalize({ ...ids, checkpointItemId: "turn-2", baseCheckpointItemId: "user-2" });
+    const linkPrompt = { ...ids, checkpointItemId: "turn-2" };
+
+    expect(states(await service.promptStatus(linkPrompt))).toEqual({
+      "a-link": "applied",
+      "linked-skills": "applied",
+    });
+    await service.revertPrompt(linkPrompt);
+    expect(existsSync(join(dir, "linked-skills"))).toBe(false);
+    await service.reapplyPrompt(linkPrompt);
+    expect(lstatSync(join(dir, "linked-skills")).isSymbolicLink()).toBe(true);
+    expect(states(await service.promptStatus(linkPrompt))).toEqual({
+      "a-link": "applied",
+      "linked-skills": "applied",
+    });
   });
 
   it("rejects paths outside the prompt", async () => {
