@@ -358,12 +358,14 @@ export class UsageService {
     if (!settings.autoRefresh || settings.disabledProviders.includes(providerId)) return;
     const snapshot = this.snapshots.get(providerId);
     const now = this.host.now();
-    if (this.isRateLimited(snapshot, now) || (snapshot && now - snapshot.fetchedAt < 30_000))
-      return;
-    const timer = setTimeout(() => {
-      this.turnRefreshTimers.delete(providerId);
-      void this.refreshProviderUsage({ providerIds: [providerId] }).catch(() => {});
-    }, 1500);
+    if (this.isRateLimited(snapshot, now)) return;
+    const timer = setTimeout(
+      () => {
+        this.turnRefreshTimers.delete(providerId);
+        void this.refreshProviderUsage({ providerIds: [providerId] }).catch(() => {});
+      },
+      Math.max(1500, snapshot ? 30_000 - (now - snapshot.fetchedAt) : 1500),
+    );
     timer.unref();
     this.turnRefreshTimers.set(providerId, timer);
   }

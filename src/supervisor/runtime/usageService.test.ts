@@ -92,10 +92,13 @@ describe("UsageService", () => {
       await vi.advanceTimersByTimeAsync(1500);
       expect(collect).toHaveBeenCalledTimes(1);
       now += 30_000;
+      await vi.advanceTimersByTimeAsync(28_500);
+      expect(collect).toHaveBeenCalledTimes(2);
+      now += 30_000;
       service.refreshAfterTurn("turn-provider");
       service.stop();
       await vi.advanceTimersByTimeAsync(1500);
-      expect(collect).toHaveBeenCalledTimes(1);
+      expect(collect).toHaveBeenCalledTimes(2);
     } finally {
       service.stop();
       vi.useRealTimers();
