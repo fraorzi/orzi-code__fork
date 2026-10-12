@@ -18,6 +18,12 @@ Stan na 2026-10-12. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
 
+## Figma MCP - ograniczenie logowania, 2026-10-12
+
+Użytkownik poprosił o połączenie Figma także z modelami Claude w Orzi Code. Dodano i włączono globalny serwer `figma` z `https://mcp.figma.com/mcp`. Próba własnego OAuth Orzi kończy się `Dynamic Client Registration rejected (HTTP 403): Forbidden`. [Figma dopuszcza zdalne MCP tylko dla klientów z zatwierdzonego katalogu](https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/). To ograniczenie dostawcy, nie brak hasła użytkownika; wcześniejsze wskazanie samego logowania w Orzi było błędne. Istniejące natywne połączenie Codex odczytało wskazany węzeł projektu, ale nie potwierdza autoryzacji globalnego serwera Orzi.
+
+Obsługiwana wspólna ścieżka to [oficjalny serwer Figma Desktop](https://developers.figma.com/docs/figma-mcp-server/local-server-installation/) pod `http://127.0.0.1:3845/mcp`. Probe Orzi potwierdził, że ten serwer nie działa; Figma Desktop nie jest zainstalowana. Użytkownik otrzymał pytanie, czy zainstalować Figma Desktop, czy pozostać bez dodatkowej aplikacji. Nie instalować jej przed odpowiedzią. Po wyborze Desktop: instalacja z oficjalnego źródła, logowanie użytkownika, otwarcie pliku, Dev Mode i Enable desktop MCP server, następnie zmiana istniejącego wpisu w Orzi i rzeczywisty probe/lista narzędzi plus odczyt węzła. Nie deklarować połączenia na podstawie samego zapisu URL ani kopiować poświadczeń Codex.
+
 ## Aktualizacja z 2026-10-12
 
 Wdrożono bieżącą listę: szybsze limity, przekazywanie zgody wbudowanego Computer Use, współdzielone i szyfrowane poświadczenia Gemini ACP, stały lokalny podpis, pointer na akcjach, okrągłe przyciski oraz lokalny updater z trwałym toastem, backupem i rollbackiem. Użytkownik wykluczył Fast / Szybki dla wszystkich modeli, także w starych zapisach; ta decyzja zastępuje wcześniejszą. Szczegóły, granice zgodności i dowody są na początku [stanu implementacji](implementation.md).
