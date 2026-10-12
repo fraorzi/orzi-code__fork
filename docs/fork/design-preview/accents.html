@@ -6,7 +6,7 @@
     <title>Orzi Code - akcenty kolorystyczne</title>
     <link rel="stylesheet" href="accents.css" />
   </head>
-  <body data-look="accent" data-state="idle">
+  <body data-look="accent" data-blue="ink" data-state="idle">
     <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <symbol id="arrow" viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6" /></symbol>
       <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
@@ -32,8 +32,12 @@
       </symbol>
       <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></symbol>
       <symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6" /></symbol>
-      <symbol id="undo" viewBox="0 0 24 24">
+      <symbol id="undo-icon" viewBox="0 0 24 24">
         <path d="m8 5-5 5 5 5m-5-5h11a6 6 0 0 1 0 12" />
+      </symbol>
+      <symbol id="redo" viewBox="0 0 24 24"><path d="m16 4 5 5-5 5m5-5H9a6 6 0 0 0 0 12" /></symbol>
+      <symbol id="download" viewBox="0 0 24 24">
+        <path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5" />
       </symbol>
       <symbol id="settings" viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="3" />
@@ -64,6 +68,18 @@
         <button id="toast-control" class="control">Pokaż toast</button>
       </div>
     </header>
+    <section class="palette-bar" aria-label="Odcienie niebieskiego">
+      <span>Odcień</span>
+      <button class="palette-choice" data-blue="ink" aria-pressed="true">
+        <i class="blue-sample ink"></i>Atrament<span>#315B9F</span>
+      </button>
+      <button class="palette-choice" data-blue="sapphire" aria-pressed="false">
+        <i class="blue-sample sapphire"></i>Szafir<span>#3458B2</span>
+      </button>
+      <button class="palette-choice" data-blue="steel" aria-pressed="false">
+        <i class="blue-sample steel"></i>Stalowy<span>#3B617E</span>
+      </button>
+    </section>
     <div class="app">
       <aside class="sidebar">
         <div class="sidebar-tools">
@@ -138,13 +154,16 @@
             </button>
           </nav>
         </header>
-        <div id="toast" class="toast" role="status" hidden>
+        <div id="toast" class="toast" role="status">
           <span class="toast-indicator"
-            ><svg><use href="#check" /></svg
+            ><svg><use href="#download" /></svg
           ></span>
-          <div>
-            <strong>Przykładowe powiadomienie</strong>
-            <p>Toasty pojawiają się teraz w prawym górnym rogu.</p>
+          <div class="toast-body">
+            <strong>Aktualizacja gotowa</strong>
+            <p>Możesz ją zainstalować po zakończeniu zadań.</p>
+            <button id="toast-action" class="toast-action">
+              Zaktualizuj i uruchom ponownie<svg><use href="#redo" /></svg>
+            </button>
           </div>
           <button id="toast-close" class="icon-button" aria-label="Zamknij powiadomienie">
             <svg><use href="#close" /></svg>
@@ -163,28 +182,285 @@
             </div>
             <p>
               Czerń zostaje. Niebieski wskazuje główną akcję i aktywne elementy. Czerwony pojawia
-              się przy zatrzymaniu i cofaniu, zielony przy przywracaniu zmian.
+              się przy zatrzymaniu i cofaniu. Zielony sygnalizuje ukończoną pracę. Przywracanie ma
+              neutralną ikonę ponownego nałożenia.
             </p>
             <div class="changes">
               <div class="changes-heading">
-                <span
-                  ><svg><use href="#files" /></svg>Zmiany promptu</span
-                ><span class="diff-stats">Podgląd</span>
-              </div>
-              <div class="file-row">
-                <span class="file-mark">TS</span><code>Button.tsx</code
-                ><button class="quiet">Przejrzyj</button>
-              </div>
-              <div class="changes-footer">
-                <button id="restore" class="restore">
-                  <svg><use href="#check" /></svg>Przywróć zmiany</button
+                <button
+                  id="changes-toggle"
+                  class="change-summary"
+                  aria-expanded="true"
+                  aria-controls="change-list"
+                >
+                  <svg class="disclosure"><use href="#chevron" /></svg><span>Zmiany promptu</span
+                  ><span class="diff-stats">3 pliki</span
+                  ><span class="review-label">Zwiń</span></button
                 ><button id="undo" class="danger">
-                  <svg><use href="#undo" /></svg>Cofnij
+                  <svg><use href="#undo-icon" /></svg>Cofnij
+                </button>
+              </div>
+              <div id="change-list" class="collapse" data-open="true">
+                <div class="collapse-inner">
+                  <div class="file-list">
+                    <div class="file-entry" data-file="button">
+                      <div class="file-row">
+                        <button
+                          class="file-toggle"
+                          aria-expanded="false"
+                          aria-controls="diff-button"
+                        >
+                          <svg class="disclosure"><use href="#chevron" /></svg
+                          ><span class="file-mark">TS</span><code>Button.tsx</code
+                          ><span class="file-counts"><b>+3</b><span>-1</span></span>
+                        </button>
+                        <div class="file-actions">
+                          <button class="icon-button open-file" aria-label="Otwórz Button.tsx">
+                            <svg><use href="#files" /></svg></button
+                          ><button
+                            class="icon-button undo-file"
+                            aria-label="Cofnij zmiany w Button.tsx"
+                          >
+                            <svg><use href="#undo-icon" /></svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        class="file-diff collapse"
+                        id="diff-button"
+                        data-open="false"
+                        aria-hidden="true"
+                        inert
+                      >
+                        <div class="collapse-inner">
+                          <div class="diff-content">
+                            <div class="diff-caption">Przykładowy diff</div>
+                            <div class="diff-line context">
+                              <span class="line-number">1</span><span class="line-sign"> </span
+                              ><code>export function SendButton() {</code>
+                            </div>
+                            <div class="diff-line del">
+                              <span class="line-number">2</span><span class="line-sign">-</span
+                              ><code> return &lt;button&gt;Wyślij&lt;/button&gt;;</code>
+                            </div>
+                            <div class="diff-line add">
+                              <span class="line-number">3</span><span class="line-sign">+</span
+                              ><code> return (</code>
+                            </div>
+                            <div class="diff-line add">
+                              <span class="line-number">4</span><span class="line-sign">+</span
+                              ><code> &lt;button className=&quot;send-button&quot;&gt;</code>
+                            </div>
+                            <div class="diff-line add">
+                              <span class="line-number">5</span><span class="line-sign">+</span
+                              ><code> Wyślij</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">6</span><span class="line-sign"> </span
+                              ><code> &lt;/button&gt;</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">7</span><span class="line-sign"> </span
+                              ><code> );</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">8</span><span class="line-sign"> </span
+                              ><code>}</code>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="file-entry" data-file="styles">
+                      <div class="file-row">
+                        <button
+                          class="file-toggle"
+                          aria-expanded="false"
+                          aria-controls="diff-styles"
+                        >
+                          <svg class="disclosure"><use href="#chevron" /></svg
+                          ><span class="file-mark">CSS</span><code>styles.css</code
+                          ><span class="file-counts"><b>+4</b><span>-3</span></span>
+                        </button>
+                        <div class="file-actions">
+                          <button class="icon-button open-file" aria-label="Otwórz styles.css">
+                            <svg><use href="#files" /></svg></button
+                          ><button
+                            class="icon-button undo-file"
+                            aria-label="Cofnij zmiany w styles.css"
+                          >
+                            <svg><use href="#undo-icon" /></svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        class="file-diff collapse"
+                        id="diff-styles"
+                        data-open="false"
+                        aria-hidden="true"
+                        inert
+                      >
+                        <div class="collapse-inner">
+                          <div class="diff-content">
+                            <div class="diff-caption">Przykładowy diff</div>
+                            <div class="diff-line context">
+                              <span class="line-number">1</span><span class="line-sign"> </span
+                              ><code>.send-button {</code>
+                            </div>
+                            <div class="diff-line del">
+                              <span class="line-number">2</span><span class="line-sign">-</span
+                              ><code> background: #e4e4e4;</code>
+                            </div>
+                            <div class="diff-line add">
+                              <span class="line-number">3</span><span class="line-sign">+</span
+                              ><code> background: var(--action);</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">4</span><span class="line-sign"> </span
+                              ><code> border-radius: 50%;</code>
+                            </div>
+                            <div class="diff-line add">
+                              <span class="line-number">5</span><span class="line-sign">+</span
+                              ><code> color: var(--action-foreground);</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">6</span><span class="line-sign"> </span
+                              ><code>}</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">7</span><span class="line-sign"> </span
+                              ><code></code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">8</span><span class="line-sign"> </span
+                              ><code>.send-button:hover {</code>
+                            </div>
+                            <div class="diff-line del">
+                              <span class="line-number">9</span><span class="line-sign">-</span
+                              ><code> background: #ffffff;</code>
+                            </div>
+                            <div class="diff-line add">
+                              <span class="line-number">10</span><span class="line-sign">+</span
+                              ><code> background: var(--action-hover);</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">11</span><span class="line-sign"> </span
+                              ><code>}</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">12</span><span class="line-sign"> </span
+                              ><code></code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">13</span><span class="line-sign"> </span
+                              ><code>.stop-button {</code>
+                            </div>
+                            <div class="diff-line del">
+                              <span class="line-number">14</span><span class="line-sign">-</span
+                              ><code> color: var(--foreground);</code>
+                            </div>
+                            <div class="diff-line add">
+                              <span class="line-number">15</span><span class="line-sign">+</span
+                              ><code> color: var(--danger);</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">16</span><span class="line-sign"> </span
+                              ><code> background: var(--danger-soft);</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">17</span><span class="line-sign"> </span
+                              ><code>}</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">18</span><span class="line-sign"> </span
+                              ><code></code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">19</span><span class="line-sign"> </span
+                              ><code>@media (prefers-reduced-motion: reduce) {</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">20</span><span class="line-sign"> </span
+                              ><code> .send-button { transition: none; }</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">21</span><span class="line-sign"> </span
+                              ><code>}</code>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="file-entry" data-file="theme">
+                      <div class="file-row">
+                        <button
+                          class="file-toggle"
+                          aria-expanded="false"
+                          aria-controls="diff-theme"
+                        >
+                          <svg class="disclosure"><use href="#chevron" /></svg
+                          ><span class="file-mark">TS</span><code>theme.ts</code
+                          ><span class="file-counts"><b>+1</b><span>-1</span></span>
+                        </button>
+                        <div class="file-actions">
+                          <button class="icon-button open-file" aria-label="Otwórz theme.ts">
+                            <svg><use href="#files" /></svg></button
+                          ><button
+                            class="icon-button undo-file"
+                            aria-label="Cofnij zmiany w theme.ts"
+                          >
+                            <svg><use href="#undo-icon" /></svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        class="file-diff collapse"
+                        id="diff-theme"
+                        data-open="false"
+                        aria-hidden="true"
+                        inert
+                      >
+                        <div class="collapse-inner">
+                          <div class="diff-content">
+                            <div class="diff-caption">Przykładowy diff</div>
+                            <div class="diff-line context">
+                              <span class="line-number">1</span><span class="line-sign"> </span
+                              ><code>export const controls = {</code>
+                            </div>
+                            <div class="diff-line del">
+                              <span class="line-number">2</span><span class="line-sign">-</span
+                              ><code> accent: &quot;neutral&quot;,</code>
+                            </div>
+                            <div class="diff-line add">
+                              <span class="line-number">3</span><span class="line-sign">+</span
+                              ><code> accent: &quot;ink&quot;,</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">4</span><span class="line-sign"> </span
+                              ><code> stop: &quot;danger&quot;,</code>
+                            </div>
+                            <div class="diff-line context">
+                              <span class="line-number">5</span><span class="line-sign"> </span
+                              ><code>};</code>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="changes-footer" id="restore-state" hidden>
+                <span
+                  ><svg><use href="#undo-icon" /></svg>Zmiany cofnięte</span
+                ><button id="restore" class="restore">
+                  <svg><use href="#redo" /></svg>Przywróć zmiany
                 </button>
               </div>
             </div>
             <p class="response-note">
-              Kolor jest na kontrolkach i statusach. Tło rozmowy, sidebar i menu pozostają czarne.
+              Kliknij dowolne miejsce w nagłówku lub wierszu pliku. Ponowne kliknięcie zamyka diff.
+              Cofnij pokazuje neutralne Przywróć zmiany.
             </p>
           </article>
           <div class="working">
@@ -253,7 +529,7 @@
       <div class="swatches">
         <span><i class="swatch blue"></i>Wyślij i aktywny wybór</span
         ><span><i class="swatch red"></i>Stop i cofanie</span
-        ><span><i class="swatch green"></i>Gotowe i przywracanie</span
+        ><span><i class="swatch green"></i>Ukończona praca</span
         ><span><i class="swatch amber"></i>Uwaga i oczekiwanie</span>
       </div>
       <p class="note-caption">

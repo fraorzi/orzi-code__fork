@@ -2,6 +2,14 @@
 
 Data: 2026-10-13. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Druga iteracja podglądu akcentów - 2026-10-13
+
+- Zmiany dotyczą wyłącznie `docs/fork/design-preview/accents.{html,css,js}`. Wygląd i zachowanie diffów nie zostały jeszcze wdrożone w aplikacji. Obowiązuje wcześniejszy odbiór podglądu przez użytkownika; pytanie o ewentualne wcześniejsze wdrożenie samych diffów nie otrzymało odpowiedzi.
+- Trzy przełączane odcienie: Atrament `#315B9F`, Szafir `#3458B2`, Stalowy `#3B617E`. Głęboka czerń pozostaje. Toast ma mniejszy promień, ikonę bez kolorowego koła, wyraźny tytuł i osobną akcję tekstową. Przywróć zmiany ma neutralny obrys i strzałkę ponownego nałożenia, bez zielonego checka sugerującego akceptację.
+- Przykładowa karta ma trzy pliki i diff pod własnym wierszem. Cały nagłówek oraz wiersz pliku są przyciskami z `aria-expanded`/`aria-controls`; akcje Otwórz/Cofnij/Przywróć są oddzielne. Ponowne kliknięcie pliku go zwija. Jednoczesne zamykanie starego i otwieranie nowego diffu trwa 160 ms, bez kolejki dwóch animacji. Zamknięte panele mają `inert`; reduced-motion wyłącza animację. Przewijanie jest korygowane podczas animacji w granicach dostępnego scrolla i przerywane ruchem użytkownika.
+- Wszystkie przyciski ikonowe podglądu mają tooltip na hover i fokus, także zmieniające się Cofnij/Przywróć przy pliku. Demonstracja Cofnij całość pokazuje nowy stan przywracania. Usunięto odziedziczoną kolizję identyfikatora SVG `undo` i przycisku `undo`; skrypt kontroli odrzuca duplikaty ID.
+- Kontrola rzeczywistego HTML w ukrytym Electronie obejmuje szerokości 320/375/414/768/1440 px, lokalny Geist, trzy palety, rozkład diffów, zwijanie karty/pliku, jednoczesną animację, undo/redo oraz tooltipy obu stanów pliku. Zrzuty i raport: `/private/tmp/orzi-accents-preview-v2/`. Skrypt: `.tmp/check-accents-v2.cjs`. Lint i format podglądu przeszły. Nie ma nowych tekstów w `src/renderer` ani zmian wersjonowanych granic, nie uruchamiano kolejnego buildu aplikacji.
+
 ## Toasty, placeholder i podgląd akcentów - 2026-10-13
 
 - Wspólny `Toast.Provider` używa `placement="top end"`. Limity szerokości, kolejka, gest zamknięcia i akcje pozostają zachowane.
