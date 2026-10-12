@@ -54,6 +54,7 @@ export interface ProviderModelMenuProps {
     presentationMode?: ThreadPresentationMode;
   }) => void;
   onOpenChange?: (open: boolean) => void;
+  align?: "start" | "end";
 }
 
 function normalizeCurrentModelForProvider(
@@ -451,7 +452,7 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
           trigger
         )
       }
-      placement="top start"
+      placement={props.align === "end" ? "top end" : "top start"}
       contentClassName={showFullList ? "w-96 p-0" : "w-auto max-w-[calc(100vw-2rem)] p-0"}
       dialogClassName="flex max-h-[28rem] flex-col overflow-hidden !p-0"
     >

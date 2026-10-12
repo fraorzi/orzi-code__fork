@@ -1169,353 +1169,348 @@ export function ThreadDraftComposerArea(props: {
     setSlashActiveIndex(0);
   }, [props.project.id, props.selectedAgent.kind]);
 
+  const worktreeRow = props.gitBranch ? (
+    <div data-draft-worktree-row="" className="flex flex-wrap items-center gap-1 px-1">
+      <WorktreeModeSelect
+        mode={experimentMode ? "new" : worktreeMode}
+        canBringChanges={experimentMode ? false : canBringChanges}
+        onChange={handleWorktreeModeChange}
+        isDisabled={experimentMode}
+        compact
+      />
+      <BranchSelector
+        projectId={props.project.id}
+        currentBranch={props.gitBranch}
+        value={
+          experimentMode
+            ? (experimentBaseBranch ?? defaultWorktreeBase ?? props.gitBranch)
+            : worktreeSelected
+              ? (worktreeBase ?? props.gitBranch)
+              : (branchSelection?.branch ?? props.gitBranch)
+        }
+        isWorktree={experimentMode ? true : branchSelection?.isWorktree}
+        baseBranch={
+          experimentMode
+            ? (experimentBaseBranch ?? defaultWorktreeBase ?? props.gitBranch)
+            : worktreeSelected
+              ? worktreeBase
+              : branchSelection?.baseBranch
+        }
+        worktreeMode={experimentMode || props.worktreeMode}
+        {...(!experimentMode ? { onWorktreeModeChange: props.onWorktreeModeChange } : {})}
+        onSelect={
+          experimentMode
+            ? (selection) =>
+                setExperimentBaseBranch(resolveOriginBase(selection.baseBranch ?? selection.branch))
+            : handleBranchSelect
+        }
+        onSwitchBranch={props.onSwitchBranch}
+        hideWorktreeToggle
+        hideTriggerIcon
+        compact
+        showMoveBranchAction={!experimentMode}
+        {...(props.project.scripts?.worktreeCopyPatterns
+          ? {
+              moveBranchCopyIgnoredPatterns: props.project.scripts.worktreeCopyPatterns,
+            }
+          : {})}
+      />
+    </div>
+  ) : props.compact ? null : (
+    <div aria-hidden data-draft-worktree-row="" className="min-h-[1.625rem] px-1" />
+  );
+
   return (
-    <>
-      <ThreadComposer
-        autoFocus={(props.paneCount ?? 1) === 1 && !isRemoteSurface} // eslint-disable-line jsx-a11y/no-autofocus -- desktop only; mobile PWA skips it so navigating to a thread doesn't pop the keyboard
-        compact={props.compact ?? false}
-        variant="draft"
-        controls={controls}
-        toolbarLayoutKey={toolbarLayoutKey}
-        fixedContent={
-          <>
-            {props.project.remoteServerId ? (
-              <RemoteHostUpdateDock desktopId={props.project.remoteServerId} />
-            ) : null}
-            {authRequired ? (
-              <ThreadAuthRequiredDock agentStatus={props.selectedAgent} project={props.project} />
-            ) : null}
-            {!usesRemoteTransport ? (
-              <>
-                <ThreadAgentUpdateDock
-                  agentStatus={props.selectedAgent}
-                  project={props.project}
-                  onUpdatingChange={setAgentUpdating}
-                />
-                <HookInstallProposal
-                  project={props.project}
-                  selectedAgent={props.selectedAgent}
-                  presentationMode={props.presentationMode}
-                />
-              </>
-            ) : null}
-            {showCommandPanel ? (
-              <ThreadCommandPanel
-                commands={filteredCommands}
-                query={slashQuery}
-                activeIndex={slashActiveIndex}
-                listId={commandListId}
-                onActiveIndexChange={setSlashActiveIndex}
-                onSelect={(cmd) => {
-                  mentionRef.current?.insertSlashCommand(cmd);
-                  setSlashQuery(null);
-                }}
+    <ThreadComposer
+      autoFocus={(props.paneCount ?? 1) === 1 && !isRemoteSurface} // eslint-disable-line jsx-a11y/no-autofocus -- desktop only; mobile PWA skips it so navigating to a thread doesn't pop the keyboard
+      compact={props.compact ?? false}
+      variant="draft"
+      controls={controls}
+      footerLeading={worktreeRow}
+      toolbarLayoutKey={toolbarLayoutKey}
+      fixedContent={
+        <>
+          {props.project.remoteServerId ? (
+            <RemoteHostUpdateDock desktopId={props.project.remoteServerId} />
+          ) : null}
+          {authRequired ? (
+            <ThreadAuthRequiredDock agentStatus={props.selectedAgent} project={props.project} />
+          ) : null}
+          {!usesRemoteTransport ? (
+            <>
+              <ThreadAgentUpdateDock
+                agentStatus={props.selectedAgent}
+                project={props.project}
+                onUpdatingChange={setAgentUpdating}
               />
-            ) : null}
-            {experimentMode && props.gitBranch ? (
-              <ExperimentDraftTargets
-                candidates={experimentCandidates}
-                isSubmitting={isSubmitting}
-                isAddDisabled={
+              <HookInstallProposal
+                project={props.project}
+                selectedAgent={props.selectedAgent}
+                presentationMode={props.presentationMode}
+              />
+            </>
+          ) : null}
+          {showCommandPanel ? (
+            <ThreadCommandPanel
+              commands={filteredCommands}
+              query={slashQuery}
+              activeIndex={slashActiveIndex}
+              listId={commandListId}
+              onActiveIndexChange={setSlashActiveIndex}
+              onSelect={(cmd) => {
+                mentionRef.current?.insertSlashCommand(cmd);
+                setSlashQuery(null);
+              }}
+            />
+          ) : null}
+          {experimentMode && props.gitBranch ? (
+            <ExperimentDraftTargets
+              candidates={experimentCandidates}
+              isSubmitting={isSubmitting}
+              isAddDisabled={
+                authRequired ||
+                agentUpdating ||
+                isSubmitting ||
+                experimentCandidates.length >= MAX_EXPERIMENT_CANDIDATES
+              }
+              onRemove={(id) =>
+                setExperimentCandidates((current) =>
+                  current.filter((candidate) => candidate.id !== id),
+                )
+              }
+              onCancel={() => {
+                setExperimentMode(false);
+                setExperimentCandidates([]);
+                setExperimentBaseBranch(null);
+              }}
+              onAdd={addExperimentCandidate}
+            />
+          ) : null}
+        </>
+      }
+      attachmentBar={
+        <AttachmentBar
+          attachments={attachments.attachments}
+          onRemove={attachments.removeAttachment}
+          onPreviewImage={(att) => {
+            const imageAttachments = attachments.attachments.filter((a) => a.isImage);
+            const idx = imageAttachments.findIndex((a) => a.id === att.id);
+            if (idx >= 0) openAttachmentLightbox(imageAttachments, idx, attachmentImageUrlForPath);
+          }}
+          onPreviewPdf={(att) => openPdfPreview(att.path)}
+          {...(attachmentImageUrlForPath ? { imageUrlForPath: attachmentImageUrlForPath } : {})}
+          leading={
+            mentionedMcpServers.length > 0 || showComputerUseChip ? (
+              <>
+                {mentionedMcpServers.map((descriptor) => (
+                  <McpChip
+                    key={descriptor.id}
+                    descriptor={descriptor}
+                    {...(composerPluginLabels[descriptor.id]
+                      ? { label: composerPluginLabels[descriptor.id] }
+                      : {})}
+                    onRemove={() =>
+                      props.onConfigChange(mcpTogglePatch(descriptor.configKey, false))
+                    }
+                  />
+                ))}
+                {showComputerUseChip ? (
+                  <ComputerUseChip onRemove={() => props.onConfigChange({ computerUse: false })} />
+                ) : null}
+              </>
+            ) : undefined
+          }
+        />
+      }
+      inputContent={
+        <MentionInput
+          ref={mentionRef}
+          autoFocus={(props.paneCount ?? 1) === 1 && !isRemoteSurface} // eslint-disable-line jsx-a11y/no-autofocus -- desktop only; mobile PWA skips it so navigating to a thread doesn't pop the keyboard
+          compact={props.compact ?? false}
+          // The PWA surfaces this draft as the home screen's compact composer
+          // pill, where an invitation reads better than the generic prompt.
+          placeholder={
+            props.placeholder ?? (isRemoteSurface ? t`Plan, ask, build…` : t`Send a message...`)
+          }
+          projectLocation={isHomeScope ? undefined : props.project.location}
+          submitOnEnter={props.submitOnEnter ?? !isRemoteSurface}
+          {...(showCommandPanel
+            ? {
+                commandListId,
+                commandActiveDescendant: `${commandListId}-option-${slashActiveIndex}`,
+              }
+            : {})}
+          {...(!isHomeScope ? { projectId: props.project.id } : {})}
+          onTextChange={(hasText) => {
+            if (hasText) cancelDraftVoice();
+            setHasContent(hasText);
+            const segments = mentionRef.current?.serializeSegments() ?? [];
+            latestSegmentsRef.current = segments;
+          }}
+          mcpMentions={composerMcpMentions}
+          pluginMentions={composerPluginMentions}
+          threadMentions={threadMentions}
+          onMcpMentionSelect={onMcpMentionSelect}
+          onPasteImage={(file: File) => {
+            cancelDraftVoice();
+            void draftVoice
+              .trackOperation(() =>
+                attachments.addClipboardImage(file, `draft:${props.project.id}`),
+              )
+              .catch((error: unknown) => toast.danger(friendlyError(error)));
+          }}
+          onSubmit={(segments) => {
+            void submitSegments([...attachments.toSegments(), ...segments]);
+          }}
+          onInterceptKey={(e) => {
+            if (
+              handleComposerControlShortcut(e, {
+                controls,
+                keybindings: useKeybindingStore.getState().keybindings,
+                platform: readBridge().platform,
+                onOpenModelPicker: () => {
+                  setControlOpenRequest((prev) => ({
+                    target: "model",
+                    nonce: (prev?.nonce ?? 0) + 1,
+                  }));
+                },
+                onStartDictation: () => voiceInputRef.current?.toggle() ?? false,
+              })
+            ) {
+              return true;
+            }
+            if (!showCommandPanel) {
+              return false;
+            }
+            return handleSlashCommandPanelKeyDown(e, {
+              slashQuery,
+              filteredCommands,
+              slashActiveIndex,
+              setSlashActiveIndex,
+              setSlashQuery,
+              mentionRef,
+            });
+          }}
+          onSlashCommandChange={setSlashQuery}
+        />
+      }
+      placeholder={props.placeholder ?? t`Send a message...`}
+      prompt={prompt}
+      submitDisabled={
+        authRequired ||
+        agentUpdating ||
+        hostUpdateRestarting ||
+        isSubmitting ||
+        !(hasContent || attachments.attachments.length > 0) ||
+        (experimentMode && experimentCandidates.length < 2)
+      }
+      submitPending={isSubmitting}
+      {...(!hasContent &&
+      attachments.attachments.length === 0 &&
+      !experimentMode &&
+      !usesRemoteTransport &&
+      !isQuickComposer &&
+      props.presentationMode === "gui" &&
+      props.selectedAgent.capabilities.liveVoice
+        ? {
+            submitControl: (
+              <LiveVoiceButton
+                scopeId={inboxKey}
+                isDisabled={
                   authRequired ||
                   agentUpdating ||
+                  hostUpdateRestarting ||
                   isSubmitting ||
-                  experimentCandidates.length >= MAX_EXPERIMENT_CANDIDATES
+                  pendingOperationCount > 0
                 }
-                onRemove={(id) =>
-                  setExperimentCandidates((current) =>
-                    current.filter((candidate) => candidate.id !== id),
-                  )
-                }
-                onCancel={() => {
-                  setExperimentMode(false);
-                  setExperimentCandidates([]);
-                  setExperimentBaseBranch(null);
-                }}
-                onAdd={addExperimentCandidate}
-              />
-            ) : null}
-          </>
-        }
-        attachmentBar={
-          <AttachmentBar
-            attachments={attachments.attachments}
-            onRemove={attachments.removeAttachment}
-            onPreviewImage={(att) => {
-              const imageAttachments = attachments.attachments.filter((a) => a.isImage);
-              const idx = imageAttachments.findIndex((a) => a.id === att.id);
-              if (idx >= 0)
-                openAttachmentLightbox(imageAttachments, idx, attachmentImageUrlForPath);
-            }}
-            onPreviewPdf={(att) => openPdfPreview(att.path)}
-            {...(attachmentImageUrlForPath ? { imageUrlForPath: attachmentImageUrlForPath } : {})}
-            leading={
-              mentionedMcpServers.length > 0 || showComputerUseChip ? (
-                <>
-                  {mentionedMcpServers.map((descriptor) => (
-                    <McpChip
-                      key={descriptor.id}
-                      descriptor={descriptor}
-                      {...(composerPluginLabels[descriptor.id]
-                        ? { label: composerPluginLabels[descriptor.id] }
-                        : {})}
-                      onRemove={() =>
-                        props.onConfigChange(mcpTogglePatch(descriptor.configKey, false))
-                      }
-                    />
-                  ))}
-                  {showComputerUseChip ? (
-                    <ComputerUseChip
-                      onRemove={() => props.onConfigChange({ computerUse: false })}
-                    />
-                  ) : null}
-                </>
-              ) : undefined
-            }
-          />
-        }
-        inputContent={
-          <MentionInput
-            ref={mentionRef}
-            autoFocus={(props.paneCount ?? 1) === 1 && !isRemoteSurface} // eslint-disable-line jsx-a11y/no-autofocus -- desktop only; mobile PWA skips it so navigating to a thread doesn't pop the keyboard
-            compact={props.compact ?? false}
-            // The PWA surfaces this draft as the home screen's compact composer
-            // pill, where an invitation reads better than the generic prompt.
-            placeholder={
-              props.placeholder ?? (isRemoteSurface ? t`Plan, ask, build…` : t`Send a message...`)
-            }
-            projectLocation={isHomeScope ? undefined : props.project.location}
-            submitOnEnter={props.submitOnEnter ?? !isRemoteSurface}
-            {...(showCommandPanel
-              ? {
-                  commandListId,
-                  commandActiveDescendant: `${commandListId}-option-${slashActiveIndex}`,
-                }
-              : {})}
-            {...(!isHomeScope ? { projectId: props.project.id } : {})}
-            onTextChange={(hasText) => {
-              if (hasText) cancelDraftVoice();
-              setHasContent(hasText);
-              const segments = mentionRef.current?.serializeSegments() ?? [];
-              latestSegmentsRef.current = segments;
-            }}
-            mcpMentions={composerMcpMentions}
-            pluginMentions={composerPluginMentions}
-            threadMentions={threadMentions}
-            onMcpMentionSelect={onMcpMentionSelect}
-            onPasteImage={(file: File) => {
-              cancelDraftVoice();
-              void draftVoice
-                .trackOperation(() =>
-                  attachments.addClipboardImage(file, `draft:${props.project.id}`),
-                )
-                .catch((error: unknown) => toast.danger(friendlyError(error)));
-            }}
-            onSubmit={(segments) => {
-              void submitSegments([...attachments.toSegments(), ...segments]);
-            }}
-            onInterceptKey={(e) => {
-              if (
-                handleComposerControlShortcut(e, {
-                  controls,
-                  keybindings: useKeybindingStore.getState().keybindings,
-                  platform: readBridge().platform,
-                  onOpenModelPicker: () => {
-                    setControlOpenRequest((prev) => ({
-                      target: "model",
-                      nonce: (prev?.nonce ?? 0) + 1,
-                    }));
-                  },
-                  onStartDictation: () => voiceInputRef.current?.toggle() ?? false,
-                })
-              ) {
-                return true;
-              }
-              if (!showCommandPanel) {
-                return false;
-              }
-              return handleSlashCommandPanelKeyDown(e, {
-                slashQuery,
-                filteredCommands,
-                slashActiveIndex,
-                setSlashActiveIndex,
-                setSlashQuery,
-                mentionRef,
-              });
-            }}
-            onSlashCommandChange={setSlashQuery}
-          />
-        }
-        placeholder={props.placeholder ?? t`Send a message...`}
-        prompt={prompt}
-        submitDisabled={
-          authRequired ||
-          agentUpdating ||
-          hostUpdateRestarting ||
-          isSubmitting ||
-          !(hasContent || attachments.attachments.length > 0) ||
-          (experimentMode && experimentCandidates.length < 2)
-        }
-        submitPending={isSubmitting}
-        {...(!hasContent &&
-        attachments.attachments.length === 0 &&
-        !experimentMode &&
-        !usesRemoteTransport &&
-        !isQuickComposer &&
-        props.presentationMode === "gui" &&
-        props.selectedAgent.capabilities.liveVoice
-          ? {
-              submitControl: (
-                <LiveVoiceButton
-                  scopeId={inboxKey}
-                  isDisabled={
-                    authRequired ||
-                    agentUpdating ||
-                    hostUpdateRestarting ||
-                    isSubmitting ||
-                    pendingOperationCount > 0
-                  }
-                  onStart={() => {
-                    const capability = props.selectedAgent.capabilities.liveVoice;
-                    if (!capability) return;
-                    draftVoice.start({
-                      capability,
-                      canPrepare: canPrepareDraftVoice,
-                      prepare: async (threadId) => {
-                        await submitSegments([], "", threadId);
-                      },
-                    });
-                  }}
-                />
-              ),
-            }
-          : {})}
-        submitLabel={experimentMode ? t`Run experiment` : t`Launch thread`}
-        onPromptChange={handleFallbackPromptChange}
-        {...(!usesRemoteTransport
-          ? {
-              onAttachFiles: (paths: string[]) => {
-                cancelDraftVoice();
-                attachments.addFiles(paths);
-              },
-            }
-          : {})}
-        onSubmit={() => {
-          const segments = mentionRef.current?.serializeSegments() ?? [];
-          void submitSegments([...attachments.toSegments(), ...segments], promptRef.current);
-        }}
-        afterControls={
-          <DraftComposerAfterControls
-            mcpServers={mcpServers}
-            pluginLabels={composerPluginLabels}
-            onPickFiles={() => {
-              cancelDraftVoice();
-              void draftVoice
-                .trackOperation(async () => {
-                  const paths = await (props.pickFiles
-                    ? props.pickFiles()
-                    : readBridge().pickFiles({ attachmentThreadId: `draft:${props.project.id}` }));
-                  if (paths) attachments.addFiles(paths);
-                })
-                .catch((error: unknown) => toast.danger(friendlyError(error)));
-            }}
-            customMcpServers={customMcpServers}
-            readOnlyMcp={providerOwnsMcpForComposer}
-            showVoiceInputButton={showVoiceInputButton && !liveVoiceActive}
-            isDisabled={authRequired || agentUpdating || isSubmitting}
-            {...(!isHomeScope && !usesRemoteTransport && !isQuickComposer && props.gitBranch
-              ? {
-                  experiment: {
-                    enabled: experimentMode,
-                    disabled: authRequired || agentUpdating || isSubmitting,
-                    onToggle: (next: boolean) => {
-                      setExperimentMode(next);
-                      if (next) {
-                        const rawBase =
-                          branchSelection?.baseBranch ??
-                          branchSelection?.branch ??
-                          defaultWorktreeBase;
-                        setExperimentBaseBranch(rawBase ? resolveOriginBase(rawBase) : null);
-                      } else {
-                        setExperimentCandidates([]);
-                        setExperimentBaseBranch(null);
-                      }
+                onStart={() => {
+                  const capability = props.selectedAgent.capabilities.liveVoice;
+                  if (!capability) return;
+                  draftVoice.start({
+                    capability,
+                    canPrepare: canPrepareDraftVoice,
+                    prepare: async (threadId) => {
+                      await submitSegments([], "", threadId);
                     },
+                  });
+                }}
+              />
+            ),
+          }
+        : {})}
+      submitLabel={experimentMode ? t`Run experiment` : t`Launch thread`}
+      onPromptChange={handleFallbackPromptChange}
+      {...(!usesRemoteTransport
+        ? {
+            onAttachFiles: (paths: string[]) => {
+              cancelDraftVoice();
+              attachments.addFiles(paths);
+            },
+          }
+        : {})}
+      onSubmit={() => {
+        const segments = mentionRef.current?.serializeSegments() ?? [];
+        void submitSegments([...attachments.toSegments(), ...segments], promptRef.current);
+      }}
+      afterControls={
+        <DraftComposerAfterControls
+          mcpServers={mcpServers}
+          pluginLabels={composerPluginLabels}
+          onPickFiles={() => {
+            cancelDraftVoice();
+            void draftVoice
+              .trackOperation(async () => {
+                const paths = await (props.pickFiles
+                  ? props.pickFiles()
+                  : readBridge().pickFiles({ attachmentThreadId: `draft:${props.project.id}` }));
+                if (paths) attachments.addFiles(paths);
+              })
+              .catch((error: unknown) => toast.danger(friendlyError(error)));
+          }}
+          customMcpServers={customMcpServers}
+          readOnlyMcp={providerOwnsMcpForComposer}
+          showVoiceInputButton={showVoiceInputButton && !liveVoiceActive}
+          isDisabled={authRequired || agentUpdating || isSubmitting}
+          {...(!isHomeScope && !usesRemoteTransport && !isQuickComposer && props.gitBranch
+            ? {
+                experiment: {
+                  enabled: experimentMode,
+                  disabled: authRequired || agentUpdating || isSubmitting,
+                  onToggle: (next: boolean) => {
+                    setExperimentMode(next);
+                    if (next) {
+                      const rawBase =
+                        branchSelection?.baseBranch ??
+                        branchSelection?.branch ??
+                        defaultWorktreeBase;
+                      setExperimentBaseBranch(rawBase ? resolveOriginBase(rawBase) : null);
+                    } else {
+                      setExperimentCandidates([]);
+                      setExperimentBaseBranch(null);
+                    }
                   },
-                }
-              : {})}
-            mentionRef={mentionRef}
-            voiceInputRef={voiceInputRef}
-            computerUse={{
-              enabled: providerOwnsMcpForComposer
-                ? providerComputerUseEnabled
-                : providerOwnsMcp
-                  ? false
-                  : computerUsePersistent,
-              visible: providerOwnsMcpForComposer
-                ? providerComputerUseEnabled
-                : providerOwnsMcp
-                  ? false
-                  : computerUseScope !== "none",
-              onToggle: (next) => {
-                if (!providerOwnsMcp) setMcpServerEnabled(COMPUTER_USE_MCP_ID, next);
-              },
-            }}
-          />
-        }
-      />
-      {props.gitBranch ? (
-        <div data-draft-worktree-row="" className="mt-1.5 flex flex-wrap items-center gap-1 px-1">
-          <WorktreeModeSelect
-            mode={experimentMode ? "new" : worktreeMode}
-            canBringChanges={experimentMode ? false : canBringChanges}
-            onChange={handleWorktreeModeChange}
-            isDisabled={experimentMode}
-            compact
-          />
-          <BranchSelector
-            projectId={props.project.id}
-            currentBranch={props.gitBranch}
-            value={
-              experimentMode
-                ? (experimentBaseBranch ?? defaultWorktreeBase ?? props.gitBranch)
-                : worktreeSelected
-                  ? (worktreeBase ?? props.gitBranch)
-                  : (branchSelection?.branch ?? props.gitBranch)
-            }
-            isWorktree={experimentMode ? true : branchSelection?.isWorktree}
-            baseBranch={
-              experimentMode
-                ? (experimentBaseBranch ?? defaultWorktreeBase ?? props.gitBranch)
-                : worktreeSelected
-                  ? worktreeBase
-                  : branchSelection?.baseBranch
-            }
-            worktreeMode={experimentMode || props.worktreeMode}
-            {...(!experimentMode ? { onWorktreeModeChange: props.onWorktreeModeChange } : {})}
-            onSelect={
-              experimentMode
-                ? (selection) =>
-                    setExperimentBaseBranch(
-                      resolveOriginBase(selection.baseBranch ?? selection.branch),
-                    )
-                : handleBranchSelect
-            }
-            onSwitchBranch={props.onSwitchBranch}
-            hideWorktreeToggle
-            hideTriggerIcon
-            compact
-            showMoveBranchAction={!experimentMode}
-            {...(props.project.scripts?.worktreeCopyPatterns
-              ? {
-                  moveBranchCopyIgnoredPatterns: props.project.scripts.worktreeCopyPatterns,
-                }
-              : {})}
-          />
-        </div>
-      ) : props.compact ? null : (
-        <div aria-hidden data-draft-worktree-row="" className="mt-1.5 min-h-[1.625rem] px-1" />
-      )}
-    </>
+                },
+              }
+            : {})}
+          mentionRef={mentionRef}
+          voiceInputRef={voiceInputRef}
+          computerUse={{
+            enabled: providerOwnsMcpForComposer
+              ? providerComputerUseEnabled
+              : providerOwnsMcp
+                ? false
+                : computerUsePersistent,
+            visible: providerOwnsMcpForComposer
+              ? providerComputerUseEnabled
+              : providerOwnsMcp
+                ? false
+                : computerUseScope !== "none",
+            onToggle: (next) => {
+              if (!providerOwnsMcp) setMcpServerEnabled(COMPUTER_USE_MCP_ID, next);
+            },
+          }}
+        />
+      }
+    />
   );
 }

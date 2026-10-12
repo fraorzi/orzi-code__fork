@@ -248,6 +248,7 @@ export function ThreadComposer(props: {
   controls: ComposerControl[];
   leadingControls?: ReactNode | ((wrapLevel: number) => ReactNode);
   afterControls?: ReactNode | ((wrapLevel: number) => ReactNode);
+  footerLeading?: ReactNode;
   toolbarLayoutKey?: string;
   /** Render only the composer toolbar (no prompt shell). Used by utility settings surfaces. */
   toolbarOnly?: boolean;
@@ -278,6 +279,7 @@ export function ThreadComposer(props: {
     controls,
     leadingControls,
     afterControls,
+    footerLeading,
     toolbarLayoutKey,
     toolbarOnly = false,
   } = props;
@@ -425,6 +427,34 @@ export function ThreadComposer(props: {
   // model, mode and permission settings sit as a quiet row under it.
   const { mobile } = useResponsiveMenu();
   const pill = !mobile && !toolbarOnly;
+  const [multiline, setMultiline] = useState(false);
+  useLayoutEffect(() => {
+    const host = editorHostRef.current;
+    if (!pill || !host) return;
+    const measure = () => {
+      const editor = host.querySelector<HTMLElement>('textarea, [contenteditable="true"]');
+      if (!editor) return;
+      const style = getComputedStyle(editor);
+      const contentHeight =
+        editor.scrollHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+      const empty =
+        editor instanceof HTMLTextAreaElement
+          ? editor.value === ""
+          : (editor.textContent ?? "") === "";
+      setMultiline((current) =>
+        empty ? false : current || contentHeight > parseFloat(style.lineHeight) * 1.5,
+      );
+    };
+    measure();
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(host);
+    const mutationObserver = new MutationObserver(measure);
+    mutationObserver.observe(host, { characterData: true, childList: true, subtree: true });
+    return () => {
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+    };
+  }, [pill, prompt]);
   const toolbarClassName = pill
     ? "poracode-composer-toolbar poracode-composer-toolbar--below relative flex items-end justify-between gap-3"
     : compact
@@ -433,6 +463,7 @@ export function ThreadComposer(props: {
   const shellClassName = [
     "poracode-composer-shell",
     pill && "poracode-composer-shell--pill",
+    pill && multiline && "poracode-composer-shell--multiline",
     variant === "draft" && "poracode-composer-shell--draft",
     variant !== "draft" &&
       preserveDisabledControlStyle &&
@@ -471,6 +502,7 @@ export function ThreadComposer(props: {
                 ...(collapseTier !== undefined ? { collapseTier } : {}),
               }
             : {})}
+          {...(pill ? { align: "end" as const } : {})}
           onChange={control.onChange}
           onOpenChange={(open) => {
             if (!open) returnFocusToInput();
@@ -729,8 +761,8 @@ export function ThreadComposer(props: {
       <div
         ref={controlsRef}
         className={`flex min-w-0 flex-nowrap items-center gap-1 overflow-hidden [&>*]:shrink-0 ${
-          wrapLevelRef.current > 0 ? "is-wrapping" : ""
-        }`}
+          pill ? "justify-end" : ""
+        } ${wrapLevelRef.current > 0 ? "is-wrapping" : ""}`}
         style={{ height: "2.25rem" }}
       >
         {renderControlsList(0)}
@@ -902,11 +934,15 @@ export function ThreadComposer(props: {
         {fixedContent}
         {attachmentBar}
         {pill ? (
-          <div className="flex items-end gap-1">
+          <div className={multiline ? "flex flex-col" : "flex items-center"}>
             <div ref={editorHostRef} data-composer-input-anchor="" className="min-w-0 flex-1">
               {renderEditor()}
             </div>
-            <div className="flex shrink-0 items-end gap-1 pb-[7px] pr-[7px]">
+            <div
+              className={`poracode-composer-pill-actions flex shrink-0 items-center gap-0.5 pr-2 ${
+                multiline ? "self-end pb-2" : ""
+              }`}
+            >
               {typeof afterControls === "function" ? afterControls(0) : afterControls}
               {renderSendButton()}
             </div>
@@ -920,7 +956,18 @@ export function ThreadComposer(props: {
           </>
         )}
       </div>
-      {pill ? toolbar : null}
+      {pill ? (
+        <div className="flex items-center gap-2">
+          {footerLeading ? (
+            <div className="poracode-composer-footer-leading min-w-0 shrink-0 pl-1">
+              {footerLeading}
+            </div>
+          ) : null}
+          <div className="min-w-0 flex-1">{toolbar}</div>
+        </div>
+      ) : footerLeading ? (
+        <div className="mt-1.5">{footerLeading}</div>
+      ) : null}
     </div>
   );
 }

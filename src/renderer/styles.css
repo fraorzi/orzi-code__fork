@@ -2343,8 +2343,17 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
 }
 
 .poracode-composer-shell--draft:focus-within .poracode-composer-border-glow {
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
+  animation: poracode-composer-border-glow-fade 1.2s ease-out 1 both;
+}
+
+@keyframes poracode-composer-border-glow-fade {
+  0%,
+  60% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .poracode-composer-shell--draft:focus-within .poracode-composer-border-glow::before {
@@ -2425,10 +2434,6 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
   --tw-ring-shadow: 0 0 #0000 !important;
   --tw-ring-offset-shadow: 0 0 #0000 !important;
   transition: border-color 0.12s ease;
-}
-
-.poracode-composer-shell--draft:focus-within {
-  border-color: transparent;
 }
 
 .poracode-model-menu-listbox:focus-visible,
@@ -2521,20 +2526,43 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
 /* Desktop pill composer: input + attach + send in a rounded field, settings
    as a quiet text row underneath. */
 .poracode-composer-shell--pill {
-  border-radius: 22px;
+  border-radius: 24px;
+}
+
+.poracode-composer-shell--pill.poracode-composer-shell--multiline {
+  border-radius: 18px;
 }
 
 .poracode-composer-shell--pill .poracode-composer-editor.textarea,
 .poracode-composer-shell--pill .poracode-composer-editor .textarea,
+.poracode-composer-shell--pill .poracode-mention-input {
+  min-height: calc(1lh + 1.6rem);
+  border-radius: 0;
+  padding: 0.8rem 0.5rem 0.8rem 1.1rem;
+}
+
+.poracode-composer-shell--multiline .poracode-composer-editor.textarea,
+.poracode-composer-shell--multiline .poracode-composer-editor .textarea,
+.poracode-composer-shell--multiline .poracode-mention-input {
+  padding: 0.8rem 1.1rem 0.25rem;
+}
+
 .poracode-composer-shell--pill .poracode-composer-custom-input {
-  border-radius: 22px 0 0 22px;
-  padding: 0.7rem 0.5rem 0.7rem 1.1rem;
+  min-height: 0;
+}
+
+.poracode-composer-pill-actions .button--icon-only {
+  width: 2rem;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0;
 }
 
 .poracode-composer-toolbar--below {
   padding: 0.15rem 0.5rem 0;
 }
 
+.poracode-composer-footer-leading .poracode-composer-menu,
 .poracode-composer-toolbar--below :is(.poracode-composer-menu, .poracode-composer-toggle) {
   height: 1.75rem !important;
   color: var(--muted) !important;
@@ -2543,9 +2571,17 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
   background: transparent !important;
 }
 
+.poracode-composer-footer-leading .poracode-composer-menu:is(:hover, [aria-expanded="true"]),
 .poracode-composer-toolbar--below
   :is(.poracode-composer-menu, .poracode-composer-toggle):is(:hover, [aria-expanded="true"]) {
   color: var(--foreground) !important;
+}
+
+.poracode-composer-footer-leading .poracode-composer-menu .text-muted,
+.poracode-composer-toolbar--below
+  :is(.poracode-composer-menu, .poracode-composer-toggle)
+  .text-muted {
+  color: inherit;
 }
 
 .poracode-composer-editor.textarea,
@@ -3031,7 +3067,7 @@ button.poracode-thread-mention-chip:active {
 .poracode-favorite-model-columns {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(11.5rem, 13.5rem);
+  grid-auto-columns: minmax(8.5rem, 10rem);
   padding-bottom: 0.25rem;
   width: max-content;
   max-width: min(60rem, calc(100vw - 2rem));

@@ -30,10 +30,12 @@ vi.mock("./ThreadComposer", () => ({
     onPromptChange: (value: string) => void;
     onSubmit: () => void;
     afterControls?: ReactNode;
+    footerLeading?: ReactNode;
   }) => {
     composerSpy(props);
     return (
       <div>
+        {props.footerLeading}
         <button type="button" onClick={() => props.onPromptChange("hello world")}>
           set-prompt
         </button>
@@ -1908,11 +1910,11 @@ describe("ThreadDraftView", () => {
         capabilities: { ...dualModeCodexStatus.capabilities, mcpScope: { gui: scope } },
       };
       render(<ThreadDraftView project={localProject} agentStatuses={[agent]} onStart={onStart} />);
-      const button = await screen.findByRole("button", { name: "Teamwork" });
-      expect(button).toHaveAttribute("aria-pressed", "false");
-      expect(button).not.toBeDisabled();
-      fireEvent.click(button);
-      expect(button).toHaveAttribute("aria-pressed", "true");
+      const toggle = await screen.findByRole("switch", { name: "Teamwork" });
+      expect(toggle).not.toBeChecked();
+      expect(toggle).not.toBeDisabled();
+      fireEvent.click(toggle);
+      expect(toggle).toBeChecked();
       fireEvent.click(screen.getByText("set-prompt"));
       fireEvent.click(screen.getByText("submit"));
       expect(onStart).toHaveBeenCalledWith(

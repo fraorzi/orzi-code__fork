@@ -106,11 +106,11 @@ export function ProviderUsageRows({ providers }: { providers: readonly UsageProv
         type="button"
         aria-expanded={expanded}
         aria-label={expanded ? t`Collapse limits` : t`Expand limits`}
-        className="flex h-7 w-full items-center gap-2 rounded-[6px] px-2 text-[13px] text-muted outline-none transition-colors hover:bg-[var(--row-hover)] hover:text-foreground focus-visible:focus-ring"
+        className="@container flex h-7 w-full items-center gap-2 rounded-[6px] px-2 text-[13px] text-muted outline-none transition-colors hover:bg-[var(--row-hover)] hover:text-foreground focus-visible:focus-ring"
         onClick={toggleExpanded}
       >
-        <Gauge className="size-4 shrink-0" />
-        <span>
+        <Gauge className={`size-4 shrink-0 ${expanded ? "" : "@max-[18rem]:hidden"}`} />
+        <span className={expanded ? "" : "@max-[18rem]:hidden"}>
           <Trans>Limits</Trans>
         </span>
         {expanded ? null : (

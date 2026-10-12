@@ -36,7 +36,7 @@ export function ModelMenuFooter(props: {
   ) : null;
 
   return (
-    <div className="flex items-center gap-3 border-t border-border px-2 py-1.5">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border px-2 py-1.5 [contain:inline-size]">
       <Button variant="ghost" size="sm" onPress={props.onAddModel}>
         <Plus className="size-3.5" />
         <Trans>Add model</Trans>

@@ -1,6 +1,7 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Button, toast } from "@heroui/react";
+import { toast } from "@heroui/react";
+import { Users } from "lucide-react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type {
   AgentStatus,
@@ -22,6 +23,7 @@ import {
 import { getConfigNormalizer } from "@/renderer/components/providers/providerComposer";
 import { useGitStore } from "@/renderer/state/gitStore";
 import { PixelLoader } from "@/renderer/components/common/PixelLoader";
+import { ToggleSwitch } from "@/renderer/components/common/ToggleSwitch";
 import { modelVisibilityKey } from "@/renderer/components/common/ProviderModelMenu/parts/providerIdentity";
 import { useSharedSettings } from "@/renderer/state/sharedSettingsStore";
 import { useAppStore } from "@/renderer/state/appStore";
@@ -1252,16 +1254,27 @@ export function ThreadDraftView(props: {
             <div className="flex items-center gap-2">
               <span
                 title={t`Workers' changes are integrated automatically. Requires a local Git project and a chat agent with Crossagents enabled.`}
+                className={`group flex h-7 items-center rounded-full border pl-1.5 pr-2.5 transition-colors ${
+                  effectiveTeamMode ? "border-accent/70 bg-accent/20" : "border-border"
+                }`}
               >
-                <Button
+                <ToggleSwitch
                   size="sm"
-                  variant={effectiveTeamMode ? "secondary" : "ghost"}
-                  aria-pressed={effectiveTeamMode}
+                  isSelected={effectiveTeamMode}
                   isDisabled={!teamAvailable}
-                  onPress={() => setTeamMode(!effectiveTeamMode)}
+                  onChange={setTeamMode}
                 >
-                  <Trans>Teamwork</Trans>
-                </Button>
+                  <span
+                    className={`flex items-center gap-1.5 text-xs font-medium ${
+                      effectiveTeamMode
+                        ? "text-foreground"
+                        : "text-muted group-hover:text-foreground"
+                    }`}
+                  >
+                    <Users className="size-3.5" />
+                    <Trans>Teamwork</Trans>
+                  </span>
+                </ToggleSwitch>
               </span>
               <PresentationModeTabs
                 presentationMode={presentationMode}
