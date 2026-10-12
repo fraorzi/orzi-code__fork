@@ -1636,8 +1636,8 @@ msgstr "Arguments"
 #. placeholder {0}: project.name
 #: src/renderer/components/thread/ThreadComposerSection.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
-msgid "Ask {0} anything about this workspace"
-msgstr "Ask {0} anything about this workspace"
+#~ msgid "Ask {0} anything about this workspace"
+#~ msgstr "Ask {0} anything about this workspace"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Ask each time"
@@ -9852,8 +9852,8 @@ msgid "Plan"
 msgstr "Plan"
 
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Plan, ask, build…"
-msgstr "Plan, ask, build…"
+#~ msgid "Plan, ask, build…"
+#~ msgstr "Plan, ask, build…"
 
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -12084,12 +12084,18 @@ msgstr "Select…"
 
 #: src/renderer/components/thread/ThreadComposerSection.tsx
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Send a message..."
-msgstr "Send a message..."
+#~ msgid "Send a message..."
+#~ msgstr "Send a message..."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Send generic text instead of conversation titles through Apple's push service."
 msgstr "Send generic text instead of conversation titles through Apple's push service."
+
+#: src/renderer/components/thread/ThreadComposerSection.tsx
+#: src/renderer/components/thread/ThreadDraftComposerArea.tsx
+#: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
+msgid "Send it"
+msgstr "Send it"
 
 #: src/renderer/commands/shortcutCatalog.ts
 #: src/renderer/components/thread/ThreadComposerSection.tsx
@@ -13415,8 +13421,8 @@ msgstr "That remote session was already gone."
 #~ msgstr "the {0} WSL user"
 
 #: src/renderer/components/thread/ThreadComposerSection.tsx
-msgid "the agent"
-msgstr "the agent"
+#~ msgid "the agent"
+#~ msgstr "the agent"
 
 #: src/renderer/components/thread/ThreadRuntimeRequestPanel/ThreadRuntimeRequestPanel.tsx
 msgid "The agent"

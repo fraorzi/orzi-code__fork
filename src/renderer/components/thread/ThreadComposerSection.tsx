@@ -538,7 +538,6 @@ function ThreadComposerSectionInner(props: ThreadComposerSectionProps & { thread
   const project = useAppStore((s) =>
     s.projects.find((candidate) => candidate.id === thread.projectId),
   );
-  const agentFallbackLabel = t`the agent`;
 
   useEffect(() => {
     if (!showContextIndicator && contextDockOpen) {
@@ -898,9 +897,8 @@ function ThreadComposerSectionInner(props: ThreadComposerSectionProps & { thread
                         approvalDenyOption
                           ? t`Deny and tell the agent what to do differently…`
                           : isServerControlled
-                            ? (props.composerPlaceholder ??
-                              t`Ask ${effectiveAgentStatus?.label ?? agentFallbackLabel} anything about this workspace`)
-                            : t`Send a message...`
+                            ? (props.composerPlaceholder ?? t`Send it`)
+                            : t`Send it`
                       }
                       projectLocation={projectLocation}
                       submitOnEnter={props.submitOnEnter ?? !isRemoteSurface}
@@ -995,7 +993,7 @@ function ThreadComposerSectionInner(props: ThreadComposerSectionProps & { thread
                     />
                   }
                   controls={controlsWithOpenSignal}
-                  placeholder={t`Send a message...`}
+                  placeholder={t`Send it`}
                   prompt={prompt}
                   promptDisabled={!(showServerComposer || showTerminalComposer)}
                   stopPending={isInterrupting}

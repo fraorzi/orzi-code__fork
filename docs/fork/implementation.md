@@ -1,6 +1,17 @@
 # Stan implementacji
 
-Data: 2026-10-12. Lokalna wersja testowa na bazie PoraCode 1.8.1.
+Data: 2026-10-13. Lokalna wersja testowa na bazie PoraCode 1.8.1.
+
+## Toasty, placeholder i podgląd akcentów - 2026-10-13
+
+- Wspólny `Toast.Provider` używa `placement="top end"`. Limity szerokości, kolejka, gest zamknięcia i akcje pozostają zachowane.
+- Nowy wątek, aktywny Chat, wejście CLI i Quick Composer mają wspólny tekst `Send it`, po polsku "Wyślij szponta". Komunikat odmowy zgody i jawne nadpisanie placeholdera pozostają obsługiwane. Lingui: 0 missing we wszystkich 12 katalogach.
+- [Podgląd akcentów](design-preview/accents.html) używa lokalnych Geist, głębokiej czerni i obecnego układu. Proponuje niebieską wysyłkę i aktywne wybory, czerwony Stop/cofanie, zielone przywracanie oraz statusy. Można przełączyć wygląd neutralny/kolorowy, pracę agenta, toast, menu modeli i zespół. Treść rozmowy i projekt są demonstracyjne. Kolorów nie wdrożono do aplikacji, użytkownik wymaga akceptacji podglądu.
+- Typecheck, zwykły i typowany lint oraz format dotkniętych plików przeszły. 53 testy w 4 zestawach: ThreadView, ThreadComposer, toastContent, AppProvider PASS. Szersza próba obejmowała także niezmienione ThreadDraftView i sharedMessages; pozostają 3 wcześniejsze niezgodne oczekiwania Fast/kontrolek oraz stara nazwa Poracode w oczekiwanej hiszpańskiej odpowiedzi. Nie deklarować całego suite jako zielonego.
+- Izolowany Electron: polski placeholder odczytany z faktycznego composera; toast ma klasę `toast-region--top-end`, 16 px od góry i prawej krawędzi. Dowód: `.tmp/accents-live-check.json`, `/private/tmp/orzi-accents-ui-20261013/artifacts/placeholder-toast.png`. Kontrola nie klikała instalacji ani nie wysyłała promptu dostawcy.
+- Smoke zmienionych powierzchni: baseline, settings, control-geometry i thread-search PASS; 6 bramek mock PASS, `visual-a11y` FAIL z wcześniejszą kontrolką bez etykiety. W przebiegu smoke 0 błędów console/runtime. Raport `/private/tmp/orzi-accents-ui-20261013/artifacts/smoke-report.json`. Sesja QA została zresetowana i zamknięta. Osobna błędna komenda inspekcyjna odwołała się do nieistniejącego eksportu toast, powodując ekran błędu wyłącznie QA; renderer przeładowano i właściwą kontrolę zakończono.
+- HTML sprawdzony w Electron przy 320/375/414/768/1440 px, bez przepełnienia szerokości i przy poprawnie wczytanym lokalnym foncie; przełączniki pracy, toastu i menu działają. Zrzuty i raport: `/private/tmp/orzi-accents-preview/`. Nie zmieniono formatów stanu, cache, protokołów ani SQLite, więc żaden numer granicy zgodności nie wymaga podniesienia.
+- Internet sprawdzono przed buildem. Renderer i Electron zbudowane; standardowy `update:local` zatrzymał się na braku Rust. Zweryfikowano istniejący helper 0.4.3/protokół 3 przez `--check`, przygotowano zasoby i spakowano gotowy build przez `--skip-build --stage-local-update`. Paczka `.tmp/orzi-accents-20261013/mac-arm64/Orzi Code.app` używa stałego lokalnego podpisu i została przygotowana w produkcyjnym profilu jako lokalna aktualizacja. `codesign --verify --deep --strict` PASS, hash paczki źródłowej i stagingu zgodny z `ready.json`: `d9d7f509e821347c640c8f771262bf3edf2c6fec41a8471c8211a6c1c6890c9b`. Hash obejmuje `app.asar` i `CodeResources`. Nie zamykano ani nie podmieniano produkcyjnej aplikacji. Logi `.tmp/accents-{update-build,package-assets,package}.log`. Nowy pakiet nie zawiera proponowanych akcentów kolorystycznych.
 
 ## Limity, uprawnienia, Keychain i lokalne aktualizacje - 2026-10-12
 

@@ -1636,8 +1636,8 @@ msgstr "Аргументи"
 #. placeholder {0}: project.name
 #: src/renderer/components/thread/ThreadComposerSection.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
-msgid "Ask {0} anything about this workspace"
-msgstr "Запитайте {0} про що завгодно в цьому робочому просторі"
+#~ msgid "Ask {0} anything about this workspace"
+#~ msgstr "Запитайте {0} про що завгодно в цьому робочому просторі"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Ask each time"
@@ -9840,8 +9840,8 @@ msgid "Plan"
 msgstr "План"
 
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Plan, ask, build…"
-msgstr "Плануйте, запитуйте, створюйте…"
+#~ msgid "Plan, ask, build…"
+#~ msgstr "Плануйте, запитуйте, створюйте…"
 
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -12068,12 +12068,18 @@ msgstr "Вибрати…"
 
 #: src/renderer/components/thread/ThreadComposerSection.tsx
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Send a message..."
-msgstr "Надіслати повідомлення..."
+#~ msgid "Send a message..."
+#~ msgstr "Надіслати повідомлення..."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Send generic text instead of conversation titles through Apple's push service."
 msgstr "Надсилати загальний текст замість назв розмов через push-сервіс Apple."
+
+#: src/renderer/components/thread/ThreadComposerSection.tsx
+#: src/renderer/components/thread/ThreadDraftComposerArea.tsx
+#: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
+msgid "Send it"
+msgstr "Надсилай"
 
 #: src/renderer/commands/shortcutCatalog.ts
 #: src/renderer/components/thread/ThreadComposerSection.tsx
@@ -13395,8 +13401,8 @@ msgstr "Цієї віддаленої сесії вже не було."
 #~ msgstr "користувача WSL {0}"
 
 #: src/renderer/components/thread/ThreadComposerSection.tsx
-msgid "the agent"
-msgstr "агент"
+#~ msgid "the agent"
+#~ msgstr "агент"
 
 #: src/renderer/components/thread/ThreadRuntimeRequestPanel/ThreadRuntimeRequestPanel.tsx
 msgid "The agent"

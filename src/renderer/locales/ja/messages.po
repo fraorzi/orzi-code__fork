@@ -1635,8 +1635,8 @@ msgstr "引数"
 #. placeholder {0}: project.name
 #: src/renderer/components/thread/ThreadComposerSection.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
-msgid "Ask {0} anything about this workspace"
-msgstr "このワークスペースについて{0}に何でも質問してください"
+#~ msgid "Ask {0} anything about this workspace"
+#~ msgstr "このワークスペースについて{0}に何でも質問してください"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Ask each time"
@@ -9838,8 +9838,8 @@ msgid "Plan"
 msgstr "計画"
 
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Plan, ask, build…"
-msgstr "計画、質問、構築…"
+#~ msgid "Plan, ask, build…"
+#~ msgstr "計画、質問、構築…"
 
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -12066,12 +12066,18 @@ msgstr "選択…"
 
 #: src/renderer/components/thread/ThreadComposerSection.tsx
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Send a message..."
-msgstr "メッセージを入力..."
+#~ msgid "Send a message..."
+#~ msgstr "メッセージを入力..."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Send generic text instead of conversation titles through Apple's push service."
 msgstr "会話のタイトルの代わりに一般的なテキストを Apple のプッシュサービス経由で送信します。"
+
+#: src/renderer/components/thread/ThreadComposerSection.tsx
+#: src/renderer/components/thread/ThreadDraftComposerArea.tsx
+#: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
+msgid "Send it"
+msgstr "送ってみよう"
 
 #: src/renderer/commands/shortcutCatalog.ts
 #: src/renderer/components/thread/ThreadComposerSection.tsx
@@ -13393,8 +13399,8 @@ msgstr "そのリモートセッションはすでに存在しません。"
 #~ msgstr "{0} WSL ユーザー"
 
 #: src/renderer/components/thread/ThreadComposerSection.tsx
-msgid "the agent"
-msgstr "エージェント"
+#~ msgid "the agent"
+#~ msgstr "エージェント"
 
 #: src/renderer/components/thread/ThreadRuntimeRequestPanel/ThreadRuntimeRequestPanel.tsx
 msgid "The agent"

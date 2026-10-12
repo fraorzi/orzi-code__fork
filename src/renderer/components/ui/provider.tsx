@@ -197,7 +197,7 @@ export function AppProvider(props: {
       <AppearanceContext.Provider value={appearance}>
         <Toast.Provider
           className="lc-toast-region"
-          placement="bottom end"
+          placement="top end"
           maxVisibleToasts={5}
           width="min(32rem, calc(100vw - 2rem))"
         >

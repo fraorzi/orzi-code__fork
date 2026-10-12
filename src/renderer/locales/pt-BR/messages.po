@@ -1636,8 +1636,8 @@ msgstr "Argumentos"
 #. placeholder {0}: project.name
 #: src/renderer/components/thread/ThreadComposerSection.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
-msgid "Ask {0} anything about this workspace"
-msgstr "Pergunte a {0} qualquer coisa sobre este espaço de trabalho"
+#~ msgid "Ask {0} anything about this workspace"
+#~ msgstr "Pergunte a {0} qualquer coisa sobre este espaço de trabalho"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Ask each time"
@@ -9840,8 +9840,8 @@ msgid "Plan"
 msgstr "Plano"
 
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Plan, ask, build…"
-msgstr "Planeje, pergunte, crie…"
+#~ msgid "Plan, ask, build…"
+#~ msgstr "Planeje, pergunte, crie…"
 
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -12068,12 +12068,18 @@ msgstr "Selecionar…"
 
 #: src/renderer/components/thread/ThreadComposerSection.tsx
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Send a message..."
-msgstr "Envie uma mensagem..."
+#~ msgid "Send a message..."
+#~ msgstr "Envie uma mensagem..."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Send generic text instead of conversation titles through Apple's push service."
 msgstr "Enviar texto genérico em vez dos títulos das conversas pelo serviço push da Apple."
+
+#: src/renderer/components/thread/ThreadComposerSection.tsx
+#: src/renderer/components/thread/ThreadDraftComposerArea.tsx
+#: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
+msgid "Send it"
+msgstr "Manda aí"
 
 #: src/renderer/commands/shortcutCatalog.ts
 #: src/renderer/components/thread/ThreadComposerSection.tsx
@@ -13395,8 +13401,8 @@ msgstr "Essa sessão remota já não existia."
 #~ msgstr "o usuário WSL {0}"
 
 #: src/renderer/components/thread/ThreadComposerSection.tsx
-msgid "the agent"
-msgstr "o agente"
+#~ msgid "the agent"
+#~ msgstr "o agente"
 
 #: src/renderer/components/thread/ThreadRuntimeRequestPanel/ThreadRuntimeRequestPanel.tsx
 msgid "The agent"

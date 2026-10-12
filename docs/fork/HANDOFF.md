@@ -1,6 +1,6 @@
 # Przekazanie Orzi Code
 
-Stan na 2026-10-12. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
+Stan na 2026-10-13. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
 
 ## Zacznij tutaj
 
@@ -17,6 +17,10 @@ Stan na 2026-10-12. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Integracja zmian wykonawców jest automatyczna. Użytkownik wyraźnie wykluczył zatwierdzanie każdego scalenia. Nie należy ponownie otwierać tej decyzji.
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
+
+## Toasty, placeholder i podgląd akcentów - 2026-10-13
+
+Użytkownik zlecił przeniesienie toastów w prawy górny róg i ujednolicenie placeholderów wiadomości do "Wyślij szponta". Obie zmiany są w kodzie, z tłumaczeniami we wszystkich językach i kontrolą rzeczywistego renderera. Podpisany pakiet `.tmp/orzi-accents-20261013/mac-arm64/Orzi Code.app` jest przygotowany w profilu jako lokalna aktualizacja, bez podmiany działającej aplikacji. [Podgląd HTML akcentów](design-preview/accents.html) przedstawia niebieską wysyłkę, czerwony Stop, aktywne elementy i semantyczne kolory akcji na głębokiej czerni. Został otwarty w domyślnej przeglądarce. Kolory czekają na akceptację użytkownika, nie wdrażać ich przed nią. Szczegóły walidacji są na początku [stanu implementacji](implementation.md).
 
 ## Figma MCP - natywne połączenia agentów, 2026-10-12
 

@@ -588,9 +588,7 @@ describe("ThreadView", () => {
       },
     });
 
-    expect(
-      screen.getByPlaceholderText("Ask Codex anything about this workspace"),
-    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Send it")).toBeInTheDocument();
     expect(screen.getByText("terminal pane")).toBeInTheDocument();
   });
 
@@ -638,10 +636,7 @@ describe("ThreadView", () => {
       },
     });
 
-    expect(screen.getByPlaceholderText("Ask Codex anything about this workspace")).toHaveAttribute(
-      "aria-disabled",
-      "true",
-    );
+    expect(screen.getByPlaceholderText("Send it")).toHaveAttribute("aria-disabled", "true");
   });
 
   it("shows a loading overlay without the composer while a terminal Codex thread is launching", () => {
@@ -690,9 +685,7 @@ describe("ThreadView", () => {
 
     expect(screen.getByRole("img", { name: "Loading" })).toBeInTheDocument();
     // Terminal composer stays hidden during launching — only the loader overlay is visible.
-    expect(
-      screen.queryByPlaceholderText("Ask Codex anything about this workspace"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText("Send it")).not.toBeInTheDocument();
   });
 
   it("disables only Send while a GUI ACP thread is launching", () => {
@@ -745,7 +738,7 @@ describe("ThreadView", () => {
     });
 
     expect(screen.queryByText("terminal pane")).not.toBeInTheDocument();
-    const input = screen.getByPlaceholderText("Ask Codex anything about this workspace");
+    const input = screen.getByPlaceholderText("Send it");
     expect(input).toBeInTheDocument();
     expect(input.getAttribute("aria-disabled")).not.toBe("true");
     expect(screen.getAllByLabelText("Select model")[0]).not.toBeDisabled();
@@ -803,9 +796,7 @@ describe("ThreadView", () => {
       },
     });
 
-    expect(
-      screen.queryByPlaceholderText("Ask Codex anything about this workspace"),
-    ).not.toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Send it")).toBeInTheDocument();
     expect(screen.getByText("terminal pane")).toBeInTheDocument();
   });
 
@@ -858,9 +849,7 @@ describe("ThreadView", () => {
     });
 
     expect(screen.queryByText("terminal pane")).not.toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText("Ask Codex anything about this workspace"),
-    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Send it")).toBeInTheDocument();
   });
 
   it("renders ExitPlanMode as an approval and leaves plan mode when accepted", async () => {
@@ -1153,9 +1142,7 @@ describe("ThreadView", () => {
     });
 
     expect(screen.queryByText("terminal pane")).not.toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText("Ask Codex anything about this workspace"),
-    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Send it")).toBeInTheDocument();
     expect(screen.getAllByText("5.4").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Medium").length).toBeGreaterThan(0);
     expect(screen.queryByText("Normal")).not.toBeInTheDocument();
@@ -1833,7 +1820,7 @@ describe("ThreadView", () => {
       },
     });
 
-    const input = screen.getByPlaceholderText("Ask Codex anything about this workspace");
+    const input = screen.getByPlaceholderText("Send it");
     input.textContent = "test";
     fireEvent.input(input);
 
@@ -1892,7 +1879,7 @@ describe("ThreadView", () => {
     const terminalPane = screen.getByText("terminal pane");
     expect(hasAncestorWithClassFragment(terminalPane.parentElement, "max-w-[920px]")).toBe(true);
     expect(hasAncestorWithClassFragment(terminalPane.parentElement, "max-w-[1040px]")).toBe(true);
-    const composer = screen.getByPlaceholderText("Ask Codex anything about this workspace");
+    const composer = screen.getByPlaceholderText("Send it");
     expect(hasAncestorWithClassFragment(composer, "max-w-[920px]")).toBe(true);
   });
 
@@ -2050,7 +2037,7 @@ describe("ThreadView", () => {
     expect(stopButton.querySelector('[aria-label="Loading"]')).toBeInTheDocument();
 
     // A follow-up remains available while Stop is pending and uses the configured action.
-    const input = screen.getByPlaceholderText("Ask Codex anything about this workspace");
+    const input = screen.getByPlaceholderText("Send it");
     input.textContent = "test";
     fireEvent.input(input);
 

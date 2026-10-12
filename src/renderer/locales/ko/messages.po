@@ -1636,8 +1636,8 @@ msgstr "인수"
 #. placeholder {0}: project.name
 #: src/renderer/components/thread/ThreadComposerSection.tsx
 #: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
-msgid "Ask {0} anything about this workspace"
-msgstr "이 작업 공간에 대해 {0}에게 무엇이든 물어보세요"
+#~ msgid "Ask {0} anything about this workspace"
+#~ msgstr "이 작업 공간에 대해 {0}에게 무엇이든 물어보세요"
 
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Ask each time"
@@ -9840,8 +9840,8 @@ msgid "Plan"
 msgstr "계획"
 
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Plan, ask, build…"
-msgstr "계획하고, 묻고, 만들어 보세요…"
+#~ msgid "Plan, ask, build…"
+#~ msgstr "계획하고, 묻고, 만들어 보세요…"
 
 #: src/renderer/views/SettingsOverlay/parts/NotificationSettings.tsx
 #: src/renderer/views/SettingsOverlay/parts/settingsSearchIndex.ts
@@ -12068,12 +12068,18 @@ msgstr "선택…"
 
 #: src/renderer/components/thread/ThreadComposerSection.tsx
 #: src/renderer/components/thread/ThreadDraftComposerArea.tsx
-msgid "Send a message..."
-msgstr "메시지 보내기..."
+#~ msgid "Send a message..."
+#~ msgstr "메시지 보내기..."
 
 #: src/renderer/views/SettingsOverlay/parts/RemoteAccessSettings.tsx
 msgid "Send generic text instead of conversation titles through Apple's push service."
 msgstr "대화 제목 대신 일반 텍스트를 Apple 푸시 서비스로 전송합니다."
+
+#: src/renderer/components/thread/ThreadComposerSection.tsx
+#: src/renderer/components/thread/ThreadDraftComposerArea.tsx
+#: src/renderer/views/QuickComposerOverlay/QuickComposerOverlay.tsx
+msgid "Send it"
+msgstr "보내 봐"
 
 #: src/renderer/commands/shortcutCatalog.ts
 #: src/renderer/components/thread/ThreadComposerSection.tsx
@@ -13395,8 +13401,8 @@ msgstr "해당 원격 세션은 이미 없어졌습니다."
 #~ msgstr "{0} WSL 사용자"
 
 #: src/renderer/components/thread/ThreadComposerSection.tsx
-msgid "the agent"
-msgstr "에이전트"
+#~ msgid "the agent"
+#~ msgstr "에이전트"
 
 #: src/renderer/components/thread/ThreadRuntimeRequestPanel/ThreadRuntimeRequestPanel.tsx
 msgid "The agent"

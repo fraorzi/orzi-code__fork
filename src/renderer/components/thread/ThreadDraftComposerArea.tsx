@@ -1327,11 +1327,7 @@ export function ThreadDraftComposerArea(props: {
           ref={mentionRef}
           autoFocus={(props.paneCount ?? 1) === 1 && !isRemoteSurface} // eslint-disable-line jsx-a11y/no-autofocus -- desktop only; mobile PWA skips it so navigating to a thread doesn't pop the keyboard
           compact={props.compact ?? false}
-          // The PWA surfaces this draft as the home screen's compact composer
-          // pill, where an invitation reads better than the generic prompt.
-          placeholder={
-            props.placeholder ?? (isRemoteSurface ? t`Plan, ask, build…` : t`Send a message...`)
-          }
+          placeholder={props.placeholder ?? t`Send it`}
           projectLocation={isHomeScope ? undefined : props.project.location}
           submitOnEnter={props.submitOnEnter ?? !isRemoteSurface}
           {...(showCommandPanel
@@ -1394,7 +1390,7 @@ export function ThreadDraftComposerArea(props: {
           onSlashCommandChange={setSlashQuery}
         />
       }
-      placeholder={props.placeholder ?? t`Send a message...`}
+      placeholder={props.placeholder ?? t`Send it`}
       prompt={prompt}
       submitDisabled={
         authRequired ||

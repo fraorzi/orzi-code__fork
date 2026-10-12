@@ -213,7 +213,7 @@ export function QuickComposerOverlay() {
             agentStatuses={projectAgentStatuses}
             quickComposer
             paneCount={1}
-            composerPlaceholder={t`Ask ${project.name} anything about this workspace`}
+            composerPlaceholder={t`Send it`}
             pickFiles={() => readBridge().pickQuickComposerFiles()}
             onProjectChange={setSelectedProjectId}
             {...(project.lastDraftConfig ? { lastDraftConfig: project.lastDraftConfig } : {})}

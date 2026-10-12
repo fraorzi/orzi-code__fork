@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Orzi Code - akcenty kolorystyczne</title>
+    <link rel="stylesheet" href="accents.css" />
+  </head>
+  <body data-look="accent" data-state="idle">
+    <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <symbol id="arrow" viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6" /></symbol>
+      <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
+      <symbol id="search" viewBox="0 0 24 24">
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <path d="m16 16 4 4" />
+      </symbol>
+      <symbol id="folder" viewBox="0 0 24 24"><path d="M3 7V5h6l2 2h10v12H3Z" /></symbol>
+      <symbol id="chevron" viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></symbol>
+      <symbol id="chat" viewBox="0 0 24 24"><path d="M5 4h14v12H9l-4 4Z" /></symbol>
+      <symbol id="archive" viewBox="0 0 24 24"><path d="M4 8h16v12H4ZM3 4h18v4H3Zm7 8h4" /></symbol>
+      <symbol id="branch" viewBox="0 0 24 24">
+        <circle cx="6" cy="5" r="2" />
+        <circle cx="6" cy="19" r="2" />
+        <circle cx="18" cy="5" r="2" />
+        <path d="M6 7v10m0-5h6a6 6 0 0 0 6-5" />
+      </symbol>
+      <symbol id="files" viewBox="0 0 24 24"><path d="M9 3h7l4 4v14H9ZM4 7v14m12-18v5h4" /></symbol>
+      <symbol id="terminal" viewBox="0 0 24 24"><path d="m4 6 6 6-6 6m9 0h7" /></symbol>
+      <symbol id="users" viewBox="0 0 24 24">
+        <circle cx="9" cy="8" r="3" />
+        <path d="M3 20v-2a6 6 0 0 1 12 0v2m1-15a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 4v2" />
+      </symbol>
+      <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></symbol>
+      <symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6" /></symbol>
+      <symbol id="undo" viewBox="0 0 24 24">
+        <path d="m8 5-5 5 5 5m-5-5h11a6 6 0 0 1 0 12" />
+      </symbol>
+      <symbol id="settings" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" />
+        <path d="m9 3-1 3-3 1-2 3 2 2-1 4 3 2 3-1 2 4 3-2 1-3 4-1 1-3-3-2V7l-3-1-2-3Z" />
+      </symbol>
+      <symbol id="panel" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <path d="M9 4v16" />
+      </symbol>
+      <symbol id="shield" viewBox="0 0 24 24">
+        <path d="m12 3 8 3v6c0 4-4 7-8 9-4-2-8-5-8-9V6Z" />
+      </symbol>
+      <symbol id="star" viewBox="0 0 24 24">
+        <path d="m12 3 3 6 6 1-4.5 4.5 1 6-5.5-3-5.5 3 1-6L3 10l6-1Z" />
+      </symbol>
+    </svg>
+    <header class="preview-bar">
+      <div class="preview-title">
+        <span class="wordmark">orzi<span>.</span></span
+        ><span>Podgląd akcentów</span>
+      </div>
+      <div class="preview-controls" aria-label="Wygląd podglądu">
+        <div class="segmented">
+          <button data-look="neutral" aria-pressed="false">Obecny</button
+          ><button data-look="accent" aria-pressed="true">Z akcentami</button>
+        </div>
+        <button id="state-control" class="control">Pokaż pracę agenta</button>
+        <button id="toast-control" class="control">Pokaż toast</button>
+      </div>
+    </header>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sidebar-tools">
+          <button class="icon-button" aria-label="Zwiń sidebar">
+            <svg><use href="#panel" /></svg></button
+          ><button class="icon-button" aria-label="Szukaj">
+            <svg><use href="#search" /></svg>
+          </button>
+        </div>
+        <button class="new-thread">
+          <svg><use href="#plus" /></svg>Nowy wątek<span class="shortcut">⌘ N</span>
+        </button>
+        <div class="section-label">
+          Projekty<button class="icon-button" aria-label="Dodaj projekt">
+            <svg><use href="#plus" /></svg>
+          </button>
+        </div>
+        <div class="project">
+          <svg><use href="#chevron" /></svg><svg><use href="#folder" /></svg
+          ><span>Projekt demo</span>
+        </div>
+        <button class="thread selected">
+          <svg><use href="#chat" /></svg><span>Akcenty w interfejsie</span
+          ><span class="status-dot"></span>
+        </button>
+        <button class="thread">
+          <svg><use href="#chat" /></svg><span>Widok zmian promptu</span>
+        </button>
+        <div class="project">
+          <svg><use href="#chevron" /></svg><svg><use href="#folder" /></svg
+          ><span>Strona demonstracyjna</span>
+        </div>
+        <button class="thread">
+          <svg><use href="#chat" /></svg><span>Menu modeli</span>
+        </button>
+        <button class="archive">
+          <svg><use href="#archive" /></svg>Archiwum
+        </button>
+        <div class="sidebar-bottom">
+          <div class="limits">
+            <div class="section-label">
+              Limity<svg><use href="#chevron" /></svg>
+            </div>
+            <div class="limit-row">
+              <span class="brand claude">✳</span><span>Claude</span
+              ><span class="limit-value">-</span>
+            </div>
+            <div class="limit-row">
+              <span class="brand codex">◎</span><span>Codex</span><span class="limit-value">-</span>
+            </div>
+            <p>Bez odczytu kont w podglądzie</p>
+          </div>
+          <div class="workspace">
+            <span class="workspace-mark">O</span><span>Osobisty</span
+            ><svg><use href="#chevron" /></svg
+            ><button class="icon-button" aria-label="Ustawienia">
+              <svg><use href="#settings" /></svg>
+            </button>
+          </div>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="thread-header">
+          <div class="thread-title">Akcenty w interfejsie<span>Projekt demo</span></div>
+          <nav aria-label="Narzędzia wątku">
+            <button class="tool active" aria-label="Pliki">
+              <svg><use href="#files" /></svg></button
+            ><button class="tool" aria-label="Git">
+              <svg><use href="#branch" /></svg></button
+            ><button class="tool" aria-label="Terminal">
+              <svg><use href="#terminal" /></svg>
+            </button>
+          </nav>
+        </header>
+        <div id="toast" class="toast" role="status" hidden>
+          <span class="toast-indicator"
+            ><svg><use href="#check" /></svg
+          ></span>
+          <div>
+            <strong>Przykładowe powiadomienie</strong>
+            <p>Toasty pojawiają się teraz w prawym górnym rogu.</p>
+          </div>
+          <button id="toast-close" class="icon-button" aria-label="Zamknij powiadomienie">
+            <svg><use href="#close" /></svg>
+          </button>
+        </div>
+        <div class="conversation">
+          <div class="user-message">
+            Dodaj trochę koloru do przycisków, zachowując głęboką czerń.
+          </div>
+          <article class="response">
+            <div class="response-meta">
+              <span class="agent-mark">◎</span><strong>Codex</strong><span>Przykładowa rozmowa</span
+              ><span class="ready"
+                ><svg><use href="#check" /></svg>Gotowe</span
+              >
+            </div>
+            <p>
+              Czerń zostaje. Niebieski wskazuje główną akcję i aktywne elementy. Czerwony pojawia
+              się przy zatrzymaniu i cofaniu, zielony przy przywracaniu zmian.
+            </p>
+            <div class="changes">
+              <div class="changes-heading">
+                <span
+                  ><svg><use href="#files" /></svg>Zmiany promptu</span
+                ><span class="diff-stats">Podgląd</span>
+              </div>
+              <div class="file-row">
+                <span class="file-mark">TS</span><code>Button.tsx</code
+                ><button class="quiet">Przejrzyj</button>
+              </div>
+              <div class="changes-footer">
+                <button id="restore" class="restore">
+                  <svg><use href="#check" /></svg>Przywróć zmiany</button
+                ><button id="undo" class="danger">
+                  <svg><use href="#undo" /></svg>Cofnij
+                </button>
+              </div>
+            </div>
+            <p class="response-note">
+              Kolor jest na kontrolkach i statusach. Tło rozmowy, sidebar i menu pozostają czarne.
+            </p>
+          </article>
+          <div class="working">
+            <span class="working-dot"></span>Agent pracuje<span
+              >Możesz zatrzymać zadanie lub dopisać wiadomość.</span
+            >
+          </div>
+        </div>
+        <footer class="composer-area">
+          <div class="composer">
+            <button class="icon-button attachment" aria-label="Dodaj załącznik">
+              <svg><use href="#plus" /></svg></button
+            ><textarea
+              rows="1"
+              placeholder="Wyślij szponta"
+              aria-label="Wiadomość demonstracyjna"
+            ></textarea
+            ><button id="send" class="send" aria-label="Wyślij">
+              <svg><use href="#arrow" /></svg><span class="stop-square"></span>
+            </button>
+          </div>
+          <div class="composer-settings">
+            <button class="team" aria-pressed="true">
+              <svg><use href="#users" /></svg><span>Praca zespołowa</span
+              ><span class="toggle"></span>
+            </button>
+            <div class="model-controls">
+              <button
+                class="model"
+                id="model-control"
+                aria-expanded="false"
+                aria-controls="model-menu"
+              >
+                ◎ Codex 6.1 Sol<span class="effort">High</span
+                ><svg><use href="#chevron" /></svg></button
+              ><button class="mode">
+                Chat<svg><use href="#chevron" /></svg></button
+              ><button class="icon-button permissions" aria-label="Uprawnienia">
+                <svg><use href="#shield" /></svg>
+              </button>
+            </div>
+          </div>
+          <div id="model-menu" class="model-menu" hidden>
+            <div class="menu-title">Ulubione modele<span>Codex</span></div>
+            <button class="model-option chosen">
+              <span>◎</span>6.1 Sol<svg><use href="#check" /></svg></button
+            ><button class="model-option">
+              <span>◎</span>6 Astra<svg class="favorite"><use href="#star" /></svg>
+            </button>
+            <div class="menu-footer">
+              <button>
+                <svg><use href="#plus" /></svg>Dodaj model</button
+              ><span>Wysiłek <b>High</b></span>
+            </div>
+          </div>
+          <div class="composer-context">
+            <svg><use href="#branch" /></svg>main<span
+              >Podgląd działa lokalnie. Nie wysyła wiadomości.</span
+            >
+          </div>
+        </footer>
+      </main>
+    </div>
+    <section class="notes" aria-label="Proponowane kolory">
+      <p><strong>Czerń zostaje.</strong> Kolor oznacza akcję albo stan.</p>
+      <div class="swatches">
+        <span><i class="swatch blue"></i>Wyślij i aktywny wybór</span
+        ><span><i class="swatch red"></i>Stop i cofanie</span
+        ><span><i class="swatch green"></i>Gotowe i przywracanie</span
+        ><span><i class="swatch amber"></i>Uwaga i oczekiwanie</span>
+      </div>
+      <p class="note-caption">
+        Propozycja do akceptacji. Kolory nie są jeszcze wdrożone w aplikacji.
+      </p>
+    </section>
+    <script src="accents.js"></script>
+  </body>
+</html>
