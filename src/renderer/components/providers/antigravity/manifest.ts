@@ -6,5 +6,6 @@ export default {
   kind: "antigravity",
   label: msg`Antigravity`,
   order: 50,
+  collapsedUsage: { windowIds: ["antigravity:claude:weekly"] },
   formatTranscriptMarkdown: formatTaskNotificationMarkdown,
 } satisfies RendererProviderManifest;

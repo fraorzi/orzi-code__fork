@@ -6,4 +6,5 @@ export default {
   label: msg`Claude Code`,
   order: 10,
   utilityOrder: 20,
+  collapsedUsage: { windowIds: ["session-5h", "weekly"] },
 } satisfies RendererProviderManifest;

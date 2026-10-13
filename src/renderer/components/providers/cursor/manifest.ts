@@ -6,4 +6,5 @@ export default {
   label: msg`Cursor`,
   order: 30,
   utilityOrder: 80,
+  collapsedUsage: { windowIds: ["cursor-api"], remainingMoney: true },
 } satisfies RendererProviderManifest;

@@ -7,7 +7,11 @@ import { usageToneColor } from "./usageTone";
 import { isClaudeUsageProvider } from "./usageProviders";
 
 /** Format a monetary amount (already in the currency's main unit, e.g. dollars). */
-export function formatMoney(amount: number | undefined, currency: string | undefined): string {
+export function formatMoney(
+  amount: number | undefined,
+  currency: string | undefined,
+  compact = false,
+): string {
   if (amount === undefined) return "";
   const code = currency || "USD";
   try {
@@ -15,6 +19,7 @@ export function formatMoney(amount: number | undefined, currency: string | undef
       style: "currency",
       currency: code,
       maximumFractionDigits: 2,
+      ...(compact ? { currencyDisplay: "narrowSymbol", minimumFractionDigits: 0 } : {}),
     }).format(amount);
   } catch {
     return `$${amount.toFixed(2)}`;

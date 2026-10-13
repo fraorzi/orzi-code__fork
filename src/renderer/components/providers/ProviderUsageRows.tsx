@@ -12,7 +12,8 @@ import { useProviderUsage } from "@/renderer/state/providerUsageStore";
 import { useSidebarUiStore } from "@/renderer/state/sidebarUiStore";
 import { openUsagePanel } from "@/renderer/actions/panelActions";
 import { ProviderIcon } from "./ProviderIcon";
-import { usageStatusText } from "./usageFormat";
+import { formatMoney, usageStatusText } from "./usageFormat";
+import { getProviderManifest } from "./providerManifest";
 import { usageToneColor } from "./usageTone";
 import type { UsageProvider } from "./usageProviders";
 
@@ -24,12 +25,30 @@ function remainingTextColor(usedPercent: number): string {
 function ProviderUsageChip({ provider }: { provider: UsageProvider }) {
   const snapshot = useProviderUsage(provider.id);
   if (snapshot?.status !== "ok" || snapshot.windows.length === 0) return null;
-  const mostUsed = Math.max(...snapshot.windows.map((window) => window.usedPercent));
-  const remaining = Math.max(0, Math.min(100, 100 - mostUsed));
+  const presentation = getProviderManifest(provider.id)?.collapsedUsage;
+  const windows = presentation
+    ? presentation.windowIds.flatMap((id) => snapshot.windows.filter((window) => window.id === id))
+    : snapshot.windows.toSorted((a, b) => b.usedPercent - a.usedPercent).slice(0, 1);
+  if (windows.length === 0) return null;
   return (
-    <span className="inline-flex items-center gap-1">
+    <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap">
       <ProviderIcon kind={provider.id} fallbackLabel={provider.label} className="size-3.5" />
-      <span style={{ color: remainingTextColor(mostUsed) }}>{Math.round(remaining)}%</span>
+      {windows.map((window, index) => (
+        <span key={window.id} className="inline-flex items-center gap-1">
+          {index > 0 ? <span className="text-muted/70">/</span> : null}
+          <span
+            title={`${provider.label} · ${usageWindowDisplayLabel(window)}`}
+            style={{ color: remainingTextColor(window.usedPercent) }}
+          >
+            {presentation?.remainingMoney &&
+            window.used !== undefined &&
+            window.limit !== undefined &&
+            window.currency
+              ? `${formatMoney(Math.max(0, window.limit - window.used), window.currency, true)} / ${formatMoney(window.limit, window.currency, true)}`
+              : `${Math.round(Math.max(0, Math.min(100, 100 - window.usedPercent)))}%`}
+          </span>
+        </span>
+      ))}
     </span>
   );
 }
@@ -106,7 +125,7 @@ export function ProviderUsageRows({ providers }: { providers: readonly UsageProv
         type="button"
         aria-expanded={expanded}
         aria-label={expanded ? t`Collapse limits` : t`Expand limits`}
-        className="@container flex h-7 w-full items-center gap-2 rounded-[6px] px-2 text-[13px] text-muted outline-none transition-colors hover:bg-[var(--row-hover)] hover:text-foreground focus-visible:focus-ring"
+        className="@container flex min-h-7 w-full items-center gap-2 rounded-[6px] px-2 py-1 text-[13px] text-muted outline-none transition-colors hover:bg-[var(--row-hover)] hover:text-foreground focus-visible:focus-ring"
         onClick={toggleExpanded}
       >
         <Gauge className={`size-4 shrink-0 ${expanded ? "" : "@max-[18rem]:hidden"}`} />
@@ -114,7 +133,7 @@ export function ProviderUsageRows({ providers }: { providers: readonly UsageProv
           <Trans>Limits</Trans>
         </span>
         {expanded ? null : (
-          <span className="ml-auto flex min-w-0 items-center gap-2.5 overflow-hidden font-mono text-[11px]">
+          <span className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-x-2.5 gap-y-1 font-mono text-[11px]">
             {providers.map((provider) => (
               <ProviderUsageChip key={provider.id} provider={provider} />
             ))}

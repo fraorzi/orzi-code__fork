@@ -15,6 +15,12 @@ export interface RendererProviderManifest {
   order: number;
   /** Optional override for automatic utility tasks; otherwise `order` applies. */
   utilityOrder?: number;
+  /** Ordered quota windows for the collapsed sidebar. Missing windows stay absent. */
+  collapsedUsage?: {
+    windowIds: readonly string[];
+    /** Show remaining money and the reported allowance when currency data is available. */
+    remainingMoney?: boolean;
+  };
   /** Provider-owned roots for relative image paths emitted in transcript markdown. */
   resolveMarkdownImageRoots?: (
     input: ProviderMarkdownImageRootsInput,

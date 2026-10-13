@@ -2,6 +2,15 @@
 
 Data: 2026-10-13. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Zwinięte limity - 2026-10-13
+
+- Claude i Codex pokazują pozostałe procenty w kolejności 5h / weekly. Cursor, używany dla Groka, pokazuje pozostałe dolary / zgłoszoną pulę API, np. 12 $ / 20 $. Antigravity pokazuje pozostały procent tygodniowej puli Claude. Nie wybiera już najbardziej zużytego okna spośród innych pul tych dostawców. Konfiguracja jest zadeklarowana w manifestach dostawców; profile dziedziczą ją przez bazowy manifest. Kwota jest formatowana według locale z krótkim symbolem waluty.
+- Przy braku wybranego okna nie pokazuje wartości innej puli. Pozostali dostawcy zachowują najbardziej zużyte okno. Przy wąskim sidebarze podsumowanie zawija się bez obcinania wartości. Rozwinięty widok zachowuje wszystkie okna i resety.
+- Typecheck, lint zwykły i typowany oraz 36 testów usageProviders/usageFormat PASS. Lingui: 0 missing we wszystkich 12 katalogach. Kontrola rzeczywistego Electron na fikcyjnych danych potwierdziła kolejność mimo odwróconego wejścia, ignorowanie pozostałych pul, kwotę i widoczność przy 333 oraz 208 px. Kliknięcia rozwijania i zwijania PASS. Dowody: `.tmp/collapsed-limits-ui-report.json`, zrzuty w `/private/tmp/orzi-collapsed-limits-live-20261013/artifacts/`.
+- Smoke: welcome, baseline, settings, control-geometry, mock-integrations i 3 bramki mock PASS, 0 błędów console/runtime. `composer-redesign` FAIL na znanym selektorze plusa, zgodnie z wcześniejszą kontrolą bazy opisaną poniżej. Nie raportować całego smoke jako PASS. Logi `.tmp/collapsed-limits-{tests,typecheck,i18n,smoke}.log`.
+- Nie zmieniono stanu trwałego, cache, IPC ani serializowanego manifestu. Manifest renderera jest metadanymi kodu; poprzednie snapshoty limitów zachowują znaczenie. Migracja i zmiana wersji nie są potrzebne.
+- Internet potwierdzono przed buildem. Build renderera i Electron PASS. Standardowy update:local zatrzymał się na braku Rust; istniejący helper 0.4.3/protokół 3 przeszedł --check. Po przygotowaniu zasobów wykonano końcowy build renderera i pakowanie --skip-build. Paczka `.tmp/orzi-collapsed-limits-20261013/mac-arm64/Orzi Code.app` jest przygotowana w produkcyjnym stagingu. Podpis źródła i stagingu oraz hash zgodny z ready.json zweryfikowano poza sandboxem, który nie widzi zaufania lokalnego Keychain. Hash: `672529b01067aa6f082398e73369f50cbcc459bd9166fe69aad9cae3716a1a23`. Produkcyjnego bundle nie podmieniano. Sesję QA zresetowano i zamknięto. Logi `.tmp/collapsed-limits-{build-final,helper,assets,package-final}.log`.
+
 ## Zielony przycisk aktualizacji zamiast toastu - 2026-10-13
 
 - Gotowa aktualizacja ma zielony przycisk z ikoną RefreshCw w górnym nagłówku sidebaru. Przy zwiniętym sidebarze jest pierwszą akcją raila. Lokalizowany tooltip i aria-label: "Update and restart", po polsku "Zaktualizuj i uruchom ponownie". Przycisk jest widoczny tylko przy downloaded, znika po utracie gotowości. Używa istniejącego installUpdate. O aplikacji pozostaje alternatywną ścieżką instalacji.

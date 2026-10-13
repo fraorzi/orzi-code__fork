@@ -18,6 +18,12 @@ Stan na 2026-10-13. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
 
+## Zwinięte limity - 2026-10-13
+
+Zwinięty sidebar pokazuje Claude i Codex jako pozostałe 5h / weekly, Cursor dla Groka jako pozostałe dolary / pulę API oraz Antigravity jako tygodniowy limit Claude. Przy małej szerokości wartości zawijają się bez obcinania. Wybór okien deklarują manifesty dostawców, bez branchy nazw w komponencie. Typecheck, lint, 36 testów i kontrola limitów w Electron PASS. Smoke zachowuje znaną porażkę selektora plusa w composer-redesign, bez błędów runtime. Dowody są na początku [stanu implementacji](implementation.md).
+
+Aktualna podpisana paczka `.tmp/orzi-collapsed-limits-20261013/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu lokalnych aktualizacji. Podpis i hash źródła oraz stagingu sprawdzono. Zastępuje starsze przygotowane paczki opisane poniżej; działającego bundle nie podmieniano.
+
 ## Przycisk aktualizacji - 2026-10-13
 
 Gotowa aktualizacja nie wyświetla już toastu. Zastępuje go zielony przycisk z ikoną RefreshCw na górze panelu bocznego, obok zwijania i szukania; przy zwiniętym panelu jest pierwszą akcją raila. Tooltip: "Zaktualizuj i uruchom ponownie". Przycisk pojawia się wyłącznie w stanie downloaded, również po odczycie aktualizacji gotowej przed startem renderera. Instalacja nadal jest dostępna w Ustawieniach > O aplikacji. Na dole pozostaje tylko postęp pobierania. Błędy aktualizacji nadal mają toast. Stare instalacje z updaterem mogą wczytać ten pakiet przez dotychczasowy toast lub ustawienia; po restarcie następne aktualizacje mają nowy przycisk. Zachować wcześniejszą blokadę instalacji przy aktywnych zadaniach i przygotowywać paczki bez podmiany działającej aplikacji. Aktualna podpisana paczka `.tmp/orzi-update-header-20261013/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu; podpis i hash zweryfikowane. Dowody i aktualna paczka są na początku [stanu implementacji](implementation.md).
