@@ -1067,6 +1067,7 @@ msgstr "添加配置文件"
 
 #: src/mobile/setupEmptyState.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
+#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 msgid "Add project"
 msgstr "添加项目"
 

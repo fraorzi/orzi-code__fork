@@ -1067,6 +1067,7 @@ msgstr "Add profile"
 
 #: src/mobile/setupEmptyState.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
+#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 msgid "Add project"
 msgstr "Add project"
 

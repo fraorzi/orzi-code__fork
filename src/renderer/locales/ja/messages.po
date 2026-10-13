@@ -1066,6 +1066,7 @@ msgstr "プロフィールを追加"
 
 #: src/mobile/setupEmptyState.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
+#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 msgid "Add project"
 msgstr "プロジェクトの追加"
 

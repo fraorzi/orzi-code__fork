@@ -2,6 +2,14 @@
 
 Data: 2026-10-13. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Dodawanie repozytorium w górnym pasku sidebara - 2026-10-13
+
+- Górny pasek ma stałą ikonę FolderPlus z przetłumaczonym tooltipem i aria-label "Add project" / "Dodaj projekt". Jest obok zwijania i wyszukiwania, także w pustym workspace i przy płaskiej liście. Korzysta z istniejącego CreateProjectMenu: nowy projekt, klonowanie, istniejący folder i SSH. Dotychczasowy plus przy nagłówku Projekty pozostaje opcją na hover.
+- Typecheck, lint zwykły i typowany oraz 5 testów CreateProjectMenu PASS. Lingui: 0 missing we wszystkich 12 katalogach, użyto istniejącego tłumaczenia. Smoke zmienionego zakresu: welcome, baseline, mock-integrations i 2 bramki mock PASS, 0 błędów console/runtime.
+- W Electron potwierdzono przycisk przed hoverem: 26 px, 6 px od góry, opacity 1 i prawidłowy hit test. Prawdziwe kliknięcia otworzyły menu oraz dialog klonowania. Nie klonowano repo ani nie zmieniano produkcyjnych projektów. Dodatkowa kontrola na fikcyjnym stanie potwierdziła widoczność w płaskiej liście i przy 0 projektów. Zrzuty i raport: `/private/tmp/orzi-add-repo-header-20261013/artifacts/`. Logi `.tmp/add-repo-{tests,typecheck,lint,i18n,smoke}.log`.
+- Zmiana wyłącznie renderera, bez zmian stanu trwałego, cache, manifestów ani IPC; migracja i zmiana wersji nie są potrzebne.
+- Internet sprawdzono przed buildem renderera, build PASS. Użyto niezmienionego runtime Electron z poprzedniego zweryfikowanego buildu i helpera 0.4.3/protokół 3 sprawdzonego przez --check. Podpisana paczka `.tmp/orzi-add-repo-header-20261013/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu lokalnych aktualizacji i zawiera również zmianę zwiniętych limitów. Podpis źródła i stagingu oraz zgodność hashy z ready.json PASS: `e09ea5c2eb1db651b21ac9317b314e55890e1afcfbd6241afc95d5bc6369ddcb`. Produkcyjnego bundle nie podmieniano. Sesję QA zresetowano i zamknięto. Logi `.tmp/add-repo-{build,helper,assets,package}.log`.
+
 ## Zwinięte limity - 2026-10-13
 
 - Claude i Codex pokazują pozostałe procenty w kolejności 5h / weekly. Cursor, używany dla Groka, pokazuje pozostałe dolary / zgłoszoną pulę API, np. 12 $ / 20 $. Antigravity pokazuje pozostały procent tygodniowej puli Claude. Nie wybiera już najbardziej zużytego okna spośród innych pul tych dostawców. Konfiguracja jest zadeklarowana w manifestach dostawców; profile dziedziczą ją przez bazowy manifest. Kwota jest formatowana według locale z krótkim symbolem waluty.

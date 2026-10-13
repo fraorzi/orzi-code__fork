@@ -1067,6 +1067,7 @@ msgstr "프로필 추가"
 
 #: src/mobile/setupEmptyState.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectsHeading.tsx
+#: src/renderer/views/MainView/parts/SidebarHeaderControls.tsx
 msgid "Add project"
 msgstr "프로젝트 추가"
 

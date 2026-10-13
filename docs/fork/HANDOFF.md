@@ -18,6 +18,12 @@ Stan na 2026-10-13. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
 
+## Dodawanie repozytorium w górnym pasku - 2026-10-13
+
+Górny pasek sidebara ma stałą ikonę FolderPlus "Dodaj projekt", obok zwijania i wyszukiwania. Otwiera istniejące menu nowego projektu, klonowania, folderu i SSH. Dostępność bez hovera potwierdzono również w pustym workspace i płaskiej liście. Typecheck, lint, 5 testów menu i smoke zmienionego zakresu PASS. Kliknięcie menu i otwarcie dialogu klonowania sprawdzono w izolowanym Electronie. Szczegóły są na początku [stanu implementacji](implementation.md).
+
+Aktualna podpisana paczka `.tmp/orzi-add-repo-header-20261013/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu lokalnych aktualizacji, zawiera również zmianę limitów. Podpis i hash źródła oraz stagingu sprawdzono. Zastępuje starsze przygotowane paczki opisane poniżej; działającego bundle nie podmieniano.
+
 ## Zwinięte limity - 2026-10-13
 
 Zwinięty sidebar pokazuje Claude i Codex jako pozostałe 5h / weekly, Cursor dla Groka jako pozostałe dolary / pulę API oraz Antigravity jako tygodniowy limit Claude. Przy małej szerokości wartości zawijają się bez obcinania. Wybór okien deklarują manifesty dostawców, bez branchy nazw w komponencie. Typecheck, lint, 36 testów i kontrola limitów w Electron PASS. Smoke zachowuje znaną porażkę selektora plusa w composer-redesign, bez błędów runtime. Dowody są na początku [stanu implementacji](implementation.md).
