@@ -1772,6 +1772,11 @@ msgstr "之后自动存档已完成的线程"
 msgid "Auto-archive done threads after (days)"
 msgstr "自动存档已完成线程的等待天数"
 
+#. placeholder {0}: summary.autoCompactThreshold.toLocaleString()
+#: src/renderer/components/thread/ThreadContextDock.tsx
+msgid "Auto-compact at {0} tokens"
+msgstr "在 {0} 个 token 时自动压缩"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Auto-generate"
 msgstr "自动生成"
@@ -2239,6 +2244,14 @@ msgstr "绕过分支保护规则"
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/PrSection.tsx
 msgid "Bypass branch protection rules (admin merge)"
 msgstr "绕过分支保护规则（管理合并）"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Cache read"
+msgstr "缓存读取"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Cache write"
+msgstr "缓存写入"
 
 #: src/mobile/views/DesktopsView.tsx
 msgid "Cached only"
@@ -3494,9 +3507,14 @@ msgstr "包含敏感值；请手动添加"
 
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
+#: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/components/thread/threadContextUsage.ts
 msgid "Context"
 msgstr "上下文"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Context change"
+msgstr "上下文变化"
 
 #: src/renderer/components/thread/ChatPane/parts/items/ContextCompaction.tsx
 msgid "Context compacted"
@@ -4050,6 +4068,10 @@ msgstr "Ctrl+Enter"
 #: src/renderer/views/SettingsOverlay/parts/CursorRuntimeCard.tsx
 msgid "Current"
 msgstr "最近"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Current / last task"
+msgstr "当前 / 最近任务"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 #~ msgid "Current project"
@@ -7856,6 +7878,10 @@ msgstr "模式"
 msgid "Model added to favorites"
 msgstr "已将模型添加到收藏夹"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Model calls"
+msgstr "模型调用次数"
+
 #: src/renderer/views/SettingsOverlay/parts/CursorProviderSettings.tsx
 #~ msgid "Model controls"
 #~ msgstr "模型控件"
@@ -9499,6 +9525,10 @@ msgstr "结果"
 msgid "Outlook"
 msgstr "Outlook"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Output (including reasoning)"
+msgstr "输出（包括推理）"
+
 #: src/renderer/components/providers/usageFormat.ts
 msgid "Over pace — runs out early"
 msgstr "节奏过快 — 提前用完"
@@ -10117,6 +10147,14 @@ msgstr "正在探测{0} v{1}"
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 msgid "Probing v{0}"
 msgstr "正在探测 v{0}"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Processed tokens"
+msgstr "已处理的 token"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Processed tokens are not subscription usage. Account limits are shown in the sidebar."
+msgstr "已处理的 token 不等于订阅用量。账户限额显示在侧边栏中。"
 
 #: src/renderer/components/plugins/pluginCopy.ts
 msgid "Productivity"
@@ -14095,6 +14133,10 @@ msgstr "工具搜索"
 msgid "Tools"
 msgstr "工具"
 
+#: src/renderer/components/thread/ThreadContextDock.tsx
+msgid "Tools loaded on demand (outside context)"
+msgstr "按需加载的工具（不占用上下文）"
+
 #: src/renderer/components/skills/SkillMarketplaceModal.tsx
 msgid "Total installs"
 msgstr "总安装量"
@@ -14555,6 +14597,10 @@ msgstr "提供商不可用"
 #~ msgid "Unavailable providers, models, reasoning levels, and Fast modes are skipped automatically. Unchecked providers and models are skipped until re-checked."
 #~ msgstr "不可用的提供商、模型、推理级别和 Fast 模式会被自动跳过。未选中的提供商和模型将被跳过，直到重新选中。"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Uncached input"
+msgstr "未缓存的输入"
+
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 msgid "Unchecked"
 msgstr "未选中"
@@ -14931,7 +14977,6 @@ msgstr "URL 为必填项。"
 #: src/mobile/views/DesktopWorkspacePanel.tsx
 #: src/mobile/WideShell.tsx
 #: src/renderer/components/layout/PanelDock/panelTabMeta.ts
-#: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 msgid "Usage"
 msgstr "用量"

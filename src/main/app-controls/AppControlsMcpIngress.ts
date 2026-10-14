@@ -1,3 +1,4 @@
+import { APP_CONTROLS_MCP_DISCOVERY } from "./mcp/instructions";
 import type { Project, ProjectNotes, RemoteThreadCommand, Thread } from "@/shared/contracts";
 import type { SupervisorEvent } from "@/shared/ipc";
 import type { RemoteProjectCommand, RemoteProjectCommandResult } from "@/shared/remote";
@@ -9,7 +10,6 @@ import type { ScheduleService } from "../schedules/ScheduleService";
 import type { CreateAppThreadRequest, CreateAppThreadResult } from "../threads/appThreadLauncher";
 import { ThreadStateBroker } from "../threads/threadStateBroker";
 import {
-  APP_CONTROLS_MCP_INSTRUCTIONS,
   APP_CONTROLS_MCP_SERVER_INFO,
   TOOLS,
   dispatchTool,
@@ -57,7 +57,7 @@ export class AppControlsMcpIngress {
   constructor(deps: AppControlsMcpIngressDeps) {
     this.ingress = new StreamableHttpMcpIngress<AppControlsToolContext>({
       serverInfo: { ...APP_CONTROLS_MCP_SERVER_INFO },
-      instructions: APP_CONTROLS_MCP_INSTRUCTIONS,
+      instructions: APP_CONTROLS_MCP_DISCOVERY,
       tools: TOOLS,
       isKnownToolName,
       buildContext: (identity) => ({ ...deps, identity, threadStates: this.threadStates }),

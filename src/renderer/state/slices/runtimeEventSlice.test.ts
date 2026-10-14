@@ -254,6 +254,37 @@ describe("runtimeEventSlice.applyRuntimeEvent", () => {
     });
   });
 
+  it("updates task-only counters, preserves them across compaction, and resets the next task", () => {
+    const taskUsage = {
+      turnId: "first",
+      calls: 1,
+      inputTokens: 10,
+      outputTokens: 20,
+      cacheReadTokens: 1000,
+      cacheWriteTokens: 50,
+      contextTokensAtStart: 25_000,
+    };
+    apply("t1", {
+      type: "context.updated",
+      threadId: "t1",
+      usage: { usedTokens: 71_000, maxTokens: 1_000_000, taskUsage },
+    });
+    apply("t1", {
+      type: "context.updated",
+      threadId: "t1",
+      usage: { taskUsage: { ...taskUsage, calls: 2, outputTokens: 40 } },
+    });
+    expect(store.getState().runtimeContextByThread.t1?.taskUsage?.calls).toBe(2);
+    apply("t1", { type: "context.updated", threadId: "t1", usage: { usedTokens: 9900 } });
+    expect(store.getState().runtimeContextByThread.t1?.taskUsage?.outputTokens).toBe(40);
+    apply("t1", {
+      type: "context.updated",
+      threadId: "t1",
+      usage: { taskUsage: { ...taskUsage, turnId: "second", calls: 0 } },
+    });
+    expect(store.getState().runtimeContextByThread.t1?.taskUsage?.turnId).toBe("second");
+  });
+
   it("preserves the context limit and replaces stale breakdown on partial updates", () => {
     apply("t1", {
       type: "context.updated",

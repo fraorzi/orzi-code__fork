@@ -1186,11 +1186,10 @@ export function ThreadDraftView(props: {
     disabledBuiltInMcpServers.crossagents !== true;
   const effectiveTeamMode = teamMode && teamAvailable;
   const effectiveBrowserMcp = effectiveMcp("browser", browserMcpMention, selectedMcpScope);
-  const effectiveCrossagentMcp = effectiveMcp(
-    "crossagents",
-    crossagentMcpMention || effectiveTeamMode,
-    selectedMcpScope,
-  );
+  const effectiveCrossagentMcp =
+    disabledBuiltInMcpServers.crossagents !== true &&
+    (crossagentMcpMention || effectiveTeamMode) &&
+    selectedMcpScope !== "none";
   const effectiveChromeMcp = effectiveMcp(
     "chrome",
     chromeMcpMention,

@@ -143,7 +143,7 @@ describe("effectiveLaunchConfig — single gate for built-in MCP disables", () =
     ).toEqual({
       ...config,
       browserMcp: true,
-      crossagentMcp: true,
+      crossagentMcp: false,
       computerUse: true,
       chromeMcp: false,
     });

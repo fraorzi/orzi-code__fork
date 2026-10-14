@@ -156,7 +156,19 @@ describe.skipIf(!sqliteAvailable)("runtimeItems incremental persistence", () => 
       {
         type: "context.updated",
         threadId: "thread-1",
-        usage: { usedTokens: 125, maxTokens: 1000 },
+        usage: {
+          usedTokens: 125,
+          maxTokens: 1000,
+          autoCompactThreshold: 800,
+          taskUsage: {
+            turnId: "task-1",
+            calls: 2,
+            inputTokens: 10,
+            outputTokens: 20,
+            cacheReadTokens: 1000,
+            cacheWriteTokens: 50,
+          },
+        },
       },
     ]);
 
@@ -172,6 +184,15 @@ describe.skipIf(!sqliteAvailable)("runtimeItems incremental persistence", () => 
     expect(dbGetThreadContextUsage("thread-1")).toEqual({
       usedTokens: 125,
       maxTokens: 1000,
+      autoCompactThreshold: 800,
+      taskUsage: {
+        turnId: "task-1",
+        calls: 2,
+        inputTokens: 10,
+        outputTokens: 20,
+        cacheReadTokens: 1000,
+        cacheWriteTokens: 50,
+      },
     });
   });
 

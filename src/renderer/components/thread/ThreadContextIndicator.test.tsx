@@ -21,6 +21,35 @@ const summary: ThreadContextUsageSummary = {
 };
 
 describe("ThreadContextIndicator", () => {
+  it("separates task consumption and deferred tools from window occupancy", () => {
+    render(
+      <ThreadContextDock
+        summary={{
+          ...summary,
+          autoCompactThreshold: 167_000,
+          breakdown: [
+            ...summary.breakdown,
+            { id: "deferred", label: "Deferred catalog", tokens: 54_000, kind: "deferred" },
+          ],
+          taskUsage: {
+            turnId: "task",
+            calls: 2,
+            inputTokens: 10,
+            outputTokens: 20,
+            cacheReadTokens: 1000,
+            cacheWriteTokens: 50,
+            contextTokensAtStart: 70_000,
+          },
+        }}
+        onClose={() => {}}
+      />,
+    );
+    expect(screen.getByText("71K used")).toBeVisible();
+    expect(screen.getByText("Tools loaded on demand (outside context)")).toBeVisible();
+    expect(screen.getByText("Auto-compact at 167,000 tokens")).toBeVisible();
+    expect(screen.getByTestId("thread-task-usage")).toHaveTextContent("Processed tokens1,080");
+    expect(screen.getByTestId("thread-task-usage")).toHaveTextContent("Model calls2");
+  });
   it("renders the context ring without any number and toggles the dock", () => {
     const onToggle = vi.fn<() => void>();
     const { container } = render(

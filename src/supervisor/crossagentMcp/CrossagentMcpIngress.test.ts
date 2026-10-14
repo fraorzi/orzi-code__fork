@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { CROSSAGENT_PROVIDER_SESSION_ID_ARG, CrossagentMcpIngress } from "./CrossagentMcpIngress";
 import type { SubagentRunManager } from "./SubagentRunManager";
-import { CROSSAGENT_MCP_INSTRUCTIONS_BASE } from "./toolRegistry";
+import { CROSSAGENT_MCP_DISCOVERY, CROSSAGENT_MCP_INSTRUCTIONS_BASE } from "./instructions";
 import type { SpawnableAgent, SpawnAgentRequest } from "./types";
 
 const AGENTS: SpawnableAgent[] = [
@@ -253,12 +253,16 @@ describe("CrossagentMcpIngress", () => {
     expect((await response.json()).result).toMatchObject({ isError: true });
   });
 
-  it("returns instructions with the routing guide on initialize", async () => {
+  it("defers detailed instructions and the routing guide until requested", async () => {
     const res = await rpc("initialize");
     const body = await res.json();
     expect(body.result.serverInfo.name).toBe("crossagents");
-    expect(body.result.instructions).toContain(CROSSAGENT_MCP_INSTRUCTIONS_BASE);
-    expect(body.result.instructions).toContain("PREFER codex for search.");
+    expect(body.result.instructions).toBe(CROSSAGENT_MCP_DISCOVERY);
+    expect(body.result.instructions).not.toContain("PREFER codex for search.");
+    const detail = await rpc("tools/call", { name: "read_instructions", arguments: {} });
+    const result = await detail.json();
+    expect(result.result.content[0].text).toContain(CROSSAGENT_MCP_INSTRUCTIONS_BASE);
+    expect(result.result.content[0].text).toContain("PREFER codex for search.");
   });
 
   it("lists the subagent tools", async () => {
@@ -276,6 +280,7 @@ describe("CrossagentMcpIngress", () => {
       "list_routing_preferences",
       "list_runs",
       "list_team_workspaces",
+      "read_instructions",
       "recover_team_integration",
       "remove_routing_preference",
       "remove_team_workspace",

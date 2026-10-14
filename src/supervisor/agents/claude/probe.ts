@@ -7,9 +7,6 @@ import {
   type CapabilitiesProbeResult,
   type DetectProbeCtx,
 } from "../base";
-import { CLAUDE_FAST_MODE_DISABLED_MESSAGE } from "./detection";
-import { resolveFastModeCachePath } from "./fastModeCache";
-import { resolveFastAvailability } from "./fastModeProbe";
 import { claudeCapabilitiesFromCliVersion, claudeCapabilitiesFromSdkModels } from "./models";
 import { AsyncPromptQueue } from "./promptQueue";
 import { spawnClaudeProbeProcess } from "./sdkProbeProcess";
@@ -152,14 +149,6 @@ async function probeClaudeSdkPartialNative(
       const init = await q.initializationResult();
       const slashCommands = mapClaudeSlashCommands(init.commands, await readClaudeSkillNames(q));
       const modelCapabilities = claudeCapabilitiesFromSdkModels(init.models);
-      const fastAvailable = await resolveFastAvailability(
-        q,
-        queue,
-        init.account?.email,
-        resolveFastModeCachePath(),
-      );
-      const fastDisabledReason =
-        fastAvailable === false ? CLAUDE_FAST_MODE_DISABLED_MESSAGE : undefined;
       try {
         queue.close();
         q.close();
@@ -167,11 +156,10 @@ async function probeClaudeSdkPartialNative(
         // ignore
       }
       abort.abort();
-      if (slashCommands.length === 0 && !fastDisabledReason && !modelCapabilities) return undefined;
+      if (slashCommands.length === 0 && !modelCapabilities) return undefined;
       return {
         ...(modelCapabilities ?? {}),
         ...(slashCommands.length > 0 ? { slashCommands } : {}),
-        ...(fastDisabledReason ? { fastDisabledReason } : {}),
       };
     } finally {
       clearTimeout(timer);
@@ -197,18 +185,11 @@ async function probeClaudeSdkPartialWsl(
   const workerHostPath = getSdkWorkerPath();
   const workerWslPath =
     process.platform === "win32" ? win32PathToWslMount(workerHostPath) : workerHostPath;
-  // The worker runs in-distro, so hand it the fast-mode cache as a `/mnt/c/...`
-  // mount; it reads/writes the same file the native path uses (keyed by account
-  // hash), so the billed turn runs at most once per account.
-  const cacheHostPath = resolveFastModeCachePath();
-  const cacheWslPath =
-    process.platform === "win32" ? win32PathToWslMount(cacheHostPath) : cacheHostPath;
-
   const result = await readWslLoginShellCommandOutputAsync(
     ctx.location.distro,
     "/tmp",
     "node",
-    [workerWslPath, ctx.executablePath, String(timeoutMs), cacheWslPath],
+    [workerWslPath, ctx.executablePath, String(timeoutMs)],
     {
       timeout: timeoutMs + 3000,
       ...(envOverrides ? { env: envOverrides } : {}),
@@ -232,22 +213,19 @@ async function probeClaudeSdkPartialWsl(
       modelEfforts?: AgentCapability["modelEfforts"];
       modelContextSizes?: AgentCapability["modelContextSizes"];
       fastModels?: AgentCapability["fastModels"];
-      fastAvailable?: boolean;
       error?: string;
     };
     if (parsed.error) {
       console.log("[claude-probe] wsl worker error field:", parsed.error);
       return undefined;
     }
-    const fastDisabledReason =
-      parsed.fastAvailable === false ? CLAUDE_FAST_MODE_DISABLED_MESSAGE : undefined;
     const hasModelCapabilities =
       parsed.models !== undefined ||
       parsed.defaultHiddenModels !== undefined ||
       parsed.modelEfforts !== undefined ||
       parsed.modelContextSizes !== undefined ||
       parsed.fastModels !== undefined;
-    if (!parsed.slashCommands?.length && !fastDisabledReason && !hasModelCapabilities) {
+    if (!parsed.slashCommands?.length && !hasModelCapabilities) {
       return undefined;
     }
     return {
@@ -257,7 +235,6 @@ async function probeClaudeSdkPartialWsl(
       ...(parsed.modelContextSizes ? { modelContextSizes: parsed.modelContextSizes } : {}),
       ...(parsed.fastModels ? { fastModels: parsed.fastModels } : {}),
       ...(parsed.slashCommands?.length ? { slashCommands: parsed.slashCommands } : {}),
-      ...(fastDisabledReason ? { fastDisabledReason } : {}),
     };
   } catch {
     console.log("[claude-probe] wsl worker: invalid json stdout");

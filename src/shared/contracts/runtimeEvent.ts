@@ -372,13 +372,30 @@ export const contextUsageBreakdownEntrySchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
   tokens: z.number().int().nonnegative(),
+  /** Non-used rows do not contribute to window occupancy. Absent in older snapshots. */
+  kind: z.enum(["used", "free", "buffer", "deferred"]).optional(),
 });
 export type ContextUsageBreakdownEntry = z.infer<typeof contextUsageBreakdownEntrySchema>;
+
+/** Provider-reported consumption for the current or most recent user task. */
+export const taskTokenUsageSchema = z.object({
+  turnId: z.string().min(1),
+  calls: z.number().int().nonnegative(),
+  inputTokens: z.number().int().nonnegative(),
+  outputTokens: z.number().int().nonnegative(),
+  cacheReadTokens: z.number().int().nonnegative(),
+  cacheWriteTokens: z.number().int().nonnegative(),
+  contextTokensAtStart: z.number().int().nonnegative().optional(),
+});
+export type TaskTokenUsage = z.infer<typeof taskTokenUsageSchema>;
 
 export const threadContextUsageSchema = z.object({
   usedTokens: z.number().int().nonnegative().optional(),
   maxTokens: z.number().int().positive().optional(),
   breakdown: z.array(contextUsageBreakdownEntrySchema).optional(),
+  // Additive snapshots remain valid without task consumption or compaction data.
+  taskUsage: taskTokenUsageSchema.optional(),
+  autoCompactThreshold: z.number().int().positive().optional(),
 });
 export type ThreadContextUsage = z.infer<typeof threadContextUsageSchema>;
 

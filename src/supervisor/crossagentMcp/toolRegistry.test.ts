@@ -102,7 +102,7 @@ describe("buildSpawnableAgents", () => {
     });
   });
 
-  it("nests composer reasoning and Fast data under each model", () => {
+  it("nests reasoning while keeping retired Fast unavailable", () => {
     const adapters = new Map<AgentKind, AgentAdapter>([
       [
         "claude" as AgentKind,
@@ -119,8 +119,8 @@ describe("buildSpawnableAgents", () => {
         values: ["low", "high", "xhigh"],
         default: "high",
       },
-      fast: { available: true },
     });
+    expect(provider?.models[2]).not.toHaveProperty("fast");
     expect(provider?.reasoningOptions).toEqual([
       { value: "low", label: "Low" },
       { value: "high", label: "High" },

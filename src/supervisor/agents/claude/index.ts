@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { homedir } from "node:os";
+import { CLAUDE_SESSION_ENV } from "./sessionPolicy";
 import path, { posix as posixPath } from "node:path";
 
 import type {
@@ -87,7 +88,12 @@ function profileEnvForLocation(
   // customEnv already has its empty keys filtered out (resolveInstanceEnv).
   // CLAUDE_CONFIG_DIR is set last so the profile's identity always wins over a
   // user-supplied override of the same key.
-  const env: Record<string, string> = { ...customEnv };
+  // Launch-local policy: retain the model's full window while compacting
+  // history earlier. Never write the user's global Claude Code settings.
+  const env: Record<string, string> = {
+    ...customEnv,
+    ...CLAUDE_SESSION_ENV,
+  };
   if (configDir?.trim()) {
     env.CLAUDE_CONFIG_DIR = resolveTildePath(configDir, location);
   }

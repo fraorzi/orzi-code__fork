@@ -110,9 +110,12 @@ export function contextUsageFromCompactionMetadata(
 export function mapClaudeContextUsageResponse(
   threadId: string,
   response: SDKControlGetContextUsageResponse,
+  modelMaxTokens?: number,
 ): RuntimeEvent | undefined {
   const maxTokens =
-    readPositiveInteger(response.maxTokens) ?? readPositiveInteger(response.rawMaxTokens);
+    modelMaxTokens ??
+    readPositiveInteger(response.rawMaxTokens) ??
+    readPositiveInteger(response.maxTokens);
   const breakdown = response.categories
     .map((category, index) => {
       const tokens = readNonNegativeInteger(category.tokens);
@@ -126,10 +129,21 @@ export function mapClaudeContextUsageResponse(
         id: slug ? `${slug}-${index}` : `category-${index}`,
         label: category.name,
         tokens,
+        kind:
+          category.isDeferred || category.name.toLowerCase().includes("(deferred)")
+            ? ("deferred" as const)
+            : category.name === "Free space"
+              ? ("free" as const)
+              : category.name === "Autocompact buffer"
+                ? ("buffer" as const)
+                : ("used" as const),
       };
     })
     .filter((entry): entry is NonNullable<typeof entry> => entry !== undefined);
   const rawUsedTokens = readNonNegativeInteger(response.totalTokens);
+  const autoCompactThreshold = response.isAutoCompactEnabled
+    ? readPositiveInteger(response.autoCompactThreshold)
+    : undefined;
   const usedTokens =
     rawUsedTokens !== undefined && (rawUsedTokens > 0 || breakdown.length > 0)
       ? rawUsedTokens
@@ -139,6 +153,7 @@ export function mapClaudeContextUsageResponse(
     ...(usedTokens !== undefined ? { usedTokens } : {}),
     ...(maxTokens !== undefined ? { maxTokens } : {}),
     ...(breakdown.length > 0 ? { breakdown } : {}),
+    ...(autoCompactThreshold ? { autoCompactThreshold } : {}),
   });
 }
 

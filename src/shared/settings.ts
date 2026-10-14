@@ -668,7 +668,7 @@ export const sharedSettingsSchema = z.object({
    * server off unless the draft explicitly `@`-mentions it, which stages a
    * removable chip for that one thread. Toggled by the composer "+" menu.
    */
-  enabledMcpServers: z.record(z.string(), z.boolean()).default({ crossagents: true }),
+  enabledMcpServers: z.record(z.string(), z.boolean()).default({}),
   /** Custom MCP servers applied to every new thread unless overridden by its project. */
   mcpServers: mcpServerListSchema,
   /** Built-in MCP servers hard-disabled for all new launches. */
@@ -831,7 +831,7 @@ export const defaultSharedSettings: SharedSettings = {
   disableCliHookPlugin: false,
   dismissedHookInstallProposals: {},
   agentHookSupport: {},
-  enabledMcpServers: { crossagents: true },
+  enabledMcpServers: {},
   mcpServers: [],
   disabledBuiltInMcpServers: {},
   disabledBuiltInMcpTools: {},

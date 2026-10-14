@@ -50,8 +50,9 @@ describe("database migration registry", () => {
       [40, "normalize Antigravity ACP model variants"],
       [41, "repair Antigravity persisted model variants"],
       [42, "deduplicate project locations"],
+      [43, "opt-in delegation and categorized context usage"],
     ]);
-    expect(LATEST_SCHEMA_VERSION).toBe(42);
+    expect(LATEST_SCHEMA_VERSION).toBe(43);
     expect(() => validateMigrationRegistry()).not.toThrow();
   });
 

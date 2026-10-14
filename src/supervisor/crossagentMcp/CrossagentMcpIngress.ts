@@ -1,9 +1,10 @@
+import { CROSSAGENT_MCP_DISCOVERY } from "./instructions";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { randomBytes, randomUUID } from "node:crypto";
 import type { CrossagentMcpHttpConfig } from "@/supervisor/agents/crossagentMcp";
 import type { CrossagentRoutingOverride } from "@/shared/settings";
 import type { SubagentRunManager } from "./SubagentRunManager";
-import { buildSubagentInstructions, dispatchTool, isKnownToolName, TOOLS } from "./toolRegistry";
+import { dispatchTool, isKnownToolName, TOOLS } from "./toolRegistry";
 import { errorResult } from "./toolResult";
 import type { ExplicitSpawnAgentSelection, SpawnableAgent } from "./types";
 
@@ -326,8 +327,8 @@ export class CrossagentMcpIngress {
           result: {
             protocolVersion: MCP_PROTOCOL_VERSION,
             capabilities: { tools: {} },
-            serverInfo: { name: "crossagents", version: "1.0.0" },
-            instructions: buildSubagentInstructions(this.deps.getRoutingGuide?.()),
+            serverInfo: { name: "crossagents", version: "1.1.0" },
+            instructions: CROSSAGENT_MCP_DISCOVERY,
           },
         };
       }
@@ -389,6 +390,7 @@ export class CrossagentMcpIngress {
         }
         const result = await dispatchTool(name, args, {
           parentThreadId: threadId,
+          ...(this.deps.getRoutingGuide ? { getRoutingGuide: this.deps.getRoutingGuide } : {}),
           runManager: this.deps.runManager,
           listSpawnableAgents: this.deps.getSpawnableAgents,
           ...(this.deps.recordExplicitSelections

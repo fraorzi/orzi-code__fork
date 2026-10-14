@@ -164,7 +164,7 @@ export function ComposerAddMenu(props: {
     (props.readOnlyCaption ?? (
       <Trans>Set when this session started — start a new thread to change plugins</Trans>
     ))
-  ) : (
+  ) : visiblePlugins.some((server) => server.descriptor.allowPersistentDefault === false) ? null : (
     <Trans>Enabled plugins stay on for new threads</Trans>
   );
   const emptyPluginsNote = <Trans>No plugins are enabled for this run</Trans>;

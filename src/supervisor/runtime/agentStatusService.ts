@@ -28,7 +28,6 @@ import {
   type AgentAdapter,
   type AgentEnvContext,
 } from "../agents/base";
-import { clearFastModeCache } from "../agents/claude/fastModeCache";
 import { managedExecutableSnapshot } from "../agents/managedExecutable";
 import { readSupervisorSharedSettings } from "./supervisorSharedSettings";
 
@@ -101,7 +100,8 @@ const execFileAsync = promisify(execFile);
 // provider's current form.
 // v36 fingerprints managed activation so a cache written before switching
 // runtimes cannot survive a crash or restart with a stale executable path.
-export const STATUS_CACHE_VERSION = 36;
+// v37 discards capabilities produced by the retired inference-based Fast probe.
+export const STATUS_CACHE_VERSION = 37;
 const WSL_AGENT_DETECTION_TIMEOUT_MS = 60_000;
 const WSL_LXSS_REGISTRY_KEY = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Lxss";
 
@@ -456,9 +456,6 @@ export class AgentStatusService {
     // install/update just ran), so bypass the binary-path TTL cache and re-read
     // PATH (including the registry-backed Windows user/machine PATH) fresh.
     invalidateExecutablePathCache();
-    // Also re-check Claude's per-account fast-mode availability (an org may have
-    // since enabled/disabled it); the next capabilities probe repopulates it.
-    void clearFastModeCache();
     if (payload.scope) {
       return this.runScopedDetection(wslDistros, payload.scope);
     }

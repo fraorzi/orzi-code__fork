@@ -666,12 +666,30 @@ function areContextUsagesEqual(
 ): boolean {
   if (!left) return false;
   if (left.usedTokens !== right.usedTokens || left.maxTokens !== right.maxTokens) return false;
+  if (left.autoCompactThreshold !== right.autoCompactThreshold) return false;
+  const leftTask = left.taskUsage;
+  const rightTask = right.taskUsage;
+  if (
+    leftTask?.turnId !== rightTask?.turnId ||
+    leftTask?.calls !== rightTask?.calls ||
+    leftTask?.inputTokens !== rightTask?.inputTokens ||
+    leftTask?.outputTokens !== rightTask?.outputTokens ||
+    leftTask?.cacheReadTokens !== rightTask?.cacheReadTokens ||
+    leftTask?.cacheWriteTokens !== rightTask?.cacheWriteTokens ||
+    leftTask?.contextTokensAtStart !== rightTask?.contextTokensAtStart
+  )
+    return false;
   const leftBreakdown = left.breakdown ?? [];
   const rightBreakdown = right.breakdown ?? [];
   if (leftBreakdown.length !== rightBreakdown.length) return false;
   return leftBreakdown.every((entry, index) => {
     const other = rightBreakdown[index];
-    return other?.id === entry.id && other.label === entry.label && other.tokens === entry.tokens;
+    return (
+      other?.id === entry.id &&
+      other.label === entry.label &&
+      other.tokens === entry.tokens &&
+      other.kind === entry.kind
+    );
   });
 }
 

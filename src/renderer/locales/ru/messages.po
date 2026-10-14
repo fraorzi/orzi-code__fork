@@ -1772,6 +1772,11 @@ msgstr "Автоархивировать завершённые треды че�
 msgid "Auto-archive done threads after (days)"
 msgstr "Автоархивировать завершённые треды через (дней)"
 
+#. placeholder {0}: summary.autoCompactThreshold.toLocaleString()
+#: src/renderer/components/thread/ThreadContextDock.tsx
+msgid "Auto-compact at {0} tokens"
+msgstr "Автоматическое сжатие при {0} токенах"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Auto-generate"
 msgstr "Создавать автоматически"
@@ -2239,6 +2244,14 @@ msgstr "Обойти правила защиты ветки"
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/PrSection.tsx
 msgid "Bypass branch protection rules (admin merge)"
 msgstr "Обойти правила защиты ветки (слияние администратором)"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Cache read"
+msgstr "Чтение из кеша"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Cache write"
+msgstr "Запись в кеш"
 
 #: src/mobile/views/DesktopsView.tsx
 msgid "Cached only"
@@ -3494,9 +3507,14 @@ msgstr "Содержит конфиденциальные значения; до
 
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
+#: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/components/thread/threadContextUsage.ts
 msgid "Context"
 msgstr "Контекст"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Context change"
+msgstr "Изменение контекста"
 
 #: src/renderer/components/thread/ChatPane/parts/items/ContextCompaction.tsx
 msgid "Context compacted"
@@ -4050,6 +4068,10 @@ msgstr "Ctrl+Enter"
 #: src/renderer/views/SettingsOverlay/parts/CursorRuntimeCard.tsx
 msgid "Current"
 msgstr "Текущие"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Current / last task"
+msgstr "Текущее / последнее задание"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 #~ msgid "Current project"
@@ -7857,6 +7879,10 @@ msgstr "Режим"
 msgid "Model added to favorites"
 msgstr "Модель добавлена в избранное"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Model calls"
+msgstr "Вызовы модели"
+
 #: src/renderer/views/SettingsOverlay/parts/CursorProviderSettings.tsx
 #~ msgid "Model controls"
 #~ msgstr "Параметры модели"
@@ -9500,6 +9526,10 @@ msgstr "Результат"
 msgid "Outlook"
 msgstr "Outlook"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Output (including reasoning)"
+msgstr "Вывод (включая рассуждения)"
+
 #: src/renderer/components/providers/usageFormat.ts
 msgid "Over pace — runs out early"
 msgstr "Темп превышен — закончится раньше"
@@ -10118,6 +10148,14 @@ msgstr "Проверка {0} v{1}"
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 msgid "Probing v{0}"
 msgstr "Проверка v{0}"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Processed tokens"
+msgstr "Обработанные токены"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Processed tokens are not subscription usage. Account limits are shown in the sidebar."
+msgstr "Обработанные токены не равны расходу подписки. Лимиты аккаунта показаны на боковой панели."
 
 #: src/renderer/components/plugins/pluginCopy.ts
 msgid "Productivity"
@@ -14096,6 +14134,10 @@ msgstr "Поиск инструментов"
 msgid "Tools"
 msgstr "Инструменты"
 
+#: src/renderer/components/thread/ThreadContextDock.tsx
+msgid "Tools loaded on demand (outside context)"
+msgstr "Инструменты, загружаемые по запросу (вне контекста)"
+
 #: src/renderer/components/skills/SkillMarketplaceModal.tsx
 msgid "Total installs"
 msgstr "Всего установок"
@@ -14556,6 +14598,10 @@ msgstr "Недоступный провайдер"
 #~ msgid "Unavailable providers, models, reasoning levels, and Fast modes are skipped automatically. Unchecked providers and models are skipped until re-checked."
 #~ msgstr "Недоступные провайдеры, модели, уровни рассуждений и режимы Fast автоматически пропускаются. Неотмеченные провайдеры и модели пропускаются, пока их снова не отметят."
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Uncached input"
+msgstr "Ввод без кеша"
+
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 msgid "Unchecked"
 msgstr "Не отмечено"
@@ -14932,7 +14978,6 @@ msgstr "URL обязателен."
 #: src/mobile/views/DesktopWorkspacePanel.tsx
 #: src/mobile/WideShell.tsx
 #: src/renderer/components/layout/PanelDock/panelTabMeta.ts
-#: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 msgid "Usage"
 msgstr "Использование"

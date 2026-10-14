@@ -12,6 +12,20 @@ export const productionRoots = [
 
 export const functionalAreas = [
   {
+    id: "context-efficiency",
+    title: "Context occupancy, compaction policy, deferred tools and task consumption",
+    patterns: [
+      /ThreadContext/,
+      /ThreadTaskUsage/,
+      /threadContextUsage/,
+      /taskUsage\.ts/,
+      /sessionPolicy\.ts/,
+      /contextUsageMigration/,
+    ],
+    automated: ["baseline", "context-usage"],
+    manual: ["changed-surface"],
+  },
+  {
     id: "local-desktop-updates",
     title: "Staged local builds, persistent update toast, safe install and restart",
     patterns: [/localUpdater/, /shared\/localUpdate/, /updateStatusSync/],

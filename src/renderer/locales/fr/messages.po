@@ -1772,6 +1772,11 @@ msgstr "Archiver automatiquement les discussions terminées après"
 msgid "Auto-archive done threads after (days)"
 msgstr "Archiver automatiquement les discussions terminées après (jours)"
 
+#. placeholder {0}: summary.autoCompactThreshold.toLocaleString()
+#: src/renderer/components/thread/ThreadContextDock.tsx
+msgid "Auto-compact at {0} tokens"
+msgstr "Compactage automatique à {0} tokens"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Auto-generate"
 msgstr "Générer automatiquement"
@@ -2239,6 +2244,14 @@ msgstr "Contourner les règles de protection des branches"
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/PrSection.tsx
 msgid "Bypass branch protection rules (admin merge)"
 msgstr "Contourner les règles de protection des branches (fusion des administrateurs)"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Cache read"
+msgstr "Lecture du cache"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Cache write"
+msgstr "Écriture du cache"
 
 #: src/mobile/views/DesktopsView.tsx
 msgid "Cached only"
@@ -3494,9 +3507,14 @@ msgstr "Contient des valeurs sensibles ; ajoutez-le manuellement"
 
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
+#: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/components/thread/threadContextUsage.ts
 msgid "Context"
 msgstr "Contexte"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Context change"
+msgstr "Variation du contexte"
 
 #: src/renderer/components/thread/ChatPane/parts/items/ContextCompaction.tsx
 msgid "Context compacted"
@@ -4050,6 +4068,10 @@ msgstr "Ctrl+Enter"
 #: src/renderer/views/SettingsOverlay/parts/CursorRuntimeCard.tsx
 msgid "Current"
 msgstr "Récent"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Current / last task"
+msgstr "Tâche actuelle / dernière"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 #~ msgid "Current project"
@@ -7856,6 +7878,10 @@ msgstr "Mode"
 msgid "Model added to favorites"
 msgstr "Modèle ajouté aux favoris"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Model calls"
+msgstr "Appels au modèle"
+
 #: src/renderer/views/SettingsOverlay/parts/CursorProviderSettings.tsx
 #~ msgid "Model controls"
 #~ msgstr "Contrôles du modèle"
@@ -9499,6 +9525,10 @@ msgstr "Résultat"
 msgid "Outlook"
 msgstr "Outlook"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Output (including reasoning)"
+msgstr "Sortie (raisonnement inclus)"
+
 #: src/renderer/components/providers/usageFormat.ts
 msgid "Over pace — runs out early"
 msgstr "Rythme trop rapide — épuisé trop tôt"
@@ -10117,6 +10147,14 @@ msgstr "Vérification de {0} v{1}"
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 msgid "Probing v{0}"
 msgstr "Vérification de v{0}"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Processed tokens"
+msgstr "Tokens traités"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Processed tokens are not subscription usage. Account limits are shown in the sidebar."
+msgstr "Les tokens traités ne correspondent pas à la consommation de l’abonnement. Les limites du compte figurent dans la barre latérale."
 
 #: src/renderer/components/plugins/pluginCopy.ts
 msgid "Productivity"
@@ -14095,6 +14133,10 @@ msgstr "Recherche d'outils"
 msgid "Tools"
 msgstr "Outils"
 
+#: src/renderer/components/thread/ThreadContextDock.tsx
+msgid "Tools loaded on demand (outside context)"
+msgstr "Outils chargés à la demande (hors contexte)"
+
 #: src/renderer/components/skills/SkillMarketplaceModal.tsx
 msgid "Total installs"
 msgstr "Total des installations"
@@ -14555,6 +14597,10 @@ msgstr "Fournisseur indisponible"
 #~ msgid "Unavailable providers, models, reasoning levels, and Fast modes are skipped automatically. Unchecked providers and models are skipped until re-checked."
 #~ msgstr "Les fournisseurs, modèles, niveaux de raisonnement et modes Fast indisponibles sont ignorés automatiquement. Les fournisseurs et modèles décochés sont ignorés jusqu'à ce qu'ils soient à nouveau cochés."
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Uncached input"
+msgstr "Entrée sans cache"
+
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 msgid "Unchecked"
 msgstr "Décoché"
@@ -14931,7 +14977,6 @@ msgstr "L’URL est obligatoire."
 #: src/mobile/views/DesktopWorkspacePanel.tsx
 #: src/mobile/WideShell.tsx
 #: src/renderer/components/layout/PanelDock/panelTabMeta.ts
-#: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 msgid "Usage"
 msgstr "Utilisation"

@@ -1713,6 +1713,71 @@ describe("ThreadDraftView", () => {
     );
   });
 
+  it("does not carry a legacy standing Crossagents default into an ordinary task", () => {
+    useSharedSettings.setState({ enabledMcpServers: { crossagents: true } });
+    const onStart = vi.fn<(input: unknown) => void>();
+    render(
+      <ThreadDraftView project={project} agentStatuses={[dualModeCodexStatus]} onStart={onStart} />,
+    );
+    fireEvent.click(screen.getByText("set-prompt"));
+    fireEvent.click(screen.getByText("submit"));
+    expect(onStart).toHaveBeenCalledTimes(1);
+    expect(onStart.mock.lastCall?.[0]).toMatchObject({ config: { model: expect.any(String) } });
+    expect(onStart.mock.lastCall?.[0]).not.toMatchObject({ config: { crossagentMcp: true } });
+  });
+
+  it("enables Crossagents from the add menu for this draft only", () => {
+    useSharedSettings.setState({ enabledMcpServers: { crossagents: false } });
+    const onStart = vi.fn<(input: unknown) => void>();
+    render(
+      <ThreadDraftView project={project} agentStatuses={[dualModeCodexStatus]} onStart={onStart} />,
+    );
+    const props = composerSpy.mock.lastCall?.[0] as { inputLeadingControls: ReactNode };
+    const menu = props.inputLeadingControls as ReactElement<{
+      mcpServers: Array<{
+        descriptor: { id: string };
+        enabled: boolean;
+        onToggle: (enabled: boolean) => void;
+      }>;
+    }>;
+    const crossagents = menu.props.mcpServers.find(
+      (server) => server.descriptor.id === "crossagents",
+    );
+    expect(crossagents?.enabled).toBe(false);
+    act(() => crossagents?.onToggle(true));
+    expect(useSharedSettings.getState().enabledMcpServers.crossagents).toBe(false);
+    fireEvent.click(screen.getByText("set-prompt"));
+    fireEvent.click(screen.getByText("submit"));
+    expect(onStart.mock.lastCall?.[0]).toMatchObject({ config: { crossagentMcp: true } });
+  });
+
+  it("does not display a provider-owned standing Crossagents setting as active", () => {
+    useSharedSettings.setState({ agentSettings: { codex: { crossagentMcp: true } } });
+    const onStart = vi.fn<(input: unknown) => void>();
+    render(
+      <ThreadDraftView
+        project={project}
+        agentStatuses={[
+          {
+            ...dualModeCodexStatus,
+            capabilities: { ...dualModeCodexStatus.capabilities, mcpConfigSource: "agentSettings" },
+          },
+        ]}
+        onStart={onStart}
+      />,
+    );
+    const props = composerSpy.mock.lastCall?.[0] as { inputLeadingControls: ReactNode };
+    const menu = props.inputLeadingControls as ReactElement<{
+      mcpServers: Array<{ descriptor: { id: string }; enabled: boolean; visible: boolean }>;
+    }>;
+    expect(
+      menu.props.mcpServers.find((server) => server.descriptor.id === "crossagents"),
+    ).toMatchObject({ enabled: false, visible: false });
+    fireEvent.click(screen.getByText("set-prompt"));
+    fireEvent.click(screen.getByText("submit"));
+    expect(onStart.mock.lastCall?.[0]).not.toMatchObject({ config: { crossagentMcp: true } });
+  });
+
   it("submits the Codex Ask for approval reviewer override", async () => {
     const onStart = vi.fn<(input: unknown) => void>();
 

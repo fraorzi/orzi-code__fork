@@ -211,7 +211,7 @@ HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\{333}
         wsl: [],
       }),
     );
-    expect(STATUS_CACHE_VERSION).toBe(36);
+    expect(STATUS_CACHE_VERSION).toBe(37);
     expect(service.getCachedCapabilities("codex")).toBeUndefined();
   });
 
@@ -220,7 +220,7 @@ HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\{333}
     writeFileSync(
       statusCachePath,
       JSON.stringify({
-        version: 34,
+        version: 36,
         windows: [{ ...makeStatus(), executablePath: "/system/old-runtime" }],
         wsl: [],
       }),

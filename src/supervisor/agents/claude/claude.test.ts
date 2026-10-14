@@ -19,6 +19,19 @@ function oscNotify(body: string, code: 9 | 99 | 777 = 9): OscNotification {
 }
 
 describe("createClaudeAdapter skill roots", () => {
+  it("sets a launch-local 200k compaction window without changing the model context or effort", () => {
+    const adapter = createClaudeAdapter();
+    const location: ProjectLocation = { kind: "posix", path: "/tmp" };
+    const config: ThreadConfig = { model: "claude-opus-5-5", contextSize: "1m", effort: "high" };
+    const launch = adapter.buildLaunchArgv(location, config, "hello");
+    expect(launch.env).toMatchObject({ CLAUDE_CODE_AUTO_COMPACT_WINDOW: "200000" });
+    expect(launch.args).toEqual(expect.arrayContaining(["claude-opus-5-5", "--effort", "high"]));
+    const resume = adapter.buildResumeArgv(location, config, "", {
+      providerSessionId: "existing",
+      discoveredAt: "2026-10-15T00:00:00Z",
+    });
+    expect(resume.env).toMatchObject({ CLAUDE_CODE_AUTO_COMPACT_WINDOW: "200000" });
+  });
   it("links canonical projections starting with Claude 2.1.203", () => {
     expect(createClaudeAdapter().skillSupport?.projectionRoots).toEqual([
       expect.objectContaining({

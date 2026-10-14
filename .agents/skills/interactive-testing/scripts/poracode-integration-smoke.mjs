@@ -22,6 +22,7 @@ import { historyImportScenario } from "../../../../scripts/smoke-history-import.
 import { crossagentRolesScenario } from "../../../../scripts/smoke-crossagent-roles.mjs";
 import { agentVersionsScenario } from "../../../../scripts/smoke-agent-versions.mjs";
 import { agentUpdatePreferencesScenario } from "../../../../scripts/smoke-agent-update-preferences.mjs";
+import { contextUsageScenario } from "../../../../scripts/smoke-context-usage.mjs";
 import { mockLiveVoiceGate } from "./smoke-live-voice.mjs";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
@@ -218,6 +219,11 @@ async function runSmoke(plan) {
     if (plan.automated.includes("composer-redesign")) {
       await runScenario(report, "composer-redesign", () =>
         composerRedesignScenario({ client, evaluate, waitForValue, screenshot, outDir }),
+      );
+    }
+    if (plan.automated.includes("context-usage")) {
+      await runScenario(report, "context-usage", () =>
+        contextUsageScenario({ client, evaluate, waitForValue, screenshot, outDir }),
       );
     }
     if (plan.automated.includes("history-import")) {

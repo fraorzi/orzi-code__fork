@@ -284,6 +284,65 @@ function sdkTaskNotification(
 }
 
 describe("ClaudeSdkSession", () => {
+  it("publishes deduplicated task consumption and a context baseline through the SDK session", async () => {
+    const fake = createFakeQuery();
+    mockSdk.query.mockReturnValue(fake.runtime);
+    const events: RuntimeEvent[] = [];
+    const session = await ClaudeSdkSession.create({
+      threadId: "usage-task",
+      projectLocation,
+      config,
+      presentationMode: "gui",
+    });
+    session.setListener({
+      onRuntimeEvent: (event) => events.push(event),
+      onUpdate: () => {},
+      onError: () => {},
+      onClose: () => {},
+    });
+    await session.openThread(config);
+    await session.startTurn("work", config);
+    expect(mockSdk.query.mock.calls[0]?.[0]).toMatchObject({
+      options: {
+        env: { CLAUDE_CODE_AUTO_COMPACT_WINDOW: "200000" },
+      },
+    });
+    const sample = {
+      type: "assistant",
+      uuid: "msg-1",
+      session_id: "claude-session",
+      parent_tool_use_id: null,
+      message: {
+        id: "msg-1",
+        role: "assistant",
+        content: [],
+        usage: {
+          input_tokens: 10,
+          output_tokens: 20,
+          cache_read_input_tokens: 1000,
+          cache_creation_input_tokens: 50,
+        },
+      },
+    } as unknown as SDKMessage;
+    fake.emitMessage(sample);
+    fake.emitMessage(sample);
+    await flushAsyncWork();
+    const counters = events.filter((e) => e.type === "context.updated" && e.usage.taskUsage);
+    expect(counters.at(-1)).toMatchObject({
+      usage: {
+        taskUsage: {
+          calls: 1,
+          inputTokens: 10,
+          outputTokens: 20,
+          cacheReadTokens: 1000,
+          cacheWriteTokens: 50,
+          contextTokensAtStart: 42000,
+        },
+      },
+    });
+    await session.dispose();
+  });
+
   const projectLocation: ProjectLocation = { kind: "windows", path: "C:\\repo" };
   const wslProjectLocation: ProjectLocation = {
     kind: "wsl",
@@ -1078,7 +1137,7 @@ describe("ClaudeSdkSession", () => {
       usage: {
         usedTokens: 42_000,
         maxTokens: 1_000_000,
-        breakdown: [{ id: "messages-0", label: "Messages", tokens: 42_000 }],
+        breakdown: [{ id: "messages-0", label: "Messages", tokens: 42_000, kind: "used" }],
       },
     });
     expect(
@@ -1138,7 +1197,7 @@ describe("ClaudeSdkSession", () => {
         usage: {
           usedTokens: 238_000,
           maxTokens: 1_000_000,
-          breakdown: [{ id: "messages-0", label: "Messages", tokens: 238_000 }],
+          breakdown: [{ id: "messages-0", label: "Messages", tokens: 238_000, kind: "used" }],
         },
       });
       // The goal tick re-emits the dock state (objective/status/time)…

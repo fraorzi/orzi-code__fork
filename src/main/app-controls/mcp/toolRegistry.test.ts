@@ -401,6 +401,13 @@ function context(
   };
 }
 
+it("loads full workspace guidance only through the instructions tool", async () => {
+  const { ctx } = context();
+  expect(await dispatchTool("read_instructions", {}, ctx)).toEqual({
+    instructions: APP_CONTROLS_MCP_INSTRUCTIONS,
+  });
+});
+
 describe("Poracode app control tools — schedules", () => {
   it("creates a schedule with the calling thread's agent defaults", async () => {
     const { ctx, service } = context();

@@ -1772,6 +1772,11 @@ msgstr "Tự động lưu trữ các chủ đề đã hoàn thành sau"
 msgid "Auto-archive done threads after (days)"
 msgstr "Tự động lưu trữ các chủ đề đã hoàn thành sau (ngày)"
 
+#. placeholder {0}: summary.autoCompactThreshold.toLocaleString()
+#: src/renderer/components/thread/ThreadContextDock.tsx
+msgid "Auto-compact at {0} tokens"
+msgstr "Tự động nén ở {0} token"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Auto-generate"
 msgstr "Tự động tạo"
@@ -2239,6 +2244,14 @@ msgstr "Bỏ qua các quy tắc bảo vệ nhánh"
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/PrSection.tsx
 msgid "Bypass branch protection rules (admin merge)"
 msgstr "Bỏ qua các quy tắc bảo vệ nhánh (hợp nhất với quyền quản trị)"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Cache read"
+msgstr "Đọc bộ nhớ đệm"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Cache write"
+msgstr "Ghi bộ nhớ đệm"
 
 #: src/mobile/views/DesktopsView.tsx
 msgid "Cached only"
@@ -3494,9 +3507,14 @@ msgstr "Có chứa giá trị nhạy cảm; hãy thêm thủ công"
 
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
+#: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/components/thread/threadContextUsage.ts
 msgid "Context"
 msgstr "Ngữ cảnh"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Context change"
+msgstr "Thay đổi ngữ cảnh"
 
 #: src/renderer/components/thread/ChatPane/parts/items/ContextCompaction.tsx
 msgid "Context compacted"
@@ -4050,6 +4068,10 @@ msgstr "Ctrl+Enter"
 #: src/renderer/views/SettingsOverlay/parts/CursorRuntimeCard.tsx
 msgid "Current"
 msgstr "Gần đây"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Current / last task"
+msgstr "Tác vụ hiện tại / gần nhất"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 #~ msgid "Current project"
@@ -7857,6 +7879,10 @@ msgstr "Chế độ"
 msgid "Model added to favorites"
 msgstr "Đã thêm mô hình vào mục yêu thích"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Model calls"
+msgstr "Lần gọi mô hình"
+
 #: src/renderer/views/SettingsOverlay/parts/CursorProviderSettings.tsx
 #~ msgid "Model controls"
 #~ msgstr "Điều khiển mô hình"
@@ -9500,6 +9526,10 @@ msgstr "Kết quả"
 msgid "Outlook"
 msgstr "Outlook"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Output (including reasoning)"
+msgstr "Đầu ra (bao gồm suy luận)"
+
 #: src/renderer/components/providers/usageFormat.ts
 msgid "Over pace — runs out early"
 msgstr "Vượt nhịp độ — hết sớm"
@@ -10118,6 +10148,14 @@ msgstr "Đang kiểm tra {0} v{1}"
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 msgid "Probing v{0}"
 msgstr "Đang kiểm tra v{0}"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Processed tokens"
+msgstr "Token đã xử lý"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Processed tokens are not subscription usage. Account limits are shown in the sidebar."
+msgstr "Token đã xử lý không phải mức sử dụng gói đăng ký. Giới hạn tài khoản được hiển thị ở thanh bên."
 
 #: src/renderer/components/plugins/pluginCopy.ts
 msgid "Productivity"
@@ -14096,6 +14134,10 @@ msgstr "Tìm kiếm công cụ"
 msgid "Tools"
 msgstr "Công cụ"
 
+#: src/renderer/components/thread/ThreadContextDock.tsx
+msgid "Tools loaded on demand (outside context)"
+msgstr "Công cụ tải theo yêu cầu (ngoài ngữ cảnh)"
+
 #: src/renderer/components/skills/SkillMarketplaceModal.tsx
 msgid "Total installs"
 msgstr "Tổng lượt cài đặt"
@@ -14556,6 +14598,10 @@ msgstr "Nhà cung cấp không khả dụng"
 #~ msgid "Unavailable providers, models, reasoning levels, and Fast modes are skipped automatically. Unchecked providers and models are skipped until re-checked."
 #~ msgstr "Nhà cung cấp, mô hình, mức suy luận và chế độ Fast không khả dụng sẽ tự động được bỏ qua. Nhà cung cấp và mô hình không được chọn sẽ bị bỏ qua cho đến khi được chọn lại."
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Uncached input"
+msgstr "Đầu vào không dùng bộ nhớ đệm"
+
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 msgid "Unchecked"
 msgstr "Bỏ chọn"
@@ -14932,7 +14978,6 @@ msgstr "Bắt buộc phải có URL."
 #: src/mobile/views/DesktopWorkspacePanel.tsx
 #: src/mobile/WideShell.tsx
 #: src/renderer/components/layout/PanelDock/panelTabMeta.ts
-#: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 msgid "Usage"
 msgstr "Mức sử dụng"

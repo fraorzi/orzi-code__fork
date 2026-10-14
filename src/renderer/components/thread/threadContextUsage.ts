@@ -5,6 +5,7 @@ import type {
   ContextUsageBreakdownEntry,
   Thread,
   ThreadContextUsage,
+  TaskTokenUsage,
 } from "@/shared/contracts";
 import { i18n } from "@/renderer/i18n/i18n";
 import { agentStatusForPresentation } from "@/shared/agentSelection";
@@ -22,11 +23,17 @@ export interface ThreadContextUsageSummary {
   percentLabel: string;
   headline: string;
   detail: string;
+  taskUsage?: TaskTokenUsage;
+  autoCompactThreshold?: number;
 }
 
 export function hasReportedContextUsage(usage: ThreadContextUsage | undefined): boolean {
   if (!usage) return false;
-  return usage.usedTokens !== undefined || (usage.breakdown?.length ?? 0) > 0;
+  return (
+    usage.usedTokens !== undefined ||
+    (usage.breakdown?.length ?? 0) > 0 ||
+    usage.taskUsage !== undefined
+  );
 }
 
 export function resolveThreadContextUsageSummary(input: {
@@ -81,6 +88,10 @@ export function resolveThreadContextUsageSummary(input: {
     ...(remainingTokens !== undefined ? { remainingTokens } : {}),
     ...(percent !== undefined ? { percent } : {}),
     breakdown,
+    ...(reportedUsage?.taskUsage ? { taskUsage: reportedUsage.taskUsage } : {}),
+    ...(reportedUsage?.autoCompactThreshold
+      ? { autoCompactThreshold: reportedUsage.autoCompactThreshold }
+      : {}),
     usedLabel,
     maxLabel,
     remainingLabel,

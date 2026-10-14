@@ -3727,8 +3727,8 @@ describe("sdkCanonicalMapping — context usage", () => {
         usedTokens: 65_000,
         maxTokens: 1_000_000,
         breakdown: [
-          { id: "system-prompt-0", label: "System prompt", tokens: 20_000 },
-          { id: "messages-1", label: "Messages", tokens: 45_000 },
+          { id: "system-prompt-0", label: "System prompt", tokens: 20_000, kind: "used" },
+          { id: "messages-1", label: "Messages", tokens: 45_000, kind: "used" },
         ],
       },
     });

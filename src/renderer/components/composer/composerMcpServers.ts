@@ -56,6 +56,8 @@ export function providerMcpSettingEnabled(
 export interface ComposerMcpServerDescriptor {
   id: "browser" | "crossagents" | "chrome";
   configKey: ComposerMcpConfigKey;
+  /** False for features that must be requested for each task, never globally enabled. */
+  allowPersistentDefault?: boolean;
   icon: LucideIcon;
   /** Menu row + chip label. */
   label: MessageDescriptor;
@@ -86,6 +88,7 @@ export const browserMcpServer: ComposerMcpServerDescriptor = {
 export const crossagentMcpServer: ComposerMcpServerDescriptor = {
   id: "crossagents",
   configKey: "crossagentMcp",
+  allowPersistentDefault: false,
   icon: Users,
   label: msg`Crossagents`,
   enabledTitle: msg`Crossagents enabled for this thread`,

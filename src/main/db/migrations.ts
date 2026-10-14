@@ -1,6 +1,8 @@
 import Database from "better-sqlite3";
 import { normalizePersistedAntigravityModelSelection } from "@/shared/agents/antigravity";
 import { repairDuplicateProjects } from "./projectDeduplication";
+import { migrateCrossagentActivation } from "./crossagentActivationMigration";
+import { invalidateUnclassifiedContextBreakdowns } from "./contextUsageMigration";
 import { HEAD_CHARS } from "./runtimeStreamCap";
 import { writeItemStreams } from "./runtimeStreamStore";
 
@@ -613,6 +615,14 @@ export const DATABASE_MIGRATIONS = [
     // Unreleased repair: retain the oldest identity and merge its settings
     // before deleting duplicate rows, including newest-first legacy profiles.
     migrate: repairDuplicateProjects,
+  },
+  {
+    version: 43,
+    name: "opt-in delegation and categorized context usage",
+    migrate: (sqlite) => {
+      migrateCrossagentActivation(sqlite);
+      invalidateUnclassifiedContextBreakdowns(sqlite);
+    },
   },
 ] as const satisfies readonly DatabaseMigration[];
 

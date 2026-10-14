@@ -139,7 +139,7 @@ export function effectiveLaunchConfig(
   }
   const next = { ...config };
   if (pluginBuiltInMcpServerIds.includes("browser")) next.browserMcp = true;
-  if (pluginBuiltInMcpServerIds.includes("crossagents")) next.crossagentMcp = true;
+  // Installing a delegation plugin is not a request to delegate this task.
   if (pluginBuiltInMcpServerIds.includes("computer-use")) next.computerUse = true;
   if (pluginBuiltInMcpServerIds.includes("chrome")) next.chromeMcp = true;
   if (disabledBuiltInMcpServerIds.includes("browser")) next.browserMcp = false;
@@ -190,8 +190,7 @@ export function applyAgentSettingsMcpFlags(
       chromeMcp: agentSettings.chromeMcp === true,
       computerUse: agentSettings.computerUse === true,
       crossagentMcp:
-        crossagentRoutingAvailable &&
-        (config.teamMode === true || agentSettings.crossagentMcp === true),
+        crossagentRoutingAvailable && (config.teamMode === true || config.crossagentMcp === true),
     },
     disabledBuiltInMcpServerIds,
   );

@@ -1,16 +1,12 @@
 /**
  * Runs inside WSL (login-shell `node` invocation) to execute the Claude Agent SDK
  * with a Linux `claude` path. Prints one JSON object on stdout:
- * `{ "slashCommands": AgentSlashCommand[], "fastAvailable"?: boolean }`.
- *
- * Args: <claudePath> <timeoutMs> [<fastModeCachePath>]. When the cache path is
- * given (a `/mnt/c/...` mount of the host cache), fast-mode availability is
- * probed once per account and shared with the native path.
+ * `{ "slashCommands": AgentSlashCommand[] }`.
+ * Args: <claudePath> <timeoutMs>. Initialization only; never submits a prompt.
  */
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { SlashCommand } from "@anthropic-ai/claude-agent-sdk";
 import { AsyncPromptQueue } from "./promptQueue";
-import { resolveFastAvailability } from "./fastModeProbe";
 import { spawnClaudeProbeProcess } from "./sdkProbeProcess";
 import { claudeCapabilitiesFromSdkModels } from "./models";
 
@@ -53,7 +49,6 @@ async function readSkillNames(runtime: {
 async function main() {
   const claudePath = process.argv[2];
   const timeoutMs = Math.min(Math.max(Number(process.argv[3]) || 12_000, 3000), 60_000);
-  const cachePath = process.argv[4]?.trim() || undefined;
 
   if (!claudePath?.trim()) {
     console.error(JSON.stringify({ error: "missing_claude_path" }));
@@ -83,14 +78,9 @@ async function main() {
     const init = await q.initializationResult();
     const slashCommands = mapCommands(init.commands, await readSkillNames(q));
     const modelCapabilities = claudeCapabilitiesFromSdkModels(init.models);
-    const fastAvailable = cachePath
-      ? await resolveFastAvailability(q, queue, init.account?.email, cachePath)
-      : undefined;
-
     const payload = {
       ...(modelCapabilities ?? {}),
       slashCommands,
-      ...(fastAvailable !== undefined ? { fastAvailable } : {}),
     };
     console.log(JSON.stringify(payload));
     try {

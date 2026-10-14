@@ -159,8 +159,8 @@ describe("shared settings defaults", () => {
   });
 
   it("enables Crossagents as the standing MCP default and preserves opt-outs", () => {
-    expect(defaultSharedSettings.enabledMcpServers.crossagents).toBe(true);
-    expect(normalizeSharedSettings({}).enabledMcpServers.crossagents).toBe(true);
+    expect(defaultSharedSettings.enabledMcpServers.crossagents).toBeUndefined();
+    expect(normalizeSharedSettings({}).enabledMcpServers.crossagents).toBeUndefined();
     expect(
       normalizeSharedSettings({ enabledMcpServers: { crossagents: false } }).enabledMcpServers
         .crossagents,

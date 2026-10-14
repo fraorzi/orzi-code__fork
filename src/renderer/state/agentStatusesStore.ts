@@ -264,9 +264,9 @@ export const useAgentStatusesStore = create<AgentStatusesStore>()(
     }),
     {
       name: "poracode-agent-statuses-v1",
-      version: 33,
-      // v33 mirrors supervisor STATUS_CACHE_VERSION=36: discard executable
-      // paths captured before managed runtime versions were introduced.
+      version: 34,
+      // v34 mirrors supervisor STATUS_CACHE_VERSION=37: discard capability
+      // snapshots from the retired inference-based Fast probe.
 
       migrate: (persisted) => {
         const prev = (persisted ?? {}) as Partial<AgentStatusesStore>;

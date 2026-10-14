@@ -304,6 +304,27 @@ describe("win32PathToWslMount", () => {
 });
 
 describe("Claude SDK probe process handling", () => {
+  it("only initializes and never requests Fast or submits a model turn, even without an account cache", async () => {
+    const query = createProbeQuery();
+    vi.mocked(query.initializationResult).mockResolvedValue({
+      commands: [{ name: "help", description: "Show help", argumentHint: "" }],
+      models: [],
+      agents: [],
+      output_style: "default",
+      available_output_styles: [],
+      account: { email: "test@example.invalid" },
+    });
+    mockSdk.query.mockReturnValue(query);
+    await probeClaudeCapabilities({
+      location: { kind: "posix", path: "/tmp" },
+      executablePath: "claude",
+      version: "2.1.299",
+    });
+    expect(query.setModel).not.toHaveBeenCalled();
+    expect(query.applyFlagSettings).not.toHaveBeenCalled();
+    const params = mockSdk.query.mock.calls[0]?.[0];
+    expect(params).toMatchObject({ options: { persistSession: false } });
+  });
   it("contains probe-owned stdin EPIPE from the Claude SDK child", async () => {
     Object.defineProperty(process, "platform", { value: "linux", configurable: true });
     mockSdk.query.mockImplementation((input: unknown) => {

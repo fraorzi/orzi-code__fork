@@ -447,10 +447,8 @@ export function ThreadDraftComposerArea(props: {
           currentWorktreePath: branchSelection?.worktreePath,
         },
   );
-  // Registry-driven MCP toggles. The "+" add menu now flips the *persistent*
-  // enablement (a standing default applied to every new thread), keyed by MCP
-  // id — not the per-thread config flag. A new MCP server means adding one
-  // descriptor to the registry.
+  // Registry descriptors choose between standing defaults and per-task flags.
+  // Delegation must be requested for the current task.
   const availableComposerMcpServers = composerMcpServers.filter(
     (descriptor) => disabledBuiltInMcpServers[descriptor.id] !== true,
   );
@@ -462,21 +460,26 @@ export function ThreadDraftComposerArea(props: {
   const providerOwnsMcpForComposer = providerOwnsMcp && (!props.isRemote || isRemoteSurface);
   const mcpServers = availableComposerMcpServers.map((descriptor) => ({
     descriptor,
-    enabled: providerOwnsMcpForComposer
-      ? providerMcpSettingEnabled(
-          props.selectedAgent.capabilities,
-          providerMcpSettings,
-          descriptor.configKey,
-        )
-      : persistentMcpServers[descriptor.id] === true,
+    enabled:
+      descriptor.allowPersistentDefault === false
+        ? props.config[descriptor.configKey] === true
+        : providerOwnsMcpForComposer
+          ? providerMcpSettingEnabled(
+              props.selectedAgent.capabilities,
+              providerMcpSettings,
+              descriptor.configKey,
+            )
+          : persistentMcpServers[descriptor.id] === true,
     visible: providerOwnsMcp
       ? providerOwnsMcpForComposer &&
         descriptor.isAvailable(props.project.location) &&
-        providerMcpSettingEnabled(
-          props.selectedAgent.capabilities,
-          providerMcpSettings,
-          descriptor.configKey,
-        )
+        (descriptor.allowPersistentDefault === false
+          ? props.config[descriptor.configKey] === true
+          : providerMcpSettingEnabled(
+              props.selectedAgent.capabilities,
+              providerMcpSettings,
+              descriptor.configKey,
+            ))
       : descriptor.getScope(
           props.selectedAgent.capabilities,
           props.presentationMode,
@@ -484,7 +487,9 @@ export function ThreadDraftComposerArea(props: {
         ) !== "none",
     onToggle: (next: boolean) => {
       if (!providerOwnsMcp) {
-        setMcpServerEnabled(descriptor.id, next);
+        if (descriptor.allowPersistentDefault === false) {
+          props.onConfigChange(mcpTogglePatch(descriptor.configKey, next));
+        } else setMcpServerEnabled(descriptor.id, next);
       }
     },
   }));
@@ -529,7 +534,8 @@ export function ThreadDraftComposerArea(props: {
   const mentionedMcpServers = availableComposerMcpServers.filter(
     (descriptor) =>
       props.config[descriptor.configKey] === true &&
-      persistentMcpServers[descriptor.id] !== true &&
+      (descriptor.allowPersistentDefault === false ||
+        persistentMcpServers[descriptor.id] !== true) &&
       (!providerOwnsMcp || providerOwnsMcpForComposer),
   );
 

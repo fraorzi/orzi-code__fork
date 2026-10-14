@@ -1771,6 +1771,11 @@ msgstr "完了したスレッドを自動アーカイブする"
 msgid "Auto-archive done threads after (days)"
 msgstr "(日)後に完了したスレッドを自動アーカイブします"
 
+#. placeholder {0}: summary.autoCompactThreshold.toLocaleString()
+#: src/renderer/components/thread/ThreadContextDock.tsx
+msgid "Auto-compact at {0} tokens"
+msgstr "{0} トークンで自動圧縮"
+
 #: src/renderer/views/SettingsOverlay/parts/settingsOptions.ts
 msgid "Auto-generate"
 msgstr "自動生成"
@@ -2238,6 +2243,14 @@ msgstr "ブランチ保護ルールをバイパスする"
 #: src/renderer/views/GitReviewOverlay/parts/GitReviewSidebar/parts/PrSection.tsx
 msgid "Bypass branch protection rules (admin merge)"
 msgstr "ブランチ保護ルールをバイパスする (管理マージ)"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Cache read"
+msgstr "キャッシュ読み取り"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Cache write"
+msgstr "キャッシュ書き込み"
 
 #: src/mobile/views/DesktopsView.tsx
 msgid "Cached only"
@@ -3493,9 +3506,14 @@ msgstr "機密値が含まれています。手動で追加してください"
 
 #: src/mobile/ComposerInfoChips.tsx
 #: src/renderer/components/common/EffortContextMenu/EffortContextMenu.tsx
+#: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/components/thread/threadContextUsage.ts
 msgid "Context"
 msgstr "コンテキスト"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Context change"
+msgstr "コンテキストの変化"
 
 #: src/renderer/components/thread/ChatPane/parts/items/ContextCompaction.tsx
 msgid "Context compacted"
@@ -4049,6 +4067,10 @@ msgstr "Ctrl+Enter"
 #: src/renderer/views/SettingsOverlay/parts/CursorRuntimeCard.tsx
 msgid "Current"
 msgstr "最近"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Current / last task"
+msgstr "現在 / 最後のタスク"
 
 #: src/renderer/components/skills/SkillImportModal.tsx
 #~ msgid "Current project"
@@ -7855,6 +7877,10 @@ msgstr "モード"
 msgid "Model added to favorites"
 msgstr "モデルをお気に入りに追加しました"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Model calls"
+msgstr "モデル呼び出し"
+
 #: src/renderer/views/SettingsOverlay/parts/CursorProviderSettings.tsx
 #~ msgid "Model controls"
 #~ msgstr "モデルコントロール"
@@ -9498,6 +9524,10 @@ msgstr "結果"
 msgid "Outlook"
 msgstr "Outlook"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Output (including reasoning)"
+msgstr "出力（推論を含む）"
+
 #: src/renderer/components/providers/usageFormat.ts
 msgid "Over pace — runs out early"
 msgstr "オーバーペース — 早めに力尽きてしまう"
@@ -10116,6 +10146,14 @@ msgstr "{0} v{1}を確認中"
 #: src/renderer/views/SettingsOverlay/parts/ModelOrderSection.tsx
 msgid "Probing v{0}"
 msgstr "v{0}を確認中"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Processed tokens"
+msgstr "処理したトークン"
+
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Processed tokens are not subscription usage. Account limits are shown in the sidebar."
+msgstr "処理したトークン数はサブスクリプションの使用量ではありません。アカウントの上限はサイドバーに表示されます。"
 
 #: src/renderer/components/plugins/pluginCopy.ts
 msgid "Productivity"
@@ -14094,6 +14132,10 @@ msgstr "ツール検索"
 msgid "Tools"
 msgstr "ツール"
 
+#: src/renderer/components/thread/ThreadContextDock.tsx
+msgid "Tools loaded on demand (outside context)"
+msgstr "必要に応じて読み込むツール（コンテキスト外）"
+
 #: src/renderer/components/skills/SkillMarketplaceModal.tsx
 msgid "Total installs"
 msgstr "合計インストール数"
@@ -14554,6 +14596,10 @@ msgstr "利用できないプロバイダー"
 #~ msgid "Unavailable providers, models, reasoning levels, and Fast modes are skipped automatically. Unchecked providers and models are skipped until re-checked."
 #~ msgstr "利用できないプロバイダー、モデル、推論レベル、Fast モードは自動的にスキップされます。チェックを外したプロバイダーとモデルは、再度チェックするまでスキップされます。"
 
+#: src/renderer/components/thread/ThreadTaskUsageDetails.tsx
+msgid "Uncached input"
+msgstr "キャッシュされていない入力"
+
 #: src/renderer/views/SettingsOverlay/parts/ModelVisibilityPopover.tsx
 msgid "Unchecked"
 msgstr "チェック解除"
@@ -14930,7 +14976,6 @@ msgstr "URLは必須です。"
 #: src/mobile/views/DesktopWorkspacePanel.tsx
 #: src/mobile/WideShell.tsx
 #: src/renderer/components/layout/PanelDock/panelTabMeta.ts
-#: src/renderer/components/thread/ThreadContextDock.tsx
 #: src/renderer/views/MainView/parts/ProjectAuxiliaryPanel.tsx
 msgid "Usage"
 msgstr "使用量"

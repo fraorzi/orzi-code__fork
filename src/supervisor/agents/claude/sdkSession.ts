@@ -1,4 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { CLAUDE_SESSION_ENV } from "./sessionPolicy";
+import { ClaudeTaskUsageTracker } from "./taskUsage";
+import { parseContextWindowTokens } from "@/shared/contextWindow";
 import type { ChildProcess } from "node:child_process";
 import type {
   CanUseTool,
@@ -154,6 +157,7 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
   // miss the steer and the staged prompt would never flush.
   private interruptInFlight = false;
   private goalTrackingTimer: ReturnType<typeof setInterval> | undefined;
+  private readonly taskUsage = new ClaudeTaskUsageTracker();
 
   private constructor(input: CreateStructuredSessionInput) {
     this.input = input;
@@ -295,6 +299,13 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
     const generation = ++this.submissionGeneration;
     this.currentConfig = config;
     const turnId = `turn-${randomUUID()}`;
+    this.emitRuntimeEvents([
+      {
+        type: "context.updated",
+        threadId: this.input.threadId,
+        usage: { taskUsage: this.taskUsage.begin(turnId) },
+      },
+    ]);
     this.currentTurnAssistantUuid = undefined;
     this.currentTurnInFlight = true;
     this.deferredCompletion.clear();
@@ -321,6 +332,8 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
     await this.syncFastMode(query);
 
     const message = await buildSdkUserMessage(prompt, segments, options?.inlineInstructions);
+    if (this.disposed || generation !== this.submissionGeneration) return;
+    await this.refreshContextUsage(turnId);
     if (this.disposed || generation !== this.submissionGeneration) return;
     this.promptQueue.push(message);
   }
@@ -733,6 +746,7 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
               CLAUDE_AGENT_SDK_CLIENT_APP: "poracode",
               ...(this.input.env ?? {}),
             };
+      Object.assign(env, CLAUDE_SESSION_ENV);
       // Posix builds ship without the SDK's bundled `claude` SEA binary
       // (electron-builder strips `@anthropic-ai/claude-agent-sdk-*` from the
       // asar). The SDK falls back to that binary when `pathToClaudeCodeExecutable`
@@ -983,6 +997,13 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
     }
 
     this.beginResumedTurnIfNeeded(message);
+    if (message.type === "assistant") {
+      const taskUsage = this.taskUsage.record(message);
+      if (taskUsage)
+        this.emitRuntimeEvents([
+          { type: "context.updated", threadId: this.input.threadId, usage: { taskUsage } },
+        ]);
+    }
 
     if (message.type === "system" && message.subtype === "init") {
       // Bundled skills are reported both here and in the slash-command list;
@@ -1173,14 +1194,32 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
     );
   }
 
-  private async refreshContextUsage(): Promise<void> {
+  private async refreshContextUsage(baselineTurnId?: string): Promise<void> {
     try {
       const runtime = this.queryRuntime;
       if (!runtime) return;
       const usage = await runtime.getContextUsage();
       if (this.disposed) return;
-      const event = mapClaudeContextUsageResponse(this.input.threadId, usage);
+      const event = mapClaudeContextUsageResponse(
+        this.input.threadId,
+        usage,
+        this.currentConfig.contextSize
+          ? parseContextWindowTokens(this.currentConfig.contextSize)
+          : undefined,
+      );
+      if (
+        baselineTurnId &&
+        event?.type === "context.updated" &&
+        event.usage.usedTokens !== undefined
+      ) {
+        this.taskUsage.setContextBaseline(baselineTurnId, event.usage.usedTokens);
+      }
       if (event) this.emitRuntimeEvents([event]);
+      const taskUsage = this.taskUsage.snapshot();
+      if (taskUsage)
+        this.emitRuntimeEvents([
+          { type: "context.updated", threadId: this.input.threadId, usage: { taskUsage } },
+        ]);
       // Goal token spend accumulates from per-call assistant-message usage
       // (see accumulateActiveGoalAssistantSpend); the `apiUsage` snapshot on
       // this response is the LAST call's usage, not spend, so it must not feed
