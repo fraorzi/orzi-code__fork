@@ -349,6 +349,10 @@ export function reopenStoredThread(threadId: string): void {
     return;
   }
 
+  // Reading a saved local chat needs only its transcript. Start the provider
+  // on the next prompt through submitThreadInput's resumable-session path.
+  if (!thread.remoteServerId && thread.presentationMode === "gui" && thread.sessionRef) return;
+
   const isGuiReconnect = thread.presentationMode === "gui" && thread.sessionRef !== undefined;
   startTransition(() => {
     store.updateThreadRuntime(thread.id, {

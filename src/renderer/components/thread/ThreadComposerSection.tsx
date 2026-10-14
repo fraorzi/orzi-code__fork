@@ -5,7 +5,6 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  type ReactNode,
   type RefObject,
 } from "react";
 import { toast } from "@heroui/react";
@@ -158,20 +157,6 @@ type ThreadComposerSectionProps = {
 export function ThreadComposerSection(props: ThreadComposerSectionProps) {
   const thread = useThread(props.threadId) ?? props.fallbackThread;
   return <ThreadComposerSectionInner {...props} thread={thread} />;
-}
-
-type ComposerAfterControlsProps = {
-  renderExtras: () => ReactNode;
-  renderVoiceInput: () => ReactNode;
-};
-
-function ComposerAfterControls({ renderExtras, renderVoiceInput }: ComposerAfterControlsProps) {
-  return (
-    <>
-      {renderExtras()}
-      {renderVoiceInput()}
-    </>
-  );
 }
 
 function ThreadComposerSectionInner(props: ThreadComposerSectionProps & { thread: Thread }) {
@@ -415,6 +400,8 @@ function ThreadComposerSectionInner(props: ThreadComposerSectionProps & { thread
     !usesTerminalPresentation &&
     thread.sessionRef !== undefined &&
     thread.status === "working";
+  const canResumeGuiInput =
+    !usesTerminalPresentation && thread.sessionRef !== undefined && thread.status === "inactive";
   const canSubmitServerInput =
     isServerControlled &&
     !isConnecting &&
@@ -423,13 +410,15 @@ function ThreadComposerSectionInner(props: ThreadComposerSectionProps & { thread
       thread.status === "needs_reply" ||
       (!usesTerminalPresentation && thread.status === "needs_approval") ||
       thread.status === "error" ||
+      canResumeGuiInput ||
       canQueueServerInput);
   const canSubmitTerminalInput =
     usesTerminalPresentation &&
     isTerminalInput &&
     thread.status !== "inactive" &&
     thread.status !== "launching";
-  const showServerComposer = isServerControlled && thread.status !== "inactive";
+  const showServerComposer =
+    isServerControlled && (thread.status !== "inactive" || canResumeGuiInput);
   const showTerminalComposer =
     usesTerminalPresentation &&
     isTerminalInput &&
@@ -1035,15 +1024,8 @@ function ThreadComposerSectionInner(props: ThreadComposerSectionProps & { thread
                     : {})}
                   onStop={canInterruptStructuredTurn ? handleInterrupt : undefined}
                   {...(() => {
-                    const renderExtras = () => (
+                    const renderAddMenu = () => (
                       <>
-                        {showContextIndicator ? (
-                          <ThreadContextIndicator
-                            summary={contextSummary}
-                            isOpen={contextDockOpen}
-                            onToggle={() => setContextDockOpen((open) => !open)}
-                          />
-                        ) : null}
                         <ComposerAddMenu
                           mcpServers={mcpServers}
                           customMcpServers={customMcpServers}
@@ -1085,16 +1067,21 @@ function ThreadComposerSectionInner(props: ThreadComposerSectionProps & { thread
                         voiceInputRef={voiceInputRef}
                       />
                     );
-                    return isCliThread
-                      ? { leadingControls: renderExtras, afterControls: renderVoiceInput }
-                      : {
-                          afterControls: (
-                            <ComposerAfterControls
-                              renderExtras={renderExtras}
-                              renderVoiceInput={renderVoiceInput}
+                    return {
+                      inputLeadingControls: renderAddMenu(),
+                      afterControls: (
+                        <>
+                          {showContextIndicator ? (
+                            <ThreadContextIndicator
+                              summary={contextSummary}
+                              isOpen={contextDockOpen}
+                              onToggle={() => setContextDockOpen((open) => !open)}
                             />
-                          ),
-                        };
+                          ) : null}
+                          {renderVoiceInput()}
+                        </>
+                      ),
+                    };
                   })()}
                   onPromptChange={setPrompt}
                   {...(!usesRemoteTransport ? { onAttachFiles: attachments.addFiles } : {})}

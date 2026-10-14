@@ -1,6 +1,6 @@
 # Przekazanie Orzi Code
 
-Stan na 2026-10-13. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
+Stan na 2026-10-15. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
 
 ## Zacznij tutaj
 
@@ -17,6 +17,10 @@ Stan na 2026-10-13. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Integracja zmian wykonawców jest automatyczna. Użytkownik wyraźnie wykluczył zatwierdzanie każdego scalenia. Nie należy ponownie otwierać tej decyzji.
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
+
+## Załączniki, WebStorm i aktualizacje providerów - 2026-10-15
+
+Plus jest po lewej stronie inputa. Lokalne pliki z odpowiedzi otwierają WebStorm, z zachowaniem numerów linii i rozwiązywania nazw. Samo przeglądanie zapisanego lokalnego chatu GUI nie uruchamia providera; prompt wznawia go z zachowanego session ref. Koordynator aktualizacji zamyka bezczynne wznawialne sesje zamiast blokować na każdej pozycji w mapie. Rzeczywista praca, pytania, zgody, pending input, kolejka, tło i aktywne terminale nadal blokują aktualizację. Podpisana paczka `.tmp/orzi-chat-fixes-20261015/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu lokalnej aktualizacji. Podpis, zgodność hashy i zawartość app.asar sprawdzone; działającego bundle nie podmieniano. Szczegóły testów, ograniczeń i pakietu są na początku [stanu implementacji](implementation.md).
 
 ## Dodawanie repozytorium w górnym pasku - 2026-10-13
 

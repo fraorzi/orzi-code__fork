@@ -12,6 +12,7 @@ const readExternalFile = vi.fn<PoracodeBridge["readExternalFile"]>(async ({ abso
   modifiedAtMs: 1,
   contentBase64: "JVBERi0xLjQ=",
 }));
+const openExternalNative = vi.fn<PoracodeBridge["openExternalNative"]>(async () => {});
 const readProjectFile = vi.fn<PoracodeBridge["readProjectFile"]>();
 const searchProjectFiles = vi.fn<PoracodeBridge["searchProjectFiles"]>(async () => ({
   totalIndexed: 1,
@@ -27,7 +28,7 @@ beforeEach(() => {
   useFileEditorStore.getState().clearSession();
   Object.defineProperty(window, "poracode", {
     configurable: true,
-    value: { readExternalFile, readProjectFile, searchProjectFiles },
+    value: { readExternalFile, readProjectFile, searchProjectFiles, openExternalNative },
   });
 });
 
@@ -49,6 +50,7 @@ describe("Home file actions", () => {
       "//server/share/cv.pdf",
     ],
     [{ kind: "posix", path: "/home/test" }, "/tmp/cv.pdf", "/tmp/cv.pdf"],
+    [{ kind: "posix", path: "/home/test" }, "~/Documents/cv.pdf", "~/Documents/cv.pdf"],
     [{ kind: "posix", path: "/home/test" }, "/home/TEST/report.md", "/home/TEST/report.md"],
     [
       { kind: "posix", path: "/home/test" },
@@ -81,6 +83,31 @@ describe("Home file actions", () => {
       "file:///home/TEST/report%5Cdraft.md%20",
       "/home/TEST/report\\draft.md ",
     ],
+  ] satisfies Array<[ProjectLocation, string, string]>)(
+    "opens %s reference %s in the desktop editor or host-aware fallback",
+    async (location, path, expectedPath) => {
+      const project = homeProject(location);
+      const actions = createChatPaneFileActions({
+        project,
+        targetContext: buildFileEditorContext(project),
+      });
+      await actions.openProjectRelativePath!(path);
+      const url = new URL(openExternalNative.mock.calls[0]![0]);
+      expect(url.protocol).toBe("webstorm:");
+      expect(url.hostname).toBe("open");
+      expect(url.searchParams.get("file")).toBe(expectedPath);
+      expect(readExternalFile).not.toHaveBeenCalled();
+      expect(useFileEditorStore.getState().rootContext).toBeNull();
+      expect(readProjectFile).not.toHaveBeenCalled();
+      expect(searchProjectFiles).not.toHaveBeenCalled();
+      expect(actions.revealProjectFolderInTree).toBeUndefined();
+      expect(actions.showProjectEntryInExplorer).toBeUndefined();
+      expect(actions.projectLocation).toBeUndefined();
+      expect(actions.projectRootNames).toBeUndefined();
+    },
+  );
+
+  it.each([
     [
       {
         kind: "wsl",
@@ -102,7 +129,7 @@ describe("Home file actions", () => {
       "/home/TEST/report\\draft.md ",
     ],
   ] satisfies Array<[ProjectLocation, string, string]>)(
-    "opens %s reference %s through the external-file reader",
+    "preserves WSL file handling for %s, %s",
     async (location, path, expectedPath) => {
       const project = homeProject(location);
       const actions = createChatPaneFileActions({
@@ -110,18 +137,12 @@ describe("Home file actions", () => {
         targetContext: buildFileEditorContext(project),
       });
       await actions.openProjectRelativePath!(path);
+      expect(openExternalNative).not.toHaveBeenCalled();
       expect(readExternalFile).toHaveBeenCalledExactlyOnceWith({
         projectLocation: location,
         absolutePath: expectedPath,
       });
-      expect(readProjectFile).not.toHaveBeenCalled();
-      expect(searchProjectFiles).not.toHaveBeenCalled();
-      expect(useFileEditorStore.getState().activePath).toBe(expectedPath);
       expect(useFileEditorStore.getState().buffers[expectedPath]?.status).toBe("binary");
-      expect(actions.revealProjectFolderInTree).toBeUndefined();
-      expect(actions.showProjectEntryInExplorer).toBeUndefined();
-      expect(actions.projectLocation).toBeUndefined();
-      expect(actions.projectRootNames).toBeUndefined();
     },
   );
 
@@ -153,6 +174,18 @@ describe("Home file actions", () => {
     });
     expect(actions.openProjectRelativePath).toBeUndefined();
     expect(readExternalFile).not.toHaveBeenCalled();
+  });
+
+  it("opens a nested basename and line in WebStorm", async () => {
+    const project = { ...homeProject({ kind: "posix", path: "/repo" }), id: "project" };
+    const actions = createChatPaneFileActions({
+      project,
+      targetContext: buildFileEditorContext(project),
+    });
+    await actions.openProjectRelativePath!("report.pdf", 3);
+    expect(openExternalNative).toHaveBeenCalledExactlyOnceWith(
+      "webstorm://open?file=%2Frepo%2Foutput%2Freport.pdf&line=3",
+    );
   });
 
   it("keeps project basename lookup and relative routing", async () => {

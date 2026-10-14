@@ -1,4 +1,4 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "@heroui/react";
 import { Download, Monitor, Settings2, Webhook, X } from "lucide-react";
 import { Trans, useLingui } from "@lingui/react/macro";
@@ -241,21 +241,17 @@ function HookInstallProposal(props: {
   );
 }
 
-function DraftComposerAfterControls(props: {
+function DraftComposerAddMenu(props: {
   mcpServers: readonly ComposerMcpMenuItem[];
   customMcpServers: readonly ComposerCustomMcpItem[];
   pluginLabels: Readonly<Record<string, string>>;
   onPickFiles: () => void;
-  showVoiceInputButton: boolean;
-  isDisabled: boolean;
   readOnlyMcp?: boolean;
   experiment?: {
     enabled: boolean;
     disabled: boolean;
     onToggle: (next: boolean) => void;
   };
-  mentionRef: RefObject<MentionInputHandle | null>;
-  voiceInputRef: RefObject<VoiceInputHandle | null>;
   computerUse: {
     enabled: boolean;
     visible: boolean;
@@ -279,12 +275,6 @@ function DraftComposerAfterControls(props: {
         onPickFiles={props.onPickFiles}
         computerUse={props.computerUse}
         {...(props.experiment ? { experiment: props.experiment } : {})}
-      />
-      <ComposerVoiceInput
-        show={props.showVoiceInputButton}
-        isDisabled={props.isDisabled}
-        mentionRef={props.mentionRef}
-        voiceInputRef={props.voiceInputRef}
       />
     </>
   );
@@ -1449,7 +1439,15 @@ export function ThreadDraftComposerArea(props: {
         void submitSegments([...attachments.toSegments(), ...segments], promptRef.current);
       }}
       afterControls={
-        <DraftComposerAfterControls
+        <ComposerVoiceInput
+          show={showVoiceInputButton && !liveVoiceActive}
+          isDisabled={authRequired || agentUpdating || isSubmitting}
+          mentionRef={mentionRef}
+          voiceInputRef={voiceInputRef}
+        />
+      }
+      inputLeadingControls={
+        <DraftComposerAddMenu
           mcpServers={mcpServers}
           pluginLabels={composerPluginLabels}
           onPickFiles={() => {
@@ -1465,8 +1463,6 @@ export function ThreadDraftComposerArea(props: {
           }}
           customMcpServers={customMcpServers}
           readOnlyMcp={providerOwnsMcpForComposer}
-          showVoiceInputButton={showVoiceInputButton && !liveVoiceActive}
-          isDisabled={authRequired || agentUpdating || isSubmitting}
           {...(!isHomeScope && !usesRemoteTransport && !isQuickComposer && props.gitBranch
             ? {
                 experiment: {
@@ -1488,8 +1484,6 @@ export function ThreadDraftComposerArea(props: {
                 },
               }
             : {})}
-          mentionRef={mentionRef}
-          voiceInputRef={voiceInputRef}
           computerUse={{
             enabled: providerOwnsMcpForComposer
               ? providerComputerUseEnabled

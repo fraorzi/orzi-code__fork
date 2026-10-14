@@ -23,6 +23,7 @@ export class AgentUpdateCoordinator {
     private readonly deps: {
       enabled(): boolean;
       hasSessions(): boolean;
+      closeIdleSessions?(): Promise<void>;
       tasks(): Promise<AgentUpdateTask[]>;
       report(id: string, result: UpdateAgentBinaryResult): void;
     },
@@ -57,7 +58,14 @@ export class AgentUpdateCoordinator {
     }
     // Set the barrier before invoking async provider code.
     const mutation = Promise.resolve()
-      .then(run)
+      .then(async () => {
+        await this.deps.closeIdleSessions?.();
+        // Closing is asynchronous. Recheck before replacing files.
+        if (this.deps.hasSessions()) {
+          return { ok: false, output: "Update deferred until agent sessions close." };
+        }
+        return run();
+      })
       .catch((error: unknown) => ({
         ok: false,
         output: error instanceof Error ? error.message : String(error),

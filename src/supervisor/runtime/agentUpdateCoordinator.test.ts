@@ -9,6 +9,7 @@ function fixture() {
   const deps = {
     enabled: vi.fn<() => boolean>(() => true),
     hasSessions: vi.fn<() => boolean>(() => false),
+    closeIdleSessions: vi.fn<() => Promise<void>>(async () => {}),
     tasks: async () => [
       { id: "agent", enabled, isOutdated: outdated, update: () => coordinator.install(update) },
     ],
@@ -93,6 +94,36 @@ describe("automatic agent updates", () => {
     await mutation;
     await launch;
     expect(launched).toBe(true);
+  });
+
+  it("closes idle sessions under the launch barrier before installing", async () => {
+    const { coordinator, deps, update } = fixture();
+    const closing = Promise.withResolvers<void>();
+    deps.closeIdleSessions.mockReturnValue(closing.promise);
+    const mutation = coordinator.install(update);
+    let launched = false;
+    const launch = coordinator.acquireLaunch().then((release) => {
+      launched = true;
+      release();
+    });
+    await Promise.resolve();
+    expect(deps.closeIdleSessions).toHaveBeenCalledOnce();
+    expect(update).not.toHaveBeenCalled();
+    expect(launched).toBe(false);
+    closing.resolve();
+    await mutation;
+    await launch;
+    expect(update).toHaveBeenCalledOnce();
+    expect(launched).toBe(true);
+  });
+
+  it("does not replace files when work starts while idle sessions close", async () => {
+    const { coordinator, deps, update } = fixture();
+    deps.closeIdleSessions.mockImplementation(async () => {
+      deps.hasSessions.mockReturnValue(true);
+    });
+    expect((await coordinator.install(update)).ok).toBe(false);
+    expect(update).not.toHaveBeenCalled();
   });
 
   it("backs off failed installs and respects disabling while online", async () => {

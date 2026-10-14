@@ -1,4 +1,5 @@
 import type { Project, ProjectLocation } from "@/shared/contracts";
+import { webstormFileUrl } from "@/shared/webstormUrl";
 import { isHomeProjectId } from "@/shared/homeScope";
 import { readBridge } from "@/renderer/bridge";
 import { activateFileEditorContext } from "@/renderer/actions/fileEditorContext";
@@ -46,6 +47,17 @@ export function createChatPaneFileActions({
       onOpenProjectRelativePath(resolvedPath, lineNumber);
       return;
     }
+    if (!project.remoteServerId && targetContext.projectLocation.kind !== "wsl") {
+      await readBridge().openExternalNative(
+        webstormFileUrl(
+          /^(?:\/|[A-Za-z]:[\\/]|\\\\|~\/)/.test(resolvedPath)
+            ? resolvedPath
+            : resolveAbsolutePath(targetContext.projectLocation, resolvedPath),
+          lineNumber,
+        ),
+      );
+      return;
+    }
     await openFileInEditor(project, worktreePath, branch, resolvedPath, lineNumber);
   };
 
@@ -90,6 +102,7 @@ export function createChatPaneFileActions({
  */
 function resolveHomeFilePath(rawPath: string, location: ProjectLocation): string {
   let path = rawPath;
+  if (path.startsWith("~/")) return path;
   if (/^file:\/\//i.test(path)) {
     const url = new URL(path);
     path = decodeURIComponent(url.pathname);

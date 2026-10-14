@@ -29,7 +29,7 @@ vi.mock("./ThreadComposer", () => ({
     controls: unknown[];
     onPromptChange: (value: string) => void;
     onSubmit: () => void;
-    afterControls?: ReactNode;
+    inputLeadingControls?: ReactNode;
     footerLeading?: ReactNode;
   }) => {
     composerSpy(props);
@@ -575,11 +575,11 @@ describe("ThreadDraftView", () => {
     render(<ThreadDraftView project={project} agentStatuses={[codexStatus]} onStart={() => {}} />);
 
     const initialComposer = composerSpy.mock.lastCall?.[0] as {
-      afterControls: ReactElement<{
+      inputLeadingControls: ReactElement<{
         experiment?: { onToggle: (enabled: boolean) => void };
       }>;
     };
-    act(() => initialComposer.afterControls.props.experiment?.onToggle(true));
+    act(() => initialComposer.inputLeadingControls.props.experiment?.onToggle(true));
 
     let composer = composerSpy.mock.lastCall?.[0] as {
       fixedContent: ReactNode;
@@ -885,9 +885,9 @@ describe("ThreadDraftView", () => {
     render(<ThreadDraftView project={project} agentStatuses={[codexStatus]} onStart={() => {}} />);
 
     const initialComposer = composerSpy.mock.lastCall?.[0] as {
-      afterControls: ReactElement<{ experiment?: { onToggle: (enabled: boolean) => void } }>;
+      inputLeadingControls: ReactElement<{ experiment?: { onToggle: (enabled: boolean) => void } }>;
     };
-    act(() => initialComposer.afterControls.props.experiment?.onToggle(true));
+    act(() => initialComposer.inputLeadingControls.props.experiment?.onToggle(true));
     expect(screen.getByRole("button", { name: "Select branch" })).toHaveTextContent("origin/main");
 
     for (let index = 0; index < 2; index += 1) {
@@ -1362,9 +1362,9 @@ describe("ThreadDraftView", () => {
       />,
     );
 
-    const composerProps = composerSpy.mock.lastCall?.[0] as { afterControls?: ReactNode };
-    expect(isValidElement(composerProps.afterControls)).toBe(true);
-    const menuProps = (composerProps.afterControls as ReactElement).props as {
+    const composerProps = composerSpy.mock.lastCall?.[0] as { inputLeadingControls?: ReactNode };
+    expect(isValidElement(composerProps.inputLeadingControls)).toBe(true);
+    const menuProps = (composerProps.inputLeadingControls as ReactElement).props as {
       mcpServers: Array<{ visible: boolean }>;
       customMcpServers: unknown[];
       readOnlyMcp?: boolean;
@@ -1695,10 +1695,10 @@ describe("ThreadDraftView", () => {
     );
 
     await waitFor(() => expect(composerSpy).toHaveBeenCalled());
-    const props = composerSpy.mock.lastCall?.[0] as { afterControls?: ReactNode };
-    expect(isValidElement(props.afterControls)).toBe(true);
+    const props = composerSpy.mock.lastCall?.[0] as { inputLeadingControls?: ReactNode };
+    expect(isValidElement(props.inputLeadingControls)).toBe(true);
     const mcpServers = (
-      props.afterControls as ReactElement<{
+      props.inputLeadingControls as ReactElement<{
         mcpServers: Array<{ descriptor: { id: string } }>;
       }>
     ).props.mcpServers;

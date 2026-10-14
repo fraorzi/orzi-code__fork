@@ -86,6 +86,7 @@ import {
   workspaceLaunchConfig,
   type SpawnThreadInput,
 } from "./threadSession/spawnPipeline";
+import { canCloseAgentSessionForUpdate } from "./threadSession/agentUpdateSessions";
 import { StructuredTurnQueue } from "./threadSession/structuredTurnQueue";
 import { StructuredFailureReporter } from "./threadSession/structuredFailureReporter";
 import { readSupervisorSharedSettings } from "./supervisorSharedSettings";
@@ -288,6 +289,30 @@ export class ThreadSessionManager {
       }
     }
     return undefined;
+  }
+
+  hasAgentUpdateBlockers(): boolean {
+    return (
+      this.startLocks.size > 0 ||
+      [...this.sessions.values()].some((session) => !this.canCloseForAgentUpdate(session))
+    );
+  }
+
+  /** Called only under the update barrier; retain history and the provider session ref. */
+  async closeIdleAgentSessions(): Promise<void> {
+    for (const session of this.sessions.values()) {
+      if (!this.canCloseForAgentUpdate(session)) {
+        throw new Error("Update deferred until agent sessions close.");
+      }
+      await this.closeThread({ threadId: session.threadId });
+    }
+  }
+
+  private canCloseForAgentUpdate(session: SessionRuntime): boolean {
+    return canCloseAgentSessionForUpdate(session, {
+      hasPendingWork: this.followUpQueue.hasPendingWork(session.threadId),
+      hasActiveRuns: this.options.crossagentMcp?.hasActiveRuns?.(session.threadId) === true,
+    });
   }
 
   getThreadSnapshots(): ThreadRuntimeSnapshot[] {

@@ -94,7 +94,7 @@ describe("performThreadInputSubmit unknown-session resume", () => {
   });
 
   it("resumes the thread instead of dropping the prompt when the session is gone", async () => {
-    const thread = createThread();
+    const thread = createThread({ status: "inactive" });
     const resumeLaunch = vi.fn<(args: unknown) => Promise<void>>().mockResolvedValue(undefined);
 
     await expect(

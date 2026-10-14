@@ -381,7 +381,7 @@ describe("threadActions", () => {
     expect(useAppStore.getState().pendingThreadLaunches[thread.id]).toBe("");
   });
 
-  it("queues inactive GUI reconnects without marking them launching", () => {
+  it("reads a saved local GUI chat without launching the provider", () => {
     const thread = makeThread({
       presentationMode: "gui",
       status: "inactive",
@@ -395,13 +395,13 @@ describe("threadActions", () => {
     reopenStoredThread(thread.id);
 
     const reopened = useAppStore.getState().threads[0];
-    expect(reopened?.status).toBe("idle");
+    expect(reopened?.status).toBe("inactive");
     expect(reopened?.attention).toBe("none");
-    expect(useAppStore.getState().connectingThreadIds[thread.id]).toEqual(expect.any(String));
-    expect(useAppStore.getState().pendingThreadLaunches[thread.id]).toBe("");
+    expect(useAppStore.getState().connectingThreadIds[thread.id]).toBeUndefined();
+    expect(useAppStore.getState().pendingThreadLaunches[thread.id]).toBeUndefined();
   });
 
-  it("queues the same empty-prompt reopen for inactive remote threads as local", () => {
+  it("keeps empty-prompt reconnects for inactive remote threads", () => {
     const thread = makeThread({
       presentationMode: "gui",
       status: "inactive",

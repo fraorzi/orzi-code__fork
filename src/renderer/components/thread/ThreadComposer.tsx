@@ -246,6 +246,7 @@ export function ThreadComposer(props: {
   onAttachFiles?: (paths: string[]) => void;
   onStop?: (() => void) | undefined;
   controls: ComposerControl[];
+  inputLeadingControls?: ReactNode;
   leadingControls?: ReactNode | ((wrapLevel: number) => ReactNode);
   afterControls?: ReactNode | ((wrapLevel: number) => ReactNode);
   footerLeading?: ReactNode;
@@ -277,6 +278,7 @@ export function ThreadComposer(props: {
     onAttachFiles,
     onStop,
     controls,
+    inputLeadingControls,
     leadingControls,
     afterControls,
     footerLeading,
@@ -317,7 +319,7 @@ export function ThreadComposer(props: {
     .join("|");
   const effectiveToolbarLayoutKey = `${derivedToolbarLayoutKey}::leading=${
     leadingControls ? "1" : "0"
-  }::after=${afterControls ? "1" : "0"}::submit=${hideSubmitButton ? "0" : "1"}${
+  }::inputLeading=${inputLeadingControls ? "1" : "0"}::after=${afterControls ? "1" : "0"}::submit=${hideSubmitButton ? "0" : "1"}${
     toolbarLayoutKey ? `::extra=${toolbarLayoutKey}` : ""
   }`;
 
@@ -728,6 +730,7 @@ export function ThreadComposer(props: {
               className={toolbarClassName.replace("relative", "")}
               style={{ position: "absolute", inset: 0 }}
             >
+              {!pill && inputLeadingControls}
               {leadingControls && (
                 <div className="flex shrink-0 items-end gap-1">
                   {typeof leadingControls === "function" ? leadingControls(level) : leadingControls}
@@ -902,6 +905,7 @@ export function ThreadComposer(props: {
 
   const toolbar = (
     <div ref={toolbarRef} className={toolbarClassName} data-wrap-level={wrapLevelRef.current}>
+      {!pill && inputLeadingControls}
       {leadingControls && (
         <div className="flex shrink-0 items-end gap-1">
           {typeof leadingControls === "function" ? leadingControls(0) : leadingControls}
@@ -943,17 +947,26 @@ export function ThreadComposer(props: {
         {fixedContent}
         {attachmentBar}
         {pill ? (
-          <div className={multiline ? "flex flex-col" : "flex items-center"}>
-            <div ref={editorHostRef} data-composer-input-anchor="" className="min-w-0 flex-1">
-              {renderEditor()}
-            </div>
+          <div className="flex items-start">
+            {inputLeadingControls ? (
+              <div className="flex shrink-0 items-center pl-2 pt-2">{inputLeadingControls}</div>
+            ) : null}
             <div
-              className={`poracode-composer-pill-actions flex shrink-0 items-center gap-0.5 pr-2 ${
-                multiline ? "self-end pb-2" : ""
-              }`}
+              className={
+                multiline ? "flex min-w-0 flex-1 flex-col" : "flex min-w-0 flex-1 items-center"
+              }
             >
-              {typeof afterControls === "function" ? afterControls(0) : afterControls}
-              {renderSendButton()}
+              <div ref={editorHostRef} data-composer-input-anchor="" className="min-w-0 flex-1">
+                {renderEditor()}
+              </div>
+              <div
+                className={`poracode-composer-pill-actions flex shrink-0 items-center gap-0.5 pr-2 ${
+                  multiline ? "self-end pb-2" : ""
+                }`}
+              >
+                {typeof afterControls === "function" ? afterControls(0) : afterControls}
+                {renderSendButton()}
+              </div>
             </div>
           </div>
         ) : (

@@ -213,7 +213,8 @@ export class SupervisorRuntime {
       sharedSettingsCache: this.sharedSettingsCache,
       getAgentStatusService: () => this.agentStatusService,
       getActiveWslProjectDistros: () => this._projectWatcher?.getWslDistros() ?? [],
-      hasAgentSessions: () => this.sessions.size > 0,
+      hasAgentSessions: () => this.threadSessionManager.hasAgentUpdateBlockers(),
+      closeIdleAgentSessions: () => this.threadSessionManager.closeIdleAgentSessions(),
       closeThreadsForAgentKind: (agentKind) => this.closeThreadsForAgentKind(agentKind),
     });
     this.agentRegistryService.refreshAgentRegistryAdapters();
@@ -452,6 +453,8 @@ export class SupervisorRuntime {
         registerProviderSession: (threadId, disabledTools) =>
           this.crossagentMcpIngress.registerProviderSessionThread(threadId, disabledTools),
         unregister: (threadId) => this.crossagentMcpIngress.unregisterThread(threadId),
+        hasActiveRuns: (threadId) =>
+          this.subagentRunManager.listRuns(threadId).some((run) => run.status === "running"),
         cancelForeground: (threadId) => this.subagentRunManager.cancelForegroundForThread(threadId),
         cancelAll: (threadId) => this.subagentRunManager.cancelAllForThread(threadId),
         resolveChildRequest: (requestId, response) =>

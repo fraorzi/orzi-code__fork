@@ -108,6 +108,7 @@ vi.mock("./ThreadComposer", () => ({
     fixedContent?: ReactNode;
     attachmentBar?: ReactNode;
     inputContent?: ReactNode;
+    inputLeadingControls?: ReactNode;
     leadingControls?: ReactNode | (() => ReactNode);
     afterControls?: ReactNode | (() => ReactNode);
     onAttachFiles?: (paths: string[]) => void;
@@ -119,6 +120,7 @@ vi.mock("./ThreadComposer", () => ({
       {props.fixedContent}
       {props.attachmentBar}
       {props.inputContent}
+      {props.inputLeadingControls}
       {typeof props.leadingControls === "function"
         ? props.leadingControls()
         : props.leadingControls}
@@ -291,6 +293,19 @@ describe("ThreadComposerSection", () => {
     runtimeActions.submitThreadInput.mockClear();
     runtimeActions.submitThreadInput.mockResolvedValue(undefined);
     toastDangerSpy.mockClear();
+  });
+
+  it("allows a prompt to resume an inactive saved GUI chat", async () => {
+    const { onSubmitInput } = renderComposer({ thread: { ...guiThread, status: "inactive" } });
+    const input = screen.getByRole("textbox");
+    input.appendChild(document.createTextNode("resume this chat"));
+    fireEvent.input(input);
+    fireEvent.click(screen.getByRole("button", { name: "send" }));
+    await waitFor(() =>
+      expect(onSubmitInput).toHaveBeenCalledWith("resume this chat", [
+        { kind: "text", content: "resume this chat" },
+      ]),
+    );
   });
 
   it("hides base-checkout changes while a new worktree is provisioning", () => {

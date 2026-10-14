@@ -292,6 +292,19 @@ export class FollowUpQueueCoordinator {
     await active.admission.promise;
   }
 
+  /** Includes async preparation before a provider has reported working. */
+  hasPendingWork(threadId: string): boolean {
+    const record = this.records.get(threadId);
+    const lifecycle = this.lifecycles.get(threadId);
+    return (
+      this.directInput.hasReservation(threadId) ||
+      lifecycle?.direct === true ||
+      (lifecycle?.pendingRequestIds.size ?? 0) > 0 ||
+      record?.active !== undefined ||
+      (record !== undefined && !record.paused && record.items.length > 0)
+    );
+  }
+
   beginDirectInput(threadId: string): DirectInputReservation {
     return this.directInput.beginDirectInput(threadId);
   }

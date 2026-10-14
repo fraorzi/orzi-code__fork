@@ -1,6 +1,8 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { mkdir } from "node:fs/promises";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
+import { homedir } from "node:os";
+import { isWebstormFileUrl } from "@/shared/webstormUrl";
 import { HistoryImportService } from "../historyImport/HistoryImportService";
 import { getSqlite } from "../db/connection";
 import { dbFlushThreadRuntimeWrites } from "../db/runtimeItems";
@@ -174,6 +176,12 @@ function assertSafeExternalUrl(rawUrl: string): string {
     parsed = new URL(rawUrl);
   } catch {
     throw new Error("Invalid external URL");
+  }
+
+  if (isWebstormFileUrl(parsed)) {
+    const file = parsed.searchParams.get("file")!;
+    if (file.startsWith("~/")) parsed.searchParams.set("file", join(homedir(), file.slice(2)));
+    return parsed.toString();
   }
 
   if (!ALLOWED_EXTERNAL_PROTOCOLS.has(parsed.protocol)) {

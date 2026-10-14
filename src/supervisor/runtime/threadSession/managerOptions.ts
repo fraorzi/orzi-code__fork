@@ -61,6 +61,8 @@ export interface ThreadSessionManagerOptions {
       disabledTools?: readonly string[],
     ): CrossagentMcpHttpConfig | undefined;
     unregister(threadId: string): void;
+    /** Live child runs must survive an idle foreground turn. */
+    hasActiveRuns?(threadId: string): boolean;
     cancelForeground(threadId: string): void;
     cancelAll(threadId: string): void;
     /**

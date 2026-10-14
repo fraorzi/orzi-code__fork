@@ -89,8 +89,10 @@ export interface AgentRegistryServiceDeps {
   sharedSettingsCache: SupervisorSharedSettingsCache;
   getAgentStatusService: () => AgentStatusService;
   getActiveWslProjectDistros: () => string[];
-  /** Stop every live thread hosting `agentKind`. */
+  /** Work, pending input, or a process that cannot be safely resumed. */
   hasAgentSessions?: () => boolean;
+  closeIdleAgentSessions?: () => Promise<void>;
+  /** Stop every live thread hosting `agentKind`. */
   closeThreadsForAgentKind: (agentKind: AgentKind) => Promise<void>;
 }
 
@@ -135,6 +137,7 @@ export class AgentRegistryService {
     this.updates = new AgentUpdateCoordinator({
       enabled: () => this.deps.sharedSettingsCache.read().automaticAgentUpdates,
       hasSessions: () => this.deps.hasAgentSessions?.() ?? true,
+      closeIdleSessions: () => this.deps.closeIdleAgentSessions?.() ?? Promise.resolve(),
       tasks: () => this.automaticUpdateTasks(),
       report: (id, result) => {
         if (!result.ok) console.warn("[agent-update]", { id, ...result });
