@@ -2590,6 +2590,15 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
   padding: 0.8rem 1.1rem 0.25rem;
 }
 
+.poracode-composer-shell--pill:has(.poracode-composer-pill-leading)
+  :is(
+    .poracode-composer-editor.textarea,
+    .poracode-composer-editor .textarea,
+    .poracode-mention-input
+  ) {
+  padding-left: calc(1.1rem - 8px);
+}
+
 .poracode-composer-shell--pill .poracode-composer-custom-input {
   min-height: 0;
 }

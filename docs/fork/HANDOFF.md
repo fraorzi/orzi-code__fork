@@ -20,7 +20,7 @@ Stan na 2026-10-15. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 
 ## Wyrównanie plusa załączników - 2026-10-15
 
-Poprawiono pionowe wyrównanie plusa w pigułce composera. Pomiar Electron potwierdził wspólny środek plusa, tekstu i akcji po prawej; sprawdzono też menu i zawijanie. Testy, typecheck, lint, build i smoke zmienionego zakresu PASS. Podpisana paczka `.tmp/orzi-plus-alignment-20261015/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu aktualizacji. Szczegóły i dowody są na początku [stanu implementacji](implementation.md).
+Poprawiono pionowe wyrównanie plusa w pigułce composera i zmniejszono odstęp tekstu od plusa o 8 px. Pomiar Electron potwierdził wspólny środek kontrolek oraz odstęp 9,6 px w obu układach; sprawdzono też menu i zawijanie. Testy, typecheck, lint, build i smoke zmienionego zakresu PASS. Najnowsza podpisana paczka `.tmp/orzi-plus-spacing-20261015/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu aktualizacji. Podpis i hashe sprawdzone. Szczegóły i dowody są na początku [stanu implementacji](implementation.md).
 
 ## Kontekst i zużycie Claude - 2026-10-15
 
