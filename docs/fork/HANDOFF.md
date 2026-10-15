@@ -20,6 +20,8 @@ Stan na 2026-10-15. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 
 ## Strona główna i prompt po wznowieniu - 2026-10-15
 
+Kod poprawki jest w lokalnym commicie `ad7b3493`. Push do `origin/main` został odrzucony przez automatyczny przegląd uprawnień, który nie uznał zgody zapisanej w handoffie za wystarczającą. Użytkownik otrzymuje pytanie o jawną zgodę na push tej poprawki do `fraorzi/orzi-code__fork`. Nie ponawiaj pushowania bez odpowiedzi. Przygotowana lokalna aktualizacja pozostaje gotowa.
+
 Dodano stały plus przy Stronie głównej i ujednolicono jej tłumaczenie w selektorze oraz nagłówku nowego wątku. Naprawiono pomijanie startTurn przy wznowieniu sesji GUI z nowym promptem. Test odtworzył utratę wiadomości przed poprawką i potwierdził pojedyncze wysłanie po poprawce. 103 testy, typecheck i lint zmienionych plików PASS, tłumaczenia kompletne. Test rzeczywistego providera wymaga odpowiedzi na zadane pytanie o zgodę po odrzuceniu przez automatyczny przegląd uprawnień. Podpisana paczka `.tmp/orzi-home-resume-20261015/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu aktualizacji; podpis i hashe sprawdzone. Działającego bundle nie podmieniano. Szczegóły i ograniczenia kontroli Electron są na początku [stanu implementacji](implementation.md).
 
 ## Wyrównanie plusa załączników - 2026-10-15
