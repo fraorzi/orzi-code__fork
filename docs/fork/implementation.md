@@ -2,6 +2,14 @@
 
 Data: 2026-10-15. Lokalna wersja testowa na bazie PoraCode 1.8.1.
 
+## Wyrównanie plusa załączników - 2026-10-15
+
+- Plus w pigułce miał 36 px i stały górny padding, co przesuwało jego środek o 2,7 px poniżej tekstu i akcji po prawej. Wspólny ThreadComposer ustawia teraz 32 px dla obu stron i centruje plus w polu jednowierszowym. Po zawinięciu tekstu zachowuje go przy pierwszym wierszu.
+- Rzeczywisty Electron w izolowanym profilu potwierdził identyczny środek plusa, tekstu, mikrofonu i Wyślij: 444,296875 px. Kliknięcie plusa otworzyło menu; wpisanie długiego tekstu potwierdziło układ wielowierszowy. Zrzuty `/private/tmp/orzi-plus-align-qa-20261015/artifacts/plus-{singleline,multiline}.png`. Sesja QA zresetowana i zamknięta. Osobnego okna Quick Composer nie otwierano; używa tego samego komponentu.
+- 32 istniejące testy ThreadComposer/ComposerAddMenu, typecheck, zwykły i typowany lint, format oraz build PASS. Lingui: 0 missing we wszystkich 12 językach. Smoke zmienionego zakresu: welcome, baseline, thread-search i 3 bramki mock PASS, 0 błędów console/runtime. Raport `/private/tmp/orzi-plus-align-qa-20261015/artifacts/smoke-report.json`. Testy providerów były mockowane; nie wysyłano rzeczywistego promptu. Logi `.tmp/plus-alignment-*.log`.
+- Zmiana wyłącznie układu renderera; brak zmian granic zgodności, migracji i wersji protokołów.
+- Podpisana paczka `.tmp/orzi-plus-alignment-20261015/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu lokalnej aktualizacji. Podpisy źródła i stagingu PASS. Hash ready.json: `0b6b1c4f1c0331b9f47457365272970a5d8526ce05d9cbd324c7cb287fb40439`. Odczyt app.asar potwierdził poprawkę w CSS i JS. Raport `.tmp/plus-alignment-package-report.json`. Działającego bundle nie podmieniano.
+
 ## Kontekst i zużycie Claude - 2026-10-15
 
 - Wdrożono punkty 2, 3, 5 i 6. Model/wysiłek nadal wybiera użytkownik, High bez zmian. Punkt 4 wykluczony; bez nowych ograniczeń logów, obrazów i sposobu pracy agenta.

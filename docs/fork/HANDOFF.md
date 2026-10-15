@@ -18,6 +18,10 @@ Stan na 2026-10-15. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
 
+## Wyrównanie plusa załączników - 2026-10-15
+
+Poprawiono pionowe wyrównanie plusa w pigułce composera. Pomiar Electron potwierdził wspólny środek plusa, tekstu i akcji po prawej; sprawdzono też menu i zawijanie. Testy, typecheck, lint, build i smoke zmienionego zakresu PASS. Podpisana paczka `.tmp/orzi-plus-alignment-20261015/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu aktualizacji. Szczegóły i dowody są na początku [stanu implementacji](implementation.md).
+
 ## Kontekst i zużycie Claude - 2026-10-15
 
 Wdrożono zaakceptowane punkty 2, 3, 5 i 6. Wysiłek/model pozostają wyborem użytkownika; punkt 4 został wykluczony. Sesje Claude uruchamiane przez Orzi mają `CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`, bez zmian globalnego Claude Code. Rzeczywisty init CLI potwierdził próg 167k i rezerwę 33k, bez promptu do modelu. MCP app-controls i Crossagents wysyłają krótki opis, a pełne instrukcje udostępniają przez `read_instructions`. Crossagents wymaga jawnego włączenia wątku, wzmianki albo Teamwork. Usunięto płatny probe dostępności Fast. Panel kontekstu pokazuje osobno zużycie bieżącego/ostatniego zadania, cache, próg kompakcji i odroczone narzędzia. SQLite v43 migruje stare domyślne delegowanie i odświeża stare kategorie kontekstu; cache statusów v37 / renderer v34. Podpisana paczka `.tmp/orzi-context-efficiency-final-20261015/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu. Podpis i hash sprawdzone, działającego bundle nie podmieniano. Szczegóły i dowody są na początku [stanu implementacji](implementation.md).

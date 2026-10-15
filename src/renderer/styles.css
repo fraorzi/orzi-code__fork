@@ -2594,6 +2594,7 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
   min-height: 0;
 }
 
+.poracode-composer-pill-leading .button--icon-only,
 .poracode-composer-pill-actions .button--icon-only {
   width: 2rem;
   min-width: 2rem;
