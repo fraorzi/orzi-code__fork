@@ -277,6 +277,71 @@ describe("ThreadSessionManager Windows shells", () => {
 });
 
 describe("ThreadSessionManager start guards", () => {
+  it.each([false, true])(
+    "delivers a GUI launch prompt exactly once (resume: %s)",
+    async (resume) => {
+      const structuredSession = createStructuredSession(Promise.resolve());
+      structuredSession.startTurn = vi.fn<NonNullable<StructuredSessionHandle["startTurn"]>>(
+        async () => undefined,
+      );
+      const adapter = createAdapter("test-agent", structuredSession);
+      const emit = vi.fn<(event: SupervisorEvent) => void>();
+      const manager = createManager("test-agent", adapter, emit);
+      const config = { model: "test-model" };
+      const sessionRef = {
+        providerSessionId: "saved-session",
+        discoveredAt: "2026-10-15T00:00:00.000Z",
+      };
+      const segments = [{ kind: "text" as const, content: "continue with marker" }];
+      await manager.startThread({
+        threadId: "launch-input",
+        projectLocation: { kind: "windows", path: "C:\\repo" },
+        agentKind: "test-agent",
+        config,
+        prompt: "continue with marker",
+        segments,
+        userMessageItemId: "user-existing",
+        initialSize: { cols: 80, rows: 24 },
+        presentationMode: "gui",
+        ...(resume ? { sessionRef } : {}),
+      });
+      expect(structuredSession.openThread).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining(config),
+        resume ? sessionRef : undefined,
+      );
+      expect(structuredSession.startTurn).toHaveBeenCalledExactlyOnceWith(
+        "continue with marker",
+        expect.objectContaining(config),
+        segments,
+        { userMessageItemId: "user-existing" },
+      );
+      expect(emit.mock.calls.map(([event]) => event)).toContainEqual(
+        expect.objectContaining({ type: "thread-state", status: "working" }),
+      );
+    },
+  );
+
+  it("only reopens history when a resumed GUI launch has no prompt", async () => {
+    const structuredSession = createStructuredSession(Promise.resolve());
+    structuredSession.startTurn = vi.fn<NonNullable<StructuredSessionHandle["startTurn"]>>(
+      async () => undefined,
+    );
+    const adapter = createAdapter("test-agent", structuredSession);
+    const manager = createManager("test-agent", adapter);
+    await manager.startThread({
+      threadId: "history-only",
+      projectLocation: { kind: "windows", path: "C:\\repo" },
+      agentKind: "test-agent",
+      config: { model: "test-model" },
+      prompt: "",
+      initialSize: { cols: 80, rows: 24 },
+      presentationMode: "gui",
+      sessionRef: { providerSessionId: "saved-session", discoveredAt: "2026-10-15T00:00:00.000Z" },
+    });
+    expect(structuredSession.openThread).toHaveBeenCalledOnce();
+    expect(structuredSession.startTurn).not.toHaveBeenCalled();
+  });
+
   it("waits for a reconnect before delivering input to the new live session", async () => {
     const activation = deferred();
     const structuredSession = createStructuredSession(activation.promise);
@@ -602,7 +667,7 @@ describe("ThreadSessionManager start guards", () => {
       threadId: "thread-opencode-empty-mcp",
       projectLocation: { kind: "windows", path: "C:\\repo" },
       agentKind: "opencode",
-      config: { model: "opencode/model" },
+      config: { model: "opencode/model", crossagentMcp: true },
       prompt: "hello",
       initialSize: { cols: 80, rows: 24 },
       presentationMode: "gui",

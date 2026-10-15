@@ -12,7 +12,7 @@ import type {
   ThreadConfig,
   ThreadPresentationMode,
 } from "@/shared/contracts";
-import { HOME_PROJECT_NAME, isHomeProjectId } from "@/shared/homeScope";
+import { isHomeProjectId } from "@/shared/homeScope";
 import { readBridge } from "@/renderer/bridge";
 import { getComputerUseScope } from "@/renderer/components/composer/computerUseScope";
 import {
@@ -207,7 +207,6 @@ export function ThreadDraftView(props: {
     isDiscoveryActiveForLocation(s, project.location),
   );
   const isHomeScope = isHomeProjectId(project.id);
-  const scopeLabel = isHomeScope ? HOME_PROJECT_NAME : undefined;
   const remoteConnection = useRemoteServersStore((state) => {
     const { remoteServerId } = project;
     if (!remoteServerId) return "local";
@@ -263,6 +262,7 @@ export function ThreadDraftView(props: {
   const [crossagentMcpMention, setCrossagentMcpMention] = useState(false);
   const [teamMode, setTeamMode] = useState(false);
   const { t } = useLingui();
+  const scopeLabel = isHomeScope ? t`Home` : undefined;
   const [chromeMcpMention, setChromeMcpMention] = useState(false);
   const [computerUseMention, setComputerUseMention] = useState(false);
   const [worktreeMode, setWorktreeMode] = useState(

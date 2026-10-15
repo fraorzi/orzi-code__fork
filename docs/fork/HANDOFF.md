@@ -18,6 +18,10 @@ Stan na 2026-10-15. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__f
 - Diff ma pokazywać wynik pojedynczego promptu. Dalszy kierunek wyglądu pozostaje otwarty.
 - Użytkownik polecił 2026-10-06: "pushuj na biezaco". Commituj i pushuj zakończone, zweryfikowane zmiany forka do `origin/main` bez ponownego pytania. Publikacja wydań i DMG pozostaje osobną decyzją. Odpowiedzi po polsku, zwięzłe, wyłącznie ASCII hyphen-minus zamiast długich myślników.
 
+## Strona główna i prompt po wznowieniu - 2026-10-15
+
+Dodano stały plus przy Stronie głównej i ujednolicono jej tłumaczenie w selektorze oraz nagłówku nowego wątku. Naprawiono pomijanie startTurn przy wznowieniu sesji GUI z nowym promptem. Test odtworzył utratę wiadomości przed poprawką i potwierdził pojedyncze wysłanie po poprawce. 103 testy, typecheck i lint zmienionych plików PASS, tłumaczenia kompletne. Test rzeczywistego providera wymaga odpowiedzi na zadane pytanie o zgodę po odrzuceniu przez automatyczny przegląd uprawnień. Podpisana paczka `.tmp/orzi-home-resume-20261015/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu aktualizacji; podpis i hashe sprawdzone. Działającego bundle nie podmieniano. Szczegóły i ograniczenia kontroli Electron są na początku [stanu implementacji](implementation.md).
+
 ## Wyrównanie plusa załączników - 2026-10-15
 
 Poprawiono pionowe wyrównanie plusa w pigułce composera i zmniejszono odstęp tekstu od plusa o 8 px. Pomiar Electron potwierdził wspólny środek kontrolek oraz odstęp 9,6 px w obu układach; sprawdzono też menu i zawijanie. Testy, typecheck, lint, build i smoke zmienionego zakresu PASS. Najnowsza podpisana paczka `.tmp/orzi-plus-spacing-20261015/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu aktualizacji. Podpis i hashe sprawdzone. Szczegóły i dowody są na początku [stanu implementacji](implementation.md).

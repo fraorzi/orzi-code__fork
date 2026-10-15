@@ -6372,9 +6372,11 @@ msgstr "Cơ sở dữ liệu lịch sử"
 msgid "History imported."
 msgstr "Đã nhập lịch sử."
 
+#: src/renderer/components/thread/ProjectSwitchMenu.tsx
+#: src/renderer/components/thread/ThreadDraftView.tsx
 #: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/HomeView.tsx
-#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarHomeSection.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 #: src/renderer/views/WelcomeOverlay.tsx
 msgid "Home"
@@ -8334,6 +8336,10 @@ msgstr "Luồng mới từ việc cần làm này"
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectHeader.tsx
 msgid "New thread in {0}"
 msgstr "Luồng mới trong {0}"
+
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarHomeSection.tsx
+msgid "New thread in {projectName}"
+msgstr "Luồng mới trong {projectName}"
 
 #: src/mobile/ThreadTitleRow.tsx
 #: src/mobile/views/threadActionSurfaces.tsx
@@ -13363,10 +13369,10 @@ msgstr "Terminal"
 #. placeholder {0}: project.name
 #. placeholder {0}: props.projectName
 #. placeholder {0}: props.worktreeBranch
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarHomeSection.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectHeader.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SortableThreadItem/parts/ThreadItemSuffix.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/WorktreeGroupHeader.tsx
-#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 msgid "Terminal for {0}"
 msgstr "Thiết bị đầu cuối cho {0}"
 

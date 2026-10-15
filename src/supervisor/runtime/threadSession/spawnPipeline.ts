@@ -434,10 +434,7 @@ export class SpawnPipeline {
     // optimistic message and shipped its id with the payload, we reuse that
     // id end-to-end so the chat pane never sees a duplicate.
     let optimisticUserMessageItemId =
-      !payload.providerSwitch &&
-      !usesTerminalPresentation &&
-      initialPrompt.length > 0 &&
-      !payload.sessionRef
+      !payload.providerSwitch && !usesTerminalPresentation && initialPrompt.length > 0
         ? ctx.emitOptimisticUserMessage(
             payload.threadId,
             initialPrompt,
@@ -693,12 +690,8 @@ export class SpawnPipeline {
         launchConfig,
         nativePlugins,
       });
-      if (
-        !startInterrupted &&
-        !payload.sessionRef &&
-        initialPrompt.length > 0 &&
-        structuredSession.startTurn
-      ) {
+      // Opening a saved session restores history; a supplied prompt still needs a new turn.
+      if (!startInterrupted && initialPrompt.length > 0 && structuredSession.startTurn) {
         const startOptions = {
           ...(optimisticUserMessageItemId
             ? { userMessageItemId: optimisticUserMessageItemId }

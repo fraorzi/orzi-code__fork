@@ -3,7 +3,7 @@ import { Check, ChevronDown, House } from "lucide-react";
 import { Description, Dropdown, Label } from "@heroui/react";
 import { useLingui } from "@lingui/react/macro";
 import type { Project } from "@/shared/contracts";
-import { HOME_PROJECT_NAME, isHomeProject, isHomeProjectId } from "@/shared/homeScope";
+import { isHomeProject, isHomeProjectId } from "@/shared/homeScope";
 import { makeDraftPaneId } from "@/shared/paneId";
 import { useAppStore } from "@/renderer/state/appStore";
 import { rememberWorkspaceProject } from "@/renderer/state/workspaceStore";
@@ -43,7 +43,7 @@ export function ProjectSwitchMenu(props: {
   // outlived a workspace switch), so it resolves against the full list.
   const current = allProjects.find((project) => project.id === currentProjectId);
   const isHomeCurrent = isHomeProjectId(currentProjectId);
-  const label = isHomeCurrent ? HOME_PROJECT_NAME : (current?.name ?? t`Select project`);
+  const label = isHomeCurrent ? t`Home` : (current?.name ?? t`Select project`);
   const currentRemote = remoteServerFor(current);
   const triggerIcon = isHomeCurrent ? (
     <House className="size-3.5 shrink-0 text-muted" />
@@ -80,7 +80,7 @@ export function ProjectSwitchMenu(props: {
   function sheetRows(entries: readonly Project[]) {
     return entries.map((project) => {
       const isHome = isHomeProject(project);
-      const itemLabel = isHome ? HOME_PROJECT_NAME : project.name;
+      const itemLabel = isHome ? t`Home` : project.name;
       const selected = project.id === currentProjectId;
       const remote = remoteServerFor(project);
       return (
@@ -110,7 +110,7 @@ export function ProjectSwitchMenu(props: {
   function menuItems(entries: readonly Project[]) {
     return entries.map((project) => {
       const isHome = isHomeProject(project);
-      const itemLabel = isHome ? HOME_PROJECT_NAME : project.name;
+      const itemLabel = isHome ? t`Home` : project.name;
       const remote = remoteServerFor(project);
       return (
         <Dropdown.Item key={project.id} id={project.id} textValue={itemLabel}>

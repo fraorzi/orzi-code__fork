@@ -6372,9 +6372,11 @@ msgstr "历史记录数据库"
 msgid "History imported."
 msgstr "历史记录已导入。"
 
+#: src/renderer/components/thread/ProjectSwitchMenu.tsx
+#: src/renderer/components/thread/ThreadDraftView.tsx
 #: src/renderer/views/ArchiveView/ArchiveView.tsx
 #: src/renderer/views/HomeView.tsx
-#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarHomeSection.tsx
 #: src/renderer/views/SchedulesView/ScheduleEditor.tsx
 #: src/renderer/views/WelcomeOverlay.tsx
 msgid "Home"
@@ -8333,6 +8335,10 @@ msgstr "基于此待办事项的新线程"
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectHeader.tsx
 msgid "New thread in {0}"
 msgstr "在 {0} 中新建线程"
+
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarHomeSection.tsx
+msgid "New thread in {projectName}"
+msgstr "在 {projectName} 中新建线程"
 
 #: src/mobile/ThreadTitleRow.tsx
 #: src/mobile/views/threadActionSurfaces.tsx
@@ -13362,10 +13368,10 @@ msgstr "终端"
 #. placeholder {0}: project.name
 #. placeholder {0}: props.projectName
 #. placeholder {0}: props.worktreeBranch
+#: src/renderer/views/MainView/parts/Sidebar/parts/SidebarHomeSection.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SidebarProjectHeader.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/SortableThreadItem/parts/ThreadItemSuffix.tsx
 #: src/renderer/views/MainView/parts/Sidebar/parts/WorktreeGroupHeader.tsx
-#: src/renderer/views/MainView/parts/Sidebar/Sidebar.tsx
 msgid "Terminal for {0}"
 msgstr "{0}的终端"
 
