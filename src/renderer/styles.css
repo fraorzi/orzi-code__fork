@@ -2596,7 +2596,7 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
     .poracode-composer-editor .textarea,
     .poracode-mention-input
   ) {
-  padding-left: calc(1.1rem - 8px);
+  padding-left: calc(1.1rem - 12px);
 }
 
 .poracode-composer-shell--pill .poracode-composer-custom-input {

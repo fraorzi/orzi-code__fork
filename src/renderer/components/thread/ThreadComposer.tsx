@@ -951,7 +951,7 @@ export function ThreadComposer(props: {
             {inputLeadingControls ? (
               <div
                 className={`poracode-composer-pill-leading flex shrink-0 items-center pl-2 ${
-                  multiline ? "pt-2" : "self-center"
+                  multiline ? "self-end pb-2" : "self-center"
                 }`}
               >
                 {inputLeadingControls}
