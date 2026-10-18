@@ -2590,7 +2590,9 @@ html[data-app-unfocused] .poracode-provider-icon--finished {
   padding: 0.8rem 1.1rem 0.25rem;
 }
 
-.poracode-composer-shell--pill:has(.poracode-composer-pill-leading)
+.poracode-composer-shell--pill:not(.poracode-composer-shell--multiline):has(
+    .poracode-composer-pill-leading
+  )
   :is(
     .poracode-composer-editor.textarea,
     .poracode-composer-editor .textarea,

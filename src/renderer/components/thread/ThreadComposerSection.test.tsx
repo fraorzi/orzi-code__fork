@@ -615,7 +615,7 @@ describe("ThreadComposerSection", () => {
     expect(menuProps.customMcpServers).toEqual([]);
   });
 
-  it("uses GUI presentation capabilities for slash commands and /fast submission", () => {
+  it("uses GUI presentation capabilities for slash commands and hides retired fast mode", () => {
     const divergentStatus: AgentStatus = {
       ...codexGuiStatus,
       capabilities: {
@@ -630,9 +630,9 @@ describe("ThreadComposerSection", () => {
         presentationCapabilities: {
           gui: {
             models: [{ id: "gpt-5.4", label: "5.4" }],
-            efforts: ["high"],
+            efforts: ["medium", "high"],
             defaultEffort: "high",
-            modelEfforts: { "gpt-5.4": ["high"] },
+            modelEfforts: { "gpt-5.4": ["medium", "high"] },
             fastModels: ["gpt-5.4"],
             modes: ["agent"],
             approvalPolicies: [{ id: "on-request", label: "On Request" }],
@@ -649,15 +649,16 @@ describe("ThreadComposerSection", () => {
     renderComposer({ agentStatus: divergentStatus });
 
     const input = screen.getByRole("textbox");
+    typeComposerText(input, "/effort");
+
+    expect(screen.getByRole("option", { name: /\/effort/ })).toBeInTheDocument();
+
     typeComposerText(input, "/fast");
 
-    expect(screen.getByRole("option", { name: /\/fast/ })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: /\/fast/ })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "send" }));
-
-    expect(runtimeActions.changeThreadConfig).toHaveBeenCalledWith(guiThread.id, {
-      model: "gpt-5.4",
-      fast: true,
-    });
+    expect(runtimeActions.changeThreadConfig).not.toHaveBeenCalled();
+    expect(input.textContent).toBe("");
   });
 
   it("hides the terminal composer collapse button in remote sessions", () => {

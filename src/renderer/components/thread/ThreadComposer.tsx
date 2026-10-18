@@ -947,32 +947,30 @@ export function ThreadComposer(props: {
         {fixedContent}
         {attachmentBar}
         {pill ? (
-          <div className="flex items-start">
+          <div className={multiline ? "grid grid-cols-2 items-end" : "flex items-center"}>
             {inputLeadingControls ? (
               <div
                 className={`poracode-composer-pill-leading flex shrink-0 items-center pl-2 ${
-                  multiline ? "self-end pb-2" : "self-center"
+                  multiline ? "row-start-2 pb-2" : ""
                 }`}
               >
                 {inputLeadingControls}
               </div>
             ) : null}
             <div
-              className={
-                multiline ? "flex min-w-0 flex-1 flex-col" : "flex min-w-0 flex-1 items-center"
-              }
+              ref={editorHostRef}
+              data-composer-input-anchor=""
+              className={multiline ? "col-span-2 row-start-1 min-w-0" : "min-w-0 flex-1"}
             >
-              <div ref={editorHostRef} data-composer-input-anchor="" className="min-w-0 flex-1">
-                {renderEditor()}
-              </div>
-              <div
-                className={`poracode-composer-pill-actions flex shrink-0 items-center gap-0.5 pr-2 ${
-                  multiline ? "self-end pb-2" : ""
-                }`}
-              >
-                {typeof afterControls === "function" ? afterControls(0) : afterControls}
-                {renderSendButton()}
-              </div>
+              {renderEditor()}
+            </div>
+            <div
+              className={`poracode-composer-pill-actions flex shrink-0 items-center gap-0.5 pr-2 ${
+                multiline ? "col-start-2 row-start-2 justify-self-end pb-2" : ""
+              }`}
+            >
+              {typeof afterControls === "function" ? afterControls(0) : afterControls}
+              {renderSendButton()}
             </div>
           </div>
         ) : (
