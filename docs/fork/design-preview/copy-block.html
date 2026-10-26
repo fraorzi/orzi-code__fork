@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Orzi Code - blok do kopiowania</title>
+    <style>
+      /* Hallmark · component: copy block · genre: utilitarian · theme: existing Orzi
+       * pre-emit critique: P5 H5 E4 S5 R5 V4
+       * states: default, hover, focus, active, disabled, loading, error, success */
+      @font-face {
+        font-family: Geist;
+        src: url("../../../src/renderer/fonts/Geist-Variable.woff2") format("woff2");
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Geist Mono";
+        src: url("../../../src/renderer/fonts/GeistMono-Variable.woff2") format("woff2");
+        font-display: swap;
+      }
+      :root {
+        color-scheme: dark;
+        --font: Geist, -apple-system, BlinkMacSystemFont, sans-serif;
+        --mono: "Geist Mono", ui-monospace, monospace;
+        --page: #050505;
+        --panel: #0b0b0b;
+        --bar: #121212;
+        --hover: #202020;
+        --pressed: #282828;
+        --text: #f0f0f0;
+        --muted: #a6a6a6;
+        --border: #343434;
+        --accent: #2d4fa8;
+        --focus: #90adff;
+        --success: #8bddac;
+        --error: #ff9d9d;
+        --syntax-key: #c792ea;
+        --syntax-string: #c3e88d;
+        --syntax-call: #82aaff;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        overflow-x: clip;
+      }
+      body {
+        background: var(--page);
+        color: var(--text);
+        font: 14px/1.65 var(--font);
+        -webkit-font-smoothing: antialiased;
+      }
+      main {
+        width: calc(100% - 40px);
+        max-width: 820px;
+        min-width: 0;
+        margin: 44px auto 80px;
+      }
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+      h1 {
+        font-size: clamp(24px, 5vw, 32px);
+        line-height: 1.2;
+        letter-spacing: -0.035em;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+      }
+      h2 {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 10px;
+      }
+      .eyebrow {
+        color: var(--muted);
+        font-size: 12px;
+        margin-bottom: 14px;
+      }
+      .intro {
+        color: var(--muted);
+        max-width: 620px;
+        margin-top: 14px;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin: 24px 0 36px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      button,
+      select {
+        font: inherit;
+        color: var(--text);
+        border: 1px solid var(--border);
+        background: var(--bar);
+        border-radius: 999px;
+        min-height: 36px;
+        padding: 6px 12px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+      }
+      select {
+        min-height: 36px;
+      }
+      button:focus-visible,
+      select:focus-visible,
+      summary:focus-visible,
+      .viewport:focus-visible,
+      .is-focus {
+        outline: 2px solid var(--focus);
+        outline-offset: 3px;
+      }
+      @media (hover: hover) {
+        button:hover:not(:disabled),
+        select:hover {
+          background: var(--hover);
+        }
+      }
+      button.is-hover {
+        background: var(--hover);
+      }
+      button:active:not(:disabled),
+      button.is-active {
+        background: var(--pressed);
+        transform: translateY(1px);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      button[data-state="success"] {
+        color: var(--success);
+      }
+      button[data-state="error"] {
+        color: var(--error);
+        border-color: var(--error);
+      }
+      button[data-state="loading"] .copy-icon {
+        animation: pulse 0.7s ease-in-out infinite alternate;
+      }
+      svg {
+        width: 15px;
+        height: 15px;
+        flex: none;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .icons {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      }
+      section {
+        margin-bottom: 32px;
+        min-width: 0;
+      }
+      .example-label {
+        color: var(--muted);
+        font-size: 12px;
+        margin-bottom: 9px;
+      }
+      .answer {
+        margin-bottom: 12px;
+      }
+      .block {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: clip;
+        background: var(--panel);
+      }
+      .viewport {
+        max-height: 320px;
+        overflow: auto;
+        scrollbar-color: var(--border) var(--panel);
+      }
+      .toolbar {
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 51px;
+        padding: 7px 10px 7px 16px;
+        background: var(--bar);
+        border-bottom: 1px solid var(--border);
+      }
+      .label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        min-width: 0;
+      }
+      .label > span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .copy {
+        flex: none;
+        min-width: 119px;
+        font-size: 12px;
+      }
+      .content {
+        margin: 0;
+        padding: 17px 18px 20px;
+        font: 13px/1.8 var(--mono);
+        tab-size: 2;
+      }
+      .text {
+        font: 14px/1.75 var(--font);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .code {
+        white-space: pre;
+        min-width: 100%;
+        width: max-content;
+      }
+      .key {
+        color: var(--syntax-key);
+      }
+      .string {
+        color: var(--syntax-string);
+      }
+      .call {
+        color: var(--syntax-call);
+      }
+      .feedback {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 7px;
+        min-height: 20px;
+      }
+      .stream-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+      }
+      .stream-controls p {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .stream-status {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .stream-status[data-writing="true"]::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--focus);
+        animation: pulse 0.7s infinite alternate;
+      }
+      details {
+        border-top: 1px solid var(--border);
+        margin-top: 36px;
+        padding-top: 18px;
+      }
+      summary {
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 12px;
+        width: fit-content;
+      }
+      .states {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 24px;
+        margin-top: 22px;
+      }
+      .state {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .note {
+        border-left: 2px solid var(--accent);
+        color: var(--muted);
+        padding-left: 12px;
+        font-size: 12px;
+        margin-top: 30px;
+      }
+      @keyframes pulse {
+        from {
+          opacity: 0.35;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @media (max-width: 500px) {
+        main {
+          width: calc(100% - 28px);
+          margin-top: 26px;
+        }
+        .states {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .toolbar {
+          padding-left: 12px;
+        }
+        .content {
+          padding: 14px 12px 17px;
+        }
+        button,
+        select {
+          min-height: 44px;
+        }
+        .toolbar {
+          min-height: 59px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before {
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg class="icons" aria-hidden="true">
+      <defs>
+        <symbol id="copy" viewBox="0 0 24 24">
+          <rect x="8" y="8" width="12" height="12" rx="2" />
+          <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
+        </symbol>
+        <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></symbol>
+        <symbol id="text" viewBox="0 0 24 24"><path d="M4 5h16M4 10h16M4 15h10M4 20h13" /></symbol>
+        <symbol id="code" viewBox="0 0 24 24">
+          <path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 20" />
+        </symbol>
+      </defs>
+    </svg>
+    <main>
+      <header>
+        <p class="eyebrow">Orzi Code / podgląd do akceptacji</p>
+        <h1>Treść z własnym przyciskiem kopiowania.</h1>
+        <p class="intro">
+          Stały pasek nad blokiem. Ikona i etykieta są widoczne od razu, a tekst zaczyna się
+          poniżej. Przy przewijaniu długiej treści pasek pozostaje na miejscu.
+        </p>
+      </header>
+      <div class="controls">
+        <label for="width">Szerokość podglądu</label
+        ><select id="width">
+          <option value="820">Pełna</option>
+          <option value="768">768 px</option>
+          <option value="414">414 px</option>
+          <option value="375">375 px</option>
+          <option value="320">320 px</option>
+        </select>
+      </div>
+
+      <section>
+        <p class="example-label">01 / Tekst do wklejenia</p>
+        <p class="answer">Przykładowa odpowiedź agenta. Gotowy prompt do skopiowania:</p>
+        <div class="block">
+          <div class="viewport" tabindex="0" aria-label="Przykładowy prompt">
+            <div class="toolbar">
+              <div class="label">
+                <svg><use href="#text" /></svg><span>Tekst</span>
+              </div>
+              <button class="copy" data-target="prompt">
+                <svg class="copy-icon"><use href="#copy" /></svg><span>Kopiuj</span>
+              </button>
+            </div>
+            <pre id="prompt" class="content text">
+Sprawdź, dlaczego formularz nie wysyła wiadomości.
+
+Odtwórz błąd, znajdź przyczynę i wprowadź najmniejszą potrzebną poprawkę. Zachowaj obecny wygląd. Na końcu podaj wynik weryfikacji.</pre>
+          </div>
+        </div>
+        <p class="feedback" aria-live="polite"></p>
+      </section>
+
+      <section>
+        <p class="example-label">02 / Komendy i kod</p>
+        <p class="answer">Przycisk zajmuje własny wiersz także przy jednej komendzie:</p>
+        <div class="block">
+          <div class="viewport" tabindex="0" aria-label="Przykładowe komendy">
+            <div class="toolbar">
+              <div class="label">
+                <svg><use href="#code" /></svg><span>Shell</span>
+              </div>
+              <button class="copy" data-target="shell">
+                <svg class="copy-icon"><use href="#copy" /></svg><span>Kopiuj</span>
+              </button>
+            </div>
+            <pre id="shell" class="content code">
+pnpm run typecheck
+pnpm run lint</pre>
+          </div>
+        </div>
+        <p class="feedback" aria-live="polite"></p>
+        <div class="block">
+          <div class="viewport" tabindex="0" aria-label="Przykładowy kod">
+            <div class="toolbar">
+              <div class="label">
+                <svg><use href="#code" /></svg><span>JavaScript</span>
+              </div>
+              <button class="copy" data-target="javascript">
+                <svg class="copy-icon"><use href="#copy" /></svg><span>Kopiuj</span>
+              </button>
+            </div>
+            <pre
+              id="javascript"
+              class="content code"
+            ><span class="key">async function</span> <span class="call">copyText</span>(text) {
+  <span class="key">await</span> navigator.clipboard.<span class="call">writeText</span>(text);
+  <span class="key">return</span> <span class="string">"Skopiowano"</span>;
+}</pre>
+          </div>
+        </div>
+        <p class="feedback" aria-live="polite"></p>
+      </section>
+
+      <section>
+        <p class="example-label">03 / Długi blok</p>
+        <p class="answer">
+          Przewiń tekst w bloku. Kopiowanie pozostaje pod ręką i obejmuje całą treść.
+        </p>
+        <div class="block">
+          <div class="viewport" tabindex="0" aria-label="Długi przykładowy tekst do przewinięcia">
+            <div class="toolbar">
+              <div class="label">
+                <svg><use href="#text" /></svg><span>Tekst</span>
+              </div>
+              <button class="copy" data-target="long">
+                <svg class="copy-icon"><use href="#copy" /></svg><span>Kopiuj</span>
+              </button>
+            </div>
+            <pre id="long" class="content text">
+Przykładowy plan sprawdzenia formularza
+
+1. Otwórz stronę kontaktu.
+Sprawdź, czy pola i przycisk wysyłania są widoczne.
+
+2. Wyślij pusty formularz.
+Zapisz komunikaty walidacji i sprawdź, czy wskazują właściwe pola.
+
+3. Wpisz poprawne dane.
+Sprawdź wysłane żądanie oraz odpowiedź serwera.
+
+4. Powtórz próbę bez połączenia.
+Sprawdź komunikat błędu i możliwość ponownego wysłania.
+
+5. Sprawdź obsługę klawiaturą.
+Przejdź przez pola Tabem i wyślij formularz Enterem.
+
+6. Sprawdź wąski ekran.
+Etykiety i przycisk muszą pozostać czytelne.
+
+7. Zapisz wynik.
+Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
+          </div>
+        </div>
+        <p class="feedback" aria-live="polite"></p>
+      </section>
+
+      <section>
+        <p class="example-label">04 / Agent pisze</p>
+        <div class="block">
+          <div class="viewport" tabindex="0" aria-label="Symulacja odpowiedzi agenta">
+            <div class="toolbar">
+              <div class="label">
+                <svg><use href="#text" /></svg
+                ><span id="stream-label" class="stream-status">Tekst</span>
+              </div>
+              <button class="copy" data-target="stream">
+                <svg class="copy-icon"><use href="#copy" /></svg><span>Kopiuj</span>
+              </button>
+            </div>
+            <pre id="stream" class="content text">Sprawdź formularz kontaktowy i opisz wynik.</pre>
+          </div>
+        </div>
+        <p class="feedback" aria-live="polite"></p>
+        <div class="stream-controls">
+          <button id="simulate">Symuluj pisanie</button>
+          <p>
+            Możesz kopiować również w trakcie pisania. Trafi tam tekst widoczny w chwili kliknięcia.
+          </p>
+        </div>
+      </section>
+
+      <p class="note">
+        To osobny podgląd HTML. Zmiana wyglądu w aplikacji nastąpi po Twojej akceptacji. Przyciski
+        kopiują tekst, bez etykiety bloku i formatowania.
+      </p>
+      <details>
+        <summary>Stany przycisku</summary>
+        <div class="states" id="states"></div>
+      </details>
+    </main>
+    <script>
+      const icon = (name) =>
+        '<svg class="copy-icon" aria-hidden="true"><use href="#' + name + '"/></svg>';
+      function buttonContent(button, label, symbol = "copy") {
+        button.innerHTML = icon(symbol) + "<span>" + label + "</span>";
+      }
+      document.querySelectorAll("[data-target]").forEach((button) => {
+        let reset;
+        button.addEventListener("click", async () => {
+          clearTimeout(reset);
+          const text = document.getElementById(button.dataset.target).textContent;
+          const feedback = button.closest(".block").nextElementSibling;
+          button.disabled = true;
+          button.dataset.state = "loading";
+          button.setAttribute("aria-busy", "true");
+          buttonContent(button, "Kopiowanie");
+          try {
+            await navigator.clipboard.writeText(text);
+            button.dataset.state = "success";
+            buttonContent(button, "Skopiowano", "check");
+            feedback.textContent = "Skopiowano tekst do schowka.";
+          } catch {
+            button.dataset.state = "error";
+            buttonContent(button, "Ponów");
+            feedback.textContent =
+              "Przeglądarka nie udostępniła schowka. Zaznacz tekst i skopiuj go klawiaturą.";
+          } finally {
+            button.disabled = false;
+            button.removeAttribute("aria-busy");
+            reset = setTimeout(() => {
+              button.dataset.state = "";
+              buttonContent(button, "Kopiuj");
+              feedback.textContent = "";
+            }, 2600);
+          }
+        });
+      });
+      document.getElementById("width").addEventListener("change", (event) => {
+        document.querySelector("main").style.maxWidth = event.target.value + "px";
+      });
+      document.getElementById("simulate").addEventListener("click", async (event) => {
+        const button = event.currentTarget;
+        const output = document.getElementById("stream");
+        const label = document.getElementById("stream-label");
+        button.disabled = true;
+        label.dataset.writing = "true";
+        label.textContent = "Pisze...";
+        output.textContent = "";
+        const text =
+          "Sprawdź formularz kontaktowy i opisz wynik.\n\nZacznij od pustych pól. Następnie wyślij poprawne dane i sprawdź odpowiedź serwera.\n\nNa końcu sprawdź obsługę klawiaturą i widok na telefonie.";
+        for (const char of text) {
+          output.textContent += char;
+          await new Promise((resolve) => setTimeout(resolve, 30));
+        }
+        label.dataset.writing = "false";
+        label.textContent = "Tekst";
+        button.disabled = false;
+      });
+      for (const [name, className, state, disabled, label] of [
+        ["Domyślny", "", "", false, "Kopiuj"],
+        ["Hover", "is-hover", "", false, "Kopiuj"],
+        ["Focus", "is-focus", "", false, "Kopiuj"],
+        ["Wciśnięty", "is-active", "", false, "Kopiuj"],
+        ["Nieaktywny", "", "", true, "Kopiuj"],
+        ["Kopiowanie", "", "loading", true, "Kopiowanie"],
+        ["Błąd", "", "error", false, "Ponów"],
+        ["Sukces", "", "success", false, "Skopiowano"],
+      ]) {
+        const row = document.createElement("div");
+        row.className = "state";
+        const caption = document.createElement("span");
+        caption.textContent = name;
+        const button = document.createElement("button");
+        button.className = "copy " + className;
+        button.dataset.state = state;
+        button.disabled = disabled;
+        button.setAttribute("aria-label", "Przykład stanu: " + name);
+        buttonContent(button, label, state === "success" ? "check" : "copy");
+        row.append(caption, button);
+        document.getElementById("states").append(row);
+      }
+    </script>
+  </body>
+</html>
