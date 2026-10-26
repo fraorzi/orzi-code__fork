@@ -180,10 +180,6 @@
         margin-bottom: 12px;
       }
       .block {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 28px;
-        align-items: start;
-        gap: 12px;
         padding: 14px 16px;
         border-radius: 6px;
         background: var(--panel);
@@ -198,9 +194,11 @@
         scrollbar-color: var(--border) var(--panel);
       }
       .copy {
+        float: right;
         width: 28px;
-        height: 28px;
-        min-height: 28px;
+        height: 24px;
+        min-height: 24px;
+        margin-left: 12px;
         padding: 0;
         border: 0;
         border-radius: 5px;
@@ -214,18 +212,17 @@
       .content {
         margin: 0;
         padding: 0;
-        font: 13px/1.8 var(--mono);
+        font: 13px/24px var(--mono);
         tab-size: 2;
       }
       .text {
-        font: 14px/1.75 var(--font);
+        font: 14px/24px var(--font);
         white-space: pre-wrap;
         overflow-wrap: anywhere;
       }
       .code {
-        white-space: pre;
-        min-width: 100%;
-        width: max-content;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
       }
       .key {
         color: var(--syntax-key);
@@ -321,14 +318,10 @@
           min-height: 44px;
         }
         .block {
-          grid-template-columns: minmax(0, 1fr) 44px;
-          gap: 4px;
           padding: 12px;
         }
         .copy {
-          width: 44px;
-          height: 44px;
-          margin-top: -10px;
+          min-height: 24px;
         }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -354,8 +347,8 @@
         <p class="eyebrow">Orzi Code / podgląd do akceptacji</p>
         <h1>Tylko treść i ikona.</h1>
         <p class="intro">
-          Delikatnie jaśniejsze tło, bez ramki i nagłówka. Ikona jest stale widoczna po prawej i ma
-          własne miejsce obok tekstu.
+          Równe odstępy po obu stronach. Pierwsza linia opływa ikonę, a kolejne korzystają z całej
+          szerokości bloku.
         </p>
       </header>
       <div class="controls">
@@ -374,14 +367,14 @@
         <p class="answer">Przykładowa odpowiedź agenta. Gotowy prompt do skopiowania:</p>
         <div class="block">
           <div class="viewport" tabindex="0" aria-label="Przykładowy prompt">
+            <button class="copy" data-target="prompt" aria-label="Skopiuj treść">
+              <svg class="copy-icon"><use href="#copy" /></svg>
+            </button>
             <pre id="prompt" class="content text">
-Sprawdź, dlaczego formularz nie wysyła wiadomości.
+Sprawdź, dlaczego formularz kontaktowy nie wysyła wiadomości mimo poprawnie wypełnionych pól. Odtwórz problem i ustal, na którym etapie przerywa się wysyłanie.
 
 Odtwórz błąd, znajdź przyczynę i wprowadź najmniejszą potrzebną poprawkę. Zachowaj obecny wygląd. Na końcu podaj wynik weryfikacji.</pre>
           </div>
-          <button class="copy" data-target="prompt" aria-label="Skopiuj treść">
-            <svg class="copy-icon"><use href="#copy" /></svg>
-          </button>
         </div>
         <p class="feedback" aria-live="polite"></p>
       </section>
@@ -391,17 +384,20 @@ Odtwórz błąd, znajdź przyczynę i wprowadź najmniejszą potrzebną poprawk�
         <p class="answer">Te same zasady dla komend i kodu:</p>
         <div class="block">
           <div class="viewport" tabindex="0" aria-label="Przykładowe komendy">
+            <button class="copy" data-target="shell" aria-label="Skopiuj treść">
+              <svg class="copy-icon"><use href="#copy" /></svg>
+            </button>
             <pre id="shell" class="content code">
 pnpm run typecheck
 pnpm run lint</pre>
           </div>
-          <button class="copy" data-target="shell" aria-label="Skopiuj treść">
-            <svg class="copy-icon"><use href="#copy" /></svg>
-          </button>
         </div>
         <p class="feedback" aria-live="polite"></p>
         <div class="block">
           <div class="viewport" tabindex="0" aria-label="Przykładowy kod">
+            <button class="copy" data-target="javascript" aria-label="Skopiuj treść">
+              <svg class="copy-icon"><use href="#copy" /></svg>
+            </button>
             <pre
               id="javascript"
               class="content code"
@@ -410,9 +406,6 @@ pnpm run lint</pre>
   <span class="key">return</span> <span class="string">"Skopiowano"</span>;
 }</pre>
           </div>
-          <button class="copy" data-target="javascript" aria-label="Skopiuj treść">
-            <svg class="copy-icon"><use href="#copy" /></svg>
-          </button>
         </div>
         <p class="feedback" aria-live="polite"></p>
       </section>
@@ -424,6 +417,9 @@ pnpm run lint</pre>
         </p>
         <div class="block">
           <div class="viewport" tabindex="0" aria-label="Długi przykładowy tekst do przewinięcia">
+            <button class="copy" data-target="long" aria-label="Skopiuj treść">
+              <svg class="copy-icon"><use href="#copy" /></svg>
+            </button>
             <pre id="long" class="content text">
 Przykładowy plan sprawdzenia formularza
 
@@ -448,9 +444,6 @@ Etykiety i przycisk muszą pozostać czytelne.
 7. Zapisz wynik.
 Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
           </div>
-          <button class="copy" data-target="long" aria-label="Skopiuj treść">
-            <svg class="copy-icon"><use href="#copy" /></svg>
-          </button>
         </div>
         <p class="feedback" aria-live="polite"></p>
       </section>
@@ -459,11 +452,11 @@ Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
         <p class="example-label">04 / Agent pisze</p>
         <div class="block">
           <div class="viewport" tabindex="0" aria-label="Symulacja odpowiedzi agenta">
+            <button class="copy" data-target="stream" aria-label="Skopiuj treść">
+              <svg class="copy-icon"><use href="#copy" /></svg>
+            </button>
             <pre id="stream" class="content text">Sprawdź formularz kontaktowy i opisz wynik.</pre>
           </div>
-          <button class="copy" data-target="stream" aria-label="Skopiuj treść">
-            <svg class="copy-icon"><use href="#copy" /></svg>
-          </button>
         </div>
         <p class="feedback" aria-live="polite"></p>
         <div class="stream-controls">
