@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "@heroui/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AppProvider } from "@/renderer/components/ui/provider";
 import { ImageLightboxHost } from "@/renderer/components/composer";
 import { ChatPaneActionsContext, type ChatPaneActions } from "../../chatPaneActionsContext";
@@ -26,6 +26,10 @@ vi.mock("./CodeBlock", () => ({
 const toastDangerSpy = vi.spyOn(toast, "danger").mockImplementation(() => undefined as never);
 
 describe("ItemMarkdownInner", () => {
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, "clipboard");
+  });
+
   beforeEach(() => {
     codeBlockSpy.mockClear();
     toastDangerSpy.mockClear();
@@ -60,6 +64,53 @@ describe("ItemMarkdownInner", () => {
 
     expect(screen.queryByTestId("code-block")).not.toBeInTheDocument();
     expect(container.querySelector("code")).toHaveTextContent("const value = 1");
+  });
+
+  it.each(["", "typescript"])(
+    "copies the latest streamed body of a %s fence without its controls",
+    async (language) => {
+      const writeText = vi.fn<(text: string) => Promise<void>>().mockResolvedValue();
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: { writeText },
+      });
+      const { rerender } = render(
+        <AppProvider>
+          <ItemMarkdownInner text={`\`\`\`${language}\nconst value =`} />
+        </AppProvider>,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Copy code" }));
+      await waitFor(() => expect(writeText).toHaveBeenLastCalledWith("const value ="));
+      expect(await screen.findByRole("button", { name: "Copied" })).toHaveTextContent("");
+
+      rerender(
+        <AppProvider>
+          <ItemMarkdownInner text={`\`\`\`${language}\nconst value = 1;\nnext();\n\`\`\``} />
+        </AppProvider>,
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Copied" }));
+      await waitFor(() => expect(writeText).toHaveBeenLastCalledWith("const value = 1;\nnext();"));
+    },
+  );
+
+  it("reports a clipboard failure without claiming the block was copied", async () => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: vi
+          .fn<(text: string) => Promise<void>>()
+          .mockRejectedValue(new Error("copy failed")),
+      },
+    });
+    render(
+      <AppProvider>
+        <ItemMarkdownInner text={"```\nplain text\n```"} />
+      </AppProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Copy code" }));
+    await waitFor(() => expect(toastDangerSpy).toHaveBeenCalledWith("copy failed"));
+    expect(screen.queryByRole("button", { name: "Copied" })).toBeNull();
   });
 
   it("falls back to a plain pre/code block for language-less fences", () => {
@@ -508,7 +559,7 @@ describe("ItemMarkdownInner", () => {
     Object.defineProperty(window, "poracode", {
       configurable: true,
       value: {
-        openExternal,
+        openExternalNative: openExternal,
         setWindowChrome: vi.fn<() => Promise<void>>().mockResolvedValue(undefined),
       },
     });

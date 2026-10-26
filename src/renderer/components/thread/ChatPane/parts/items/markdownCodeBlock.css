@@ -1,0 +1,66 @@
+.lc-chat-code-block {
+  display: flow-root;
+  margin-block: 8px;
+  padding: 14px 16px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+  font-size: 1em;
+  line-height: 24px;
+  overflow-wrap: anywhere;
+}
+
+.lc-chat-code-block--code {
+  font-family: "Geist Mono", var(--font-mono);
+  font-size: 0.875em;
+}
+
+/* No overflow or other formatting context on the body: its inline text must
+   flow around the float for one line, then regain the block's full width. */
+.lc-chat-code-block pre,
+.lc-chat-code-block code {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: anywhere;
+  overflow: visible;
+}
+
+.lc-chat-code-copy {
+  float: right;
+  height: 24px;
+  margin-left: 12px;
+  line-height: 0;
+}
+
+.lc-chat-code-copy .button {
+  width: 28px;
+  height: 24px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+}
+
+.lc-chat-code-copy .button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.lc-chat-code-copy .button[data-hovered="true"] {
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+}
+
+.lc-chat-code-copy .button[data-copied="true"] {
+  color: var(--success);
+}
+
+@media (max-width: 500px) {
+  .lc-chat-code-block {
+    padding: 12px;
+  }
+}

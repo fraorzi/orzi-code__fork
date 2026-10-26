@@ -3634,7 +3634,7 @@ msgstr "{0} cihaz kodunu kopyala {1}"
 msgid "Copy all Lightcode data into Orzi Code. Orzi Code restarts and keeps a complete backup of its current data."
 msgstr "Tüm Lightcode verilerini Orzi Code'a kopyalayın. Orzi Code yeniden başlatılır ve mevcut verilerinin tam bir yedeğini saklar."
 
-#: src/renderer/components/thread/ChatPane/parts/items/ItemMarkdownInner.tsx
+#: src/renderer/components/thread/ChatPane/parts/items/MarkdownCodeBlock.tsx
 msgid "Copy code"
 msgstr "Kodu kopyala"
 

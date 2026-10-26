@@ -3634,7 +3634,7 @@ msgstr "复制{0}设备代码{1}"
 msgid "Copy all Lightcode data into Orzi Code. Orzi Code restarts and keeps a complete backup of its current data."
 msgstr "将所有 Lightcode 数据复制到 Orzi Code。Orzi Code 将重新启动，并保留当前数据的完整备份。"
 
-#: src/renderer/components/thread/ChatPane/parts/items/ItemMarkdownInner.tsx
+#: src/renderer/components/thread/ChatPane/parts/items/MarkdownCodeBlock.tsx
 msgid "Copy code"
 msgstr "复制代码"
 

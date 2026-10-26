@@ -3634,7 +3634,7 @@ msgstr "Sao chép {0} mã thiết bị {1}"
 msgid "Copy all Lightcode data into Orzi Code. Orzi Code restarts and keeps a complete backup of its current data."
 msgstr "Sao chép toàn bộ dữ liệu Lightcode vào Orzi Code. Orzi Code sẽ khởi động lại và giữ một bản sao lưu đầy đủ của dữ liệu hiện tại."
 
-#: src/renderer/components/thread/ChatPane/parts/items/ItemMarkdownInner.tsx
+#: src/renderer/components/thread/ChatPane/parts/items/MarkdownCodeBlock.tsx
 msgid "Copy code"
 msgstr "Sao chép mã"
 

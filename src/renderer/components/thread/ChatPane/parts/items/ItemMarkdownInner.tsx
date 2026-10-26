@@ -1,5 +1,4 @@
 import { Link } from "@heroui/react";
-import { useLingui } from "@lingui/react/macro";
 import { ExternalLink } from "lucide-react";
 import type { ProjectLocation } from "@/shared/contracts";
 import {
@@ -29,7 +28,7 @@ import { getProjectFsPath } from "@/shared/wsl";
 import { useChatPaneActions } from "../../chatPaneActionsContext";
 import { normalizeChatProjectPath } from "../../chatPathUtils";
 import { CodeBlock } from "./CodeBlock";
-import { CopyTextButton } from "./CopyTextButton";
+import { MarkdownCodeBlock } from "./MarkdownCodeBlock";
 import { ImageCard } from "./ImageCard";
 import { InlineFilePathChip } from "./InlineFilePathChip";
 import { InlineFolderPathChip } from "./InlineFolderPathChip";
@@ -213,16 +212,16 @@ const MD_COMPONENTS: StreamdownComponents = {
       if (language) {
         const text = flattenMdChildren(codeProps?.children).replace(/\r?\n$/, "");
         return (
-          <MdCodeBlockFrame text={text}>
+          <MarkdownCodeBlock text={text} monospace>
             <CodeBlock text={text} lang={language} className={markdownCodeBlockClass} />
-          </MdCodeBlockFrame>
+          </MarkdownCodeBlock>
         );
       }
     }
     return (
-      <MdCodeBlockFrame text={flattenMdChildren(children).replace(/\r?\n$/, "")}>
+      <MarkdownCodeBlock text={flattenMdChildren(children).replace(/\r?\n$/, "")}>
         <pre>{markCodeChildAsBlock(children)}</pre>
-      </MdCodeBlockFrame>
+      </MarkdownCodeBlock>
     );
   },
   code({ className, children, ...rest }) {
@@ -290,8 +289,7 @@ const MD_COMPONENTS: StreamdownComponents = {
 
 const inlineCodeChipClass =
   "rounded border-0 bg-foreground/10 px-[0.35em] py-[0.1em] font-mono text-[0.875em] leading-none align-baseline text-foreground [overflow-wrap:anywhere]";
-const markdownCodeBlockClass =
-  "not-prose my-2 min-w-0 overflow-x-hidden rounded bg-foreground/10 px-[0.5em] py-[0.25em] font-mono text-[0.875em] leading-snug text-foreground";
+const markdownCodeBlockClass = "not-prose text-foreground";
 const transformMarkdownUrl: UrlTransform = (url, key, node) =>
   key === "src" && node.tagName === "img" && url.startsWith("poracode-local://")
     ? url
@@ -358,24 +356,6 @@ function allowLocalImageProtocol(plugin: RehypePlugins[number]): RehypePlugins[n
       },
     },
   ] as RehypePlugins[number];
-}
-
-/**
- * Wraps a fenced code block with a copy button that reveals on hover of the
- * code block itself (`group/codeblock`). Kept outside `CodeBlock` so
- * command-output viewports (which reuse `CodeBlock`) are not affected.
- */
-function MdCodeBlockFrame({ text, children }: { text: string; children?: ReactNode }) {
-  const { t } = useLingui();
-  if (text.length === 0) return <>{children}</>;
-  return (
-    <div className="group/codeblock relative">
-      {children}
-      <div className="absolute right-1 top-1 z-10 opacity-0 transition-opacity focus-within:opacity-100 group-hover/codeblock:opacity-100">
-        <CopyTextButton text={text} label={t`Copy code`} />
-      </div>
-    </div>
-  );
 }
 
 function MdCode(props: { className: string; isBlock?: boolean; children?: ReactNode }) {

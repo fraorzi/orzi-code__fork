@@ -2,6 +2,12 @@
 
 Stan na 2026-10-15. Kontynuuj w `/Users/franciszek/WebstormProjects/orzi-code__fork`.
 
+## Bloki do kopiowania - 2026-10-26
+
+Użytkownik zaakceptował finalny podgląd `design-preview/copy-block.html` i polecił wdrożenie. Bloki odpowiedzi mają subtelne tło, bez ramki, nagłówka języka i napisu Kopiuj. Stale widoczna ikona opływana jest tylko przez pierwszą linię; kolejne korzystają z pełnej szerokości. Haczyk potwierdza skopiowanie. Praca dotyczy bloków Markdown, nie widoków wyjścia narzędzi. Szczegóły i dowody są na początku [stanu implementacji](implementation.md).
+
+48 testów, typecheck, oba linty, format i 0 braków tłumaczeń PASS. Smoke Electron i kontrola 12 układów z rzeczywistym Shiki, schowkiem oraz syntetycznym strumieniem PASS, 0 błędów runtime. Bez rzeczywistych promptów do modeli. Podpisana paczka `.tmp/orzi-copy-blocks-20261026/mac-arm64/Orzi Code.app` jest w produkcyjnym stagingu lokalnej aktualizacji. Podpisy, hashe i zawartość app.asar sprawdzone. Instalacja przez zielony przycisk po zakończeniu pracy, bez podmiany działającego bundle przez agenta.
+
 ## Zacznij tutaj
 
 1. Przeczytaj instrukcje nadrzędnego i lokalnego `AGENTS.md`, potem [stan implementacji](implementation.md). Ten dokument określa, co działa, co sprawdzono i jakie są ograniczenia.
