@@ -23,7 +23,7 @@
         --font: Geist, -apple-system, BlinkMacSystemFont, sans-serif;
         --mono: "Geist Mono", ui-monospace, monospace;
         --page: #050505;
-        --panel: #0b0b0b;
+        --panel: #0d0d0d;
         --bar: #121212;
         --hover: #202020;
         --pressed: #282828;
@@ -180,51 +180,40 @@
         margin-bottom: 12px;
       }
       .block {
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        overflow: clip;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 28px;
+        align-items: start;
+        gap: 12px;
+        padding: 14px 16px;
+        border-radius: 6px;
         background: var(--panel);
       }
+      .block + .feedback + .block {
+        margin-top: 12px;
+      }
       .viewport {
+        min-width: 0;
         max-height: 320px;
         overflow: auto;
         scrollbar-color: var(--border) var(--panel);
       }
-      .toolbar {
-        position: sticky;
-        top: 0;
-        left: 0;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        min-height: 51px;
-        padding: 7px 10px 7px 16px;
-        background: var(--bar);
-        border-bottom: 1px solid var(--border);
-      }
-      .label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--muted);
-        font-size: 12px;
-        min-width: 0;
-      }
-      .label > span {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
       .copy {
-        flex: none;
-        min-width: 119px;
-        font-size: 12px;
+        width: 28px;
+        height: 28px;
+        min-height: 28px;
+        padding: 0;
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: var(--muted);
+      }
+      .copy svg {
+        width: 16px;
+        height: 16px;
       }
       .content {
         margin: 0;
-        padding: 17px 18px 20px;
+        padding: 0;
         font: 13px/1.8 var(--mono);
         tab-size: 2;
       }
@@ -248,10 +237,24 @@
         color: var(--syntax-call);
       }
       .feedback {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+      .feedback[data-error="true"] {
+        position: static;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        clip-path: none;
+        white-space: normal;
         font-size: 12px;
-        color: var(--muted);
+        color: var(--error);
         margin-top: 7px;
-        min-height: 20px;
       }
       .stream-controls {
         display: flex;
@@ -263,19 +266,6 @@
       .stream-controls p {
         color: var(--muted);
         font-size: 12px;
-      }
-      .stream-status {
-        display: inline-flex;
-        gap: 6px;
-        align-items: center;
-      }
-      .stream-status[data-writing="true"]::before {
-        content: "";
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: var(--focus);
-        animation: pulse 0.7s infinite alternate;
       }
       details {
         border-top: 1px solid var(--border);
@@ -326,18 +316,19 @@
         .states {
           grid-template-columns: minmax(0, 1fr);
         }
-        .toolbar {
-          padding-left: 12px;
-        }
-        .content {
-          padding: 14px 12px 17px;
-        }
         button,
         select {
           min-height: 44px;
         }
-        .toolbar {
-          min-height: 59px;
+        .block {
+          grid-template-columns: minmax(0, 1fr) 44px;
+          gap: 4px;
+          padding: 12px;
+        }
+        .copy {
+          width: 44px;
+          height: 44px;
+          margin-top: -10px;
         }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -356,19 +347,15 @@
           <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
         </symbol>
         <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></symbol>
-        <symbol id="text" viewBox="0 0 24 24"><path d="M4 5h16M4 10h16M4 15h10M4 20h13" /></symbol>
-        <symbol id="code" viewBox="0 0 24 24">
-          <path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 20" />
-        </symbol>
       </defs>
     </svg>
     <main>
       <header>
         <p class="eyebrow">Orzi Code / podgląd do akceptacji</p>
-        <h1>Treść z własnym przyciskiem kopiowania.</h1>
+        <h1>Tylko treść i ikona.</h1>
         <p class="intro">
-          Stały pasek nad blokiem. Ikona i etykieta są widoczne od razu, a tekst zaczyna się
-          poniżej. Przy przewijaniu długiej treści pasek pozostaje na miejscu.
+          Delikatnie jaśniejsze tło, bez ramki i nagłówka. Ikona jest stale widoczna po prawej i ma
+          własne miejsce obok tekstu.
         </p>
       </header>
       <div class="controls">
@@ -387,52 +374,34 @@
         <p class="answer">Przykładowa odpowiedź agenta. Gotowy prompt do skopiowania:</p>
         <div class="block">
           <div class="viewport" tabindex="0" aria-label="Przykładowy prompt">
-            <div class="toolbar">
-              <div class="label">
-                <svg><use href="#text" /></svg><span>Tekst</span>
-              </div>
-              <button class="copy" data-target="prompt">
-                <svg class="copy-icon"><use href="#copy" /></svg><span>Kopiuj</span>
-              </button>
-            </div>
             <pre id="prompt" class="content text">
 Sprawdź, dlaczego formularz nie wysyła wiadomości.
 
 Odtwórz błąd, znajdź przyczynę i wprowadź najmniejszą potrzebną poprawkę. Zachowaj obecny wygląd. Na końcu podaj wynik weryfikacji.</pre>
           </div>
+          <button class="copy" data-target="prompt" aria-label="Skopiuj treść">
+            <svg class="copy-icon"><use href="#copy" /></svg>
+          </button>
         </div>
         <p class="feedback" aria-live="polite"></p>
       </section>
 
       <section>
         <p class="example-label">02 / Komendy i kod</p>
-        <p class="answer">Przycisk zajmuje własny wiersz także przy jednej komendzie:</p>
+        <p class="answer">Te same zasady dla komend i kodu:</p>
         <div class="block">
           <div class="viewport" tabindex="0" aria-label="Przykładowe komendy">
-            <div class="toolbar">
-              <div class="label">
-                <svg><use href="#code" /></svg><span>Shell</span>
-              </div>
-              <button class="copy" data-target="shell">
-                <svg class="copy-icon"><use href="#copy" /></svg><span>Kopiuj</span>
-              </button>
-            </div>
             <pre id="shell" class="content code">
 pnpm run typecheck
 pnpm run lint</pre>
           </div>
+          <button class="copy" data-target="shell" aria-label="Skopiuj treść">
+            <svg class="copy-icon"><use href="#copy" /></svg>
+          </button>
         </div>
         <p class="feedback" aria-live="polite"></p>
         <div class="block">
           <div class="viewport" tabindex="0" aria-label="Przykładowy kod">
-            <div class="toolbar">
-              <div class="label">
-                <svg><use href="#code" /></svg><span>JavaScript</span>
-              </div>
-              <button class="copy" data-target="javascript">
-                <svg class="copy-icon"><use href="#copy" /></svg><span>Kopiuj</span>
-              </button>
-            </div>
             <pre
               id="javascript"
               class="content code"
@@ -441,6 +410,9 @@ pnpm run lint</pre>
   <span class="key">return</span> <span class="string">"Skopiowano"</span>;
 }</pre>
           </div>
+          <button class="copy" data-target="javascript" aria-label="Skopiuj treść">
+            <svg class="copy-icon"><use href="#copy" /></svg>
+          </button>
         </div>
         <p class="feedback" aria-live="polite"></p>
       </section>
@@ -452,14 +424,6 @@ pnpm run lint</pre>
         </p>
         <div class="block">
           <div class="viewport" tabindex="0" aria-label="Długi przykładowy tekst do przewinięcia">
-            <div class="toolbar">
-              <div class="label">
-                <svg><use href="#text" /></svg><span>Tekst</span>
-              </div>
-              <button class="copy" data-target="long">
-                <svg class="copy-icon"><use href="#copy" /></svg><span>Kopiuj</span>
-              </button>
-            </div>
             <pre id="long" class="content text">
 Przykładowy plan sprawdzenia formularza
 
@@ -484,6 +448,9 @@ Etykiety i przycisk muszą pozostać czytelne.
 7. Zapisz wynik.
 Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
           </div>
+          <button class="copy" data-target="long" aria-label="Skopiuj treść">
+            <svg class="copy-icon"><use href="#copy" /></svg>
+          </button>
         </div>
         <p class="feedback" aria-live="polite"></p>
       </section>
@@ -492,17 +459,11 @@ Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
         <p class="example-label">04 / Agent pisze</p>
         <div class="block">
           <div class="viewport" tabindex="0" aria-label="Symulacja odpowiedzi agenta">
-            <div class="toolbar">
-              <div class="label">
-                <svg><use href="#text" /></svg
-                ><span id="stream-label" class="stream-status">Tekst</span>
-              </div>
-              <button class="copy" data-target="stream">
-                <svg class="copy-icon"><use href="#copy" /></svg><span>Kopiuj</span>
-              </button>
-            </div>
             <pre id="stream" class="content text">Sprawdź formularz kontaktowy i opisz wynik.</pre>
           </div>
+          <button class="copy" data-target="stream" aria-label="Skopiuj treść">
+            <svg class="copy-icon"><use href="#copy" /></svg>
+          </button>
         </div>
         <p class="feedback" aria-live="polite"></p>
         <div class="stream-controls">
@@ -515,7 +476,7 @@ Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
 
       <p class="note">
         To osobny podgląd HTML. Zmiana wyglądu w aplikacji nastąpi po Twojej akceptacji. Przyciski
-        kopiują tekst, bez etykiety bloku i formatowania.
+        kopiują sam tekst, bez formatowania.
       </p>
       <details>
         <summary>Stany przycisku</summary>
@@ -526,7 +487,8 @@ Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
       const icon = (name) =>
         '<svg class="copy-icon" aria-hidden="true"><use href="#' + name + '"/></svg>';
       function buttonContent(button, label, symbol = "copy") {
-        button.innerHTML = icon(symbol) + "<span>" + label + "</span>";
+        button.innerHTML = icon(symbol);
+        button.setAttribute("aria-label", label);
       }
       document.querySelectorAll("[data-target]").forEach((button) => {
         let reset;
@@ -537,6 +499,7 @@ Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
           button.disabled = true;
           button.dataset.state = "loading";
           button.setAttribute("aria-busy", "true");
+          feedback.dataset.error = "false";
           buttonContent(button, "Kopiowanie");
           try {
             await navigator.clipboard.writeText(text);
@@ -546,6 +509,7 @@ Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
           } catch {
             button.dataset.state = "error";
             buttonContent(button, "Ponów");
+            feedback.dataset.error = "true";
             feedback.textContent =
               "Przeglądarka nie udostępniła schowka. Zaznacz tekst i skopiuj go klawiaturą.";
           } finally {
@@ -555,6 +519,7 @@ Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
               button.dataset.state = "";
               buttonContent(button, "Kopiuj");
               feedback.textContent = "";
+              feedback.dataset.error = "false";
             }, 2600);
           }
         });
@@ -565,10 +530,8 @@ Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
       document.getElementById("simulate").addEventListener("click", async (event) => {
         const button = event.currentTarget;
         const output = document.getElementById("stream");
-        const label = document.getElementById("stream-label");
         button.disabled = true;
-        label.dataset.writing = "true";
-        label.textContent = "Pisze...";
+        button.textContent = "Pisze...";
         output.textContent = "";
         const text =
           "Sprawdź formularz kontaktowy i opisz wynik.\n\nZacznij od pustych pól. Następnie wyślij poprawne dane i sprawdź odpowiedź serwera.\n\nNa końcu sprawdź obsługę klawiaturą i widok na telefonie.";
@@ -576,8 +539,7 @@ Podaj odtworzone błędy, wprowadzone zmiany i wykonane sprawdzenia.</pre>
           output.textContent += char;
           await new Promise((resolve) => setTimeout(resolve, 30));
         }
-        label.dataset.writing = "false";
-        label.textContent = "Tekst";
+        button.textContent = "Symuluj pisanie";
         button.disabled = false;
       });
       for (const [name, className, state, disabled, label] of [
