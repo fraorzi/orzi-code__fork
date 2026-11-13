@@ -6,6 +6,7 @@ export const BUILT_IN_USAGE_PROVIDER_DESCRIPTORS = {
     label: "Claude",
     mechanism: "oauth-endpoint",
     needsLogin: false,
+    browserHttpOrigins: ["https://claude.ai"],
     windowIds: ["session-5h", "weekly", "weekly-opus", "weekly-sonnet", "weekly-fable", "monthly"],
   },
   codex: {

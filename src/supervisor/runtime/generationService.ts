@@ -1,3 +1,9 @@
+import { randomUUID } from "node:crypto";
+import type {
+  AuxiliaryGenerationMeasurement,
+  AuxiliaryOperation,
+  OneShotUsage,
+} from "@/shared/auxiliaryUsage";
 import type {
   AgentKind,
   ExtractContextPayload,
@@ -23,6 +29,7 @@ import type { AgentAdapter } from "../agents/base";
 import type { WslBridgeClient } from "../wsl/bridge/client";
 
 export interface GenerationServiceDeps {
+  onAuxiliaryGeneration?: (measurement: AuxiliaryGenerationMeasurement) => void;
   adapters: Map<AgentKind, AgentAdapter>;
   readTerminalScrollback: (threadId: string) => string;
   wslBridgeClient: WslBridgeClient | undefined;
@@ -52,7 +59,7 @@ export class GenerationService {
     payload: GenerateCommitMessagePayload,
   ): Promise<GenerateCommitMessageResult> {
     const adapter = this.requireAdapter(payload.agentKind);
-    return {
+    return this.measure("commit", payload, async (onUsage) => ({
       message: await generateCommitMessage(
         payload.projectLocation,
         adapter,
@@ -60,13 +67,14 @@ export class GenerationService {
         payload.effort,
         payload.language,
         payload.fast,
+        onUsage,
       ),
-    };
+    }));
   }
 
   async generateTitle(payload: GenerateTitlePayload): Promise<GenerateTitleResult> {
     const adapter = this.requireAdapter(payload.agentKind);
-    return {
+    return this.measure("title", payload, async (onUsage) => ({
       title: await generateTitle(
         payload.projectLocation,
         adapter,
@@ -75,21 +83,57 @@ export class GenerationService {
         payload.effort,
         payload.language,
         payload.fast,
+        onUsage,
       ),
-    };
+    }));
   }
 
   async generatePrSummary(payload: GeneratePrSummaryPayload): Promise<GeneratePrSummaryResult> {
     const adapter = this.requireAdapter(payload.agentKind);
-    return generatePrSummary(
-      payload.projectLocation,
-      adapter,
-      payload.branch,
-      payload.baseBranch,
-      payload.model,
-      payload.effort,
-      payload.language,
+    return this.measure("pr", payload, (onUsage) =>
+      generatePrSummary(
+        payload.projectLocation,
+        adapter,
+        payload.branch,
+        payload.baseBranch,
+        payload.model,
+        payload.effort,
+        payload.language,
+        onUsage,
+      ),
     );
+  }
+
+  private async measure<T>(
+    operation: AuxiliaryOperation,
+    payload: { agentKind: AgentKind; model?: string | undefined; effort?: string | undefined },
+    run: (onUsage: (usage: OneShotUsage) => void) => Promise<T>,
+  ): Promise<T> {
+    const startedAt = Date.now();
+    const usage: OneShotUsage[] = [];
+    let outcome: AuxiliaryGenerationMeasurement["outcome"] = "failed";
+    try {
+      const result = await run((sample) => usage.push(sample));
+      outcome = "completed";
+      return result;
+    } finally {
+      try {
+        this.deps.onAuxiliaryGeneration?.({
+          id: randomUUID(),
+          operation,
+          provider: payload.agentKind,
+          ...(payload.model ? { model: payload.model } : {}),
+          ...(payload.effort ? { effort: payload.effort } : {}),
+          startedAt,
+          finishedAt: Date.now(),
+          outcome,
+          usage,
+        });
+      } catch (error) {
+        // Reporting must not replace a completed result or a provider failure.
+        console.warn("[generation] unable to report auxiliary usage", error);
+      }
+    }
   }
 
   async judgeExperiment(payload: JudgeExperimentPayload): Promise<JudgeExperimentResult> {

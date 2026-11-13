@@ -375,6 +375,19 @@ describe("SessionRuntimeLifecycle", () => {
     expect(harness.mocks.append).toHaveBeenCalled();
   });
 
+  it("preserves the application-owned quota recovery option across provider config updates", () => {
+    const h = createHarness({
+      session: { config: { model: "model-1", autoResumeAfterLimit: true } },
+    });
+    h.lifecycle.attach(h.session);
+    h.structuredListener?.onUpdate({
+      status: "working",
+      attention: "working",
+      config: { model: "model-2" },
+    });
+    expect(h.session.config).toEqual({ model: "model-2", autoResumeAfterLimit: true });
+  });
+
   it("emits state for a config-only working update", () => {
     const harness = createHarness();
     harness.lifecycle.attach(harness.session);

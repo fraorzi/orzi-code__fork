@@ -131,7 +131,7 @@ describe("collapsedHeaderCache", () => {
     expect(deriveToolDisplayMock).toHaveBeenCalledTimes(1);
 
     const prev = i18n.locale;
-    i18n.activate(prev === "en" ? "es" : "en");
+    i18n.activate(prev === "en" ? "pl" : "en");
     try {
       getToolCallCollapsedHeader(item, payload);
       expect(deriveToolDisplayMock).toHaveBeenCalledTimes(2);

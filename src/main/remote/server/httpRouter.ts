@@ -64,22 +64,9 @@ import {
   assertRemoteThreadCommandExperimentSafe,
   assertRemoteThreadStartExperimentSafe,
 } from "../experimentOwnership";
-import {
-  buildForwardEnterErrorPageHtml,
-  buildLocalPairingIconSvg,
-  buildLocalPairingManifestJson,
-  buildLocalPairingPageHtml,
-  buildLocalPairingServiceWorkerJs,
-} from "../pairingPage";
-import { tryServeBuiltMobileApp } from "../staticMobileApp";
+import { buildForwardEnterErrorPageHtml, buildLocalPairingPageHtml } from "../pairingPage";
 import type { RemoteServerContext } from "./context";
-import {
-  writeError,
-  writeHtml,
-  writeJson,
-  writeNegotiatedJsonResponse,
-  writeText,
-} from "./httpResponses";
+import { writeError, writeHtml, writeJson, writeNegotiatedJsonResponse } from "./httpResponses";
 import { writeLocalImageFile } from "./localImageFile";
 import { parseImageRefPath, resolveImageRef } from "./imageRefProjection";
 import {
@@ -268,21 +255,6 @@ export async function handleHttp(
 
   try {
     const url = new URL(req.url ?? "/", ctx.requireInfo().httpBaseUrl);
-    // Lazily resolve the forward session at most once per request, and only for
-    // the two branches that consume it (the `/assets/` branch and the reverse-
-    // proxy fallthrough) — the vast majority of requests hit an explicit app
-    // route above and never touch it. Memoized (not `??=`) because `null` is a
-    // real "no session" result that must not trigger a re-resolve, and because
-    // `resolveSession` slides the session's TTL, so it must run at most once.
-    let sessionResolved = false;
-    let sessionPort: number | null = null;
-    const forwardTargetPort = (): number | null => {
-      if (!sessionResolved) {
-        sessionResolved = true;
-        sessionPort = ctx.options.portProxy?.resolveSession(req.headers.cookie) ?? null;
-      }
-      return sessionPort;
-    };
     if (
       req.method === "GET" &&
       (url.pathname === "/.well-known/poracode/environment" ||
@@ -295,57 +267,11 @@ export async function handleHttp(
       req.method === "GET" &&
       (url.pathname === "/pair" || url.pathname === "/app" || url.pathname.startsWith("/app/"))
     ) {
-      if (ctx.options.devMobileAppUrl) {
-        const target = new URL(ctx.options.devMobileAppUrl);
-        if (url.pathname.startsWith("/app/")) {
-          target.pathname = url.pathname.slice("/app".length);
-        }
-        for (const [key, value] of url.searchParams) target.searchParams.set(key, value);
-        target.searchParams.set("host", ctx.requireInfo().httpBaseUrl);
-        res.writeHead(302, { location: target.toString() });
-        res.end();
-        return;
-      }
-      if (tryServeBuiltMobileApp(url.pathname, res)) {
-        return;
-      }
       writeHtml(
         res,
         200,
         buildLocalPairingPageHtml({ httpBaseUrl: ctx.requireInfo().httpBaseUrl }),
       );
-      return;
-    }
-    if (req.method === "GET" && url.pathname.startsWith("/assets/")) {
-      // An active forward session wins over the bundled mobile PWA: a
-      // forwarded dev server's own `/assets/*` files (e.g. a Vite bundle) must
-      // stay reachable rather than being shadowed by this reservation. No
-      // session (or no `portProxy` wired up) falls through to the PWA lookup
-      // exactly as before this feature existed.
-      const targetPort = forwardTargetPort();
-      if (targetPort) {
-        proxyForwardedHttpRequest(req, res, targetPort);
-        return;
-      }
-      if (tryServeBuiltMobileApp(url.pathname, res)) {
-        return;
-      }
-    }
-    if (req.method === "GET" && url.pathname === "/manifest.webmanifest") {
-      writeText(res, 200, buildLocalPairingManifestJson(), "application/manifest+json");
-      return;
-    }
-    if (req.method === "GET" && url.pathname === "/service-worker.js") {
-      writeText(
-        res,
-        200,
-        buildLocalPairingServiceWorkerJs(ctx.options.appVersion),
-        "application/javascript; charset=utf-8",
-      );
-      return;
-    }
-    if (req.method === "GET" && url.pathname === "/app-icon.svg") {
-      writeText(res, 200, buildLocalPairingIconSvg(), "image/svg+xml; charset=utf-8");
       return;
     }
     // Plain browser navigation (no bearer header available to a top-level
@@ -997,7 +923,7 @@ export async function handleHttp(
     // resolves it straight to that dev server; no session (or no `portProxy`
     // wired up on this host) 404s exactly as before this feature existed.
     if (!isReservedForwardProxyPath(url.pathname)) {
-      const targetPort = forwardTargetPort();
+      const targetPort = ctx.options.portProxy?.resolveSession(req.headers.cookie) ?? null;
       if (targetPort) {
         proxyForwardedHttpRequest(req, res, targetPort);
         return;

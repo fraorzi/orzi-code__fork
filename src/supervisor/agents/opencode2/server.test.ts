@@ -1,4 +1,5 @@
 import { EventEmitter } from "node:events";
+import { readTransportPorts } from "../base/transportPorts";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const spawnMock = vi.hoisted(() => vi.fn<(...args: unknown[]) => unknown>(() => undefined));
@@ -85,10 +86,14 @@ describe("spawnOpenCode2Server", () => {
   it("resolves both the URL and the server-generated password from stdout", async () => {
     const handle = spawn();
     emitLine(child.stdout, "server listening on http://127.0.0.1:50208");
+    expect(readTransportPorts()).toContain(50208);
     emitLine(child.stdout, "server password KSjBZJSs9rF9bK8MaWaxxj5kSYAZmOatbIuRs2obo7o");
 
     await expect(handle.baseUrl).resolves.toBe("http://127.0.0.1:50208");
     await expect(handle.password).resolves.toBe("KSjBZJSs9rF9bK8MaWaxxj5kSYAZmOatbIuRs2obo7o");
+    child.exitCode = 0;
+    child.emit("exit", 0, null);
+    expect(readTransportPorts()).not.toContain(50208);
   });
 
   it("does not resolve until both markers arrive, in either order", async () => {

@@ -8,6 +8,26 @@ import {
 } from "./settings";
 
 describe("shared settings defaults", () => {
+  it("normalizes pre-cleanup locale settings without losing unrelated preferences", () => {
+    const normalized = normalizeSharedSettings({
+      locale: "ja",
+      gitTextLanguage: "de",
+      guiChatFontSize: 17,
+      threadRemoveAction: "delete",
+    });
+
+    expect(normalized).toMatchObject({
+      locale: "system",
+      gitTextLanguage: "en",
+      guiChatFontSize: 17,
+      threadRemoveAction: "delete",
+    });
+    expect(normalizeSharedSettings({ locale: "pl", gitTextLanguage: "pl" })).toMatchObject({
+      locale: "pl",
+      gitTextLanguage: "pl",
+    });
+  });
+
   it("normalizes sidebar shortcut order without duplicates or omissions", () => {
     expect(normalizeSidebarShortcutOrder(["schedules", "schedules"])).toEqual([
       "schedules",

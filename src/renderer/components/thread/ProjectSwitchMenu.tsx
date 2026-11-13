@@ -1,22 +1,17 @@
-import { startTransition, useState } from "react";
-import { Check, ChevronDown, House } from "lucide-react";
+import type { Project } from "@/shared/contracts";
+import { startTransition } from "react";
+import { ChevronDown, House } from "lucide-react";
 import { Description, Dropdown, Label } from "@heroui/react";
 import { useLingui } from "@lingui/react/macro";
-import type { Project } from "@/shared/contracts";
 import { isHomeProject, isHomeProjectId } from "@/shared/homeScope";
 import { makeDraftPaneId } from "@/shared/paneId";
 import { useAppStore } from "@/renderer/state/appStore";
 import { rememberWorkspaceProject } from "@/renderer/state/workspaceStore";
 import {
-  ResponsiveMenuSurface,
-  useResponsiveMenu,
-} from "@/renderer/components/common/ResponsiveMenuSurface";
-import {
   ProjectSelectorIcon,
   useProjectRemoteServerLookup,
 } from "@/renderer/components/common/ProjectRemoteServer";
 import { useProjectSwitchProjects } from "./projectSwitchGroups";
-
 export function ProjectSwitchMenu(props: {
   currentProjectId: string;
   variant: "hero" | "compact";
@@ -36,9 +31,6 @@ export function ProjectSwitchMenu(props: {
   const openDraft = useAppStore((state) => state.openDraft);
   const replacePaneId = useAppStore((state) => state.replacePaneId);
   const discardDraftContent = useAppStore((state) => state.discardDraftContent);
-  const { mobile } = useResponsiveMenu();
-  const [isOpen, setIsOpen] = useState(false);
-
   // The label may name a project the active workspace hides (a draft that
   // outlived a workspace switch), so it resolves against the full list.
   const current = allProjects.find((project) => project.id === currentProjectId);
@@ -58,7 +50,6 @@ export function ProjectSwitchMenu(props: {
   ) : null;
   const isDisabled =
     projects.length === 0 || (projects.length === 1 && projects[0]?.id === currentProjectId);
-
   function handleSelect(nextProjectId: string) {
     if (nextProjectId === currentProjectId) return;
     rememberWorkspaceProject(nextProjectId);
@@ -75,38 +66,6 @@ export function ProjectSwitchMenu(props: {
       }
     });
   }
-
-  /** Finger-sized rows for the mobile bottom drawer. */
-  function sheetRows(entries: readonly Project[]) {
-    return entries.map((project) => {
-      const isHome = isHomeProject(project);
-      const itemLabel = isHome ? t`Home` : project.name;
-      const selected = project.id === currentProjectId;
-      const remote = remoteServerFor(project);
-      return (
-        <button
-          key={project.id}
-          type="button"
-          className="m-sheet-action"
-          aria-pressed={selected || undefined}
-          onClick={() => {
-            setIsOpen(false);
-            handleSelect(project.id);
-          }}
-        >
-          <ProjectSelectorIcon project={project} remote={remote} />
-          <span className="min-w-0 flex-1 truncate">{itemLabel}</span>
-          {remote.serverName ? (
-            <span className="max-w-28 shrink-0 truncate text-xs text-muted/60">
-              {remote.serverName}
-            </span>
-          ) : null}
-          {selected ? <Check className="size-4 shrink-0 text-accent" /> : null}
-        </button>
-      );
-    });
-  }
-
   function menuItems(entries: readonly Project[]) {
     return entries.map((project) => {
       const isHome = isHomeProject(project);
@@ -121,51 +80,6 @@ export function ProjectSwitchMenu(props: {
       );
     });
   }
-
-  // Mobile PWA: present as a bottom drawer with finger-sized rows instead of the
-  // desktop HeroUI dropdown popover. `mobile === isRemoteSession()`, so the
-  // desktop branch below is never reached on the phone (and stays untouched).
-  if (mobile) {
-    const triggerClass =
-      variant === "hero"
-        ? "group mx-auto inline-flex max-w-full items-center gap-1.5 rounded border border-transparent px-2 py-0.5 outline-none transition-colors hover:border-border/60 hover:bg-[var(--row-hover)] disabled:cursor-default disabled:hover:border-transparent disabled:hover:bg-transparent"
-        : "group inline-flex min-w-0 max-w-full items-center gap-1 rounded px-1 py-0.5 text-sm leading-tight text-muted/60 outline-none transition-colors hover:bg-[var(--row-hover)] hover:text-foreground disabled:cursor-default disabled:hover:bg-transparent disabled:hover:text-muted/60";
-    return (
-      <ResponsiveMenuSurface
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        label={t`Switch project`}
-        trigger={
-          <button
-            type="button"
-            aria-label={t`Switch project`}
-            aria-expanded={isOpen}
-            disabled={isDisabled}
-            className={triggerClass}
-            onClick={() => {
-              if (!isDisabled) setIsOpen(true);
-            }}
-          >
-            {variant === "hero" ? (
-              <span className="min-w-0 truncate pb-[0.08em] leading-snug font-medium tracking-normal text-transparent [background-image:linear-gradient(135deg,var(--muted)_0%,color-mix(in_oklab,var(--accent)_30%,var(--muted))_100%)] [background-size:100%_100%] bg-clip-text font-mono">
-                {label}
-              </span>
-            ) : (
-              <>
-                {triggerIcon}
-                <span className="min-w-0 truncate">{label}</span>
-                {triggerMachine}
-              </>
-            )}
-            {!isDisabled ? <ChevronDown className="size-3 shrink-0 text-muted/60" /> : null}
-          </button>
-        }
-      >
-        <div className="m-sheet-list">{sheetRows(projects)}</div>
-      </ResponsiveMenuSurface>
-    );
-  }
-
   const menu = (
     <Dropdown.Menu
       aria-label={t`Switch project`}
@@ -177,7 +91,6 @@ export function ProjectSwitchMenu(props: {
       {menuItems(projects)}
     </Dropdown.Menu>
   );
-
   if (variant === "hero") {
     return (
       <Dropdown>
@@ -197,7 +110,6 @@ export function ProjectSwitchMenu(props: {
       </Dropdown>
     );
   }
-
   return (
     <Dropdown>
       <Dropdown.Trigger

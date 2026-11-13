@@ -1,4 +1,5 @@
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
+import { readAssistantLimitError } from "../usageRecovery";
 import type { RuntimeEvent, ToolCallProgress, TurnState } from "@/shared/contracts";
 import { readFileChangePath, readStringField } from "../../fileChangeSummary";
 import type { ClaudeMapperState } from "../sdkCanonicalMappingState";
@@ -233,6 +234,21 @@ function mapClaudeSdkMessageInner(
   options?: ClaudeSdkMessageMappingOptions,
 ): RuntimeEvent[] {
   const events: RuntimeEvent[] = [];
+  const limitError = readAssistantLimitError(message);
+  if (limitError) {
+    events.push(...closeClaudeOpenItems(state));
+    events.push({ type: "error", threadId: state.threadId, message: limitError });
+    if (state.currentTurnId) {
+      events.push({
+        type: "turn.completed",
+        threadId: state.threadId,
+        turnId: state.currentTurnId,
+        state: "failed",
+      });
+      delete state.currentTurnId;
+    }
+    return events;
+  }
   // Native /goal Stop-hook verdicts. Typed outside the SDKMessage union but
   // yielded on the same stream.
   if (isActiveGoalMessage(message)) {

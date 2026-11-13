@@ -120,13 +120,6 @@ export interface RemoteAccessServerOptions {
    * memory growth behind a slow mobile or relay connection.
    */
   readonly maxWebSocketOutboundBufferBytes?: number;
-  /**
-   * Dev-mode URL of the mobile PWA on the Vite dev server (e.g.
-   * `http://192.168.1.5:3100/mobile.html`). Pairing links are minted on this
-   * origin with the desktop API in `?host=...`, and `/app`/`/pair` still
-   * redirect there as a fallback so the phone gets hot reload.
-   */
-  readonly devMobileAppUrl?: string;
   readonly port: number;
   /** Same-port retries absorb brief listener overlap during app relaunches. */
   readonly listenRetryAttempts?: number;
@@ -654,7 +647,7 @@ export class RemoteAccessServer {
   }
 
   private mintPairingUrl(httpBaseUrl: string, credential: string): string {
-    const pairingAppUrl = this.options.pairingAppUrl ?? this.options.devMobileAppUrl;
+    const pairingAppUrl = this.options.pairingAppUrl;
     return buildPairingUrl({
       httpBaseUrl,
       credential,

@@ -6,5 +6,7 @@ export default {
   label: msg`Claude Code`,
   order: 10,
   utilityOrder: 20,
+  usageResetUrl: "https://claude.ai/settings/usage",
+  usageResetBrowserLogin: true,
   collapsedUsage: { windowIds: ["session-5h", "weekly"] },
 } satisfies RendererProviderManifest;

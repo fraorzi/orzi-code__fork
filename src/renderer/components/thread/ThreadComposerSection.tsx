@@ -70,6 +70,7 @@ import { ThreadChangesBubble } from "./ThreadChangesBubble";
 import { ThreadDockBubbles } from "./ThreadDockBubbles";
 import { ThreadImagesBubble } from "./ThreadImagesBubble";
 import { useThreadDocksSummary } from "./useThreadDocksSummary";
+import { ThreadUsageRecovery } from "./ThreadUsageRecovery";
 import { ThreadComposer, type ComposerControl } from "./ThreadComposer";
 import { supportsUsableFastMode } from "./threadDraftViewHelpers";
 import { ThreadContextIndicator } from "./ThreadContextIndicator";
@@ -806,58 +807,66 @@ function ThreadComposerSectionInner(props: ThreadComposerSectionProps & { thread
                 <ThreadComposer
                   autoFocus={shouldAutoFocusComposer} // eslint-disable-line jsx-a11y/no-autofocus -- Electron is always desktop; the PWA enables this only for desktop-like input
                   compact
+                  footerLeading={
+                    !usesTerminalPresentation &&
+                    effectiveAgentStatus?.capabilities.supportsUsageRecovery ? (
+                      <ThreadUsageRecovery key={thread.id} thread={thread} />
+                    ) : null
+                  }
                   toolbarLayoutKey={[
                     isCliThread ? "cli" : "chat",
                     showContextIndicator ? "ctx" : "no-ctx",
                     authRequired ? "auth-required" : "auth-ready",
                   ].join("|")}
                   fixedContent={
-                    <ThreadComposerDocks
-                      hasActiveSubAgent={hasActiveSubAgent}
-                      hasBackgroundTasks={hasBackgroundTasks}
-                      showContextInComposer={showContextInComposer}
-                      showErrorInComposer={showErrorInComposer}
-                      showGoalInComposer={showGoalInComposer}
-                      showTodoInComposer={showTodoInComposer}
-                      authRequired={showAuthInComposer}
-                      showCommandPanel={showCommandPanel}
-                      threadId={thread.id}
-                      projectLocation={projectLocation}
-                      threadConfig={thread.config}
-                      worktreePath={thread.worktreePath}
-                      branchName={branchName}
-                      agentStatus={effectiveAgentStatus}
-                      project={project}
-                      contextSummary={contextSummary}
-                      errorDockStates={errorDockStates}
-                      goalDockState={goalDockState}
-                      todoDockState={todoDockState}
-                      todoDockCollapsed={todoDockCollapsed}
-                      pendingSteer={composerPendingSteer}
-                      followUpQueue={composerFollowUpQueue}
-                      onRestoreComposerFocus={() => mentionRef.current?.focus()}
-                      activeRuntimeRequest={composerRuntimeRequest}
-                      filteredCommands={filteredCommands}
-                      slashQuery={slashQuery}
-                      slashActiveIndex={slashActiveIndex}
-                      commandListId={commandListId}
-                      onCloseContextDock={() => setContextDockOpen(false)}
-                      onDismissError={props.onDismissError}
-                      onGoalDockDismiss={props.onGoalDockDismiss}
-                      onTodoDockCollapsedChange={props.onTodoDockCollapsedChange}
-                      {...(props.onTodoDockRetire
-                        ? { onTodoDockRetire: props.onTodoDockRetire }
-                        : {})}
-                      onCancelPendingSteer={() => clearThreadPendingSteer(thread.id)}
-                      {...(props.onOpenProjectRelativePath
-                        ? { onOpenProjectRelativePath: props.onOpenProjectRelativePath }
-                        : {})}
-                      onSlashActiveIndexChange={setSlashActiveIndex}
-                      onSelectCommand={(cmd) => {
-                        mentionRef.current?.insertSlashCommand(cmd);
-                        setSlashQuery(null);
-                      }}
-                    />
+                    <>
+                      <ThreadComposerDocks
+                        hasActiveSubAgent={hasActiveSubAgent}
+                        hasBackgroundTasks={hasBackgroundTasks}
+                        showContextInComposer={showContextInComposer}
+                        showErrorInComposer={showErrorInComposer}
+                        showGoalInComposer={showGoalInComposer}
+                        showTodoInComposer={showTodoInComposer}
+                        authRequired={showAuthInComposer}
+                        showCommandPanel={showCommandPanel}
+                        threadId={thread.id}
+                        projectLocation={projectLocation}
+                        threadConfig={thread.config}
+                        worktreePath={thread.worktreePath}
+                        branchName={branchName}
+                        agentStatus={effectiveAgentStatus}
+                        project={project}
+                        contextSummary={contextSummary}
+                        errorDockStates={errorDockStates}
+                        goalDockState={goalDockState}
+                        todoDockState={todoDockState}
+                        todoDockCollapsed={todoDockCollapsed}
+                        pendingSteer={composerPendingSteer}
+                        followUpQueue={composerFollowUpQueue}
+                        onRestoreComposerFocus={() => mentionRef.current?.focus()}
+                        activeRuntimeRequest={composerRuntimeRequest}
+                        filteredCommands={filteredCommands}
+                        slashQuery={slashQuery}
+                        slashActiveIndex={slashActiveIndex}
+                        commandListId={commandListId}
+                        onCloseContextDock={() => setContextDockOpen(false)}
+                        onDismissError={props.onDismissError}
+                        onGoalDockDismiss={props.onGoalDockDismiss}
+                        onTodoDockCollapsedChange={props.onTodoDockCollapsedChange}
+                        {...(props.onTodoDockRetire
+                          ? { onTodoDockRetire: props.onTodoDockRetire }
+                          : {})}
+                        onCancelPendingSteer={() => clearThreadPendingSteer(thread.id)}
+                        {...(props.onOpenProjectRelativePath
+                          ? { onOpenProjectRelativePath: props.onOpenProjectRelativePath }
+                          : {})}
+                        onSlashActiveIndexChange={setSlashActiveIndex}
+                        onSelectCommand={(cmd) => {
+                          mentionRef.current?.insertSlashCommand(cmd);
+                          setSlashQuery(null);
+                        }}
+                      />
+                    </>
                   }
                   attachmentBar={
                     <AttachmentBar

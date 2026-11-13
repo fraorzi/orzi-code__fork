@@ -50,6 +50,7 @@ import {
 } from "../base";
 import { getAgentProbeCwd, resolveProbeSpawnCwd } from "../probeCwd";
 import { applyAcpRegistryNpxArgsOverride } from "../acpRegistryNpx";
+import type { AcpPromptFailureClassifier } from "../acp/promptRecovery";
 
 /** First-time `npx` installs can exceed the default probe budget. */
 export const REGISTRY_INSTALL_PROBE_TIMEOUT_MS = 90_000;
@@ -77,6 +78,8 @@ export interface AcpGenericAdapterOptions {
   normalizeProbeResult?: (result: AcpProbeResult) => AcpProbeResult;
   synthesizeApprovalPolicies?: boolean;
   sessionBehavior?: AcpSessionBehavior;
+  /** Recognize pre-execution failures eligible for one safe prompt retry. */
+  promptFailureClassifier?: AcpPromptFailureClassifier;
   /** Provider parser for agent-text quirks the shared canonical mapper must not own. */
   textStreamExtension?: AcpTextStreamExtension;
   /**
@@ -182,6 +185,9 @@ export function createAcpGenericAdapter(
         },
         {
           ...(options.sessionBehavior ? { behavior: options.sessionBehavior } : {}),
+          ...(options.promptFailureClassifier
+            ? { promptFailureClassifier: options.promptFailureClassifier }
+            : {}),
           ...(options.textStreamExtension
             ? { textStreamExtension: options.textStreamExtension }
             : {}),

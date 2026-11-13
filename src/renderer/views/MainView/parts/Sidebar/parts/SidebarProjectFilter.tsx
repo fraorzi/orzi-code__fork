@@ -1,10 +1,9 @@
+import type { Project } from "@/shared/contracts";
 import React, { useEffect, useRef, useState } from "react";
-import type { Selection } from "@heroui/react";
-import { Description, Dropdown, Label, Separator } from "@heroui/react";
-import { Check, ChevronsUpDown, ListFilter, MoreHorizontal } from "lucide-react";
+import { Description, Dropdown, Label, Separator, type Selection } from "@heroui/react";
+import { ChevronsUpDown, ListFilter, MoreHorizontal } from "lucide-react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { plural } from "@lingui/core/macro";
-import type { Project } from "@/shared/contracts";
 import { isHomeProject } from "@/shared/homeScope";
 import { ContextMenuSurface, MENU_BACKDROP_ATTR } from "@/renderer/components/common/ContextMenu";
 import {
@@ -12,10 +11,6 @@ import {
   useProjectRemoteServerLookup,
 } from "@/renderer/components/common/ProjectRemoteServer";
 import { isRemoteProjectStatusUnreachable } from "@/renderer/state/remoteServers/reachability";
-import {
-  ResponsiveMenuSurface,
-  useResponsiveMenu,
-} from "@/renderer/components/common/ResponsiveMenuSurface";
 import { sidebarRowClass } from "@/renderer/components/common/SidebarButton";
 import { handleKeyActivate } from "@/renderer/utils/a11y";
 import { useProjectMenu } from "./useProjectMenu";
@@ -116,12 +111,13 @@ function ProjectRowMenuButton(props: {
   onOpenMenu: (anchor: { x: number; y: number }) => void;
 }) {
   const { t } = useLingui();
-
   const open = (element: HTMLElement) => {
     const rect = element.getBoundingClientRect();
-    props.onOpenMenu({ x: rect.left, y: rect.bottom });
+    props.onOpenMenu({
+      x: rect.left,
+      y: rect.bottom,
+    });
   };
-
   return (
     <div
       role="button"
@@ -143,7 +139,9 @@ function ProjectRowMenuButton(props: {
         open(event.currentTarget);
       }}
       onKeyDown={(event) =>
-        handleKeyActivate(event, () => open(event.currentTarget), { stopPropagation: true })
+        handleKeyActivate(event, () => open(event.currentTarget), {
+          stopPropagation: true,
+        })
       }
     >
       <MoreHorizontal className="size-3.5" />
@@ -165,7 +163,10 @@ function ProjectRowMenuButton(props: {
  */
 function ProjectOverflowMenu(props: {
   project: Project;
-  anchor: { x: number; y: number };
+  anchor: {
+    x: number;
+    y: number;
+  };
   onClose: () => void;
   /** Fired before dispatching a picked action, so the filter menu can close. */
   onAction: () => void;
@@ -194,17 +195,6 @@ function ProjectOverflowMenu(props: {
     />
   );
 }
-
-/**
- * Project filter for the flat thread list: a multi-select of which projects'
- * threads to show, defaulting to all of them. Selecting every project — or
- * deselecting the last selected one — collapses back to "All projects" (null),
- * since a filter matching everything or nothing is meaningless.
- *
- * The trigger is a sidebar row labelled with the current selection; the menu
- * is a desktop dropdown and a bottom sheet in the mobile PWA, mirroring
- * {@link SidebarWorkspaceSwitcher}.
- */
 export function SidebarProjectFilter(props: {
   /** Projects offered in the menu, including unavailable projects with actions. */
   projects: readonly Project[];
@@ -220,15 +210,16 @@ export function SidebarProjectFilter(props: {
   onChange: (next: string[] | null) => void;
 }) {
   const { t } = useLingui();
-  const { mobile } = useResponsiveMenu();
   const remoteServerFor = useProjectRemoteServerLookup();
   const [isOpen, setIsOpen] = useState(false);
   // Which project the overflow menu is open for, and where.
   const [overflowTarget, setOverflowTarget] = useState<{
     project: Project;
-    anchor: { x: number; y: number };
+    anchor: {
+      x: number;
+      y: number;
+    };
   } | null>(null);
-
   const close = () => {
     setIsOpen(false);
     setOverflowTarget(null);
@@ -258,7 +249,6 @@ export function SidebarProjectFilter(props: {
     event.preventDefault();
     event.stopPropagation();
   };
-
   const filterableProjects = props.projects.filter((project) =>
     props.filterableProjectIds.has(project.id),
   );
@@ -270,7 +260,6 @@ export function SidebarProjectFilter(props: {
   // In the all state every project reads as selected — unchecking one then
   // filters it out, matching checkbox expectations.
   const selectedProjects: ReadonlySet<string> = props.value ?? new Set(filterableIds);
-
   const soleSelected =
     !isAll && selectedProjects.size === 1
       ? filterableProjects.find((project) => selectedProjects.has(project.id))
@@ -280,7 +269,10 @@ export function SidebarProjectFilter(props: {
     ? t`All projects`
     : selectedProjects.size === 1
       ? (soleSelected?.name ?? t`All projects`)
-      : t`${plural(selectedProjects.size, { one: `# project`, other: `# projects` })}`;
+      : t`${plural(selectedProjects.size, {
+          one: `# project`,
+          other: `# projects`,
+        })}`;
   // A persisted filter outlives the session that set it, so a lone same-named
   // project still has to say which machine it came from — muted, since the
   // project stays the thing being named.
@@ -292,9 +284,7 @@ export function SidebarProjectFilter(props: {
   ) : (
     baseLabel
   );
-
   const selectAll = () => props.onChange(null);
-
   const toggleProject = (projectId: string) => {
     const next = new Set(selectedProjects);
     if (next.has(projectId)) next.delete(projectId);
@@ -302,7 +292,6 @@ export function SidebarProjectFilter(props: {
     // Empty and complete selections are both just "all projects".
     props.onChange(next.size === 0 || next.size >= filterableIds.length ? null : [...next]);
   };
-
   const triggerContent = (
     <>
       <span className="flex size-4 shrink-0 items-center justify-center">
@@ -316,95 +305,6 @@ export function SidebarProjectFilter(props: {
       </span>
     </>
   );
-
-  if (mobile) {
-    return (
-      <ResponsiveMenuSurface
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        label={t`Filter by project`}
-        trigger={
-          <button
-            type="button"
-            aria-label={t`Filter by project`}
-            aria-expanded={isOpen}
-            className={sidebarRowClass({ size: "xs" })}
-            onClick={() => setIsOpen(true)}
-          >
-            {triggerContent}
-          </button>
-        }
-      >
-        <div className="m-sheet-list">
-          <button
-            type="button"
-            className="m-sheet-action"
-            aria-pressed={isAll || undefined}
-            onClick={selectAll}
-          >
-            <span className="flex-1 truncate">
-              <Trans>All projects</Trans>
-            </span>
-            {isAll ? <Check className="size-4 shrink-0 text-accent" /> : null}
-          </button>
-          {filterableProjects.map((project) => {
-            const selected = selectedProjects.has(project.id);
-            const remote = remoteServerFor(project);
-            return (
-              <button
-                key={project.id}
-                type="button"
-                className="m-sheet-action"
-                aria-pressed={selected || undefined}
-                onClick={() => toggleProject(project.id)}
-              >
-                <ProjectSelectorIcon project={project} remote={remote} />
-                <span className="min-w-0 flex-1 truncate">{project.name}</span>
-                {remote.serverName ? (
-                  <span className="max-w-24 shrink-0 truncate text-xs text-muted/60">
-                    {remote.serverName}
-                  </span>
-                ) : null}
-                <span className="shrink-0 text-xs text-muted">
-                  {props.threadCounts.get(project.id) ?? 0}
-                </span>
-                {selected ? <Check className="size-4 shrink-0 text-accent" /> : null}
-              </button>
-            );
-          })}
-          {unavailableProjects.map((project) => {
-            const remote = remoteServerFor(project);
-            return (
-              <div key={project.id} className="m-sheet-action opacity-50" data-static="true">
-                <ProjectSelectorIcon project={project} remote={remote} />
-                <span className="min-w-0 flex-1 truncate">{project.name}</span>
-                {remote.serverName ? (
-                  <span className="max-w-24 shrink-0 truncate text-xs text-muted/60">
-                    {remote.serverName}
-                  </span>
-                ) : null}
-                {isHomeProject(project) ? null : (
-                  <ProjectRowMenuButton
-                    project={project}
-                    onOpenMenu={(anchor) => setOverflowTarget({ project, anchor })}
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
-        {overflowTarget ? (
-          <ProjectOverflowMenu
-            project={overflowTarget.project}
-            anchor={overflowTarget.anchor}
-            onClose={() => setOverflowTarget(null)}
-            onAction={close}
-          />
-        ) : null}
-      </ResponsiveMenuSurface>
-    );
-  }
-
   // Controlled multi-selection menu: a press flips one key, so diff the new
   // selection against the rendered one to find it, then route through the same
   // toggle/reset logic as the sheet. Selection changes never close the menu.
@@ -443,7 +343,6 @@ export function SidebarProjectFilter(props: {
     }
     toggleProject(pressed);
   };
-
   return (
     <Dropdown
       isOpen={isOpen}
@@ -462,9 +361,13 @@ export function SidebarProjectFilter(props: {
         onClickCapture={onTriggerClickCapture}
       >
         <Dropdown.Trigger
-          {...{ [TRIGGER_ATTR]: true }}
+          {...{
+            [TRIGGER_ATTR]: true,
+          }}
           aria-label={t`Filter by project`}
-          className={`${sidebarRowClass({ size: "xs" })} h-8`}
+          className={`${sidebarRowClass({
+            size: "xs",
+          })} h-8`}
         >
           {triggerContent}
         </Dropdown.Trigger>
@@ -512,7 +415,10 @@ export function SidebarProjectFilter(props: {
                       // The filter menu stays open; the overflow menu stacks
                       // on top like a submenu and closes it once an action is
                       // picked (see ProjectOverflowMenu's onAction).
-                      setOverflowTarget({ project, anchor });
+                      setOverflowTarget({
+                        project,
+                        anchor,
+                      });
                     }}
                   />
                 )}
@@ -532,7 +438,12 @@ export function SidebarProjectFilter(props: {
                     <ProjectRowMenuButton
                       project={project}
                       className="ms-auto"
-                      onOpenMenu={(anchor) => setOverflowTarget({ project, anchor })}
+                      onOpenMenu={(anchor) =>
+                        setOverflowTarget({
+                          project,
+                          anchor,
+                        })
+                      }
                     />
                   )}
                   {/* Invisible while unselected; marks the row as having an

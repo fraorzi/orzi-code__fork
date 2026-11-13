@@ -232,7 +232,7 @@ describe("useSkills", () => {
   });
 
   it("localizes plugin command display metadata without changing its invocation identity", async () => {
-    await dynamicActivate("es");
+    await dynamicActivate("pl");
     useSharedSettings.getState().installPlugin(pluginFixture("browser-tools"));
     scanSkillsMock.mockResolvedValueOnce(pluginSkillScan());
     const hook = renderHook(
@@ -248,12 +248,11 @@ describe("useSkills", () => {
       await waitFor(() => expect(hook.result.current.commands).toHaveLength(1));
       expect(hook.result.current.commands[0]).toMatchObject({
         id: "browser-control",
-        label:
-          "Control del navegador — Navega, inspecciona y prueba páginas con el MCP del navegador integrado.",
-        description: "Navega, inspecciona y prueba páginas con el MCP del navegador integrado.",
+        label: expect.stringContaining("Sterowanie przeglądarką"),
+        description: "Nawiguj, sprawdzaj i testuj strony za pomocą wbudowanego MCP przeglądarki.",
         skillName: "browser-control",
         skillInvocation: "$browser-control",
-        skillProvider: "Navegador",
+        skillProvider: "Przeglądarka",
       });
     } finally {
       hook.unmount();

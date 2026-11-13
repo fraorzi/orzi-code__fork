@@ -1,5 +1,6 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { parseClaudeResetCredits } from "./claudeResetCredits";
+import { readClaudeWebResetCredits } from "./claudeWebResetCredits";
 import { DEFAULT_CLIENT_VERSIONS } from "../clientVersions";
 import { parseRetryAfter, toEpochMs } from "../formatters";
 import type { CollectOptions, HostPort, HttpClient, HttpResponse, OAuthToken } from "../host";
@@ -297,7 +298,15 @@ export async function collectClaude(
     triedAccessTokens.add(token.accessToken);
     const res = await requestClaudeUsage(host, token, version);
     if (!isClaudeAuthRejected(res.status)) {
-      return parseClaudeUsageResponse(res, token, now);
+      const snapshot = parseClaudeUsageResponse(res, token, now);
+      if (
+        snapshot.status === "ok" &&
+        snapshot.resetCredits?.status === "unknown" &&
+        (await host.credentials.getSecret("claude", "cookie"))
+      ) {
+        return { ...snapshot, ...(await readClaudeWebResetCredits(host, token)) };
+      }
+      return snapshot;
     }
     const next = await host.credentials.refreshOAuthToken?.("claude", token);
     if (!next?.accessToken || triedAccessTokens.has(next.accessToken)) {
@@ -315,7 +324,7 @@ export async function collectClaude(
  * expires and the usage endpoint 401s, so a caller that can persist the rotated
  * token uses {@link refreshClaudeOAuthToken} to renew it before collecting.
  */
-export const CLAUDE_OAUTH_TOKEN_ENDPOINT = "https://console.anthropic.com/v1/oauth/token";
+export const CLAUDE_OAUTH_TOKEN_ENDPOINT = "https://platform.claude.com/v1/oauth/token";
 export const CLAUDE_OAUTH_CLIENT_ID = "9d1c250a-e61b-44d9-88ed-5944d1962f5e";
 
 export interface ClaudeRefreshedToken {

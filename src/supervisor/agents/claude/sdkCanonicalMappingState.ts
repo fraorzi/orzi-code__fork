@@ -143,8 +143,8 @@ export interface ClaudeMapperState {
    */
   sawActiveGoalMessage?: boolean;
   /**
-   * Set when a clean turn `result` arrived while background work was still
-   * live (subagent tasks, and plain backgrounded Bash via the level signal)
+   * Set when a clean turn `result` arrived while delegated subagent/workflow
+   * tasks were still live through task edges or the authoritative level
    * and no `active_goal` verdict had been seen, so the goal was held active
    * instead of completed. The goal completes after the last live task drains
    * and the session's resume grace expires — unless a new turn starts first.
@@ -175,22 +175,14 @@ export interface ClaudeMapperState {
   /** Reverse of {@link activeSubAgentTaskToTool}: tool_use id → task_id. */
   activeSubAgentToolToTask?: Map<string, string>;
   /**
-   * Task ids of EVERY live background task — plain backgrounded Bash included —
-   * from the CLI's `background_tasks_changed` level signal. The payload is the
-   * full live set with REPLACE semantics, so a missed `task_started` /
-   * `task_notification` bookend cannot wedge a stale "running" entry, and it
-   * carries ids only: it says nothing about how tool rows render (a background
-   * Bash row still completes at its launch tool_result). Ambient housekeeping
-   * tasks are filtered out. Per CLI process: reset to empty whenever the
-   * session's CLI process (re)starts and let the next level repopulate it.
-   *
-   * This is the "is background work still running" signal that holds a
-   * goal open across a clean turn end — subagent tasks are also tracked here
-   * when the CLI emits the level, but the {@link activeSubAgentTaskToTool}
-   * edge maps remain the source of truth for those (older CLIs emit the edges
-   * without the level signal).
+   * Subagent/workflow ids from the CLI's authoritative background-task level.
+   * Replaced on every level update and cleared when its process restarts.
+   * Together with the edge maps above, this holds completion while delegated
+   * work is running, including with older CLIs that emit only task edges.
+   * Detached commands and monitors remain in reportedBackgroundTasks and do
+   * not block a completed response or goal.
    */
-  liveBackgroundTaskIds?: Set<string>;
+  liveBackgroundSubAgentTaskIds?: Set<string>;
   /**
    * Fingerprint of the last `background_tasks.changed` event emitted, so the
    * level signal (which fires on every membership change, including sub-agent

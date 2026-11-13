@@ -1,5 +1,7 @@
 import { collectClaude } from "./collectors/claude";
 import { collectCodex } from "./collectors/codex";
+import { consumeCodexResetCredit } from "./collectors/codexResetCredits";
+import { consumeClaudeResetCredit } from "./collectors/claudeWebResetCredits";
 import { collectCommandCode } from "./collectors/commandcode";
 import { collectCopilot } from "./collectors/copilot";
 import { collectCursor } from "./collectors/cursor";
@@ -13,7 +15,12 @@ import { collectQwen } from "./collectors/qwen";
 import { collectZai } from "./collectors/zai";
 import type { CollectOptions, HostPort } from "./host";
 import { BUILT_IN_USAGE_PROVIDER_DESCRIPTORS } from "./providers";
-import type { UsageProviderDescriptor, UsageSnapshot } from "./types";
+import type {
+  UsageProviderDescriptor,
+  UsageSnapshot,
+  UsageResetRequest,
+  UsageResetResult,
+} from "./types";
 
 /**
  * A self-contained usage collector for one provider. Adding a provider is a new
@@ -23,16 +30,20 @@ import type { UsageProviderDescriptor, UsageSnapshot } from "./types";
 export interface UsageCollector {
   readonly descriptor: UsageProviderDescriptor;
   collect(host: HostPort, opts?: CollectOptions): Promise<UsageSnapshot>;
+  /** Redeem only the selected, freshly verified grant. Mutations are never retried. */
+  consumeReset?(host: HostPort, request: UsageResetRequest): Promise<UsageResetResult>;
 }
 
 const CLAUDE_COLLECTOR: UsageCollector = {
   descriptor: BUILT_IN_USAGE_PROVIDER_DESCRIPTORS.claude,
   collect: collectClaude,
+  consumeReset: consumeClaudeResetCredit,
 };
 
 const CODEX_COLLECTOR: UsageCollector = {
   descriptor: BUILT_IN_USAGE_PROVIDER_DESCRIPTORS.codex,
   collect: collectCodex,
+  consumeReset: consumeCodexResetCredit,
 };
 
 const COPILOT_COLLECTOR: UsageCollector = {
@@ -114,6 +125,7 @@ export interface UsageCollectorRegistry {
   descriptors(): UsageProviderDescriptor[];
   /** Collect one provider. Errors are caught and returned as an `error` snapshot. */
   collect(id: string, host: HostPort, opts?: CollectOptions): Promise<UsageSnapshot>;
+  consumeReset(id: string, host: HostPort, request: UsageResetRequest): Promise<UsageResetResult>;
   /** Collect many providers concurrently (defaults to all registered). */
   collectAll(
     ids: readonly string[] | undefined,
@@ -158,6 +170,15 @@ export function createUsageCollectorRegistry(extra: UsageCollector[] = []): Usag
     has: (id) => collectors.has(id),
     descriptors: () => [...collectors.values()].map((c) => c.descriptor),
     collect: collectOne,
+    consumeReset: async (id, host, request) => {
+      const collector = collectors.get(id);
+      if (!collector?.consumeReset) return { outcome: "unsupported" };
+      try {
+        return await collector.consumeReset(host, request);
+      } catch {
+        return { outcome: "unknown" };
+      }
+    },
     collectAll: (ids, host, opts) => {
       const targets = ids ?? [...collectors.keys()];
       return Promise.all(targets.map((id) => collectOne(id, host, opts)));

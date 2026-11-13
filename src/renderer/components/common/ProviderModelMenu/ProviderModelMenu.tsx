@@ -1,9 +1,10 @@
+import type { ProviderModelItem } from "./parts/types";
 import { startTransition, useDeferredValue, useEffect, useId, useRef, useState } from "react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { ArrowLeft, ChevronDown, Search } from "lucide-react";
 import { Tooltip } from "@heroui/react";
 import { ProviderIcon } from "@/renderer/components/providers/ProviderIcon";
-import { ResponsiveMenuSurface, useResponsiveMenu } from "../ResponsiveMenuSurface";
+import { MenuPopover } from "../MenuPopover";
 import { useSharedSettings } from "@/renderer/state/sharedSettingsStore";
 import { effectiveProviderOrder } from "@/shared/machineSettings";
 import { LOCAL_NATIVE_MACHINE_KEY } from "@/shared/machines";
@@ -12,22 +13,17 @@ import { migrateCursorBaseId, parseCursorModelId } from "@/shared/cursorModelId"
 import { Button } from "../Button";
 import {
   buildProviderModelItems,
-  type ModelRef,
   type ProviderModelMenuProvider,
+  type ModelRef,
 } from "./parts/buildItems";
 import { deriveSubProvider } from "./parts/deriveSubProvider";
 import { providerMenuKey } from "./parts/providerIdentity";
-import type { ProviderModelItem } from "./parts/types";
 import { WindowedProviderModelList, type ModelListHandle } from "./parts/WindowedProviderModelList";
 import { FavoriteModelColumns } from "./parts/FavoriteModelColumns";
 import { ModelMenuFooter, type ModelMenuSettings } from "./parts/ModelMenuFooter";
 import { splitModelLabel } from "./parts/splitModelLabel";
-
 const MODEL_MENU_ROW_HEIGHT = 28;
-const MODEL_MENU_ROW_HEIGHT_MOBILE = 44;
-
 export type { ModelMenuSettings, ProviderModelMenuProvider };
-
 export interface ProviderModelMenuProps {
   /** Providers to surface (typically all installed agents for draft, locked-only otherwise). */
   providers: ProviderModelMenuProvider[];
@@ -56,7 +52,6 @@ export interface ProviderModelMenuProps {
   onOpenChange?: (open: boolean) => void;
   align?: "start" | "end";
 }
-
 function normalizeCurrentModelForProvider(
   provider: ProviderModelMenuProvider | undefined,
   modelId: string,
@@ -93,7 +88,12 @@ function refsForPresentation(
         provider.kind === ref.agentKind && provider.presentationMode === presentationMode,
     );
     if (current?.capabilities.models.some((model) => model.id === ref.modelId)) {
-      return [{ ...ref, presentationMode }];
+      return [
+        {
+          ...ref,
+          presentationMode,
+        },
+      ];
     }
     return alternativeProviders.some(
       (provider) =>
@@ -103,7 +103,6 @@ function refsForPresentation(
       : [];
   });
 }
-
 export function ProviderModelMenu(props: ProviderModelMenuProps) {
   const {
     providers,
@@ -120,9 +119,7 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
     onChange,
     onOpenChange,
   } = props;
-
   const { t } = useLingui();
-  const { mobile } = useResponsiveMenu();
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [activeModelItemId, setActiveModelItemId] = useState<string | null>(null);
@@ -131,7 +128,6 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
   const searchRef = useRef<HTMLInputElement>(null);
   const windowedListRef = useRef<ModelListHandle>(null);
   const listboxDomIdPrefix = useId();
-
   const favorites = useSharedSettings((s) => s.favoriteModels);
   const providerOrder = useSharedSettings((s) =>
     effectiveProviderOrder(s, props.machineKey ?? LOCAL_NATIVE_MACHINE_KEY),
@@ -140,7 +136,6 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
   const providerModelPreferences = useSharedSettings((s) => s.providerModelPreferences);
   const providerConfigs = useSharedSettings((s) => s.providerConfigs);
   const toggleFavoriteModel = useSharedSettings((s) => s.toggleFavoriteModelAnyMode);
-
   const currentProvider =
     providers.find(
       (p) =>
@@ -167,15 +162,14 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
       setCatalogOpen(false);
     }
   }
-
   const wasMenuOpenRef = useRef(false);
   useEffect(() => {
     const opened = isOpen && !wasMenuOpenRef.current;
     wasMenuOpenRef.current = isOpen;
-    // On mobile, auto-focusing search would pop the keyboard over the drawer;
+
     // let the user tap the field if they want to filter.
-    if (opened && !mobile) setTimeout(() => searchRef.current?.focus(), 50);
-  }, [isOpen, mobile]);
+    if (opened && true) setTimeout(() => searchRef.current?.focus(), 50);
+  }, [isOpen]);
 
   // An external `openSignal` bump opens the menu, tracked as a render snapshot
   // with the previous effect's re-run semantics.
@@ -184,10 +178,12 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
     disabled: isDisabled,
   });
   if (prevOpenSignal.signal !== openSignal || prevOpenSignal.disabled !== isDisabled) {
-    setPrevOpenSignal({ signal: openSignal, disabled: isDisabled });
+    setPrevOpenSignal({
+      signal: openSignal,
+      disabled: isDisabled,
+    });
     if (openSignal !== undefined && !isDisabled) setIsOpen(true);
   }
-
   function handleOpenChange(open: boolean) {
     setIsOpen(open);
     if (!open) setActiveModelItemId(null);
@@ -209,7 +205,11 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
     return buildProviderModelItems({
       providers,
       search: searchValue,
-      ...(lockedAgentKind ? { lockedAgentKind } : {}),
+      ...(lockedAgentKind
+        ? {
+            lockedAgentKind,
+          }
+        : {}),
       currentAgentKind: deferredAgentKind,
       currentModel: deferredModel,
       favoriteStateRefs: activeFavorites,
@@ -219,7 +219,6 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
       providerOrder,
     });
   }
-
   const items = isOpen ? buildItemsForSearch(deferredSearch) : [];
   // Typing searches every model, not just favorites; the catalog (opened by
   // "Add model") is the same list where activating a row favorites it.
@@ -247,7 +246,6 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
     if (legacy?.model === modelId && legacy.fast !== undefined) return legacy.fast;
     return true;
   }
-
   function selectModelItem(selected: ProviderModelItem | undefined) {
     if (selected?.type !== "model") return;
     if (
@@ -266,15 +264,17 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
       onChange({
         agentKind: selected.providerKind,
         model: selected.modelId,
-        ...(selected.presentationMode ? { presentationMode: selected.presentationMode } : {}),
+        ...(selected.presentationMode
+          ? {
+              presentationMode: selected.presentationMode,
+            }
+          : {}),
       });
     });
   }
-
   function handleSelect(itemId: string) {
     activateItem(items.find((item) => item.id === itemId));
   }
-
   function activateItem(item: ProviderModelItem | undefined) {
     if (catalogOpen) {
       if (item?.type === "model" && !item.isFavorite)
@@ -285,7 +285,6 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
         );
     } else selectModelItem(item);
   }
-
   const trigger = (
     <Button
       aria-label={t`Select model`}
@@ -293,11 +292,14 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
       size="sm"
       variant="ghost"
       className="poracode-composer-menu poracode-composer-model-control min-w-0 px-2.5"
-      {...(mobile ? { onPress: () => handleOpenChange(true) } : {})}
     >
       <ProviderIcon
         kind={currentAgentKind}
-        {...(currentProvider?.icon ? { icon: currentProvider.icon } : {})}
+        {...(currentProvider?.icon
+          ? {
+              icon: currentProvider.icon,
+            }
+          : {})}
         fallbackLabel={currentProvider?.label}
         tone="active"
         className="size-3.5 shrink-0"
@@ -332,8 +334,7 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
       />
     </Button>
   );
-
-  const renderContent = ({ expanded }: { readonly expanded: boolean }) => (
+  const renderContent = () => (
     <>
       {catalogOpen ? (
         <div className="flex items-center gap-2 border-b border-border px-2 py-1.5">
@@ -408,9 +409,7 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
           items={items}
           selectedKeys={selectedKeys}
           ref={windowedListRef}
-          modelRowHeight={mobile ? MODEL_MENU_ROW_HEIGHT_MOBILE : MODEL_MENU_ROW_HEIGHT}
-          mobile={mobile}
-          mobileExpanded={mobile && expanded}
+          modelRowHeight={MODEL_MENU_ROW_HEIGHT}
           onActiveChange={setActiveModelItemId}
           modelFastEnabled={modelFastEnabled}
           toggleFavorite={(providerKind, modelId, rowPresentationMode) =>
@@ -434,14 +433,13 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
       )}
     </>
   );
-
   return (
-    <ResponsiveMenuSurface
+    <MenuPopover
       isOpen={isOpen}
       onOpenChange={handleOpenChange}
       label={t`Select model`}
       trigger={
-        !mobile && hideLabelOnWrap ? (
+        hideLabelOnWrap ? (
           <Tooltip>
             {trigger}
             <Tooltip.Content placement="top">
@@ -457,6 +455,6 @@ export function ProviderModelMenu(props: ProviderModelMenuProps) {
       dialogClassName="flex max-h-[28rem] flex-col overflow-hidden !p-0"
     >
       {renderContent}
-    </ResponsiveMenuSurface>
+    </MenuPopover>
   );
 }

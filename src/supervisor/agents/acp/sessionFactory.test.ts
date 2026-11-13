@@ -148,4 +148,13 @@ describe("createAcpStructuredSession baseSpawnEnv merge", () => {
 
     expect(createSpy.mock.calls[0]?.[3]).toMatchObject({ textStreamExtension });
   });
+
+  it("forwards the provider pre-execution failure classifier", () => {
+    const createSpy = spyOnCreate();
+    const promptFailureClassifier = () => undefined;
+    createAcpStructuredSession({ command: "vendor-acp", args: [] }, makeInput(), {
+      promptFailureClassifier,
+    });
+    expect(createSpy.mock.calls[0]?.[3]).toMatchObject({ promptFailureClassifier });
+  });
 });

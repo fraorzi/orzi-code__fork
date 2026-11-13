@@ -3,9 +3,11 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import {
   type ClaudeRefreshedToken,
+  type HttpClient,
   type OAuthToken,
   refreshClaudeOAuthToken,
 } from "@poracode/agents-usage";
+import { parseRetryAfter } from "@poracode/agents-usage/formatters";
 import { writeFileAtomic } from "@/shared/atomicFile";
 import { coalesceByKey } from "@/shared/coalesce";
 import {
@@ -263,11 +265,32 @@ export interface ClaudeRefreshDeps {
   writeFile(path: string, content: string): void;
 }
 
-export function defaultClaudeRefreshDeps(): ClaudeRefreshDeps {
-  const http = createNodeHttpClient();
+export function defaultClaudeRefreshDeps(
+  http: HttpClient = createNodeHttpClient(),
+): ClaudeRefreshDeps {
+  let refreshBlockedUntil = 0;
   return {
     now: () => Date.now(),
-    refresh: (refreshToken, nowMs) => refreshClaudeOAuthToken(http, refreshToken, nowMs),
+    refresh: async (refreshToken, nowMs) => {
+      if (nowMs < refreshBlockedUntil) return undefined;
+      return refreshClaudeOAuthToken(
+        {
+          request: async (request) => {
+            const response = await http.request(request);
+            if (response.status === 429) {
+              refreshBlockedUntil =
+                parseRetryAfter(
+                  response.headers["retry-after"] ?? response.headers["Retry-After"],
+                  nowMs,
+                ) ?? nowMs + 5 * 60_000;
+            }
+            return response;
+          },
+        },
+        refreshToken,
+        nowMs,
+      );
+    },
     readFile: (path) => readFileSync(path, "utf8"),
     // Atomic write with owner-only perms (cleans up its temp file on failure),
     // so a torn or crashed write never corrupts or leaks the credentials file.

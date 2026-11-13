@@ -1,4 +1,5 @@
 import { spawn, type ChildProcess } from "node:child_process";
+import { protectTransportPort } from "../base/transportPorts";
 import { terminateChildProcessTree } from "@/shared/processTree";
 import { ExpectedStructuredRuntimeError, type CommandSpec } from "../base";
 import { classifyOpenCode2Error } from "./opencode2Errors";
@@ -90,6 +91,7 @@ export function spawnOpenCode2Server(commandSpec: CommandSpec): OpenCode2ServerH
   let stdoutAll = "";
   let stderrBuf = "";
   let baseUrl: string | undefined;
+  let releaseTransportPort: (() => void) | undefined;
   let password: string | undefined;
   let pending: PendingResolve | undefined;
 
@@ -117,6 +119,7 @@ export function spawnOpenCode2Server(commandSpec: CommandSpec): OpenCode2ServerH
     );
   });
   child.once("exit", (code, signal) => {
+    releaseTransportPort?.();
     activeServerChildren.delete(child);
     if (!baseUrl || !password) {
       const detail = formatOutput();
@@ -170,7 +173,10 @@ export function spawnOpenCode2Server(commandSpec: CommandSpec): OpenCode2ServerH
       }
       if (!baseUrl && line.startsWith(URL_LINE_PREFIX)) {
         const m = line.match(URL_REGEX);
-        if (m && m[1]) baseUrl = m[1];
+        if (m && m[1]) {
+          baseUrl = m[1];
+          releaseTransportPort = protectTransportPort(baseUrl);
+        }
       }
       if (!password && line.startsWith(PASSWORD_LINE_PREFIX)) {
         const m = line.match(PASSWORD_REGEX);
@@ -211,6 +217,7 @@ export function spawnOpenCode2Server(commandSpec: CommandSpec): OpenCode2ServerH
   async function dispose(): Promise<void> {
     if (disposed) return;
     disposed = true;
+    releaseTransportPort?.();
     clearTimeout(readyTimeout);
     if (child.exitCode !== null || child.killed) return;
 

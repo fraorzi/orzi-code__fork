@@ -32,6 +32,7 @@ import { cursorModelGrouping } from "./modelGrouping";
 import { buildCursorAgentCommand, readCursorAgentCommandOutput } from "./windowsExecutable";
 
 export const cursorDefaultCapabilities: AgentCapability = {
+  supportsUsageRecovery: true,
   models: [],
   efforts: [],
   modelEfforts: {},

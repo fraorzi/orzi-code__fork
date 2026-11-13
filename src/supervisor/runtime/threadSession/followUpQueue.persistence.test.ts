@@ -32,6 +32,43 @@ describe("durable follow-ups", () => {
     expect(harness().state()).toBeNull();
   });
 
+  it("retains opt-in config and the original message identity while launch waits for quota", () => {
+    const h = harness("idle");
+    h.queue.stageInitialUsageWait(
+      h.session,
+      {
+        threadId: "thread",
+        prompt: "held initial task",
+        config: { model: "model", autoResumeAfterLimit: true },
+      },
+      "original-user-message",
+    );
+    expect(saved()[0]?.items[0]).toMatchObject({
+      userMessageItemId: "original-user-message",
+      payload: { config: { autoResumeAfterLimit: true }, prompt: "held initial task" },
+    });
+    h.queue.dispose();
+    expect(harness("idle").state()).toMatchObject({
+      paused: true,
+      items: [{ prompt: "held initial task" }],
+    });
+  });
+
+  it("persists recovery display metadata, and drops it when the user edits the prompt", async () => {
+    const h = harness("idle");
+    h.queue.stageUsageContinuation(h.session, "provider recovery instruction");
+    expect(saved()[0]?.items[0]?.source).toBe("usage-recovery");
+    h.queue.dispose();
+    const restarted = harness("idle");
+    expect(restarted.state()?.items[0]?.source).toBe("usage-recovery");
+    await restarted.queue.editQueuedThreadFollowUp({
+      ...restarted.item(),
+      prompt: "user replacement",
+    });
+    expect(saved()[0]?.items[0]?.source).toBeUndefined();
+    expect(restarted.state()?.items[0]?.prompt).toBe("user replacement");
+  });
+
   it("saves raw input, attachments, config and stable identities before acknowledging receipt", async () => {
     const h = harness();
     await h.queue.queueThreadFollowUp({

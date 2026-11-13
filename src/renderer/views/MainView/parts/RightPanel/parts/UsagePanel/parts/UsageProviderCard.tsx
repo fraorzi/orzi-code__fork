@@ -1,5 +1,6 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { UsageResetCredits } from "@/renderer/components/providers/UsageResetCredits";
+import { getProviderManifest } from "@/renderer/components/providers/providerManifest";
 import { type FormEvent, useEffect, useState } from "react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { ChevronDown, ChevronRight, GripVertical, LogOut, RefreshCw } from "lucide-react";
@@ -79,6 +80,7 @@ export function UsageProviderCard(props: {
   const { id, label, index, collapsed, onToggleCollapse } = props;
   const { t } = useLingui();
   const snapshot = useProviderUsage(id);
+  const resetUrl = getProviderManifest(id)?.usageResetUrl;
   const {
     canBrowserSignIn,
     canApiKeySignIn,
@@ -211,7 +213,13 @@ export function UsageProviderCard(props: {
 
       {snapshot?.resetCredits && (
         <div className="px-3 pb-2">
-          <UsageResetCredits credits={snapshot.resetCredits} now={now} allowNavigation />
+          <UsageResetCredits
+            providerId={id}
+            credits={snapshot.resetCredits}
+            now={now}
+            allowNavigation
+            {...(resetUrl ? { manageUrl: resetUrl } : {})}
+          />
         </div>
       )}
       {!collapsed ? (

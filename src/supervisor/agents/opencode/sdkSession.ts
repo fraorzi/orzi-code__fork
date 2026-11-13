@@ -161,6 +161,8 @@ export class OpencodeSdkSession implements StructuredSessionHandle {
   private currentSlashCommands: AgentSlashCommand[] | undefined;
   /** True between `startTurn`'s promptAsync and the next SSE idle signal. */
   private turnActive = false;
+  /** Ownership of a prompt request that can outlive its authoritative SSE completion. */
+  private turnGeneration = 0;
   /** Live MCP set; starts from the launch input, replaced by settings saves. */
   private mcpServers: readonly ResolvedMcpServer[] | undefined;
 
@@ -314,9 +316,14 @@ export class OpencodeSdkSession implements StructuredSessionHandle {
     segments?: PromptSegment[],
     options?: StartTurnOptions,
   ): Promise<void> {
+    if (this.reacquirePromise) await this.reacquirePromise;
     const acquired = this.requireAcquired();
     const sessionID = this.requireSessionId();
     this.currentConfig = config;
+    const turnGeneration = ++this.turnGeneration;
+    let promptIssued = false;
+    const isSuperseded = () =>
+      turnGeneration !== this.turnGeneration || (promptIssued && !this.turnActive);
 
     // Reset the retry-dedup key synchronously at turn entry (before any
     // await): the SSE stream runs concurrently with `promptAsync`, so a new
@@ -350,6 +357,9 @@ export class OpencodeSdkSession implements StructuredSessionHandle {
     const variant = config.effort && config.effort.length > 0 ? config.effort : undefined;
 
     const sendParts = async (promptParts: OpenCodePromptPart[]): Promise<void> => {
+      if (turnGeneration !== this.turnGeneration) return;
+      promptIssued = true;
+      this.turnActive = true;
       await acquired.client.session.promptAsync({
         directory: this.sdkDirectory,
         sessionID,
@@ -365,11 +375,14 @@ export class OpencodeSdkSession implements StructuredSessionHandle {
       try {
         await sendParts(parts);
       } catch (cause) {
+        if (isSuperseded()) return;
         if (!shouldRetryOpenCodePromptWithTextFallback(cause, parts)) throw cause;
-        await sendParts(await buildOpenCodeTextFallbackParts(parts));
+        const fallbackParts = await buildOpenCodeTextFallbackParts(parts);
+        if (!isSuperseded()) await sendParts(fallbackParts);
       }
-      this.turnActive = true;
     } catch (cause) {
+      if (isSuperseded()) return;
+      this.turnActive = false;
       throw new Error(classifyOpenCodeError({ cause, operation: "session.promptAsync" }), {
         cause,
       });
@@ -774,10 +787,30 @@ export class OpencodeSdkSession implements StructuredSessionHandle {
     const acquired = this.requireAcquired();
     this.unsubscribeServerExit = acquired.onServerExit?.(() => {
       if (this.disposed || this.acquired !== acquired) return;
+      if (this.turnActive || this.pendingRequests.size > 0) {
+        this.turnGeneration++;
+        const message = this.classifyOpenCodeError(new Error("socket hang up"), "opencode serve");
+        this.emitRuntimeEvents(this.mapperState ? closeOpenItems(this.mapperState) : []);
+        for (const requestId of this.pendingRequests.keys()) {
+          this.emitRuntimeEvents([
+            {
+              type: "request.resolved",
+              threadId: this.threadId,
+              requestId: String(requestId),
+              outcome: "cancelled",
+            },
+          ]);
+        }
+        this.pendingRequests.clear();
+        this.emitTurnCompletedIfActive("failed");
+        this.emitRuntimeEvents([{ type: "error", threadId: this.threadId, message }]);
+        this.listener?.onUpdate({ status: "error", attention: "error", errorMessage: message });
+      }
       void this.reacquireOpenCodeServer().catch((cause) => {
         if (this.disposed) return;
         const message = classifyOpenCodeError({ cause, operation: "restart opencode serve" });
         this.emitRuntimeEvents([{ type: "error", threadId: this.threadId, message }]);
+        this.listener?.onUpdate({ status: "error", attention: "error", errorMessage: message });
       });
     });
   }
@@ -1004,7 +1037,7 @@ export class OpencodeSdkSession implements StructuredSessionHandle {
    * callback) and aligns OpenCode with Codex/ACP, which always emit
    * `turn.completed` from their canonical mappers.
    */
-  private emitTurnCompletedIfActive(): void {
+  private emitTurnCompletedIfActive(state: "completed" | "failed" = "completed"): void {
     if (!this.turnActive) return;
     this.turnActive = false;
     this.emitRuntimeEvents([
@@ -1012,7 +1045,7 @@ export class OpencodeSdkSession implements StructuredSessionHandle {
         type: "turn.completed",
         threadId: this.threadId,
         turnId: `opencode-${this.sessionId ?? "unknown"}`,
-        state: "completed",
+        state,
       },
     ]);
   }

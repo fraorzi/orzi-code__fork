@@ -23,6 +23,8 @@ import { crossagentRolesScenario } from "../../../../scripts/smoke-crossagent-ro
 import { agentVersionsScenario } from "../../../../scripts/smoke-agent-versions.mjs";
 import { agentUpdatePreferencesScenario } from "../../../../scripts/smoke-agent-update-preferences.mjs";
 import { contextUsageScenario } from "../../../../scripts/smoke-context-usage.mjs";
+import { localPortsScenario } from "../../../../scripts/smoke-local-ports.mjs";
+import { savedResetsScenario } from "../../../../scripts/smoke-saved-resets.mjs";
 import { mockLiveVoiceGate } from "./smoke-live-voice.mjs";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
@@ -212,6 +214,23 @@ async function runSmoke(plan) {
     await runScenario(report, "welcome-dismissal", () => welcomeDismissalScenario(client));
     await installWindowErrorCollector(client);
     await runScenario(report, "baseline", () => baselineScenario(client));
+    if (plan.automated.includes("saved-resets")) {
+      await runScenario(report, "saved-resets", () =>
+        savedResetsScenario({ client, evaluate, bridgeInvoke, waitForValue, screenshot, outDir }),
+      );
+    }
+    if (plan.automated.includes("local-ports")) {
+      await runScenario(report, "local-ports", () =>
+        localPortsScenario({
+          client,
+          evaluate,
+          bridgeInvoke,
+          waitForValue,
+          screenshot,
+          outDir,
+        }),
+      );
+    }
     if (plan.automated.includes("settings")) {
       await runScenario(report, "settings", () => settingsScenario(client));
       await runScenario(report, "control-geometry", () => controlGeometryScenario(client));
@@ -1802,7 +1821,7 @@ async function runMockGate(client, gate, fixture) {
       assert(controls.selectControls > 0, "provider model/approval controls did not render");
       return `provider ${state.kind} was hydrated and selector UI rendered without external credentials`;
     }
-    case "remote-mobile": {
+    case "remote-access": {
       const pairing = await bridgeInvoke(client, "getRemoteAccessPairing");
       assert(pairing && typeof pairing === "object", "remote pairing bridge returned no result");
       return "remote pairing state bridge returned successfully";
@@ -1851,7 +1870,9 @@ async function runMockGate(client, gate, fixture) {
         client,
         `(() => ({
           unlabeled: [...document.querySelectorAll("button,input,textarea")].filter((el) => {
-            const label = el.getAttribute("aria-label") || el.getAttribute("title") || el.getAttribute("placeholder") || el.textContent?.trim();
+            const label = el.getAttribute("aria-label") || el.getAttribute("title") || el.getAttribute("placeholder") || el.textContent?.trim()
+              || [...(el.labels ?? [])].some((label) => label.textContent?.trim())
+              || el.getAttribute("aria-labelledby")?.split(/\\s+/).some((id) => document.getElementById(id)?.textContent?.trim());
             return !label;
           }).length,
           dark: document.documentElement.classList.contains("dark"),

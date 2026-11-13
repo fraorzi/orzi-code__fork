@@ -1,3 +1,4 @@
+import { usageRecovery } from "./usageRecovery";
 import type { AgentCapability, ProjectLocation } from "@/shared/contracts";
 import type { OscNotification } from "@/shared/osc";
 import {
@@ -111,6 +112,7 @@ export function createCodexAdapter(): AgentAdapter {
 
   return {
     kind: codexDetectionSpec.kind,
+    usageRecovery,
     usageProviderId: "codex",
     label: codexDetectionSpec.label,
     binary: codexDetectionSpec.binary,

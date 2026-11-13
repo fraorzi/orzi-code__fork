@@ -139,11 +139,12 @@ export function useUsageProviderLogin(id: string) {
       // closed it). Unsubscribe first so this dismiss doesn't re-fire cancel.
       unsubscribe();
       usePanelStore.getState().setBrowserOverlayOpen(false);
-      if (!outcome.ok) return;
+      if (!outcome.ok) return outcome;
       // Mark the session stored so the UI reads as signed in immediately,
       // independent of whether the usage fetch below yields displayable data.
       useUsageLoginStateStore.getState().setStored(id, true);
       await refreshAndMergeProviderUsage(id);
+      return outcome;
     } finally {
       unsubscribe();
       setSigningIn(false);

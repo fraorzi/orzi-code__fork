@@ -1,3 +1,4 @@
+import { usageRecovery } from "./usageRecovery";
 import { antigravityNativeMcpConfig } from "./nativeMcp";
 import { antigravitySubscriptionImages, verifyAntigravityImageAccount } from "./subscriptionImages";
 import type {
@@ -82,6 +83,7 @@ export function createAntigravityAdapter(acpInstance?: AgentInstanceConfig): Age
     subscriptionImages: antigravitySubscriptionImages(),
     nativeMcpConfig: (ctx) => (ctx.envKind === "wsl" ? undefined : antigravityNativeMcpConfig()),
     kind: detectionSpec.kind,
+    usageRecovery,
     usageProviderId: "antigravity",
     label: detectionSpec.label,
     binary: detectionSpec.binary,

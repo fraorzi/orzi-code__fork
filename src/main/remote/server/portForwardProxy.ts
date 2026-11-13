@@ -36,11 +36,7 @@ function isHopByHopHeader(name: string): boolean {
  * that function without an explicit `return` — this list makes sure such a
  * request 404s instead of silently being proxied to a forwarded dev server.
  *
- * `/assets/` is deliberately NOT reserved here: an active `lc_forward` session
- * wins over the bundled mobile PWA for that prefix (see `handleHttp`'s
- * `/assets/` branch, which proxies to the forward before ever trying
- * `tryServeBuiltMobileApp`), so this list must not also cause it to 404 in the
- * fallthrough when no earlier branch returned.
+ * `/assets/` remains available to forwarded dev servers.
  */
 const RESERVED_EXACT_PATHS = new Set([
   "/ws",

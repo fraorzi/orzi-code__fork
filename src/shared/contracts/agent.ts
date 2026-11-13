@@ -237,6 +237,8 @@ export function resolveComposerMcpScope(
 }
 
 export const agentCapabilitySchema = z.object({
+  /** Structured quota failures and account windows can be matched for automatic recovery. */
+  supportsUsageRecovery: z.boolean().optional(),
   /** Short provider-owned runtime badge shown in structured composers (for example ACP / SDK). */
   runtimeLabel: z.string().min(1).optional(),
   /** Keep runtime identity but omit its suffix from model-picker provider labels. */

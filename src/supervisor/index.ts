@@ -56,7 +56,11 @@ async function handleRequest(request: SupervisorRequest): Promise<unknown> {
   return handler(request.payload as never);
 }
 
-process.on("message", (message: SupervisorRequest) => {
+process.on("message", (message: SupervisorRequest | { type: "usage-http-reply" }) => {
+  if (message.type === "usage-http-reply") {
+    // The pending browser HTTP request owns this private response.
+    return;
+  }
   void handleRequest(message)
     .then((data): SupervisorReply => ({
       replyTo: message.id,

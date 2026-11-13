@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ChevronLeft, Settings2, SlidersHorizontal } from "lucide-react";
+import { Settings2, SlidersHorizontal } from "lucide-react";
 import type { Selection } from "@heroui/react";
 import { Dropdown, Label } from "@heroui/react";
 import { Trans, useLingui } from "@lingui/react/macro";
@@ -135,68 +135,6 @@ export function ComposerMcpServersSubmenuContent(props: ComposerMcpServersMenuPr
         </Dropdown.Menu>
       ) : null}
       <p className={submenuCaptionClassName}>{caption}</p>
-    </div>
-  );
-}
-
-/**
- * Mobile bottom-sheet drill-in for the "MCP Servers" list. Mirrors the desktop
- * flyout with sheet-native rows. `onManaged` lets the parent close the sheet
- * before the settings overlay opens.
- */
-export function ComposerMcpServersMobileList(
-  props: ComposerMcpServersMenuProps & { onBack: () => void; onManaged: () => void },
-) {
-  const { servers, readOnly, onManage, onBack, onManaged } = props;
-  const { t } = useLingui();
-  const { caption, emptyNote } = useMcpServersMenuText(readOnly, props.readOnlyCaption);
-
-  return (
-    <div className="m-sheet-list">
-      <button type="button" className="m-sheet-action" aria-label={t`Back`} onClick={onBack}>
-        <ChevronLeft className="size-4 text-muted" />
-        <span className="flex-1 truncate font-medium">
-          <Trans>MCP Servers</Trans>
-        </span>
-      </button>
-      {servers.map((server) =>
-        readOnly ? (
-          <div key={server.id} className="m-sheet-action" data-static="true" aria-disabled="true">
-            <Settings2 className="size-4 text-muted" />
-            <span className="flex-1 truncate">{server.name}</span>
-            <MenuSwitch checked={server.enabled} readOnly />
-          </div>
-        ) : (
-          <button
-            key={server.id}
-            type="button"
-            className="m-sheet-action"
-            aria-pressed={server.enabled}
-            onClick={() => server.onToggle?.(!server.enabled)}
-          >
-            <Settings2 className="size-4 text-muted" />
-            <span className="flex-1 truncate">{server.name}</span>
-            <MenuSwitch checked={server.enabled} />
-          </button>
-        ),
-      )}
-      {servers.length === 0 ? <p className="px-2 py-1 text-sm text-muted">{emptyNote}</p> : null}
-      {onManage ? (
-        <button
-          type="button"
-          className="m-sheet-action"
-          onClick={() => {
-            onManaged();
-            onManage();
-          }}
-        >
-          <SlidersHorizontal className="size-4 text-muted" />
-          <span className="flex-1 truncate">
-            <Trans>Manage MCP servers</Trans>
-          </span>
-        </button>
-      ) : null}
-      <p className="px-2 pt-0.5 text-[11px] leading-snug text-muted">{caption}</p>
     </div>
   );
 }

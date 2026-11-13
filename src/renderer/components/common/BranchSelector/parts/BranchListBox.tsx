@@ -1,3 +1,5 @@
+import type { BranchListItem } from "./useBranchList";
+import type { Thread } from "@/shared/contracts";
 import { Trans, useLingui } from "@lingui/react/macro";
 import {
   Check,
@@ -9,7 +11,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { Header, Label, ListBox, ListLayout, Tooltip, Virtualizer } from "@heroui/react";
-import type { Thread } from "@/shared/contracts";
 import {
   buildBranchNamePrKey,
   usePrChecksStatus,
@@ -27,10 +28,7 @@ import {
   VIRTUALIZED_COMPACT_DROPDOWN_ITEM_CLASS,
 } from "../../dropdownVirtualization";
 import { PixelLoader } from "../../PixelLoader";
-import { useResponsiveMenu } from "../../ResponsiveMenuSurface";
-import type { BranchListItem } from "./useBranchList";
 import { localBranchNameFromRef } from "./worktreeBaseRef";
-
 const STATUS_DOT_CLASS: Record<StatusTone, string> = {
   inactive: "bg-muted/40",
   active: "bg-success",
@@ -40,13 +38,11 @@ const STATUS_DOT_CLASS: Record<StatusTone, string> = {
   attention: "bg-warning",
   done: "bg-muted/40",
 };
-
 export interface OpenPrReviewArgs {
   branch: string;
   prNumber: number;
   worktreePath?: string;
 }
-
 export function BranchListBox(props: {
   projectId: string;
   items: BranchListItem[];
@@ -88,12 +84,11 @@ export function BranchListBox(props: {
     onOpenPrReview,
   } = props;
   const { t } = useLingui();
-  // In the mobile drawer, grow branch rows to a finger target. Drop the compact
+
   // `!h-7` force-class so the `.m-sheet .list-box-item { min-height }` rule sizes
   // them, and match the virtualizer's rowHeight so the scroll math stays in sync.
-  const { mobile } = useResponsiveMenu();
-  const rowHeight = mobile ? 44 : COMPACT_DROPDOWN_ROW_HEIGHT;
 
+  const rowHeight = COMPACT_DROPDOWN_ROW_HEIGHT;
   if (!hasLocal && !hasRemote) {
     return (
       <div className="px-3 py-3 text-center text-sm text-muted">
@@ -101,18 +96,22 @@ export function BranchListBox(props: {
       </div>
     );
   }
-
   const selectedRef = isWorktree || worktreeMode ? (baseBranch ?? value) : value;
   const listedBranches = items.flatMap((item) => (item.type === "branch" ? [item.branch] : []));
   const selectedKey = items.some((item) => item.type === "branch" && item.id === selectedRef)
     ? selectedRef
     : localBranchNameFromRef(selectedRef, listedBranches);
-
   return (
-    <Virtualizer layout={ListLayout} layoutOptions={{ rowHeight, padding: 8 }}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight,
+        padding: 8,
+      }}
+    >
       <ListBox
         aria-label={t`Branches`}
-        className={`poracode-menu max-h-60 overflow-y-auto ${mobile ? "" : VIRTUALIZED_COMPACT_DROPDOWN_ITEM_CLASS}`}
+        className={`poracode-menu max-h-60 overflow-y-auto ${VIRTUALIZED_COMPACT_DROPDOWN_ITEM_CLASS}`}
         items={items}
         selectedKeys={new Set([selectedKey])}
         selectionMode="single"
@@ -164,7 +163,11 @@ export function BranchListBox(props: {
                 isCurrent={isCurrent}
                 isSelected={isSelected}
                 isWorktreeBranch={isWorktreeBranch}
-                {...(worktreePath ? { worktreePath } : {})}
+                {...(worktreePath
+                  ? {
+                      worktreePath,
+                    }
+                  : {})}
                 threads={threads}
                 isDeleting={isDeleting}
                 allowWorktreeDelete={allowWorktreeDelete}
@@ -179,9 +182,12 @@ export function BranchListBox(props: {
     </Virtualizer>
   );
 }
-
 function BranchRowBody(props: {
-  branch: { name: string; isRemote: boolean; remote?: string };
+  branch: {
+    name: string;
+    isRemote: boolean;
+    remote?: string;
+  };
   projectId: string;
   isCurrent: boolean;
   isSelected: boolean;
@@ -210,7 +216,6 @@ function BranchRowBody(props: {
   } = props;
   const { t } = useLingui();
   const canDelete = !selectionOnly && !isCurrent && (allowWorktreeDelete || !worktreePath);
-
   const prKey = worktreePath ?? buildBranchNamePrKey(projectId, branch.name);
   const prState = usePrState(prKey);
   const prChecksStatus = usePrChecksStatus(prKey);
@@ -225,7 +230,6 @@ function BranchRowBody(props: {
   // globe for remote ones, a plain branch otherwise. The current branch keeps
   // its glyph but brightens to foreground (white) instead of a "current" label.
   const LeadingIcon = branch.isRemote ? Globe : isWorktreeBranch ? GitFork : GitBranch;
-
   return (
     <>
       <LeadingIcon
@@ -265,7 +269,15 @@ function BranchRowBody(props: {
               <button
                 type="button"
                 aria-label={t`Review PR #${prNumber} for ${branch.name}`}
-                className={`flex items-center rounded border-0 bg-transparent p-0.5 transition hover:bg-[var(--row-hover)] ${PR_TONE_TEXT_CLASS[getPrStatusTone(prState, prChecksStatus, { reviewDecision: prReviewDecision, mergeable: prMergeable, mergeStateStatus: prMergeStateStatus })]}`}
+                className={`flex items-center rounded border-0 bg-transparent p-0.5 transition hover:bg-[var(--row-hover)] ${
+                  PR_TONE_TEXT_CLASS[
+                    getPrStatusTone(prState, prChecksStatus, {
+                      reviewDecision: prReviewDecision,
+                      mergeable: prMergeable,
+                      mergeStateStatus: prMergeStateStatus,
+                    })
+                  ]
+                }`}
                 onPointerDown={(e) => e.stopPropagation()}
                 onPointerUp={(e) => e.stopPropagation()}
                 onClick={(e) => {
@@ -273,7 +285,11 @@ function BranchRowBody(props: {
                   onOpenPrReview({
                     branch: branch.name,
                     prNumber,
-                    ...(worktreePath ? { worktreePath } : {}),
+                    ...(worktreePath
+                      ? {
+                          worktreePath,
+                        }
+                      : {}),
                   });
                 }}
               >

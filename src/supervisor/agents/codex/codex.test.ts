@@ -2939,6 +2939,98 @@ describe("CodexStructuredSession", () => {
     );
   });
 
+  it.each(["idle", "systemError"] as const)(
+    "keeps a submitted turn active when a delayed resume snapshot reports %s",
+    async (type) => {
+      const structuredSession = makeStructuredSession([]);
+      const updates: StructuredSessionUpdate[] = [];
+      let resolveThreadRead!: (value: unknown) => void;
+      const threadRead = new Promise<unknown>((resolve) => {
+        resolveThreadRead = resolve;
+      });
+      let resolveTurnStart!: (value: unknown) => void;
+      const turnStart = new Promise<unknown>((resolve) => {
+        resolveTurnStart = resolve;
+      });
+      const request = vi.fn<(method: string) => Promise<unknown>>(async (method) => {
+        if (method === "thread/read") return threadRead;
+        if (method === "turn/start") return turnStart;
+        return {};
+      });
+      (structuredSession as unknown as Record<string, unknown>)["rpc"] = {
+        claimThread: () => {},
+        request,
+      };
+      structuredSession.setListener({
+        onClose: () => {},
+        onError: () => {},
+        onUpdate: (update) => updates.push(update),
+      });
+      await structuredSession.openThread(
+        { model: "gpt-5.4" },
+        { providerSessionId: "provider-thread", discoveredAt: "2026-05-10T12:00:00.000Z" },
+      );
+      expect(request).toHaveBeenCalledWith("thread/read", expect.anything());
+
+      const submitted = structuredSession.startTurn("hello", { model: "gpt-5.4" });
+      await Promise.resolve();
+      expect(updates.at(-1)?.status).toBe("working");
+      resolveThreadRead({ thread: { status: { type } } });
+      await vi.waitFor(() => expect(updates.at(-1)?.sessionRef).toBeDefined());
+      expect(updates.map((update) => update.status)).toEqual(["working", "working"]);
+
+      resolveTurnStart({ turn: { id: "turn-1", status: "inProgress" } });
+      await submitted;
+      dispatchNotification(structuredSession, {
+        jsonrpc: "2.0",
+        method: "turn/completed",
+        params: {
+          threadId: "provider-thread",
+          turn: { id: "turn-1", status: "completed" },
+        },
+      });
+      expect(updates.at(-1)?.status).toBe("idle");
+      expect(updates.filter((update) => update.status === "idle")).toHaveLength(1);
+    },
+  );
+
+  it("does not reopen a completed turn from a delayed active resume snapshot", async () => {
+    const structuredSession = makeStructuredSession([]);
+    const updates: StructuredSessionUpdate[] = [];
+    let resolveThreadRead!: (value: unknown) => void;
+    const threadRead = new Promise<unknown>((resolve) => {
+      resolveThreadRead = resolve;
+    });
+    (structuredSession as unknown as Record<string, unknown>)["rpc"] = {
+      claimThread: () => {},
+      request: async (method: string) => {
+        if (method === "thread/read") return threadRead;
+        if (method === "turn/start") return { turn: { id: "turn-1" } };
+        return {};
+      },
+    };
+    structuredSession.setListener({
+      onClose: () => {},
+      onError: () => {},
+      onUpdate: (update) => updates.push(update),
+    });
+    await structuredSession.openThread(
+      { model: "gpt-5.4" },
+      { providerSessionId: "provider-thread", discoveredAt: "2026-05-10T12:00:00.000Z" },
+    );
+    await structuredSession.startTurn("hello", { model: "gpt-5.4" });
+    dispatchNotification(structuredSession, {
+      jsonrpc: "2.0",
+      method: "turn/completed",
+      params: { threadId: "provider-thread", turn: { id: "turn-1", status: "completed" } },
+    });
+    expect(updates.at(-1)?.status).toBe("idle");
+
+    resolveThreadRead({ thread: { status: { type: "active", activeFlags: [] } } });
+    await vi.waitFor(() => expect(updates.at(-1)?.sessionRef).toBeDefined());
+    expect(updates.map((update) => update.status)).toEqual(["working", "idle", "idle"]);
+  });
+
   it("keeps live status on lifecycle notifications instead of startup thread/read", async () => {
     const session = createSessionShell();
     const updates: StructuredSessionUpdate[] = [];

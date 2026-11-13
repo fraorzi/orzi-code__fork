@@ -1,6 +1,7 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { TeamWorktreeService } from "./crossagentMcp/TeamWorktreeService";
 import { NativeMcpSetupCoordinator } from "./runtime/nativeMcpSetupCoordinator";
+import { LocalPortsService } from "./runtime/localPortsService";
 import { existsSync, mkdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { isAbsolute, join } from "node:path";
@@ -109,6 +110,7 @@ function toPublicExperimentSnapshot(
 }
 
 export class SupervisorRuntime {
+  readonly localPortsService = new LocalPortsService();
   private readonly isDev = Boolean(process.env.VITE_DEV_SERVER_URL);
   private readonly baseDir: string;
   private readonly logsDir: string;
@@ -435,6 +437,11 @@ export class SupervisorRuntime {
     this.threadSessionManager = new ThreadSessionManager({
       onUsageSnapshot: (snapshot) => this.usageService.acceptLiveSnapshot(snapshot),
       onUsageRefresh: (providerId) => this.usageService.refreshAfterTurn(providerId),
+      readUsageSnapshot: (providerId) => this.usageService?.readSnapshot(providerId),
+      refreshUsageSnapshot: async (providerId) => {
+        const result = await this.usageService.refreshProviderUsage({ providerIds: [providerId] });
+        return result.snapshots.find((snapshot) => snapshot.providerId === providerId);
+      },
       acquireAgentLaunch: () => this.agentRegistryService.updates.acquireLaunch(),
       emit,
       isDev: this.isDev,
@@ -545,6 +552,7 @@ export class SupervisorRuntime {
     );
     this.usageService = new UsageService({
       emit,
+      onSnapshot: (snapshot) => this.threadSessionManager.acceptUsageSnapshot(snapshot),
       cachePath: join(paths.cacheDir, "provider-usage.json"),
       cacheDir: paths.cacheDir,
       settingsPath: this.settingsPath,
@@ -556,6 +564,8 @@ export class SupervisorRuntime {
     this.usageService.startAutoRefresh();
 
     this.generationService = new GenerationService({
+      onAuxiliaryGeneration: (measurement) =>
+        this.emit({ type: "auxiliary-generation", measurement }),
       adapters: this.adapters,
       readTerminalScrollback: (threadId) =>
         this.threadSessionManager.readTerminalScrollback(threadId),

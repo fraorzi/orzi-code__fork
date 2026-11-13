@@ -1,11 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Dropdown, Label } from "@heroui/react";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import { useLingui } from "@lingui/react/macro";
-import {
-  ResponsiveMenuSurface,
-  useResponsiveMenu,
-} from "@/renderer/components/common/ResponsiveMenuSurface";
 import { WorkspaceIcon } from "@/renderer/components/workspace/WorkspaceIcon";
 import {
   parseWorkspaceMenuKey,
@@ -18,7 +14,6 @@ import {
 } from "@/renderer/components/common/SidebarButton";
 import { useSharedSettings } from "@/renderer/state/sharedSettingsStore";
 import { useActiveWorkspaceId, useWorkspaceStore } from "@/renderer/state/workspaceStore";
-
 interface MenuEntry {
   key: string;
   label: string;
@@ -37,7 +32,6 @@ export function SidebarWorkspaceSwitcher(props: { iconOnly?: boolean }) {
   const { t } = useLingui();
   const workspaces = useSharedSettings((state) => state.workspaces);
   const activeWorkspaceId = useActiveWorkspaceId();
-  const { mobile } = useResponsiveMenu();
   const [isOpen, setIsOpen] = useState(false);
 
   // With fewer than two workspaces there is nothing to switch, so keep the
@@ -46,7 +40,6 @@ export function SidebarWorkspaceSwitcher(props: { iconOnly?: boolean }) {
 
   // `useActiveWorkspaceId` falls back to the first workspace, so this resolves.
   const active = workspaces.find((w) => w.id === activeWorkspaceId) ?? workspaces[0]!;
-
   function handleAction(key: string) {
     setIsOpen(false);
     const selection = parseWorkspaceMenuKey(key);
@@ -54,8 +47,6 @@ export function SidebarWorkspaceSwitcher(props: { iconOnly?: boolean }) {
       useWorkspaceStore.getState().setActiveWorkspaceId(selection.workspaceId);
     }
   }
-
-  // Built once so the desktop menu and the mobile sheet can never drift apart.
   const workspaceEntries: MenuEntry[] = workspaces.map((workspace) => ({
     key: workspaceMenuKey(workspace.id),
     label: workspace.name,
@@ -82,13 +73,12 @@ export function SidebarWorkspaceSwitcher(props: { iconOnly?: boolean }) {
       ) : null}
     </>
   );
-
   if (workspaces.length === 2) {
     const nextWorkspace = workspaces.find((workspace) => workspace.id !== active.id)!;
     const switchToNext = () => useWorkspaceStore.getState().setActiveWorkspaceId(nextWorkspace.id);
     if (iconOnly) {
       // iconOnly exists for the collapsed footer nav (a bottom icon row), so
-      // the tooltip opens upward instead of over the neighbouring icons.
+
       return (
         <SidebarButton
           iconOnly
@@ -116,48 +106,6 @@ export function SidebarWorkspaceSwitcher(props: { iconOnly?: boolean }) {
       </button>
     );
   }
-
-  const trigger = (
-    <button
-      type="button"
-      aria-label={t`Switch workspace`}
-      aria-expanded={isOpen}
-      className={iconOnly ? sidebarIconButtonClass() : sidebarRowClass()}
-      // Desktop presses are wired by Popover.Trigger; the mobile sheet has no
-      // trigger wiring of its own, so it opens the drawer directly.
-      {...(mobile ? { onClick: () => setIsOpen(true) } : {})}
-    >
-      {triggerContent}
-    </button>
-  );
-
-  if (mobile) {
-    return (
-      <ResponsiveMenuSurface
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        label={t`Switch workspace`}
-        trigger={trigger}
-      >
-        <div className="m-sheet-list">
-          {workspaceEntries.map((entry) => (
-            <button
-              key={entry.key}
-              type="button"
-              className="m-sheet-action"
-              aria-pressed={entry.isSelected || undefined}
-              onClick={() => handleAction(entry.key)}
-            >
-              {entry.icon}
-              <span className="flex-1 truncate">{entry.label}</span>
-              {entry.isSelected ? <Check className="size-4 shrink-0 text-accent" /> : null}
-            </button>
-          ))}
-        </div>
-      </ResponsiveMenuSurface>
-    );
-  }
-
   return (
     <Dropdown isOpen={isOpen} onOpenChange={setIsOpen}>
       <Dropdown.Trigger

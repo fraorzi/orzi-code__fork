@@ -28,18 +28,7 @@ export {
 const LOCALE_SETTING_LABELS: Record<LocaleSetting, string | MessageDescriptor> = {
   system: msg`System`,
   en: "English",
-  es: "Español",
-  ru: "Русский",
-  uk: "Українська",
-  "zh-CN": "简体中文",
-  ja: "日本語",
-  "pt-BR": "Português (Brasil)",
-  de: "Deutsch",
-  fr: "Français",
-  ko: "한국어",
   pl: "Polski",
-  vi: "Tiếng Việt",
-  tr: "Türkçe",
 };
 
 /**

@@ -280,6 +280,11 @@ export interface SpawnPipelineContext {
   cliHookPlugin: CliHookSessionCoordinator;
   closeThread(payload: CloseThreadPayload): Promise<void>;
   failStructuredSession(session: SessionRuntime, error: unknown): void;
+  holdInitialTurnForUsage?(
+    session: SessionRuntime,
+    payload: StartThreadPayload,
+    userMessageItemId?: string,
+  ): boolean;
   isCurrentSession(session: SessionRuntime): boolean;
   resolveAgentSettings(
     adapter: AgentAdapter,
@@ -690,6 +695,13 @@ export class SpawnPipeline {
         launchConfig,
         nativePlugins,
       });
+      if (
+        !startInterrupted &&
+        initialPrompt.length > 0 &&
+        ctx.holdInitialTurnForUsage?.(session, payload, optimisticUserMessageItemId)
+      ) {
+        return { threadId: payload.threadId };
+      }
       // Opening a saved session restores history; a supplied prompt still needs a new turn.
       if (!startInterrupted && initialPrompt.length > 0 && structuredSession.startTurn) {
         const startOptions = {
@@ -1126,6 +1138,9 @@ export class SpawnPipeline {
     }
 
     const agentEnv = this.resolveAgentProcessEnv(input.adapter, input.projectLocation);
+    if (process.env.PORACODE_PROCESS_OWNER) {
+      agentEnv.PORACODE_PROCESS_OWNER = process.env.PORACODE_PROCESS_OWNER;
+    }
     const cliHookEnvInjected = Boolean(input.extraEnv?.PORACODE_HOOK_URL);
     // `baseSpawnEnv` underlies every lane; the location-specific `spawnEnv`
     // layers on top so a provider can still override per platform.
@@ -1514,6 +1529,9 @@ export class SpawnPipeline {
         projectLocation,
         config,
         agentSettings: this.ctx.resolveAgentSettings(adapter, projectLocation),
+        ...(process.env.PORACODE_PROCESS_OWNER
+          ? { env: { PORACODE_PROCESS_OWNER: process.env.PORACODE_PROCESS_OWNER } }
+          : {}),
         ...(adapter.baseSpawnEnv ? { baseSpawnEnv: adapter.baseSpawnEnv } : {}),
         ...(mcpIdentity ? { mcpIdentity } : {}),
         ...(mcpServers.length > 0 || adapter.capabilities.mcpConfigSource === "agentSettings"

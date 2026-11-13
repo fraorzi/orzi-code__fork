@@ -7,10 +7,13 @@ const responseSchema = z.object({
     .object({
       eligible: z.boolean(),
       ineligible_reason: z.string().nullish(),
+      next_grant_id: z.string().nullish(),
       grants: z
         .array(
           z.object({
             id: z.string().min(1),
+            label: z.string().nullish(),
+            usable_now: z.boolean().optional(),
             resets_left: z.number().int().nonnegative(),
             starts_at: timestamp,
             ends_at: timestamp,
@@ -51,6 +54,8 @@ export function parseClaudeResetCredits(body: unknown, now: number): UsageResetC
       .map((grant) => ({
         id: grant.id,
         remaining: grant.resets_left,
+        ...(grant.label ? { label: grant.label } : {}),
+        canActivate: grant.usable_now === true && cedar.next_grant_id === grant.id,
         ...(grant.starts_at ? { startsAt: Date.parse(grant.starts_at) } : {}),
         ...(grant.ends_at ? { expiresAt: Date.parse(grant.ends_at) } : {}),
       }));
@@ -64,6 +69,7 @@ export function parseClaudeResetCredits(body: unknown, now: number): UsageResetC
             {
               id: "juniper_tide",
               remaining: 1,
+              canActivate: true,
               ...(juniper.weekly_resets_at
                 ? { expiresAt: Date.parse(juniper.weekly_resets_at) }
                 : {}),

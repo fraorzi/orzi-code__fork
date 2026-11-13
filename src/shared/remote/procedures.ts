@@ -41,9 +41,11 @@ function longRunning<const Spec extends RemoteProcedureSpec>(spec: Spec) {
  * controls which desktop must execute the operation.
  */
 export const REMOTE_PROCEDURE_SPECS = {
+  consumeProviderUsageReset: operate("none"),
   // Thread checkpoints / rollback
   rollbackThreadConversation: operate("thread"),
   queueThreadFollowUp: operate("thread"),
+  setThreadUsageRecovery: operate("thread"),
   removeQueuedThreadFollowUp: operate("thread"),
   reorderQueuedThreadFollowUp: operate("thread"),
   editQueuedThreadFollowUp: operate("thread"),
@@ -175,6 +177,7 @@ export type RemoteProcedureName = keyof typeof REMOTE_PROCEDURE_SPECS;
  */
 export const REMOTE_FOLLOW_UP_QUEUE_PROCEDURES = [
   "queueThreadFollowUp",
+  "setThreadUsageRecovery",
   "removeQueuedThreadFollowUp",
   "reorderQueuedThreadFollowUp",
   "editQueuedThreadFollowUp",

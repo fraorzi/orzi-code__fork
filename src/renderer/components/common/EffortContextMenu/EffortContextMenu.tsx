@@ -4,8 +4,7 @@ import { Check, ChevronDown } from "lucide-react";
 import { Header, Label, ListBox, Tooltip } from "@heroui/react";
 import type { LabeledOption } from "@/shared/contracts";
 import { Button } from "../Button";
-import { ResponsiveMenuSurface, useResponsiveMenu } from "../ResponsiveMenuSurface";
-
+import { MenuPopover } from "../MenuPopover";
 export interface EffortContextMenuProps {
   efforts: readonly LabeledOption[];
   effortValue?: string;
@@ -25,7 +24,6 @@ export interface EffortContextMenuProps {
   openSignal?: number;
   onOpenChange?: (open: boolean) => void;
 }
-
 export function EffortContextMenu(props: EffortContextMenuProps) {
   const {
     efforts,
@@ -45,11 +43,8 @@ export function EffortContextMenu(props: EffortContextMenuProps) {
     openSignal,
     onOpenChange,
   } = props;
-
   const { t } = useLingui();
   const [isOpen, setIsOpen] = useState(false);
-  const { mobile } = useResponsiveMenu();
-
   const hasEffort = efforts.length > 0;
   const hasContext = contextSizes.length > 0;
   const hasThinking = thinkingSupported;
@@ -83,27 +78,21 @@ export function EffortContextMenu(props: EffortContextMenuProps) {
       setIsOpen(true);
     }
   }
-
   if (!hasEffort && !hasContext && !hasThinking) return null;
-
   const effortLabel = hasEffort
     ? (efforts.find((o) => o.id === effortValue)?.label ?? effortValue ?? "")
     : "";
   const contextLabel = hasContext
     ? (contextSizes.find((o) => o.id === contextValue)?.label ?? contextValue ?? "")
     : "";
-
   const triggerLabel =
     [effortLabel, contextLabel].filter((p) => p.length > 0).join(" · ") ||
     (hasThinking ? t`Thinking` : "");
-
   function handleOpenChange(open: boolean) {
     setIsOpen(open);
     onOpenChange?.(open);
   }
-
   const closeOnSelect = !(hasEffort && hasContext);
-
   function handleEffort(id: string) {
     if (closeOnSelect) handleOpenChange(false);
     if (id === effortValue) return;
@@ -114,7 +103,6 @@ export function EffortContextMenu(props: EffortContextMenuProps) {
     if (id === contextValue) return;
     startTransition(() => onContextChange?.(id));
   }
-
   const trigger = (
     <Button
       aria-label={t`Effort and context`}
@@ -122,7 +110,6 @@ export function EffortContextMenu(props: EffortContextMenuProps) {
       size="sm"
       variant="ghost"
       className="poracode-composer-menu poracode-composer-effort-control min-w-0 px-2.5"
-      {...(mobile ? { onPress: () => handleOpenChange(true) } : {})}
     >
       {icon}
       <span
@@ -145,10 +132,8 @@ export function EffortContextMenu(props: EffortContextMenuProps) {
       />
     </Button>
   );
-
   const columnCount = (hasEffort ? 1 : 0) + (hasContext ? 1 : 0);
   const popoverWidth = columnCount === 2 ? "w-72" : "w-44";
-
   const thinkingToggle = hasThinking ? (
     <button
       type="button"
@@ -162,25 +147,22 @@ export function EffortContextMenu(props: EffortContextMenuProps) {
         <Trans>Thinking</Trans>
       </span>
       <span
-        className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
-          thinkingValue ? "bg-success" : "bg-surface-tertiary"
-        }`}
+        className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${thinkingValue ? "bg-success" : "bg-surface-tertiary"}`}
       >
         <span
-          className={`absolute top-0.5 size-4 rounded-full bg-white transition-transform ${
-            thinkingValue ? "translate-x-[18px]" : "translate-x-0.5"
-          }`}
+          className={`absolute top-0.5 size-4 rounded-full bg-white transition-transform ${thinkingValue ? "translate-x-[18px]" : "translate-x-0.5"}`}
         />
       </span>
     </button>
   ) : null;
-
   const desktopContent = (
     <>
       {columnCount > 0 ? (
         <div
           className="grid"
-          style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}
+          style={{
+            gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+          }}
         >
           {hasContext ? (
             <Column
@@ -213,44 +195,15 @@ export function EffortContextMenu(props: EffortContextMenuProps) {
     </>
   );
 
-  // Mobile: sections stack full-width with finger-sized rows instead of the
   // side-by-side desktop columns.
-  const mobileContent = (
-    <div className="m-sheet-list">
-      {hasContext ? (
-        <MobileSection
-          label={t`Context`}
-          options={contextSizes}
-          value={contextValue}
-          onSelect={handleContext}
-        />
-      ) : null}
-      {hasEffort ? (
-        <MobileSection
-          label={t`Reasoning`}
-          options={efforts}
-          value={effortValue}
-          onSelect={handleEffort}
-        />
-      ) : null}
-      {thinkingToggle ? (
-        <div>
-          <MobileSectionHeader label={t`Options`} />
-          {thinkingToggle}
-        </div>
-      ) : null}
-    </div>
-  );
 
   return (
-    <ResponsiveMenuSurface
+    <MenuPopover
       isOpen={isOpen}
       onOpenChange={handleOpenChange}
       label={t`Effort and context`}
       trigger={
-        mobile ? (
-          trigger
-        ) : hideLabelOnWrap ? (
+        hideLabelOnWrap ? (
           <Tooltip>
             {trigger}
             <Tooltip.Content placement="top">{triggerLabel}</Tooltip.Content>
@@ -263,45 +216,10 @@ export function EffortContextMenu(props: EffortContextMenuProps) {
       contentClassName={`${popoverWidth} p-0`}
       dialogClassName="flex max-h-[24rem] flex-col overflow-hidden"
     >
-      {mobile ? mobileContent : desktopContent}
-    </ResponsiveMenuSurface>
+      {desktopContent}
+    </MenuPopover>
   );
 }
-
-function MobileSectionHeader(props: { label: string }) {
-  return (
-    <div className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted/80">
-      {props.label}
-    </div>
-  );
-}
-
-function MobileSection(props: {
-  label: string;
-  options: readonly LabeledOption[];
-  value: string | undefined;
-  onSelect: (id: string) => void;
-}) {
-  const { label, options, value, onSelect } = props;
-  return (
-    <div>
-      <MobileSectionHeader label={label} />
-      {options.map((option) => (
-        <button
-          key={option.id}
-          type="button"
-          className="m-sheet-action"
-          aria-pressed={option.id === value || undefined}
-          onClick={() => onSelect(option.id)}
-        >
-          <span className="flex-1 truncate">{option.label}</span>
-          {option.id === value ? <Check className="size-4 shrink-0 text-accent" /> : null}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function Column(props: {
   label: string;
   options: readonly LabeledOption[];

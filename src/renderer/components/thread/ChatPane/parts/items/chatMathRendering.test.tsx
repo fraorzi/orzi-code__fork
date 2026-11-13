@@ -23,6 +23,51 @@ describe.each(surfaces)("$name math rendering", ({ content }) => {
     expect(container.textContent).not.toContain("$Z=XW$");
   });
 
+  it("keeps dollar amounts from swallowing prose, emphasis, and links", () => {
+    const { container } = renderMarkdown(
+      "Nie wiem, czy poszło z kredytu 300$, czy z karty. Wejdź na konto testowe, potem **Billing** i **Credits** ([konsola](https://console.cloud.google.com/billing)), i sprawdź pozostałe 300$.",
+    );
+    expect(container.querySelector(".katex")).toBeNull();
+    expect(container.textContent).toContain("300$, czy z karty. Wejdź na konto testowe");
+    expect(
+      [...container.querySelectorAll('[data-streamdown="strong"]')].map((node) => node.textContent),
+    ).toEqual(["Billing", "Credits"]);
+    expect(
+      container.querySelector('a[href="https://console.cloud.google.com/billing"]'),
+    ).not.toBeNull();
+  });
+
+  it.each([
+    "Credit $300, then pay $20 per month.",
+    "Prices range from $10-$20.",
+    "Credit 300 $, then pay 20 $.",
+    "Spend $5/month and keep $10.",
+  ])("leaves currency in ordinary Markdown: %s", (text) => {
+    const { container } = renderMarkdown(text);
+    expect(container.querySelector(".katex")).toBeNull();
+    expect(container.textContent).toContain(text);
+  });
+
+  it("renders equations alongside currency without matching dollars across them", () => {
+    const { container } = renderMarkdown(
+      "Credit $300, compute $2 + 2 = 4$ and $x^2$, then pay 20$.",
+    );
+    expect(container.querySelectorAll(".katex")).toHaveLength(2);
+    expect(container.textContent).toContain("Credit $300, compute");
+    expect(container.textContent).toContain("then pay 20$.");
+  });
+
+  it("keeps currency readable while its paragraph streams", () => {
+    const text = "Credit 300$, open **Billing** and check the remaining 20$.";
+    const { container, rerender } = renderMarkdown("");
+    for (let length = 1; length <= text.length; length++) {
+      rerender(<AppProvider>{content(text.slice(0, length))}</AppProvider>);
+      expect(container.querySelector(".katex"), `prefix length ${length}`).toBeNull();
+    }
+    expect(container.querySelector('[data-streamdown="strong"]')?.textContent).toBe("Billing");
+    expect(container.textContent).toContain("300$, open");
+  });
+
   it("typesets LaTeX inline and display delimiters", () => {
     const { container } = renderMarkdown(
       "Weight \\(W_{dj}\\) changes \\(Z_{ij}\\).\n\n\\[\n\\frac{\\partial L}{\\partial W_{dj}}\n\\]\n",

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { usageResetRequestSchema, type UsageResetResult } from "@poracode/agents-usage/types";
 
 /**
  * Provider usage contracts. The canonical usage vocabulary (UsageSnapshot etc.)
@@ -42,6 +43,14 @@ export interface ProviderUsageResponse {
   snapshots: UsageSnapshot[];
   /** True when the snapshots came from the on-disk cache (a refresh may be in flight). */
   fromCache: boolean;
+}
+
+export const providerUsageResetPayloadSchema = usageResetRequestSchema.extend({
+  providerId: z.string().min(1),
+});
+export type ProviderUsageResetPayload = z.infer<typeof providerUsageResetPayloadSchema>;
+export interface ProviderUsageResetResponse extends UsageResetResult {
+  snapshot?: UsageSnapshot;
 }
 
 export const usageLoginPayloadSchema = z.object({

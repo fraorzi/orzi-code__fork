@@ -80,6 +80,39 @@ describe.skipIf(!sqliteAvailable)("runtimeItems incremental persistence", () => 
     delete process.env.PORACODE_BETTER_SQLITE3_NATIVE_BINDING;
   });
 
+  it("adds a durable recovery receipt to a legacy completed message without replacing its text", () => {
+    const thread = testThread();
+    dbReplaceThreadRuntimeItems(thread.id, [
+      {
+        id: "answer",
+        type: "assistant_message",
+        state: "completed",
+        payload: { content: [{ kind: "text", text: "Finished" }] },
+        streams: { assistant_text: "Finished" },
+      },
+    ]);
+    expect(dbGetThreadRuntimeItems(thread.id)[0]?.payload).toEqual({
+      content: [{ kind: "text", text: "Finished" }],
+    });
+    dbApplyThreadRuntimeEvents(thread.id, [
+      {
+        type: "item.updated",
+        threadId: thread.id,
+        itemId: "answer",
+        payload: { usageRecoveryResumedAt: 1793303400000 },
+      },
+    ]);
+    dbFlushThreadRuntimeWrites();
+    expect(dbGetThreadRuntimeItems(thread.id)[0]).toMatchObject({
+      state: "completed",
+      streams: { assistant_text: "Finished" },
+      payload: {
+        content: [{ kind: "text", text: "Finished" }],
+        usageRecoveryResumedAt: 1793303400000,
+      },
+    });
+  });
+
   it("replaces pre-snapshot chunked streams and preserves other streams", () => {
     const threadId = "thread-1",
       itemId = "recovery";

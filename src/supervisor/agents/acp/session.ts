@@ -82,6 +82,7 @@ import {
 } from "../base";
 import { mapAcpSlashCommands } from "./probe";
 import { AcpSessionConfigSync } from "./sessionConfigSync";
+import { AcpPromptRecovery, type AcpPromptFailureClassifier } from "./promptRecovery";
 
 // ── Helpers ──────────────────────────────────────────────────────
 
@@ -213,6 +214,8 @@ export interface AcpSessionBehavior {
 }
 
 export interface AcpStructuredSessionOptions {
+  /** Buffer a declared pre-execution failure and retry its prompt once, before any activity. */
+  promptFailureClassifier?: AcpPromptFailureClassifier;
   /**
    * Hook the adapter passes in when it wants to control the message a failed
    * `session/load` produces. Receives the raw transport error and the
@@ -313,6 +316,8 @@ export class AcpStructuredSession implements StructuredSessionHandle {
 
   private readonly initializeMeta: Record<string, unknown> | undefined;
   private readonly behavior: AcpSessionBehavior;
+  private readonly promptFailureClassifier: AcpPromptFailureClassifier | undefined;
+  private promptRecovery: AcpPromptRecovery | undefined;
   private readonly textStreamExtension: AcpTextStreamExtension | undefined;
   private readonly stderrTurnSignalParser:
     | ((line: string) => "background-wait" | undefined)
@@ -411,7 +416,7 @@ export class AcpStructuredSession implements StructuredSessionHandle {
    * second prompt onto the wire (the agent would queue it server-side anyway,
    * with no updates until the background work ends).
    */
-  private startTurnChain: Promise<void> = Promise.resolve();
+  private startTurnChain: Promise<void> | undefined;
   private recentInterruptAckTextTail = "";
   /** User-visible error text from an `agent_message_chunk` before `prompt()` settles. */
   private agentSurfacedErrorMessage: string | undefined;
@@ -522,6 +527,7 @@ export class AcpStructuredSession implements StructuredSessionHandle {
     }
     this.initializeMeta = options?.initializeMeta;
     this.behavior = options?.behavior ?? {};
+    this.promptFailureClassifier = options?.promptFailureClassifier;
     this.textStreamExtension = options?.textStreamExtension;
     this.stderrTurnSignalParser = options?.stderrTurnSignalParser;
     if (options?.extensionNotificationHandler) {
@@ -688,9 +694,11 @@ export class AcpStructuredSession implements StructuredSessionHandle {
     const connection = new ClientSideConnection(
       (_agent): Client => ({
         requestPermission(params: RequestPermissionRequest) {
+          session.promptRecovery?.markActivity();
           return session.handlePermissionRequest(params);
         },
         createElicitation(params: CreateElicitationRequest) {
+          session.promptRecovery?.markActivity();
           return session.handleElicitationRequest(params);
         },
         completeElicitation(params: CompleteElicitationNotification) {
@@ -702,12 +710,15 @@ export class AcpStructuredSession implements StructuredSessionHandle {
           return Promise.resolve();
         },
         async readTextFile(params) {
+          session.promptRecovery?.markActivity();
           return session.handleReadTextFile(params);
         },
         async writeTextFile(params) {
+          session.promptRecovery?.markActivity();
           return session.handleWriteTextFile(params);
         },
         async createTerminal(params: CreateTerminalRequest) {
+          session.promptRecovery?.markActivity();
           return session.handleCreateTerminal(params);
         },
         async terminalOutput(params: TerminalOutputRequest) {
@@ -1042,18 +1053,20 @@ export class AcpStructuredSession implements StructuredSessionHandle {
     // of racing a second prompt onto a session that only takes one at a time.
     const previousTurn = this.startTurnChain;
     let releaseTurn!: () => void;
-    this.startTurnChain = new Promise((resolve) => {
+    const currentTurn = new Promise<void>((resolve) => {
       releaseTurn = resolve;
     });
+    this.startTurnChain = currentTurn;
     try {
-      // Only queue when a prompt is actually pending — the fast path must
-      // start synchronously so interrupt staging keeps its existing timing.
-      if (this.promptInFlight) {
+      // Reserve the whole turn, including config and attachment preparation.
+      // The first call still starts synchronously for interrupt staging.
+      if (previousTurn) {
         await previousTurn;
         if (this.isDisposed) return;
       }
       await this.runStartTurn(prompt, config, segments, options);
     } finally {
+      if (this.startTurnChain === currentTurn) this.startTurnChain = undefined;
       releaseTurn();
     }
   }
@@ -1149,10 +1162,23 @@ export class AcpStructuredSession implements StructuredSessionHandle {
         this.pendingPromptInterrupt = false;
         await this.connection.cancel({ sessionId: this.sessionId });
       }
-      const result = await this.connection.prompt({
-        sessionId: this.sessionId,
-        prompt: contentBlocks,
-      });
+      const sessionId = this.sessionId;
+      const send = () => this.connection.prompt({ sessionId, prompt: contentBlocks });
+      this.promptRecovery = this.promptFailureClassifier
+        ? new AcpPromptRecovery(this.promptFailureClassifier, (notification) =>
+            this.processSessionUpdate(notification),
+          )
+        : undefined;
+      const result = this.promptRecovery
+        ? await this.promptRecovery.run(
+            send,
+            () =>
+              !this.isDisposed &&
+              !this.currentTurnInterruptRequested &&
+              !this.pendingPromptInterrupt &&
+              !this.agentSurfacedErrorMessage,
+          )
+        : await send();
       const usageEvent = createAcpPromptUsageEvent(this.threadId, result.usage);
       if (usageEvent) this.emitRuntimeEvents([usageEvent]);
       // The same prompt response also carries the session-cumulative counter
@@ -1243,6 +1269,7 @@ export class AcpStructuredSession implements StructuredSessionHandle {
         this.emitPromptFailure(error);
       }
     } finally {
+      this.promptRecovery = undefined;
       this.promptInFlight = false;
       this.promptHeldForBackgroundWork = false;
       this.foregroundTurnOpen = false;
@@ -1625,6 +1652,14 @@ export class AcpStructuredSession implements StructuredSessionHandle {
    * a turn: text chunks, tool calls, plan updates, etc.
    */
   private handleSessionUpdate(rawParams: SessionNotification, notifyExternalSources = true): void {
+    if (this.promptRecovery && !this.isReplayingHistory && notifyExternalSources) {
+      this.promptRecovery.accept(rawParams);
+      return;
+    }
+    this.processSessionUpdate(rawParams, notifyExternalSources);
+  }
+
+  private processSessionUpdate(rawParams: SessionNotification, notifyExternalSources = true): void {
     let deferredByExternalSource = false;
     if (notifyExternalSources) {
       for (const source of this.externalSessionUpdateSources ?? []) {

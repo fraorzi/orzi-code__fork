@@ -11,6 +11,10 @@ import { i18n } from "./i18n";
  * arguments resolved with the values passed to `msg()`.
  */
 const SHARED_MESSAGE_DESCRIPTORS: Record<MessageKey, MessageDescriptor> = {
+  "supervisor.usageRecovery.continue": msg({
+    message:
+      "Continue the task interrupted by the usage limit. Check what already completed before proceeding.",
+  }),
   "voice.unavailable": msg({ message: "Live voice is unavailable for this thread." }),
   "voice.alreadyConnected": msg({ message: "A voice conversation is already active." }),
   "voice.subscriptionRequired": msg({

@@ -126,6 +126,11 @@ export const usageResetCreditsSchema = z.discriminatedUnion("status", [
     grants: z.array(
       z.object({
         id: z.string().min(1),
+        /** Optional title reported by the provider, kept distinct for partial resets. */
+        label: z.string().optional(),
+        description: z.string().optional(),
+        /** True only when the collector has verified native redemption is available now. */
+        canActivate: z.boolean().optional(),
         remaining: z.number().int().positive(),
         expiresAt: z.number().int().nonnegative().optional(),
         startsAt: z.number().int().nonnegative().optional(),
@@ -134,11 +139,33 @@ export const usageResetCreditsSchema = z.discriminatedUnion("status", [
   }),
   z.object({
     status: z.literal("unknown"),
-    reason: z.enum(["web-only", "unavailable"]),
+    reason: z.enum(["web-only", "unavailable", "account-mismatch"]),
     manageUrl: z.string().url().optional(),
   }),
 ]);
 export type UsageResetCredits = z.infer<typeof usageResetCreditsSchema>;
+
+export const usageResetRequestSchema = z.object({
+  grantId: z.string().min(1).max(256),
+  requestId: z.string().uuid(),
+});
+export type UsageResetRequest = z.infer<typeof usageResetRequestSchema>;
+export const usageResetOutcomeSchema = z.enum([
+  "reset",
+  "already-redeemed",
+  "nothing-to-reset",
+  "unavailable",
+  "auth-required",
+  "account-mismatch",
+  "rate-limited",
+  "unknown",
+  "unsupported",
+  "busy",
+]);
+export type UsageResetOutcome = z.infer<typeof usageResetOutcomeSchema>;
+export interface UsageResetResult {
+  outcome: UsageResetOutcome;
+}
 
 export const usageSnapshotSchema = z.object({
   providerId: z.string(),
@@ -184,5 +211,7 @@ export interface UsageProviderDescriptor {
   needsBrowserSessionForUsage?: boolean;
   /** A cookie-backed provider also accepts a pasted API key. */
   apiKeyFallback?: boolean;
+  /** API origins requiring the desktop browser network stack, with explicitly supplied credentials. */
+  browserHttpOrigins?: readonly string[];
   windowIds: UsageWindowId[];
 }

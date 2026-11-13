@@ -1,19 +1,8 @@
 import { fireEvent, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { renderWithI18n as render } from "@/renderer/testUtils/i18n";
 import { LARGE_DROPDOWN_VIRTUALIZATION_THRESHOLD } from "./dropdownVirtualization";
 import { Select, type SelectOption } from "./Select";
-
-const responsiveMenuState = vi.hoisted(() => ({ mobile: false }));
-
-vi.mock("@/renderer/bridge", () => ({
-  isRemoteSession: () => responsiveMenuState.mobile,
-}));
-
-vi.mock("./ResponsiveMenuSurface", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("./ResponsiveMenuSurface")>()),
-  useResponsiveMenu: () => ({ mobile: responsiveMenuState.mobile }),
-}));
 
 const options: SelectOption[] = [
   {
@@ -31,10 +20,6 @@ const options: SelectOption[] = [
 ];
 
 describe("Select rich options", () => {
-  beforeEach(() => {
-    responsiveMenuState.mobile = false;
-  });
-
   it("renders icon in the desktop trigger and selects a rich option with detail", async () => {
     const onChange = vi.fn<(value: string) => void>();
     render(<Select aria-label="Project" options={options} value="alpha" onChange={onChange} />);
@@ -47,22 +32,6 @@ describe("Select rich options", () => {
     const beta = await screen.findByRole("option", { name: /Beta/u });
     expect(beta).toHaveTextContent("C:\\Beta");
     expect(beta.querySelector('[data-testid="beta-icon"]')).not.toBeNull();
-    fireEvent.click(beta);
-
-    expect(onChange).toHaveBeenCalledWith("beta");
-  });
-
-  it("renders and selects rich options in the mobile drawer", async () => {
-    responsiveMenuState.mobile = true;
-    const onChange = vi.fn<(value: string) => void>();
-    render(<Select aria-label="Project" options={options} value="alpha" onChange={onChange} />);
-
-    const trigger = screen.getByRole("button", { name: "Project" });
-    expect(trigger).toHaveTextContent("Alpha");
-    fireEvent.click(trigger);
-
-    const beta = await screen.findByRole("button", { name: /Beta/u });
-    expect(beta).toHaveTextContent("C:\\Beta");
     fireEvent.click(beta);
 
     expect(onChange).toHaveBeenCalledWith("beta");

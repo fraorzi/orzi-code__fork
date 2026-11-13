@@ -29,6 +29,7 @@ const CLAUDE_BUILT_IN_SLASH_COMMANDS: AgentCapability["slashCommands"] = [
 ];
 
 export const claudeCapabilities: AgentCapability = {
+  supportsUsageRecovery: true,
   models: CLAUDE_BUILTIN_MODELS,
   defaultHiddenModels: claudeDefaultHiddenModels(CLAUDE_BUILTIN_MODELS),
   efforts: CLAUDE_PREMIUM_EFFORT_TIERS,

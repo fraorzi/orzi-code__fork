@@ -34,6 +34,8 @@ export function createSupervisorIpcHandlers(runtime: SupervisorRuntime): Supervi
     userPluginsDir: pluginRegistry.ensureUserPluginsDir(),
   });
   return defineSupervisorIpcHandlers({
+    listLocalPorts: () => runtime.localPortsService.list(),
+    stopLocalPort: (payload) => runtime.localPortsService.stop(payload),
     getTeamWorkspaces: () => runtime.subagentRunManager.getTeamWorkspaces(),
     cleanupTeamWorkspace: ({ runId, discardChanges }) =>
       runtime.subagentRunManager.cleanupTeamWorkspace(runId, discardChanges),
@@ -47,6 +49,7 @@ export function createSupervisorIpcHandlers(runtime: SupervisorRuntime): Supervi
     refreshAgentStatuses: (payload) => registry.refreshAgentStatuses(payload),
     getProviderUsage: (payload) => usage.getProviderUsage(payload),
     refreshProviderUsage: (payload) => usage.refreshProviderUsage(payload),
+    consumeProviderUsageReset: (payload) => usage.consumeProviderUsageReset(payload),
     getNativeMcpSetup: (payload) => runtime.nativeMcpSetupCoordinator.getStatus(payload),
     applyNativeMcpSetup: (payload) => runtime.nativeMcpSetupCoordinator.apply(payload),
     getAgentHookPluginStatuses: (payload) => hookPlugins.getStatuses(payload),
@@ -76,6 +79,7 @@ export function createSupervisorIpcHandlers(runtime: SupervisorRuntime): Supervi
     rollbackThreadConversation: (payload) => threads.rollbackThreadConversation(payload),
     setPendingSteer: (payload) => threads.setPendingSteer(payload),
     clearPendingSteer: (payload) => threads.clearPendingSteer(payload),
+    setThreadUsageRecovery: (payload) => threads.setThreadUsageRecovery(payload),
     queueThreadFollowUp: (payload) => threads.queueThreadFollowUp(payload),
     removeQueuedThreadFollowUp: (payload) => threads.removeQueuedThreadFollowUp(payload),
     reorderQueuedThreadFollowUp: (payload) => threads.reorderQueuedThreadFollowUp(payload),

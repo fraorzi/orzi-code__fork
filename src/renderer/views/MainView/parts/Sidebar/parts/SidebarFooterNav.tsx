@@ -1,5 +1,6 @@
 import { Dropdown, Label } from "@heroui/react";
-import { Ellipsis, Globe, Settings2 } from "lucide-react";
+import { Ellipsis, Globe, Network, Settings2 } from "lucide-react";
+import { useLocalPortsStore } from "@/renderer/state/localPortsStore";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { useLingui } from "@lingui/react/macro";
 import { SidebarButton, sidebarIconButtonClass } from "@/renderer/components/common/SidebarButton";
@@ -138,6 +139,13 @@ export function SidebarFooterNav(props: { remoteAccessStatus: RemoteAccessSideba
       isActive: shortcut.isActive,
       onPress: shortcut.onPress,
     })),
+    {
+      key: "ports",
+      icon: <Network className="size-4" />,
+      label: t`Ports`,
+      isActive: useLocalPortsStore((s) => s.open),
+      onPress: () => useLocalPortsStore.getState().setOpen(true),
+    },
     {
       key: "browser",
       icon: <Globe className="size-4" />,

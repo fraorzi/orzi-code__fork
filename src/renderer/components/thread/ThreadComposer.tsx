@@ -1,34 +1,35 @@
-import { ReactNode, useEffect, useLayoutEffect, useRef, useState, type DragEvent } from "react";
+import type { LabeledOption, ThreadPresentationMode } from "@/shared/contracts";
+import type { MessageDescriptor } from "@lingui/core";
+import { useEffect, useLayoutEffect, useRef, useState, ReactNode, type DragEvent } from "react";
 import { ArrowUp, Square } from "lucide-react";
 import { ToggleButton, Tooltip } from "@heroui/react";
-import type { MessageDescriptor } from "@lingui/core";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { Button } from "@/renderer/components/common/Button";
-import type { ButtonProps } from "@/renderer/components/common/Button";
+import { Button, ButtonProps } from "@/renderer/components/common/Button";
 import { EffortContextMenu } from "@/renderer/components/common/EffortContextMenu/EffortContextMenu";
 import { OptionMenu } from "@/renderer/components/common/OptionMenu";
 import { PixelLoader } from "@/renderer/components/common/PixelLoader";
-import { useResponsiveMenu } from "@/renderer/components/common/ResponsiveMenuSurface";
 import {
-  type ModelMenuSettings,
   ProviderModelMenu,
+  type ModelMenuSettings,
   type ProviderModelMenuProvider,
 } from "@/renderer/components/common/ProviderModelMenu/ProviderModelMenu";
 import { TextArea } from "@/renderer/components/common/TextArea";
 import { EffortIcon } from "@/renderer/components/providers/EffortIcon";
 import { PermissionIcon } from "@/renderer/components/providers/PermissionIcon";
 import { isRemoteSession } from "@/renderer/bridge";
-import type { LabeledOption, ThreadPresentationMode } from "@/shared/contracts";
-
-export type OptionMenuOption = string | { id: string; label: string; hint?: string };
+export type OptionMenuOption =
+  | string
+  | {
+      id: string;
+      label: string;
+      hint?: string;
+    };
 
 /** Semantic icon kinds resolved automatically by the composer. */
 export type ComposerIconKind = "effort" | "fast" | "mode" | "permission";
-
 const COLLAPSE_LEVELS = [0, 1, 2, 3, 4, 5] as const;
 const DEFAULT_LABEL_COLLAPSE_LEVEL = 1;
 const COMPOSER_FILE_DRAG_TYPE = "application/poracode-composer-file";
-
 export type ComposerControl =
   | {
       kind?: "menu";
@@ -117,10 +118,16 @@ export type ComposerControl =
     };
 
 /** Permission controls render as an icon; the active mode is in the tooltip and menu. */
-function rendersIconOnly(control: Extract<ComposerControl, { iconOnly?: boolean }>): boolean {
+function rendersIconOnly(
+  control: Extract<
+    ComposerControl,
+    {
+      iconOnly?: boolean;
+    }
+  >,
+): boolean {
   return control.iconOnly === true || ("iconKind" in control && control.iconKind === "permission");
 }
-
 export function resolveComposerControlIcon(control: ComposerControl): ReactNode | undefined {
   if (control.kind === "static") return control.icon;
   if (control.kind === "provider-model" || control.kind === "effort-context") {
@@ -129,16 +136,14 @@ export function resolveComposerControlIcon(control: ComposerControl): ReactNode 
   if (control.icon) return control.icon;
   const iconKind = control.iconKind;
   if (!iconKind) return undefined;
-
   if (iconKind === "effort" && control.kind !== "toggle") {
     const ids = control.options.map((o) => (typeof o === "string" ? o : o.id));
     return <EffortIcon className="size-4 text-foreground" effort={control.value} efforts={ids} />;
   }
-
   if (iconKind === "permission") {
     // The `poracode-composer-permission-icon` marker is a provider-agnostic
     // hook (keyed off the generic `iconKind`, never a provider name) that the
-    // mobile compact composer uses to surface the permission chip as an icon.
+
     if (control.kind === "toggle") {
       return (
         <PermissionIcon
@@ -158,10 +163,8 @@ export function resolveComposerControlIcon(control: ComposerControl): ReactNode 
       />
     );
   }
-
   return undefined;
 }
-
 function shouldHideControlLabel(
   control: ComposerControl,
   targetWrapLevel: number,
@@ -172,16 +175,13 @@ function shouldHideControlLabel(
   if (collapseTier === undefined) return false;
   return targetWrapLevel >= collapseTier;
 }
-
 function getControlCollapseTier(control: ComposerControl): number | undefined {
   if (!control.hideLabelOnWrap && control.tier === undefined) return undefined;
   return control.tier ?? DEFAULT_LABEL_COLLAPSE_LEVEL;
 }
-
 function getOptionLabel(option: OptionMenuOption): string {
   return typeof option === "string" ? option : option.label;
 }
-
 function resolveControlProbeLabel(control: ComposerControl, thinkingLabel: string): string {
   if (control.kind === "provider-model") {
     const provider =
@@ -192,7 +192,6 @@ function resolveControlProbeLabel(control: ComposerControl, thinkingLabel: strin
       control.currentModel
     );
   }
-
   if (control.kind === "effort-context") {
     const effortLabel =
       control.efforts.find((option) => option.id === control.effortValue)?.label ??
@@ -206,7 +205,6 @@ function resolveControlProbeLabel(control: ComposerControl, thinkingLabel: strin
       [effortLabel, contextLabel].filter((part) => part.length > 0).join(" · ") || thinkingLabel
     );
   }
-
   if (control.kind === "toggle") return control.label;
   if (control.kind === "static") return control.value;
   const selectedOption = control.options.find(
@@ -214,13 +212,11 @@ function resolveControlProbeLabel(control: ComposerControl, thinkingLabel: strin
   );
   return selectedOption ? getOptionLabel(selectedOption) : control.value;
 }
-
 function hasProbeIcon(control: ComposerControl): boolean {
   if (control.kind === "provider-model" || control.kind === "effort-context") return true;
   if (control.kind === "static") return Boolean(control.icon);
   return Boolean(control.icon || control.iconKind);
 }
-
 export function ThreadComposer(props: {
   autoFocus?: boolean;
   compact?: boolean;
@@ -286,14 +282,19 @@ export function ThreadComposer(props: {
     toolbarOnly = false,
   } = props;
   const { t } = useLingui();
-
   const [isAttachmentDropActive, setIsAttachmentDropActive] = useState(false);
   const controlsRef = useRef<HTMLDivElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const probeContainerRef = useRef<HTMLDivElement>(null);
   const editorHostRef = useRef<HTMLDivElement>(null);
   const attachmentDragDepthRef = useRef(0);
-  const probeContentCacheRef = useRef<{ key: string; content: ReactNode } | undefined>(undefined);
+  const probeContentCacheRef = useRef<
+    | {
+        key: string;
+        content: ReactNode;
+      }
+    | undefined
+  >(undefined);
   const derivedToolbarLayoutKey = controls
     .map((control) => {
       if (control.kind === "provider-model") {
@@ -317,14 +318,8 @@ export function ThreadComposer(props: {
       return `menu:${control.value}:${control.iconOnly ? "icon" : "label"}:${control.hideLabelOnWrap ? "hide" : "show"}`;
     })
     .join("|");
-  const effectiveToolbarLayoutKey = `${derivedToolbarLayoutKey}::leading=${
-    leadingControls ? "1" : "0"
-  }::inputLeading=${inputLeadingControls ? "1" : "0"}::after=${afterControls ? "1" : "0"}::submit=${hideSubmitButton ? "0" : "1"}${
-    toolbarLayoutKey ? `::extra=${toolbarLayoutKey}` : ""
-  }`;
-
+  const effectiveToolbarLayoutKey = `${derivedToolbarLayoutKey}::leading=${leadingControls ? "1" : "0"}::inputLeading=${inputLeadingControls ? "1" : "0"}::after=${afterControls ? "1" : "0"}::submit=${hideSubmitButton ? "0" : "1"}${toolbarLayoutKey ? `::extra=${toolbarLayoutKey}` : ""}`;
   const returnFocusToInput = () => {
-    // On mobile (PWA) refocusing the composer after closing a menu/drawer would
     // pop the on-screen keyboard back up over the chat — a jarring side effect
     // of tapping a toolbar control. Leave focus where the user left it there.
     if (isRemoteSession()) return;
@@ -340,7 +335,6 @@ export function ThreadComposer(props: {
   const lastCollapseWidthRef = useRef<number | undefined>(undefined);
   const lastToolbarWidthRef = useRef<number | undefined>(undefined);
   const isToolbarWidthDecreasingRef = useRef(false);
-
   const applyWrapLevel = (level: number) => {
     wrapLevelRef.current = level;
     toolbarRef.current?.setAttribute("data-wrap-level", String(level));
@@ -353,7 +347,6 @@ export function ThreadComposer(props: {
     if (!probeContainerRef.current) return;
     const probes = probeContainerRef.current.children;
     if (probes.length === 0) return;
-
     const currentLevel = wrapLevelRef.current;
     let availableWidth = 0;
 
@@ -364,14 +357,12 @@ export function ThreadComposer(props: {
       const probeToolbar = probes[level] as HTMLElement;
       const wrappingContainer = probeToolbar?.querySelector(".probe-wrap-container") as HTMLElement;
       if (!wrappingContainer) continue;
-
       availableWidth ||= wrappingContainer.clientWidth;
       if (wrappingContainer.scrollWidth <= wrappingContainer.clientWidth) {
         bestLevel = level;
         break;
       }
     }
-
     const toolbarWidth = toolbarRef.current?.clientWidth || availableWidth;
     const previousToolbarWidth = lastToolbarWidthRef.current;
     if (toolbarWidth > 0) {
@@ -388,7 +379,6 @@ export function ThreadComposer(props: {
       "data-width-decreasing",
       isToolbarWidthDecreasingRef.current,
     );
-
     if (bestLevel !== currentLevel) {
       const isExpanding = bestLevel < currentLevel;
       if (
@@ -403,7 +393,6 @@ export function ThreadComposer(props: {
       applyWrapLevel(bestLevel);
     }
   };
-
   useEffect(() => {
     const observer = new ResizeObserver(() => {
       checkWrap();
@@ -418,7 +407,6 @@ export function ThreadComposer(props: {
     checkWrap();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- wrap measurement is keyed by layout-affecting values only
   }, [effectiveToolbarLayoutKey]);
-
   const editorClassName = compact
     ? "poracode-composer-editor poracode-composer-editor--compact"
     : "poracode-composer-editor";
@@ -427,8 +415,8 @@ export function ThreadComposer(props: {
     : "poracode-composer-custom-input";
   // Desktop layout: the input, attachments and send live in one rounded pill;
   // model, mode and permission settings sit as a quiet row under it.
-  const { mobile } = useResponsiveMenu();
-  const pill = !mobile && !toolbarOnly;
+
+  const pill = !toolbarOnly;
   const [multiline, setMultiline] = useState(false);
   useLayoutEffect(() => {
     const host = editorHostRef.current;
@@ -451,7 +439,11 @@ export function ThreadComposer(props: {
     const resizeObserver = new ResizeObserver(measure);
     resizeObserver.observe(host);
     const mutationObserver = new MutationObserver(measure);
-    mutationObserver.observe(host, { characterData: true, childList: true, subtree: true });
+    mutationObserver.observe(host, {
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
     return () => {
       resizeObserver.disconnect();
       mutationObserver.disconnect();
@@ -474,7 +466,6 @@ export function ThreadComposer(props: {
   ]
     .filter(Boolean)
     .join(" ");
-
   const renderControlItem = (
     control: ComposerControl,
     index: number,
@@ -491,20 +482,52 @@ export function ThreadComposer(props: {
           providers={control.providers}
           currentAgentKind={control.currentAgentKind}
           currentModel={control.currentModel}
-          {...(control.lockedAgentKind ? { lockedAgentKind: control.lockedAgentKind } : {})}
-          {...(control.machineKey ? { machineKey: control.machineKey } : {})}
-          {...(control.presentationMode ? { presentationMode: control.presentationMode } : {})}
-          {...(control.isDisabled !== undefined ? { isDisabled: control.isDisabled } : {})}
-          {...(control.openSignal !== undefined ? { openSignal: control.openSignal } : {})}
-          {...(control.settings ? { settings: control.settings } : {})}
+          {...(control.lockedAgentKind
+            ? {
+                lockedAgentKind: control.lockedAgentKind,
+              }
+            : {})}
+          {...(control.machineKey
+            ? {
+                machineKey: control.machineKey,
+              }
+            : {})}
+          {...(control.presentationMode
+            ? {
+                presentationMode: control.presentationMode,
+              }
+            : {})}
+          {...(control.isDisabled !== undefined
+            ? {
+                isDisabled: control.isDisabled,
+              }
+            : {})}
+          {...(control.openSignal !== undefined
+            ? {
+                openSignal: control.openSignal,
+              }
+            : {})}
+          {...(control.settings
+            ? {
+                settings: control.settings,
+              }
+            : {})}
           {...(hideOnWrap || shouldHideLabel
             ? {
                 hideLabelOnWrap: true,
                 forceHideLabel: shouldHideLabel,
-                ...(collapseTier !== undefined ? { collapseTier } : {}),
+                ...(collapseTier !== undefined
+                  ? {
+                      collapseTier,
+                    }
+                  : {}),
               }
             : {})}
-          {...(pill ? { align: "end" as const } : {})}
+          {...(pill
+            ? {
+                align: "end" as const,
+              }
+            : {})}
           onChange={control.onChange}
           onOpenChange={(open) => {
             if (!open) returnFocusToInput();
@@ -512,30 +535,71 @@ export function ThreadComposer(props: {
         />
       );
     }
-
     if (control.kind === "effort-context") {
       return (
         <EffortContextMenu
           key={`effort-context-${index}`}
           efforts={control.efforts}
-          {...(control.effortValue !== undefined ? { effortValue: control.effortValue } : {})}
-          {...(control.onEffortChange ? { onEffortChange: control.onEffortChange } : {})}
-          contextSizes={control.contextSizes}
-          {...(control.contextValue !== undefined ? { contextValue: control.contextValue } : {})}
-          {...(control.onContextChange ? { onContextChange: control.onContextChange } : {})}
-          {...(control.thinkingSupported !== undefined
-            ? { thinkingSupported: control.thinkingSupported }
+          {...(control.effortValue !== undefined
+            ? {
+                effortValue: control.effortValue,
+              }
             : {})}
-          {...(control.thinkingValue !== undefined ? { thinkingValue: control.thinkingValue } : {})}
-          {...(control.onThinkingChange ? { onThinkingChange: control.onThinkingChange } : {})}
-          {...(control.icon ? { icon: control.icon } : {})}
-          {...(control.isDisabled !== undefined ? { isDisabled: control.isDisabled } : {})}
-          {...(control.openSignal !== undefined ? { openSignal: control.openSignal } : {})}
+          {...(control.onEffortChange
+            ? {
+                onEffortChange: control.onEffortChange,
+              }
+            : {})}
+          contextSizes={control.contextSizes}
+          {...(control.contextValue !== undefined
+            ? {
+                contextValue: control.contextValue,
+              }
+            : {})}
+          {...(control.onContextChange
+            ? {
+                onContextChange: control.onContextChange,
+              }
+            : {})}
+          {...(control.thinkingSupported !== undefined
+            ? {
+                thinkingSupported: control.thinkingSupported,
+              }
+            : {})}
+          {...(control.thinkingValue !== undefined
+            ? {
+                thinkingValue: control.thinkingValue,
+              }
+            : {})}
+          {...(control.onThinkingChange
+            ? {
+                onThinkingChange: control.onThinkingChange,
+              }
+            : {})}
+          {...(control.icon
+            ? {
+                icon: control.icon,
+              }
+            : {})}
+          {...(control.isDisabled !== undefined
+            ? {
+                isDisabled: control.isDisabled,
+              }
+            : {})}
+          {...(control.openSignal !== undefined
+            ? {
+                openSignal: control.openSignal,
+              }
+            : {})}
           {...(hideOnWrap || shouldHideLabel
             ? {
                 hideLabelOnWrap: true,
                 forceHideLabel: shouldHideLabel,
-                ...(collapseTier !== undefined ? { collapseTier } : {}),
+                ...(collapseTier !== undefined
+                  ? {
+                      collapseTier,
+                    }
+                  : {}),
               }
             : {})}
           onOpenChange={(open) => {
@@ -544,7 +608,6 @@ export function ThreadComposer(props: {
         />
       );
     }
-
     if (control.kind === "static") {
       const hideLabel = control.iconOnly || shouldHideLabel;
       const labelClassName = hideOnWrap
@@ -560,7 +623,6 @@ export function ThreadComposer(props: {
           )}
         </div>
       );
-
       if (control.iconOnly || hideOnWrap || (hideLabel && targetWrapLevel > 0)) {
         return (
           <Tooltip key={`static-tooltip-${index}`}>
@@ -569,10 +631,8 @@ export function ThreadComposer(props: {
           </Tooltip>
         );
       }
-
       return content;
     }
-
     if (control.kind === "toggle") {
       const hideLabel = control.iconOnly || shouldHideLabel;
       const labelClassName = hideOnWrap
@@ -589,13 +649,7 @@ export function ThreadComposer(props: {
           key={`toggle-${index}`}
           aria-label={toggleLabel}
           aria-disabled={gated}
-          className={`poracode-composer-toggle ${
-            control.fillIconOnSelect ? "poracode-composer-toggle--fill-icon-selected " : ""
-          }${control.isCurrentState ? "poracode-composer-toggle--current " : ""}${
-            control.iconOnly ? "min-w-9 px-2" : "min-w-0 px-2.5"
-          }${gated ? " opacity-50 cursor-not-allowed" : ""}${
-            control.className ? ` ${control.className}` : ""
-          }`}
+          className={`poracode-composer-toggle ${control.fillIconOnSelect ? "poracode-composer-toggle--fill-icon-selected " : ""}${control.isCurrentState ? "poracode-composer-toggle--current " : ""}${control.iconOnly ? "min-w-9 px-2" : "min-w-0 px-2.5"}${gated ? " opacity-50 cursor-not-allowed" : ""}${control.className ? ` ${control.className}` : ""}`}
           isDisabled={gated ? false : (control.isDisabled ?? false)}
           isSelected={gated ? false : control.isSelected}
           size="sm"
@@ -610,7 +664,6 @@ export function ThreadComposer(props: {
           )}
         </ToggleButton>
       );
-
       const tooltipText = gated
         ? control.disabledReason
         : hideOnWrap || hideLabel
@@ -629,26 +682,43 @@ export function ThreadComposer(props: {
           </Tooltip>
         );
       }
-
       return toggle;
     }
-
     const resolvedIcon = resolveComposerControlIcon(control);
     const optionalProps = {
-      ...(resolvedIcon ? { icon: resolvedIcon } : {}),
-      ...(rendersIconOnly(control) ? { iconOnly: true } : {}),
-      ...(control.placeholder ? { placeholder: control.placeholder } : {}),
-      ...(control.isDisabled !== undefined ? { isDisabled: control.isDisabled } : {}),
+      ...(resolvedIcon
+        ? {
+            icon: resolvedIcon,
+          }
+        : {}),
+      ...(rendersIconOnly(control)
+        ? {
+            iconOnly: true,
+          }
+        : {}),
+      ...(control.placeholder
+        ? {
+            placeholder: control.placeholder,
+          }
+        : {}),
+      ...(control.isDisabled !== undefined
+        ? {
+            isDisabled: control.isDisabled,
+          }
+        : {}),
       ...(hideOnWrap || shouldHideLabel
         ? {
             hideLabelOnWrap: true,
             forceHideLabel: shouldHideLabel,
-            ...(collapseTier !== undefined ? { collapseTier } : {}),
+            ...(collapseTier !== undefined
+              ? {
+                  collapseTier,
+                }
+              : {}),
             tooltip: control.value,
           }
         : {}),
     };
-
     return (
       <OptionMenu
         key={`${control.value}-${index}`}
@@ -664,12 +734,10 @@ export function ThreadComposer(props: {
       />
     );
   };
-
   const renderControlsList = (targetWrapLevel: number, forceShowLabels = false) =>
     controls.map((control, index) =>
       renderControlItem(control, index, targetWrapLevel, forceShowLabels),
     );
-
   const renderProbeControlItem = (
     control: ComposerControl,
     index: number,
@@ -686,12 +754,9 @@ export function ThreadComposer(props: {
     const probeClassName = isStatic
       ? "poracode-composer-static min-w-0 px-2.5"
       : isToggle
-        ? `poracode-composer-toggle inline-flex min-w-0 items-center gap-[0.35rem] px-2.5 ${
-            control.iconOnly ? "min-w-9 px-2" : ""
-          }`
+        ? `poracode-composer-toggle inline-flex min-w-0 items-center gap-[0.35rem] px-2.5 ${control.iconOnly ? "min-w-9 px-2" : ""}`
         : "poracode-composer-menu inline-flex min-w-0 items-center gap-[0.35rem] px-2.5";
     const label = resolveControlProbeLabel(control, t`Thinking`);
-
     return (
       <div key={`probe-control-${index}`} className={probeClassName}>
         {hasProbeIcon(control) ? <span className="size-4 shrink-0" /> : null}
@@ -704,12 +769,10 @@ export function ThreadComposer(props: {
       </div>
     );
   };
-
   const renderProbeControlsList = (targetWrapLevel: number, forceShowLabels = false) =>
     controls.map((control, index) =>
       renderProbeControlItem(control, index, targetWrapLevel, forceShowLabels),
     );
-
   const probeContentCacheKey = `${effectiveToolbarLayoutKey}|compact=${compact}|pill=${pill}`;
   if (!probeContentCacheRef.current || probeContentCacheRef.current.key !== probeContentCacheKey) {
     // The hidden probe tree uses cheap geometry stubs for controls instead of
@@ -721,14 +784,20 @@ export function ThreadComposer(props: {
           ref={probeContainerRef}
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-0"
-          style={{ visibility: "hidden", zIndex: -1 }}
+          style={{
+            visibility: "hidden",
+            zIndex: -1,
+          }}
         >
           {COLLAPSE_LEVELS.map((level) => (
             <div
               key={`probe-${level}`}
               data-wrap-level={level}
               className={toolbarClassName.replace("relative", "")}
-              style={{ position: "absolute", inset: 0 }}
+              style={{
+                position: "absolute",
+                inset: 0,
+              }}
             >
               {!pill && inputLeadingControls}
               {leadingControls && (
@@ -738,7 +807,9 @@ export function ThreadComposer(props: {
               )}
               <div
                 className="probe-wrap-container flex min-w-0 flex-1 flex-nowrap items-center gap-1 overflow-hidden [&>*]:shrink-0"
-                style={{ height: "2.25rem" }}
+                style={{
+                  height: "2.25rem",
+                }}
               >
                 {renderProbeControlsList(level)}
               </div>
@@ -755,7 +826,6 @@ export function ThreadComposer(props: {
     };
   }
   const probeContent = probeContentCacheRef.current.content;
-
   const renderControls = () => (
     <div className="relative min-w-0 flex-1">
       {/* Real controls: wrap collapse is applied through DOM attributes/classes.
@@ -763,16 +833,15 @@ export function ThreadComposer(props: {
          while labels collapse — wrapped items are clipped, not shown. */}
       <div
         ref={controlsRef}
-        className={`flex min-w-0 flex-nowrap items-center gap-1 overflow-hidden [&>*]:shrink-0 ${
-          pill ? "justify-end" : ""
-        } ${wrapLevelRef.current > 0 ? "is-wrapping" : ""}`}
-        style={{ height: "2.25rem" }}
+        className={`flex min-w-0 flex-nowrap items-center gap-1 overflow-hidden [&>*]:shrink-0 ${pill ? "justify-end" : ""} ${wrapLevelRef.current > 0 ? "is-wrapping" : ""}`}
+        style={{
+          height: "2.25rem",
+        }}
       >
         {renderControlsList(0)}
       </div>
     </div>
   );
-
   const renderEditor = () =>
     inputContent ? (
       <div className={customInputClassName}>{inputContent}</div>
@@ -795,7 +864,6 @@ export function ThreadComposer(props: {
         }}
       />
     );
-
   const renderSendButton = () => {
     if (hideSubmitButton) return null;
 
@@ -836,7 +904,11 @@ export function ThreadComposer(props: {
             isPending={submitPending}
             onPress={onSubmit}
             size="sm"
-            {...(submitVariant ? { variant: submitVariant } : {})}
+            {...(submitVariant
+              ? {
+                  variant: submitVariant,
+                }
+              : {})}
           >
             {({ isPending }) =>
               isPending ? (
@@ -851,17 +923,18 @@ export function ThreadComposer(props: {
       </Tooltip>
     );
   };
-
   const hasAttachmentDragData = (dataTransfer: DataTransfer) =>
     Array.from(dataTransfer.types).some(
       (type) => type === "Files" || type === COMPOSER_FILE_DRAG_TYPE,
     );
-
   const resolveAttachmentDropPaths = (dataTransfer: DataTransfer): string[] => {
     const payload = dataTransfer.getData(COMPOSER_FILE_DRAG_TYPE);
     if (payload) {
       try {
-        const parsed = JSON.parse(payload) as { path?: unknown; type?: unknown };
+        const parsed = JSON.parse(payload) as {
+          path?: unknown;
+          type?: unknown;
+        };
         return typeof parsed.path === "string" && parsed.type === "file" ? [parsed.path] : [];
       } catch {
         return [];
@@ -869,7 +942,6 @@ export function ThreadComposer(props: {
     }
     return window.poracode.getDroppedFilePaths(Array.from(dataTransfer.files));
   };
-
   const handleAttachmentDragEnter = (event: DragEvent<HTMLDivElement>) => {
     if (!onAttachFiles || !hasAttachmentDragData(event.dataTransfer)) return;
     event.preventDefault();
@@ -877,13 +949,11 @@ export function ThreadComposer(props: {
     event.dataTransfer.dropEffect = "copy";
     setIsAttachmentDropActive(true);
   };
-
   const handleAttachmentDragOver = (event: DragEvent<HTMLDivElement>) => {
     if (!onAttachFiles || !hasAttachmentDragData(event.dataTransfer)) return;
     event.preventDefault();
     event.dataTransfer.dropEffect = "copy";
   };
-
   const handleAttachmentDragLeave = (event: DragEvent<HTMLDivElement>) => {
     if (!onAttachFiles || !hasAttachmentDragData(event.dataTransfer)) return;
     attachmentDragDepthRef.current = Math.max(0, attachmentDragDepthRef.current - 1);
@@ -891,7 +961,6 @@ export function ThreadComposer(props: {
       setIsAttachmentDropActive(false);
     }
   };
-
   const handleAttachmentDrop = (event: DragEvent<HTMLDivElement>) => {
     if (!onAttachFiles || !hasAttachmentDragData(event.dataTransfer)) return;
     event.preventDefault();
@@ -902,7 +971,6 @@ export function ThreadComposer(props: {
       onAttachFiles(paths);
     }
   };
-
   const toolbar = (
     <div ref={toolbarRef} className={toolbarClassName} data-wrap-level={wrapLevelRef.current}>
       {!pill && inputLeadingControls}
@@ -922,11 +990,9 @@ export function ThreadComposer(props: {
       {probeContent}
     </div>
   );
-
   if (toolbarOnly) {
     return toolbar;
   }
-
   return (
     <div data-poracode-composer="">
       <div
@@ -936,8 +1002,7 @@ export function ThreadComposer(props: {
         onDragLeave={handleAttachmentDragLeave}
         onDrop={handleAttachmentDrop}
       >
-        {/* Inert unless a shell-level rule lights it: desktop draft focus, or
-            the phone layout's expanded live composer. */}
+        {}
         <div className="poracode-composer-border-glow" />
         {isAttachmentDropActive ? (
           <div className="poracode-composer-drop-overlay">
@@ -950,9 +1015,7 @@ export function ThreadComposer(props: {
           <div className={multiline ? "grid grid-cols-2 items-end" : "flex items-center"}>
             {inputLeadingControls ? (
               <div
-                className={`poracode-composer-pill-leading flex shrink-0 items-center pl-2 ${
-                  multiline ? "row-start-2 pb-2" : ""
-                }`}
+                className={`poracode-composer-pill-leading flex shrink-0 items-center pl-2 ${multiline ? "row-start-2 pb-2" : ""}`}
               >
                 {inputLeadingControls}
               </div>
@@ -965,9 +1028,7 @@ export function ThreadComposer(props: {
               {renderEditor()}
             </div>
             <div
-              className={`poracode-composer-pill-actions flex shrink-0 items-center gap-0.5 pr-2 ${
-                multiline ? "col-start-2 row-start-2 justify-self-end pb-2" : ""
-              }`}
+              className={`poracode-composer-pill-actions flex shrink-0 items-center gap-0.5 pr-2 ${multiline ? "col-start-2 row-start-2 justify-self-end pb-2" : ""}`}
             >
               {typeof afterControls === "function" ? afterControls(0) : afterControls}
               {renderSendButton()}

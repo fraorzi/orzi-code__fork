@@ -7,6 +7,7 @@ export default {
   label: msg`Codex`,
   order: 20,
   utilityOrder: 10,
+  usageResetUrl: "https://chatgpt.com/codex/settings/usage",
   collapsedUsage: { windowIds: ["session-5h", "weekly"] },
   formatTranscriptMarkdown: formatFileCitationMarkdown,
 } satisfies RendererProviderManifest;

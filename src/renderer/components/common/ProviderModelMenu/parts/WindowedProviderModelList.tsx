@@ -6,14 +6,9 @@ import type { ProviderModelItem } from "./types";
 import { ModelMenuRow } from "./ModelMenuRow";
 
 const MODEL_MENU_ROW_HEIGHT = 28;
-/** Model rows grow to a finger-friendly target in the mobile PWA drawer; headers
- * stay compact. Threaded through the virtualizer so the JS row math and the
- * rendered row height never disagree (a mismatch desyncs the scroll spacers). */
-const MODEL_MENU_EXPANDED_MOBILE_CHROME_HEIGHT = 180;
 const MODEL_MENU_PROVIDER_HEADER_BOTTOM_GAP = 4;
 const MODEL_MENU_MAX_HEIGHT = 288;
 const MODEL_MENU_LISTBOX_PADDING_BOTTOM = 6;
-const MODEL_MENU_MOBILE_SCROLL_END_GAP = 32;
 const MODEL_MENU_OVERSCAN_ROWS = 16;
 
 interface WindowedItemsMeta {
@@ -147,32 +142,6 @@ function selectedModelIndex(selectedKeys: Set<string>, meta: WindowedItemsMeta):
   return -1;
 }
 
-function expandedMobileModelMenuMaxHeight(): number {
-  if (typeof window === "undefined") return MODEL_MENU_MAX_HEIGHT;
-  return Math.max(
-    MODEL_MENU_MAX_HEIGHT,
-    window.innerHeight - MODEL_MENU_EXPANDED_MOBILE_CHROME_HEIGHT,
-  );
-}
-
-/* In iOS Safari browser mode the sheet extends below the visible viewport so
-   its paint fills the band under the floating toolbar (styles.css,
-   --m-browser-band-paint). The virtual list must add that depth to its scroll
-   end gap or the last rows park under the toolbar. Resolve the CSS token with
-   a probe so the JS gap and the CSS geometry can never drift; it computes to
-   0 everywhere the token is undefined (desktop, standalone, Android). */
-function browserToolbarScrollClearance(): number {
-  if (typeof document === "undefined") return 0;
-  const probe = document.createElement("div");
-  probe.style.cssText =
-    "position:fixed;visibility:hidden;pointer-events:none;width:0;" +
-    "height:var(--m-browser-toolbar-safe-area,0px);";
-  document.body.append(probe);
-  const height = probe.getBoundingClientRect().height;
-  probe.remove();
-  return height;
-}
-
 export interface ModelListHandle {
   moveActive: (delta: number) => void;
   moveHorizontal?: (delta: number) => void;
@@ -183,10 +152,8 @@ export interface ModelListProps {
   domIdPrefix: string;
   items: ProviderModelItem[];
   selectedKeys: Set<string>;
-  /** Height of a model row; larger on mobile so drawer rows are finger-sized. */
+  /** Height of a model row, shared with the virtualizer. */
   modelRowHeight: number;
-  mobile: boolean;
-  mobileExpanded: boolean;
   onActiveChange: (itemId: string | null) => void;
   modelFastEnabled: (providerKind: string, modelId: string) => boolean;
   toggleFavorite: (
@@ -204,8 +171,6 @@ export const WindowedProviderModelList = forwardRef<ModelListHandle, ModelListPr
       items,
       selectedKeys,
       modelRowHeight,
-      mobile,
-      mobileExpanded,
       onActiveChange,
       modelFastEnabled,
       toggleFavorite,
@@ -252,16 +217,9 @@ export const WindowedProviderModelList = forwardRef<ModelListHandle, ModelListPr
     }, [activeIndex, activeRowId, onActiveChange]);
 
     const totalHeight = meta.totalHeight;
-    const [browserToolbarClearance] = useState(() =>
-      mobile ? browserToolbarScrollClearance() : 0,
-    );
-    const scrollEndGapHeight = mobile
-      ? MODEL_MENU_MOBILE_SCROLL_END_GAP + browserToolbarClearance
-      : MODEL_MENU_LISTBOX_PADDING_BOTTOM;
+    const scrollEndGapHeight = MODEL_MENU_LISTBOX_PADDING_BOTTOM;
     const totalScrollHeight = totalHeight + scrollEndGapHeight;
-    const maxViewportHeight = mobileExpanded
-      ? expandedMobileModelMenuMaxHeight()
-      : MODEL_MENU_MAX_HEIGHT;
+    const maxViewportHeight = MODEL_MENU_MAX_HEIGHT;
     const viewportHeight = Math.min(totalScrollHeight, maxViewportHeight);
     const visibleRowCount = Math.max(1, Math.ceil(viewportHeight / modelRowHeight));
     const clampedVisibleRow = Math.min(visibleRow, Math.max(0, items.length - 1));
@@ -391,9 +349,7 @@ export const WindowedProviderModelList = forwardRef<ModelListHandle, ModelListPr
         aria-activedescendant={
           activeIndex >= 0 ? `${domIdPrefix}-${items[activeIndex]?.id}` : undefined
         }
-        className={`poracode-model-menu-listbox no-scrollbar overflow-y-auto outline-none ${
-          mobileExpanded ? "max-h-none" : "max-h-72"
-        }`}
+        className="poracode-model-menu-listbox no-scrollbar overflow-y-auto outline-none max-h-72"
         style={{ height: viewportHeight }}
         tabIndex={0}
         onScroll={(event) => {

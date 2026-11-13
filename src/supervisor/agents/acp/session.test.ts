@@ -53,7 +53,7 @@ type TestableAcpSession = {
   dispose(): Promise<void>;
   resolveServerRequest(requestId: string, response: unknown): Promise<void>;
   handlePermissionRequest(params: RequestPermissionRequest): Promise<unknown>;
-  handleSessionUpdate(params: { update: unknown }): void;
+  handleSessionUpdate(params: { sessionId?: string; update: unknown }): void;
   getBackgroundTasks(): readonly import("@/shared/contracts").BackgroundTask[];
   handleStderrTurnSignalLine(line: string): void;
   ingestExternalSessionUpdate(notification: SessionNotification): void;
@@ -93,6 +93,7 @@ function makeConfigSyncSession(
     behavior?: AcpSessionBehavior;
     textStreamExtension?: AcpTextStreamExtension;
     stderrTurnSignalParser?: (line: string) => "background-wait" | undefined;
+    promptFailureClassifier?: import("./promptRecovery").AcpPromptFailureClassifier;
   } = {},
 ) {
   const connection = {
@@ -208,10 +209,11 @@ function makeConfigSyncSession(
   session["agentSessionCapabilities"] = undefined;
   session["initializeMeta"] = overrides.initializeMeta;
   session["behavior"] = overrides.behavior ?? {};
+  session["promptFailureClassifier"] = overrides.promptFailureClassifier;
   session["textStreamExtension"] = overrides.textStreamExtension;
   session["stderrTurnSignalParser"] = overrides.stderrTurnSignalParser;
   session["promptHeldForBackgroundWork"] = false;
-  session["startTurnChain"] = Promise.resolve();
+  session["startTurnChain"] = undefined;
   session["cwd"] = "C:\\repo";
   session["stableSessionRef"] = undefined;
   session["usageScopeId"] = undefined;
@@ -268,6 +270,40 @@ describe("shouldSpawnAcpSession — shared resume/presentation gate for all ACP 
 });
 
 describe("ACP async extension updates", () => {
+  it("serializes prompts while the first turn is still applying its config", async () => {
+    const { connection, session } = makeConfigSyncSession();
+    let resolveConfig!: (value: unknown) => void;
+    connection.request.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveConfig = resolve;
+      }),
+    );
+    let resolvePrompt!: (value: { stopReason: string }) => void;
+    connection.prompt.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolvePrompt = resolve;
+      }),
+    );
+    const first = session.startTurn("first", { model: "model-b" });
+    await vi.waitFor(() => expect(connection.request).toHaveBeenCalledOnce());
+    const second = session.startTurn("second", { model: "model-c" });
+    const third = session.startTurn("third", { model: "model-d" });
+    await Promise.resolve();
+    expect(connection.request).toHaveBeenCalledOnce();
+    expect(connection.prompt).not.toHaveBeenCalled();
+
+    resolveConfig({});
+    await vi.waitFor(() => expect(connection.prompt).toHaveBeenCalledOnce());
+    expect(connection.request).toHaveBeenCalledOnce();
+    resolvePrompt({ stopReason: "end_turn" });
+    await Promise.all([first, second, third]);
+    expect(connection.prompt.mock.calls.map(([args]) => args.prompt)).toEqual([
+      [{ type: "text", text: "first" }],
+      [{ type: "text", text: "second" }],
+      [{ type: "text", text: "third" }],
+    ]);
+  });
+
   it.each(["disposed", "replaying"] as const)(
     "drops recovered updates when the session becomes %s before resolution",
     async (state) => {
@@ -395,6 +431,91 @@ describe("resolveAcpPromptFailureMessage — prompt rejection after agent-surfac
 });
 
 describe("ACP empty-response provider guard", () => {
+  it("retries a declared pre-execution failure with the same prompt and one user row", async () => {
+    const { connection, listener, session } = makeConfigSyncSession({
+      promptFailureClassifier: (text) => (text === "pre-execution failure" ? "failure" : undefined),
+    });
+    connection.prompt.mockImplementationOnce(async () => {
+      session.handleSessionUpdate({
+        sessionId: "session-1",
+        update: {
+          sessionUpdate: "agent_message_chunk",
+          content: { type: "text", text: "pre-execution failure" },
+        },
+      });
+      return { stopReason: "end_turn" };
+    });
+    await session.startTurn("original task", { model: "model-a" });
+    expect(connection.prompt).toHaveBeenCalledTimes(2);
+    expect(connection.prompt.mock.calls[0]).toEqual(connection.prompt.mock.calls[1]);
+    const events = listener.onRuntimeEvent.mock.calls.map(([event]) => event);
+    expect(
+      events.filter(
+        (event) =>
+          typeof event === "object" &&
+          event !== null &&
+          "itemType" in event &&
+          event.itemType === "user_message",
+      ),
+    ).toHaveLength(1);
+    expect(events).not.toContainEqual(expect.objectContaining({ type: "error" }));
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: "turn.completed", state: "completed" }),
+    );
+  });
+
+  it("settles an exhausted prompt recovery as a failed turn", async () => {
+    const { connection, listener, session } = makeConfigSyncSession({
+      promptFailureClassifier: (text) => (text === "pre-execution failure" ? "failure" : undefined),
+    });
+    connection.prompt.mockImplementation(async () => {
+      session.handleSessionUpdate({
+        sessionId: "session-1",
+        update: {
+          sessionUpdate: "agent_message_chunk",
+          content: { type: "text", text: "pre-execution failure" },
+        },
+      });
+      return { stopReason: "end_turn" };
+    });
+    await session.startTurn("original task", { model: "model-a" });
+    expect(connection.prompt).toHaveBeenCalledTimes(2);
+    expect(listener.onRuntimeEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "error",
+        message: "pre-execution failure",
+      }),
+    );
+    expect(listener.onRuntimeEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "turn.completed",
+        state: "failed",
+      }),
+    );
+  });
+
+  it("does not resend a diagnosed failure after the user presses Stop", async () => {
+    const { connection, listener, session } = makeConfigSyncSession({
+      promptFailureClassifier: (text) => (text === "pre-execution failure" ? "failure" : undefined),
+    });
+    connection.prompt.mockImplementationOnce(async () => {
+      session.handleSessionUpdate({
+        sessionId: "session-1",
+        update: {
+          sessionUpdate: "agent_message_chunk",
+          content: { type: "text", text: "pre-execution failure" },
+        },
+      });
+      await session.interruptTurn();
+      return { stopReason: "cancelled" };
+    });
+    await session.startTurn("original task", { model: "model-a" });
+    expect(connection.prompt).toHaveBeenCalledTimes(1);
+    expect(listener.onRuntimeEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "turn.completed", state: "cancelled" }),
+    );
+  });
+
   it("turns a provider-diagnosed empty end_turn into a visible failed turn", async () => {
     const { connection, listener, session } = makeConfigSyncSession();
     const resolver = vi.fn<(input: { stopReason: string; stderr: readonly string[] }) => Error>(

@@ -9,21 +9,7 @@
  */
 
 /** Locales we actually ship catalogs for. */
-export const SUPPORTED_LOCALES = [
-  "en",
-  "es",
-  "ru",
-  "uk",
-  "zh-CN",
-  "ja",
-  "pt-BR",
-  "de",
-  "fr",
-  "ko",
-  "pl",
-  "vi",
-  "tr",
-] as const;
+export const SUPPORTED_LOCALES = ["en", "pl"] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 /** Source locale — its catalog mirrors the message source text. */
@@ -45,18 +31,7 @@ export type LocaleSetting = (typeof LOCALE_SETTING_VALUES)[number];
  */
 export const LOCALE_ENGLISH_NAMES: Record<SupportedLocale, string> = {
   en: "English",
-  es: "Spanish",
-  ru: "Russian",
-  uk: "Ukrainian",
-  "zh-CN": "Simplified Chinese",
-  ja: "Japanese",
-  "pt-BR": "Brazilian Portuguese",
-  de: "German",
-  fr: "French",
-  ko: "Korean",
   pl: "Polish",
-  vi: "Vietnamese",
-  tr: "Turkish",
 };
 
 /**
@@ -68,41 +43,12 @@ export const AI_LANGUAGE_VALUES = ["match-app", ...SUPPORTED_LOCALES] as const;
 export type AiContentLanguage = (typeof AI_LANGUAGE_VALUES)[number];
 
 export function isSupportedLocale(value: string): value is SupportedLocale {
-  return (SUPPORTED_LOCALES as readonly string[]).includes(value);
+  return SUPPORTED_LOCALES.some((locale) => locale === value);
 }
 
-const SUPPORTED_LOCALES_BY_NORMALIZED_TAG = new Map(
-  SUPPORTED_LOCALES.map((locale) => [locale.toLowerCase(), locale]),
-);
-
 function findSupportedLocaleForLanguageTag(tag: string): SupportedLocale | undefined {
-  const normalized = tag.trim().replaceAll("_", "-").toLowerCase();
-  const exactMatch = SUPPORTED_LOCALES_BY_NORMALIZED_TAG.get(normalized);
-  if (exactMatch) {
-    return exactMatch;
-  }
-
-  const base = normalized.split("-")[0];
-  if (!base) {
-    return undefined;
-  }
-
-  const baseMatch = SUPPORTED_LOCALES_BY_NORMALIZED_TAG.get(base);
-  if (baseMatch) {
-    return baseMatch;
-  }
-
-  let regionalMatch: SupportedLocale | undefined;
-  for (const locale of SUPPORTED_LOCALES) {
-    if (locale.toLowerCase().split("-")[0] !== base) {
-      continue;
-    }
-    if (regionalMatch) {
-      return undefined;
-    }
-    regionalMatch = locale;
-  }
-  return regionalMatch;
+  const language = tag.trim().replaceAll("_", "-").toLowerCase().split("-")[0] ?? "";
+  return isSupportedLocale(language) ? language : undefined;
 }
 
 /**
@@ -110,8 +56,8 @@ function findSupportedLocaleForLanguageTag(tag: string): SupportedLocale | undef
  *
  * - An explicit supported locale is returned as-is.
  * - `"system"` (or any unexpected value) walks `preferredLanguages` (e.g.
- *   `navigator.languages`, BCP-47 tags like `"uk-UA"`), matching exact
- *   regional tags first, then base language, and falls back to
+ *   `navigator.languages`, BCP-47 tags like `"pl-PL"`), matching the
+ *   base language, and falls back to
  *   {@link SOURCE_LOCALE} when nothing matches.
  */
 export function resolveLocale(

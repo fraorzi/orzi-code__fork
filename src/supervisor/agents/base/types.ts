@@ -1,3 +1,4 @@
+import type { OneShotUsage } from "@/shared/auxiliaryUsage";
 import type { NativeMcpConfigFile } from "../../mcp/nativeSetup/configFile";
 import type {
   ManageAgentCredentialsPayload,
@@ -571,6 +572,8 @@ export interface AgentSessionTracker {
 }
 
 export interface RunOneShotInput {
+  /** Report only consumption supplied by the provider, including failed attempts when available. */
+  onUsage?: ((usage: OneShotUsage) => void) | undefined;
   location: ProjectLocation;
   model: string;
   effort?: string | undefined;
@@ -619,6 +622,8 @@ export interface OneShotGenerationOptions {
 }
 
 export interface AgentOneShotRunner {
+  /** Decode provider-native CLI envelopes without leaking their format into shared generators. */
+  parseOneShotOutput?(raw: string): { text: string; usage?: OneShotUsage[]; error?: string };
   /** Explicit child-lane choice when an adapter supports both structured and one-shot execution. */
   readonly subagentExecutionPreference?: "structured" | "one-shot";
   defaultOneShotModel?: string;
@@ -812,6 +817,11 @@ export interface AgentAdapter
     Partial<AgentNativePluginSupport> {
   /** Account usage collector to refresh after a completed turn, including real PTY turns. */
   usageProviderId?: string;
+  /** Provider-owned quota error vocabulary and model-specific account windows. */
+  usageRecovery?: {
+    isLimitError(message: string): boolean;
+    windowIds(config: ThreadConfig): readonly string[];
+  };
   /** Manage native provider package plugins in the selected execution environment. */
   managePlugins?(
     input: Omit<ManageAgentPluginsPayload, "agentKind">,

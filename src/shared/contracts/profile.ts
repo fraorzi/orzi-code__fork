@@ -1,3 +1,4 @@
+import type { AuxiliaryUsageSummary } from "../auxiliaryUsage";
 import { z } from "zod";
 
 /**
@@ -227,6 +228,8 @@ export interface ProfileTokenProvider {
 }
 
 export interface ProfileTokenStats {
+  /** Optional for older remote hosts. Separate from historical/chat token totals. */
+  auxiliary?: AuxiliaryUsageSummary[];
   /** False when no durable token events have been recorded on this device yet. */
   available: boolean;
   scope: ProfileStatScope;

@@ -5,12 +5,32 @@ export const productionRoots = [
   "src/renderer/",
   "src/shared/",
   "src/supervisor/",
-  "src/mobile/",
   "src/server/",
   "chrome-extension/",
 ];
 
 export const functionalAreas = [
+  {
+    id: "saved-resets",
+    title: "Compact saved resets, expiration warnings, native activation and account binding",
+    patterns: [
+      /ProviderResetCreditsSection/,
+      /ProviderUsageRows/,
+      /UsageReset/,
+      /usageReset/,
+      /ResetCredits\.ts$/,
+      /(?:browserUsageHttp|usageBrowserHttp)/,
+    ],
+    automated: ["baseline", "saved-resets"],
+    manual: [],
+  },
+  {
+    id: "local-ports",
+    title: "Owned local TCP servers, process identity and stopping a server",
+    patterns: [/localPorts/i, /LocalPortsOverlay/],
+    automated: ["baseline", "local-ports"],
+    manual: ["changed-surface", "ipc-roundtrip"],
+  },
   {
     id: "context-efficiency",
     title: "Context occupancy, compaction policy, deferred tools and task consumption",
@@ -24,6 +44,21 @@ export const functionalAreas = [
     ],
     automated: ["baseline", "context-usage"],
     manual: ["changed-surface"],
+  },
+  {
+    id: "utility-usage",
+    title: "Measured utility generations, report coverage and durable Profile totals",
+    patterns: [
+      /auxiliaryUsage/i,
+      /AuxiliaryUsage/,
+      /oneShotUsage/,
+      /oneShotPromptRunner/,
+      /(?:title|commitMessage|prSummary)Generator/,
+      /generationService/,
+      /profile\/tokenStats/,
+    ],
+    automated: ["baseline", "settings"],
+    manual: ["changed-surface", "ipc-roundtrip"],
   },
   {
     id: "local-desktop-updates",
@@ -138,7 +173,13 @@ export const functionalAreas = [
   {
     id: "follow-up-queue",
     title: "GUI follow-up queue, steering choice, and queue controls",
-    patterns: [/followUpQueue/i, /FollowUpQueue/, /threadComposerSubmit/],
+    patterns: [
+      /followUpQueue/i,
+      /FollowUpQueue/,
+      /threadComposerSubmit/,
+      /usageRecovery/i,
+      /ThreadUsageRecovery/,
+    ],
     automated: ["baseline", "thread-search", "settings"],
     manual: ["ipc-roundtrip", "provider-live", "runtime-requests"],
   },
@@ -182,7 +223,7 @@ export const functionalAreas = [
     title: "Device scheduled tasks, persistence, and remote management",
     patterns: [/schedule/i],
     automated: ["baseline", "schedules"],
-    manual: ["ipc-roundtrip", "remote-mobile"],
+    manual: ["ipc-roundtrip", "remote-access"],
   },
   {
     id: "settings",
@@ -217,11 +258,11 @@ export const functionalAreas = [
     manual: ["native-auth-update"],
   },
   {
-    id: "remote-mobile",
-    title: "Remote access, mobile UI, pairing, and push",
-    patterns: [/^src\/mobile\//, /remote/i, /pairing/i, /push/i],
+    id: "remote-access",
+    title: "Desktop remote access, pairing, and push",
+    patterns: [/remote/i, /pairing/i, /push/i],
     automated: ["settings"],
-    manual: ["remote-mobile"],
+    manual: ["remote-access"],
   },
   {
     id: "native-mcp-setup",
@@ -303,8 +344,8 @@ export const manualGates = {
     "Launch a fresh isolated thread with each changed provider and observe first output.",
   "provider-skill-delivery":
     "Launch each supported provider with an isolated managed skill and verify the provider discovers and invokes it.",
-  "remote-mobile":
-    "Pair an isolated mobile client and verify reconnect plus one read-only action; for push changes, verify background delivery and notification-tap routing.",
+  "remote-access":
+    "Connect an isolated desktop client and verify reconnect plus one read-only action; for push changes, verify delivery to an existing supported client.",
   "runtime-requests": "Trigger approval and structured-input requests; deny or submit safely.",
   "terminal-pty": "Launch a terminal thread, send input, resize, interrupt, and stop the real PTY.",
   "skills-manager":

@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Orzi Code">
-  <defs><rect id="tile" width="1024" height="1024" rx="232"/></defs>
-  <use xlink:href="#tile" fill="#232323"/>
-  <path fill-rule="evenodd" fill="#e6e6e6" d="M768 512a256 256 0 1 0-512 0a256 256 0 1 0 512 0ZM672 512a160 160 0 1 1-320 0a160 160 0 1 1 320 0Z"/>
-  <path fill="#e6e6e6" d="M474 432l-80 80 80 80 28-28-52-52 52-52ZM550 432l80 80-80 80-28-28 52-52-52-52Z"/>
-</svg>

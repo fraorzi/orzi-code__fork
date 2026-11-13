@@ -4,13 +4,6 @@ import { REMOTE_COMMAND_ID_HEADER, type RemoteAccessScope } from "@/shared/remot
 import { parseBearerAuthorizationHeader, RemoteHttpError, type RemoteAuthStore } from "../auth";
 import type { RemoteAccessServerOptions } from "../RemoteAccessServer";
 
-const NATIVE_WEBVIEW_ORIGINS = new Set([
-  "capacitor://localhost",
-  "ionic://localhost",
-  "http://localhost",
-  "https://localhost",
-]);
-
 export const DEFAULT_TOKEN_EXCHANGE_RATE_LIMIT = {
   maxAttempts: 20,
   windowMs: 5 * 60 * 1000,
@@ -135,7 +128,6 @@ export class RemoteServerSecurity {
   }
 
   private isTrustedCorsOrigin(origin: string): boolean {
-    if (NATIVE_WEBVIEW_ORIGINS.has(origin)) return true;
     if (isLoopbackWebOrigin(origin)) return true;
     const key = this.ctx.getHttpBaseUrl();
     let cache = this.trustedCorsOrigins;
@@ -144,7 +136,6 @@ export class RemoteServerSecurity {
       for (const value of [
         key,
         this.ctx.options.pairingAppUrl,
-        this.ctx.options.devMobileAppUrl,
         ...(this.ctx.options.trustedCorsOrigins ?? []),
       ]) {
         if (!value) continue;

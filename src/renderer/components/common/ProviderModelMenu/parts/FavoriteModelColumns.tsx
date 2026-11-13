@@ -90,7 +90,7 @@ export const FavoriteModelColumns = forwardRef<ModelListHandle, ModelListProps>(
                 key={item.id}
                 item={item}
                 domIdPrefix={props.domIdPrefix}
-                modelRowHeight={props.mobile ? 44 : 28}
+                modelRowHeight={props.modelRowHeight}
                 variant="column"
                 isSelected={props.selectedKeys.has(item.id)}
                 isActive={item.id === active?.id}

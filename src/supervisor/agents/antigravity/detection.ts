@@ -30,6 +30,7 @@ const defaultModelCapabilities = buildAntigravityModelCapabilities(
 );
 
 export const defaultAntigravityCapabilities: AgentCapability = {
+  supportsUsageRecovery: true,
   models: defaultModelCapabilities.models,
   efforts: defaultModelCapabilities.efforts,
   defaultEffort: defaultModelCapabilities.defaultEffort,

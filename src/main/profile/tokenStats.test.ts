@@ -1,3 +1,4 @@
+import { recordAuxiliaryGeneration } from "./auxiliaryUsage";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -52,6 +53,94 @@ describe("computeProfileTokenStats (real sqlite)", () => {
   afterEach(() => {
     closeDatabase();
     rmSync(dir, { recursive: true, force: true });
+  });
+
+  it("persists threadless generations once, with unknown/zero/partial report coverage", () => {
+    const now = Date.now();
+    const measured = {
+      id: "measured",
+      operation: "title",
+      provider: "claude:work",
+      startedAt: now - 10,
+      finishedAt: now,
+      outcome: "completed",
+      usage: [
+        { totalTokens: 10, costUsd: 0.01 },
+        { totalTokens: 5, costUsd: 0.02 },
+      ],
+    } as const;
+    recordAuxiliaryGeneration({ ...measured, usage: [...measured.usage] });
+    recordAuxiliaryGeneration({ ...measured, usage: [...measured.usage] });
+    recordAuxiliaryGeneration({ ...measured, id: "unknown", outcome: "failed", usage: [] });
+    recordAuxiliaryGeneration({
+      ...measured,
+      id: "zero",
+      operation: "commit",
+      usage: [{ totalTokens: 0, costUsd: 0 }],
+    });
+    recordAuxiliaryGeneration({
+      ...measured,
+      id: "cost-only",
+      operation: "pr",
+      usage: [{ costUsd: 0.01 }],
+    });
+    const stats = computeProfileTokenStats({ utcOffsetMinutes: 0 });
+    expect(stats.lifetimeTokens).toBe(0);
+    expect(stats.auxiliary).toEqual([
+      {
+        operation: "commit",
+        runs: 1,
+        failedRuns: 0,
+        runsWithTokenReports: 1,
+        runsWithCostReports: 1,
+        reportedTokens: 0,
+        reportedCostUsd: 0,
+      },
+      {
+        operation: "pr",
+        runs: 1,
+        failedRuns: 0,
+        runsWithTokenReports: 0,
+        runsWithCostReports: 1,
+        reportedCostUsd: 0.01,
+      },
+      {
+        operation: "title",
+        runs: 2,
+        failedRuns: 1,
+        runsWithTokenReports: 1,
+        runsWithCostReports: 1,
+        reportedTokens: 15,
+        reportedCostUsd: 0.03,
+      },
+    ]);
+    expect(computeProfileTokenStats({ utcOffsetMinutes: 0, provider: "claude" }).auxiliary).toEqual(
+      [],
+    );
+    expect(
+      computeProfileTokenStats({ utcOffsetMinutes: 0, provider: "claude:work" }).auxiliary,
+    ).toEqual(stats.auxiliary);
+  });
+
+  it("keeps previous-version logs valid and filters auxiliary generations by calendar window", () => {
+    const now = Date.now();
+    dbAppendUsageEvents([{ ts: now, kind: "tokens_v2", value: 2 }]);
+    expect(computeProfileTokenStats({ utcOffsetMinutes: 0 }).auxiliary).toEqual([]);
+    recordAuxiliaryGeneration({
+      id: "old",
+      operation: "title",
+      provider: "opencode",
+      startedAt: now - 10 * 86_400_000,
+      finishedAt: now - 10 * 86_400_000,
+      outcome: "completed",
+      usage: [{ totalTokens: 30 }],
+    });
+    expect(computeProfileTokenStats({ utcOffsetMinutes: 0, window: "7d" }).auxiliary).toEqual([]);
+    expect(
+      computeProfileTokenStats({ utcOffsetMinutes: 0, window: "30d" }).auxiliary?.[0]
+        ?.reportedTokens,
+    ).toBe(30);
+    expect(computeProfileTokenStats({ utcOffsetMinutes: 0 }).lifetimeTokens).toBe(2);
   });
 
   it("sums legacy tokens and exact tokens_v2 rows together", () => {

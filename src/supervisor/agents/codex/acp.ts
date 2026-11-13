@@ -1497,6 +1497,7 @@ export class CodexStructuredSession implements StructuredSessionHandle {
   }
 
   private async syncRemoteThreadState(threadId: string, sessionRef?: SessionRef): Promise<void> {
+    const statusBeforeRead = this.currentThreadStatus;
     let confirmedStatus: CodexThreadStatus | undefined;
     try {
       const result = await this.rpc.request("thread/read", {
@@ -1510,6 +1511,15 @@ export class CodexStructuredSession implements StructuredSessionHandle {
 
       const thread = result.thread;
       if (!thread || typeof thread !== "object") {
+        return;
+      }
+
+      if (this.isDisposed || this.remoteThreadId !== threadId) return;
+      // Status objects are replaced on every live lifecycle edge. A resume
+      // snapshot requested before that edge cannot settle or reopen its turn.
+      // Still publish the session reference with the current live status.
+      if (this.currentThreadStatus !== statusBeforeRead) {
+        this.emitDerivedUpdate(sessionRef);
         return;
       }
 

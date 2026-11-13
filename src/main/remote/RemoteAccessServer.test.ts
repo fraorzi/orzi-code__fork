@@ -946,39 +946,21 @@ describe("RemoteAccessServer", () => {
     const pairingPageResponse = await fetch(info.pairingUrl);
     expect(pairingPageResponse.status).toBe(200);
     const pairingHtml = await pairingPageResponse.text();
-    expect(pairingHtml).toContain("Poracode");
-    expect(pairingHtml).toContain('rel="manifest"');
+    expect(pairingHtml).toContain("Orzi Code");
+    expect(pairingHtml).toContain("desktop-only build");
 
     const appResponse = await fetch(new URL("/app", info.httpBaseUrl));
     expect(appResponse.status).toBe(200);
-    await expect(appResponse.text()).resolves.toContain("Poracode");
+    await expect(appResponse.text()).resolves.toContain("Orzi Code");
 
     const appRouteResponse = await fetch(new URL("/app/settings/appearance", info.httpBaseUrl));
     expect(appRouteResponse.status).toBe(200);
-    await expect(appRouteResponse.text()).resolves.toContain("Poracode");
+    await expect(appRouteResponse.text()).resolves.toContain("Orzi Code");
 
-    const manifestResponse = await fetch(new URL("/manifest.webmanifest", info.httpBaseUrl));
-    expect(manifestResponse.status).toBe(200);
-    await expect(manifestResponse.json()).resolves.toMatchObject({
-      name: "Poracode",
-      start_url: "/app",
-      display: "standalone",
-    });
-
-    const serviceWorkerResponse = await fetch(new URL("/service-worker.js", info.httpBaseUrl));
-    expect(serviceWorkerResponse.status).toBe(200);
-    const serviceWorker = await serviceWorkerResponse.text();
-    expect(serviceWorker).toContain("poracode-remote-local-1.0.0");
-    expect(serviceWorker).toContain("caches.delete(LEGACY_CACHE_NAME)");
-    expect(serviceWorker).toContain('self.addEventListener("push"');
-    expect(serviceWorker).toContain("showNotification");
-    expect(serviceWorker).toContain('self.addEventListener("notificationclick"');
-    expect(serviceWorker).toContain("if (response.ok)");
-    expect(serviceWorker).toContain('url.pathname.startsWith("/assets/")');
-    expect(serviceWorker).toContain("NAVIGATION_FALLBACK_DELAY_MS = 500");
-    expect(serviceWorker).toContain('if (request.mode === "navigate")');
-    expect(serviceWorker).toContain("if (!isAppRequest && !isPwaStaticRequest) return");
-    expect(serviceWorker).toContain('request.mode === "navigate" ? "/app" : request');
+    for (const path of ["/manifest.webmanifest", "/service-worker.js", "/app-icon.svg"]) {
+      const response = await fetch(new URL(path, info.httpBaseUrl));
+      expect(response.status).toBe(404);
+    }
 
     const { ws, ready } = await openPairedSocket(info);
     expect(ready).toMatchObject({ type: "ready", seq: 0 });
@@ -2151,8 +2133,8 @@ describe("RemoteAccessServer", () => {
     const nativeResponse = await fetch(descriptorUrl, {
       headers: { origin: "capacitor://localhost" },
     });
-    expect(nativeResponse.status).toBe(200);
-    expect(nativeResponse.headers.get("access-control-allow-origin")).toBe("capacitor://localhost");
+    expect(nativeResponse.status).toBe(403);
+    expect(nativeResponse.headers.get("access-control-allow-origin")).toBeNull();
 
     const blockedResponse = await fetch(descriptorUrl, {
       headers: { origin: "https://evil.example" },
@@ -2305,30 +2287,6 @@ describe("RemoteAccessServer", () => {
       });
     });
     expect(replayStatus).toBe(401);
-  });
-
-  it("points dev pairing links at the mobile dev app origin", async () => {
-    const server = new RemoteAccessServer({
-      appVersion: "1.0.0",
-      identity: { desktopId: "desktop-test", label: "Test Desktop" },
-      host: "127.0.0.1",
-      port: 0,
-      devMobileAppUrl: "http://192.168.1.20:3100/mobile.html",
-      callSupervisor: vi.fn<RemoteAccessServerOptions["callSupervisor"]>(async () => "" as never),
-    });
-    servers.push(server);
-    const info = await server.start();
-
-    const startupPairing = new URL(info.pairingUrl);
-    expect(startupPairing.origin).toBe("http://192.168.1.20:3100");
-    expect(startupPairing.pathname).toBe("/pair");
-    expect(startupPairing.searchParams.get("host")).toBe(info.httpBaseUrl);
-    expect(new URLSearchParams(startupPairing.hash.slice(1)).get("token")).toMatch(/^lc_pair_/);
-
-    const settingsPairing = new URL(server.issuePairingUrl("Settings QR"));
-    expect(settingsPairing.origin).toBe(startupPairing.origin);
-    expect(settingsPairing.pathname).toBe("/pair");
-    expect(settingsPairing.searchParams.get("host")).toBe(info.httpBaseUrl);
   });
 
   it("points production pairing links at the hosted Poracode app", async () => {

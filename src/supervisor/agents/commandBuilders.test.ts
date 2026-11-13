@@ -458,12 +458,15 @@ describe("agent command builders", () => {
         "--fallback-model",
         "haiku",
         "--no-session-persistence",
+        "--output-format",
+        "json",
         "--effort",
         "low",
         "--settings",
         '{"fastMode":false}',
       ],
       stdin: "",
+      env: { CLAUDE_CODE_ENTRYPOINT: expect.any(String) },
     });
 
     expect(
@@ -511,6 +514,8 @@ describe("agent command builders", () => {
         "--fallback-model",
         "haiku",
         "--no-session-persistence",
+        "--output-format",
+        "json",
         "--safe-mode",
         "--tools",
         "",
@@ -523,6 +528,7 @@ describe("agent command builders", () => {
         '{"fastMode":false}',
       ],
       stdin: "",
+      env: { CLAUDE_CODE_ENTRYPOINT: expect.any(String) },
     });
   });
 
@@ -546,6 +552,8 @@ describe("agent command builders", () => {
         "--fallback-model",
         "haiku",
         "--no-session-persistence",
+        "--output-format",
+        "json",
         "--permission-mode",
         "plan",
         "--allowedTools",
@@ -561,6 +569,7 @@ describe("agent command builders", () => {
         '{"fastMode":false}',
       ],
       stdin: "",
+      env: { CLAUDE_CODE_ENTRYPOINT: expect.any(String) },
     });
   });
 
@@ -608,12 +617,15 @@ describe("agent command builders", () => {
         "--fallback-model",
         "haiku",
         "--no-session-persistence",
+        "--output-format",
+        "json",
         "--effort",
         "high",
         "--settings",
         '{"fastMode":false}',
       ],
       stdin: "",
+      env: { CLAUDE_CODE_ENTRYPOINT: expect.any(String) },
     });
 
     // A global CLI opt-in is also overridden when the argument is omitted.

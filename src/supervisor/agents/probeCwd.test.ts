@@ -1,7 +1,5 @@
-import { rmSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ProjectLocation } from "@/shared/contracts";
 
 const mkdirSyncMock = vi.hoisted(() => vi.fn<(...args: unknown[]) => string | undefined>());
@@ -14,24 +12,19 @@ vi.mock("node:fs", async () => {
   };
 });
 
+// Probe location tests must not depend on the host application's profile or
+// remove directories belonging to a running application during cleanup.
+vi.mock("@/shared/poracodePaths", () => ({
+  resolvePoracodeBaseDir: () => "/mock/poracode-probe-profile",
+}));
+
 import { getAgentProbeCwd, resolveProbeSpawnCwd } from "./probeCwd";
 
-const probeDir = join(homedir(), ".poracode", "agent-probe");
+const probeDir = join("/mock/poracode-probe-profile", "agent-probe");
 
 beforeEach(() => {
   mkdirSyncMock.mockReset();
   mkdirSyncMock.mockReturnValue(undefined);
-});
-
-afterEach(() => {
-  // The module caches the probe dir on the first successful mkdir. Vitest
-  // module isolation gives each test fresh state, but if that changes the
-  // afterEach keeps disk side-effect-free anyway.
-  try {
-    rmSync(probeDir, { recursive: true, force: true });
-  } catch {
-    // ignore
-  }
 });
 
 describe("getAgentProbeCwd", () => {

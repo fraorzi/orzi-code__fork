@@ -18,6 +18,12 @@ import type { WindowsShellPreference } from "../../shellPreference";
 export interface ThreadSessionManagerOptions {
   onUsageSnapshot?(snapshot: import("@poracode/agents-usage").UsageSnapshot): void;
   onUsageRefresh?(providerId: string): void;
+  readUsageSnapshot?(
+    providerId: string,
+  ): import("@poracode/agents-usage").UsageSnapshot | undefined;
+  refreshUsageSnapshot?(
+    providerId: string,
+  ): Promise<import("@poracode/agents-usage").UsageSnapshot | undefined>;
   acquireAgentLaunch?: () => Promise<() => void>;
   emit(event: SupervisorEvent): void;
   isDev: boolean;

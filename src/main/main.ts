@@ -80,6 +80,7 @@ import {
 } from "@/shared/crossagentRanking";
 import { getAppName } from "@/shared/appName";
 import { appIdFor, electronAppNameFor, resolvePoracodeChannel } from "@/shared/channel";
+import { requestBrowserUsageHttp } from "./usageLogin/browserUsageHttp";
 import {
   IPC_EVENT_CHANNELS,
   IPC_WINDOW_CHANNELS,
@@ -754,6 +755,7 @@ if (!hasSingleInstanceLock) {
         bundledSkillsDir,
         bundledPluginsDir,
         secretStorageKey,
+        requestBrowserUsageHttp,
         resolveExtraEnv: () => {
           const env: Record<string, string> = {};
           const browserInfo = browserMcpIngress?.getInfo();

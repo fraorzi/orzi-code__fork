@@ -1,42 +1,24 @@
-import { useState, type ReactNode } from "react";
-import {
-  Cable,
-  ChevronLeft,
-  ChevronRight,
-  FlaskConical,
-  Monitor,
-  Paperclip,
-  Plus,
-  Server,
-} from "lucide-react";
-import type { Selection } from "@heroui/react";
-import { Dropdown, Label, Separator } from "@heroui/react";
+import { type ReactNode } from "react";
+import { Cable, FlaskConical, Monitor, Paperclip, Plus, Server } from "lucide-react";
+import { Dropdown, Label, Separator, Selection } from "@heroui/react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { isRemoteSession } from "@/renderer/bridge";
 import { Button } from "@/renderer/components/common/Button";
-import {
-  ResponsiveMenuSurface,
-  useResponsiveMenu,
-} from "@/renderer/components/common/ResponsiveMenuSurface";
 import {
   InfoHint,
   MenuSwitch,
   readOnlyRowClassName,
   submenuCaptionClassName,
 } from "./ComposerAddMenuParts";
-import { COMPUTER_USE_MCP_ID } from "./composerMcpServers";
-import type { ComposerMcpServerDescriptor } from "./composerMcpServers";
+import { COMPUTER_USE_MCP_ID, ComposerMcpServerDescriptor } from "./composerMcpServers";
 import {
-  ComposerMcpServersMobileList,
   ComposerMcpServersSubmenuContent,
   type ComposerCustomMcpItem,
 } from "./ComposerMcpServersMenu";
-
 export type { ComposerCustomMcpItem } from "./ComposerMcpServersMenu";
 
 /** Selection id for the Computer Use row inside the Plugins submenu. */
 const COMPUTER_USE_KEY = COMPUTER_USE_MCP_ID;
-
 export type ComposerMcpMenuItem = {
   descriptor: ComposerMcpServerDescriptor;
   enabled: boolean;
@@ -46,10 +28,6 @@ export type ComposerMcpMenuItem = {
 
 /** Stable empty map so an omitted `pluginLabels` prop doesn't churn renders. */
 const EMPTY_PLUGIN_LABELS: Readonly<Record<string, string>> = {};
-
-/** Mobile sheet drill-in target: the root list swaps to a sub-list in place. */
-type MobileView = "root" | "plugins" | "mcp";
-
 export function ComposerAddMenu(props: {
   /** First-party plugin MCP servers, listed under "Plugins". */
   mcpServers: readonly ComposerMcpMenuItem[];
@@ -98,9 +76,6 @@ export function ComposerAddMenu(props: {
   const readOnly = props.readOnly === true;
   const pluginLabels = props.pluginLabels ?? EMPTY_PLUGIN_LABELS;
   const { t } = useLingui();
-  const { mobile } = useResponsiveMenu();
-  const [isOpen, setIsOpen] = useState(false);
-  const [mobileView, setMobileView] = useState<MobileView>("root");
   const visiblePlugins = mcpServers.filter((server) => server.visible);
   const showComputerUse = computerUse?.visible === true;
   const hasPluginRows = visiblePlugins.length > 0 || showComputerUse;
@@ -122,22 +97,8 @@ export function ComposerAddMenu(props: {
     visiblePlugins.filter((server) => server.enabled).length +
     (showComputerUse && computerUse.enabled ? 1 : 0);
   const enabledMcpServerCount = customMcpServers.filter((server) => server.enabled).length;
-
   if (!showFileOption && !hasPluginsMenu && !hasMcpServersMenu && !experiment) return null;
-
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
-    // Reset the drill-in when the sheet closes so it reopens at the root.
-    if (!open) setMobileView("root");
-  };
-
-  const closeMenu = () => {
-    setIsOpen(false);
-    setMobileView("root");
-  };
-
   const handlePickFiles = () => {
-    closeMenu();
     onPickFiles();
   };
 
@@ -148,7 +109,6 @@ export function ComposerAddMenu(props: {
     ...visiblePlugins.filter((server) => server.enabled).map((server) => server.descriptor.id),
     ...(showComputerUse && computerUse.enabled ? [COMPUTER_USE_KEY] : []),
   ]);
-
   const handlePluginSelection = (keys: Selection) => {
     for (const server of visiblePlugins) {
       const next = keys !== "all" && keys.has(server.descriptor.id);
@@ -159,7 +119,6 @@ export function ComposerAddMenu(props: {
       if (next !== computerUse.enabled) computerUse.onToggle(next);
     }
   };
-
   const pluginsCaption = readOnly ? (
     (props.readOnlyCaption ?? (
       <Trans>Set when this session started — start a new thread to change plugins</Trans>
@@ -168,14 +127,20 @@ export function ComposerAddMenu(props: {
     <Trans>Enabled plugins stay on for new threads</Trans>
   );
   const emptyPluginsNote = <Trans>No plugins are enabled for this run</Trans>;
-
   const mcpServersMenuProps = {
     servers: customMcpServers,
     readOnly,
-    ...(props.readOnlyCaption !== undefined ? { readOnlyCaption: props.readOnlyCaption } : {}),
-    ...(onManageMcpServers ? { onManage: onManageMcpServers } : {}),
+    ...(props.readOnlyCaption !== undefined
+      ? {
+          readOnlyCaption: props.readOnlyCaption,
+        }
+      : {}),
+    ...(onManageMcpServers
+      ? {
+          onManage: onManageMcpServers,
+        }
+      : {}),
   };
-
   const button = (
     <Button
       isIconOnly
@@ -183,166 +148,10 @@ export function ComposerAddMenu(props: {
       className="poracode-composer-menu min-w-9 px-2"
       size="sm"
       variant="ghost"
-      {...(mobile ? { onPress: () => setIsOpen(true) } : {})}
     >
       <Plus className="size-4" />
     </Button>
   );
-
-  // ── Mobile: bottom-sheet with drill-ins for the Plugins and MCP lists ─────
-  const mobileRootList = (
-    <div className="m-sheet-list">
-      {showFileOption ? (
-        <button type="button" className="m-sheet-action" onClick={handlePickFiles}>
-          <Paperclip className="size-4 text-muted" />
-          <span className="flex-1 truncate">
-            <Trans>File</Trans>
-          </span>
-          <span className="shrink-0 text-xs text-muted">
-            <Trans>Attach</Trans>
-          </span>
-        </button>
-      ) : null}
-      {experiment ? (
-        <button
-          type="button"
-          className="m-sheet-action"
-          aria-pressed={experiment.enabled}
-          disabled={experiment.disabled}
-          onClick={() => experiment.onToggle(!experiment.enabled)}
-        >
-          <FlaskConical className="size-4 text-muted" />
-          <span className="flex-1 truncate">
-            <Trans>Experiment</Trans>
-          </span>
-          <InfoHint text={experimentHint} />
-          <MenuSwitch checked={experiment.enabled} />
-        </button>
-      ) : null}
-      {hasPluginsMenu ? (
-        <button type="button" className="m-sheet-action" onClick={() => setMobileView("plugins")}>
-          <Server className="size-4 text-muted" />
-          <span className="flex-1 truncate">
-            <Trans>Plugins</Trans>
-          </span>
-          {enabledPluginCount > 0 ? (
-            <span className="shrink-0 text-xs tabular-nums text-muted">{enabledPluginCount}</span>
-          ) : null}
-          <ChevronRight className="size-4 shrink-0 text-muted" />
-        </button>
-      ) : null}
-      {hasMcpServersMenu ? (
-        <button type="button" className="m-sheet-action" onClick={() => setMobileView("mcp")}>
-          <Cable className="size-4 text-muted" />
-          <span className="flex-1 truncate">
-            <Trans>MCP Servers</Trans>
-          </span>
-          {enabledMcpServerCount > 0 ? (
-            <span className="shrink-0 text-xs tabular-nums text-muted">
-              {enabledMcpServerCount}
-            </span>
-          ) : null}
-          <ChevronRight className="size-4 shrink-0 text-muted" />
-        </button>
-      ) : null}
-    </div>
-  );
-
-  const mobilePluginsList = (
-    <div className="m-sheet-list">
-      <button
-        type="button"
-        className="m-sheet-action"
-        aria-label={t`Back`}
-        onClick={() => setMobileView("root")}
-      >
-        <ChevronLeft className="size-4 text-muted" />
-        <span className="flex-1 truncate font-medium">
-          <Trans>Plugins</Trans>
-        </span>
-      </button>
-      {visiblePlugins.map((server) => {
-        const Icon = server.descriptor.icon;
-        const label = pluginLabels[server.descriptor.id] ?? t(server.descriptor.label);
-        return readOnly ? (
-          <div
-            key={server.descriptor.id}
-            className="m-sheet-action"
-            data-static="true"
-            aria-disabled="true"
-          >
-            <Icon className="size-4 text-muted" />
-            <span className="flex-1 truncate">{label}</span>
-            <MenuSwitch checked={server.enabled} readOnly />
-          </div>
-        ) : (
-          <button
-            key={server.descriptor.id}
-            type="button"
-            className="m-sheet-action"
-            aria-pressed={server.enabled}
-            onClick={() => server.onToggle(!server.enabled)}
-          >
-            <Icon className="size-4 text-muted" />
-            <span className="flex-1 truncate">{label}</span>
-            <MenuSwitch checked={server.enabled} />
-          </button>
-        );
-      })}
-      {readOnly && !hasPluginRows ? (
-        <p className="px-2 py-1 text-sm text-muted">{emptyPluginsNote}</p>
-      ) : null}
-      {showComputerUse && readOnly ? (
-        <div className="m-sheet-action" data-static="true" aria-disabled="true">
-          <Monitor className="size-4 shrink-0 text-muted" />
-          <span className="flex-1 truncate">{computerUseLabel}</span>
-          <InfoHint text={computerUseHint} />
-          <MenuSwitch checked={computerUse.enabled} readOnly />
-        </div>
-      ) : null}
-      {showComputerUse && !readOnly ? (
-        <button
-          type="button"
-          className="m-sheet-action"
-          aria-pressed={computerUse.enabled}
-          onClick={() => computerUse.onToggle(!computerUse.enabled)}
-        >
-          <Monitor className="size-4 shrink-0 text-muted" />
-          <span className="flex-1 truncate">{computerUseLabel}</span>
-          <InfoHint text={computerUseHint} />
-          <MenuSwitch checked={computerUse.enabled} />
-        </button>
-      ) : null}
-      <p className="px-2 pt-0.5 text-[11px] leading-snug text-muted">{pluginsCaption}</p>
-    </div>
-  );
-
-  if (mobile) {
-    return (
-      <ResponsiveMenuSurface
-        isOpen={isOpen}
-        onOpenChange={handleOpenChange}
-        label={t`Add to composer`}
-        trigger={button}
-        placement="top"
-        contentClassName="p-0"
-        dialogClassName="overflow-hidden"
-      >
-        {mobileView === "plugins" && hasPluginsMenu ? (
-          mobilePluginsList
-        ) : mobileView === "mcp" && hasMcpServersMenu ? (
-          <ComposerMcpServersMobileList
-            {...mcpServersMenuProps}
-            onBack={() => setMobileView("root")}
-            onManaged={closeMenu}
-          />
-        ) : (
-          mobileRootList
-        )}
-      </ResponsiveMenuSurface>
-    );
-  }
-
   // ── Desktop: HeroUI dropdown with real flyout submenus ──────────────────────
   return (
     <Dropdown>

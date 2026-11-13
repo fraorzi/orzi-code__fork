@@ -3,20 +3,14 @@ import { Check, ChevronDown, GitBranch, GitFork } from "lucide-react";
 import { Label, ListBox } from "@heroui/react";
 import { useLingui } from "@lingui/react/macro";
 import { Button } from "@/renderer/components/common/Button";
-import {
-  ResponsiveMenuSurface,
-  useResponsiveMenu,
-} from "@/renderer/components/common/ResponsiveMenuSurface";
-
+import { MenuPopover } from "@/renderer/components/common/MenuPopover";
 export type WorktreeMode = "none" | "new" | "new-with-changes";
-
 interface WorktreeModeOption {
   id: WorktreeMode;
   label: string;
   description: string;
   icon: typeof GitFork;
 }
-
 export function WorktreeModeSelect(props: {
   mode: WorktreeMode;
   /** Whether to offer the "carry uncommitted changes" variant. */
@@ -28,9 +22,7 @@ export function WorktreeModeSelect(props: {
 }) {
   const { t } = useLingui();
   const [isOpen, setIsOpen] = useState(false);
-  const { mobile } = useResponsiveMenu();
   const iconSize = props.compact ? "size-3" : "size-3.5";
-
   const options: WorktreeModeOption[] = [
     {
       id: "none",
@@ -55,16 +47,13 @@ export function WorktreeModeSelect(props: {
         ]
       : []),
   ];
-
   const selected = options.find((option) => option.id === props.mode) ?? options[0]!;
   const SelectedIcon = selected.icon;
-  const triggerClassName = `poracode-composer-menu min-w-0 max-w-56 ${
-    props.compact ? "poracode-composer-menu--compact px-2" : "px-2.5"
-  }`;
+  const triggerClassName = `poracode-composer-menu min-w-0 max-w-56 ${props.compact ? "poracode-composer-menu--compact px-2" : "px-2.5"}`;
 
   // Two options (no "bring changes" variant): a dropdown for a binary choice
   // is overkill on any device — a single-tap/click toggle between none ⇄ new
-  // is faster. The drawer/popover only appears once the third variant exists.
+
   if (options.length === 2) {
     const isOn = props.mode !== "none";
     return (
@@ -82,12 +71,10 @@ export function WorktreeModeSelect(props: {
       </Button>
     );
   }
-
   function handleSelect(mode: WorktreeMode) {
     props.onChange(mode);
     setIsOpen(false);
   }
-
   const trigger = (
     <Button
       aria-label={t`Worktree mode`}
@@ -95,14 +82,12 @@ export function WorktreeModeSelect(props: {
       size="sm"
       variant="ghost"
       className={triggerClassName}
-      {...(mobile ? { onPress: () => setIsOpen(true) } : {})}
     >
       <SelectedIcon className={`${iconSize} text-muted`} />
       <span className="truncate">{selected.label}</span>
       <ChevronDown className={`${iconSize} text-muted`} />
     </Button>
   );
-
   const desktopContent = (
     <ListBox
       aria-label={t`Worktree mode`}
@@ -133,35 +118,10 @@ export function WorktreeModeSelect(props: {
     </ListBox>
   );
 
-  // Mobile: full-width finger-sized rows in the bottom drawer instead of the
   // compact desktop popover list.
-  const mobileContent = (
-    <div className="m-sheet-list">
-      {options.map((option) => {
-        const OptionIcon = option.icon;
-        const isSelected = option.id === props.mode;
-        return (
-          <button
-            key={option.id}
-            type="button"
-            className="m-sheet-action"
-            aria-pressed={isSelected || undefined}
-            onClick={() => handleSelect(option.id)}
-          >
-            <OptionIcon className="size-4 shrink-0 text-muted" />
-            <div className="flex min-w-0 flex-1 flex-col">
-              <span className="truncate">{option.label}</span>
-              <span className="truncate text-xs text-muted">{option.description}</span>
-            </div>
-            {isSelected ? <Check className="size-4 shrink-0 text-accent" /> : null}
-          </button>
-        );
-      })}
-    </div>
-  );
 
   return (
-    <ResponsiveMenuSurface
+    <MenuPopover
       isOpen={isOpen}
       onOpenChange={setIsOpen}
       label={t`Worktree mode`}
@@ -171,7 +131,7 @@ export function WorktreeModeSelect(props: {
       contentClassName="w-64 p-0"
       dialogClassName="!p-0 !py-1"
     >
-      {mobile ? mobileContent : desktopContent}
-    </ResponsiveMenuSurface>
+      {desktopContent}
+    </MenuPopover>
   );
 }

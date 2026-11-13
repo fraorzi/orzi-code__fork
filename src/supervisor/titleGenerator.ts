@@ -1,3 +1,4 @@
+import type { OneShotUsage } from "@/shared/auxiliaryUsage";
 import type { ProjectLocation } from "@/shared/contracts";
 import {
   resolveAgentProjectLocation,
@@ -101,6 +102,7 @@ export async function generateTitle(
   effort?: string,
   language?: string,
   fast?: boolean,
+  onUsage?: (usage: OneShotUsage) => void,
 ): Promise<string> {
   if (!adapter.runOneShot && !adapter.buildOneShotCommand) {
     throw new Error(`${adapter.label} does not support one-shot generation`);
@@ -118,6 +120,7 @@ export async function generateTitle(
   // exposes `buildOneShotCommand`.
   const raw = adapter.runOneShot
     ? await adapter.runOneShot({
+        onUsage,
         location: executionLocation,
         model: effectiveModel,
         effort,
@@ -133,6 +136,7 @@ export async function generateTitle(
         finalPrompt,
         fast,
         signal,
+        onUsage,
       );
 
   const title = cleanTitle(raw);
@@ -150,6 +154,7 @@ async function runViaCli(
   prompt: string,
   fast: boolean | undefined,
   signal: AbortSignal | undefined,
+  onUsage: ((usage: OneShotUsage) => void) | undefined,
 ): Promise<string> {
   const cmd = adapter.buildOneShotCommand!(model, effort, prompt, location, fast);
   if (!cmd) {
@@ -161,7 +166,11 @@ async function runViaCli(
     location,
     withCommandBaseSpawnEnv(cmd, adapter.baseSpawnEnv),
   );
-  return spawn(spec, cmd.stdin ?? prompt, TITLE_GEN_TIMEOUT_MS, signal);
+  const raw = await spawn(spec, cmd.stdin ?? prompt, TITLE_GEN_TIMEOUT_MS, signal);
+  const parsed = adapter.parseOneShotOutput?.(raw);
+  for (const usage of parsed?.usage ?? []) onUsage?.(usage);
+  if (parsed?.error) throw new Error(parsed.error);
+  return parsed?.text ?? raw;
 }
 
 function timeoutSignal(timeoutMs: number): AbortSignal | undefined {

@@ -19,6 +19,7 @@ import {
   DeferredPrReviewOverlay,
   DeferredProjectSettingsOverlay,
   DeferredSettingsOverlay,
+  DeferredLocalPortsOverlay,
 } from "@/renderer/deferredFeatures";
 
 import { useAppStore } from "@/renderer/state/appStore";
@@ -104,6 +105,9 @@ export function AppOverlays() {
     <>
       <WelcomeOverlay />
       <WhatsNewOverlay />
+      <Suspense fallback={null}>
+        <DeferredLocalPortsOverlay />
+      </Suspense>
       <OverlayShell open={settingsOpen} onExited={() => usePanelStore.getState().closeSettings()}>
         <Suspense fallback={<OverlayLoader />}>
           <DeferredSettingsOverlay onClose={() => usePanelStore.getState().closeSettings()} />

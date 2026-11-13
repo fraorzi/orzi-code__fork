@@ -1,3 +1,4 @@
+import { AuxiliaryUsage } from "@/renderer/views/ProfileOverlay/parts/AuxiliaryUsage";
 import { useState } from "react";
 import { Pencil, Share2 } from "lucide-react";
 import { Trans, useLingui } from "@lingui/react/macro";
@@ -207,6 +208,7 @@ export function ProfileSettings() {
         <div className="grid grid-cols-1 gap-x-10 gap-y-8 sm:grid-cols-2">
           <BreakdownBars title={t`Modes`} entries={core.modes} emptyText={t`No threads yet.`} />
           <AiActions actions={core.aiActions} />
+          {tokens ? <AuxiliaryUsage items={tokens.auxiliary} /> : null}
         </div>
       </div>
 

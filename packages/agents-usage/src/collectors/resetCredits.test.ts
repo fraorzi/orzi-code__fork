@@ -20,6 +20,25 @@ const credit = {
 };
 
 describe("saved reset inventory", () => {
+  it("preserves provider titles so partial resets remain distinguishable", () => {
+    expect(
+      parseCodexResetCredits({ credits: [{ ...credit, title: "Rate-limit reset" }] }, now),
+    ).toMatchObject({
+      status: "known",
+      grants: [{ label: "Rate-limit reset" }],
+    });
+    expect(
+      parseClaudeResetCredits(
+        {
+          cedar_ember: {
+            eligible: true,
+            grants: [{ id: "partial", label: "Partial reset", resets_left: 1, ends_at: expiry }],
+          },
+        },
+        now,
+      ),
+    ).toMatchObject({ status: "known", grants: [{ label: "Partial reset" }] });
+  });
   it("reads the observed Codex credit shape and exact expiry", () => {
     expect(parseCodexResetCredits({ credits: [credit], available_count: 1 }, now)).toEqual({
       status: "known",
@@ -27,6 +46,7 @@ describe("saved reset inventory", () => {
         {
           id: "credit",
           remaining: 1,
+          canActivate: true,
           startsAt: Date.parse(credit.granted_at),
           expiresAt: Date.parse(expiry),
         },
@@ -106,6 +126,7 @@ describe("saved reset inventory", () => {
         {
           id: "grant",
           remaining: 2,
+          canActivate: false,
           startsAt: Date.parse(grant.starts_at),
           expiresAt: Date.parse(expiry),
         },
@@ -124,7 +145,9 @@ describe("saved reset inventory", () => {
       ),
     ).toEqual({
       status: "known",
-      grants: [{ id: "juniper_tide", remaining: 1, expiresAt: Date.parse(expiry) }],
+      grants: [
+        { id: "juniper_tide", remaining: 1, canActivate: true, expiresAt: Date.parse(expiry) },
+      ],
     });
   });
 

@@ -39,6 +39,13 @@ rule is about control flow and data shape, not about erasing history.
    (agent-text, background-task, and tool-lifecycle quirks), `acpSessionUpdateTransform` /
    `acpExtensionSessionUpdateTransform` (payload normalization),
    `acpExtensionNotificationHandler` (vendor JSON-RPC notifications).
+   `promptFailureClassifier` recognizes a pre-execution diagnostic, including
+   partial text chunks. The ACP session buffers only matching text and retries
+   the same prompt once before any assistant activity or client service request.
+   The `fatal` outcome fails the turn without retrying, for diagnostics such as
+   authentication, MCP startup and quota failures reported as assistant text.
+   Stop/disposal prevent recovery; a repeated failure fails the turn. Providers
+   without this hook retain their normal prompt behavior.
    Probe customization uses `normalizeProbeResult` for discovered capabilities
    and `modelLabel` for fallback labels when the agent supplies no display name.
    Skill frontmatter rules use `skillSupport.invocationForSkill`.
@@ -47,6 +54,11 @@ Message payloads can declare `turnIndependent: true` when a conversation stream
 publishes messages outside an agent execution turn. The shared renderer persists
 and renders them without using their arrival to reopen the agent's work timer.
 Providers own this classification; ordinary messages keep the default behavior.
+
+Internal TCP transports register their bind URL with `protectTransportPort`
+from `agents/base/transportPorts` before exposing server readiness and release
+the registration on exit/disposal. Local server controls exclude their entire
+listening process, including wrappers, pooled servers and delegated sessions.
 
 If none of the three fits, the right move is to add a new hook with a
 capability-shaped name and document it here — not to add a branch.

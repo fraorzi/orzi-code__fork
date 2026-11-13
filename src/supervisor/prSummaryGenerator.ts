@@ -1,3 +1,4 @@
+import type { OneShotUsage } from "@/shared/auxiliaryUsage";
 import type { ProjectLocation } from "@/shared/contracts";
 import { resolveOneShotEffectiveModel, type AgentAdapter } from "./agents/base";
 import { buildDiffPromptContext, getFilesFromDiff } from "./diffPromptContext";
@@ -84,6 +85,7 @@ export async function generatePrSummary(
   model?: string,
   effort?: string,
   language?: string,
+  onUsage?: (usage: OneShotUsage) => void,
 ): Promise<{ title: string; description: string }> {
   const effectiveModel = resolveOneShotEffectiveModel(adapter, model, () => {
     return new Error(`No default one-shot model configured for ${adapter.label}`);
@@ -121,6 +123,7 @@ export async function generatePrSummary(
   const instructions = buildPrompt(language);
 
   const raw = await runOneShotPromptWithFallback({
+    onUsage,
     location,
     adapter,
     model: effectiveModel,

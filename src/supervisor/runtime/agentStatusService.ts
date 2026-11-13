@@ -101,7 +101,7 @@ const execFileAsync = promisify(execFile);
 // v36 fingerprints managed activation so a cache written before switching
 // runtimes cannot survive a crash or restart with a stale executable path.
 // v37 discards capabilities produced by the retired inference-based Fast probe.
-export const STATUS_CACHE_VERSION = 37;
+export const STATUS_CACHE_VERSION = 38;
 const WSL_AGENT_DETECTION_TIMEOUT_MS = 60_000;
 const WSL_LXSS_REGISTRY_KEY = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Lxss";
 

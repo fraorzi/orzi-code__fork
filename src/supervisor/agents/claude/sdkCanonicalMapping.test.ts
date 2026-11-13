@@ -542,89 +542,39 @@ describe("sdkCanonicalMapping — prompt content", () => {
     }
   });
 
-  it("holds a goal open across a clean turn end while a background Bash task is live", () => {
+  it("completes the goal while a detached server remains visible", () => {
     const state = createClaudeMapperState("thread-1");
-    vi.useFakeTimers();
-    try {
-      vi.setSystemTime(new Date("2026-05-12T10:00:00Z"));
-      startClaudeTurn(state, "turn-goal", "/goal ship it", undefined, "user-goal");
-      // Plain background Bash: `task_started` without a subagent_type never
-      // registers as a subagent; the level signal is what reports it live.
-      mapClaudeSdkMessage(
-        {
-          type: "system",
-          subtype: "background_tasks_changed",
-          session_id: "claude-session",
-          tasks: [
-            { task_id: "bash-1", task_type: "local_bash", description: "cargo test" },
-            {
-              task_id: "housekeeper",
-              task_type: "local_bash",
-              description: "chore",
-              ambient: true,
-            },
-          ],
-        } as unknown as SDKMessage,
-        state,
-      );
-      expect(state.liveBackgroundTaskIds).toEqual(new Set(["bash-1"]));
-
-      vi.setSystemTime(new Date("2026-05-12T10:37:44Z"));
-      const resultEvents = mapClaudeSdkMessage(
-        {
-          type: "result",
-          subtype: "success",
-          session_id: "claude-session",
-        } as unknown as SDKMessage,
-        state,
-      );
-
-      // The turn ended mid-work (the CLI wakes the model when the task
-      // finishes) — the goal must not complete with the command still running.
-      const resultGoalUpdate = resultEvents.find(
-        (event) => event.type === "item.updated" && event.itemId === "goal-turn-goal",
-      );
-      expect(resultGoalUpdate).toMatchObject({
-        payload: { status: "active", timeUsedSeconds: 2264 },
-      });
-      expect(state.activeGoalItemId).toBe("goal-turn-goal");
-      expect(state.pendingGoalCompletionOnTaskDrain).toBe(true);
-
-      // REPLACE semantics: the next level is the whole live set, so finishing
-      // one task while another starts must not strand the first entry.
-      mapClaudeSdkMessage(
-        {
-          type: "system",
-          subtype: "background_tasks_changed",
-          session_id: "claude-session",
-          tasks: [{ task_id: "bash-2", task_type: "local_bash", description: "next check" }],
-        } as unknown as SDKMessage,
-        state,
-      );
-      expect(state.liveBackgroundTaskIds).toEqual(new Set(["bash-2"]));
-
-      // Last task drains and the model never resumes: the held goal completes.
-      mapClaudeSdkMessage(
-        {
-          type: "system",
-          subtype: "background_tasks_changed",
-          session_id: "claude-session",
-          tasks: [],
-        } as unknown as SDKMessage,
-        state,
-      );
-      const drainEvents = completeActiveGoalOnTaskDrainEvents(state);
-      expect(drainEvents).toContainEqual(
-        expect.objectContaining({
-          type: "item.updated",
-          itemId: "goal-turn-goal",
-          payload: expect.objectContaining({ status: "complete" }),
-        }),
-      );
-      expect(state.activeGoalItemId).toBeUndefined();
-    } finally {
-      vi.useRealTimers();
-    }
+    startClaudeTurn(state, "turn-goal", "/goal start the server", undefined, "user-goal");
+    mapClaudeSdkMessage(
+      {
+        type: "system",
+        subtype: "background_tasks_changed",
+        session_id: "claude-session",
+        tasks: [{ task_id: "server", task_type: "local_bash", description: "pnpm dev" }],
+      } as unknown as SDKMessage,
+      state,
+    );
+    expect(state.liveBackgroundSubAgentTaskIds).toEqual(new Set());
+    const events = mapClaudeSdkMessage(
+      {
+        type: "result",
+        subtype: "success",
+        session_id: "claude-session",
+      } as unknown as SDKMessage,
+      state,
+    );
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        type: "item.updated",
+        itemId: "goal-turn-goal",
+        payload: expect.objectContaining({ status: "complete" }),
+      }),
+    );
+    expect(state.reportedBackgroundTasks).toEqual([
+      { taskId: "server", kind: "command", description: "pnpm dev" },
+    ]);
+    expect(state.activeGoalItemId).toBeUndefined();
+    expect(completeActiveGoalOnTaskDrainEvents(state)).toEqual([]);
   });
 
   it("replaces the live background task set wholesale and drops malformed entries", () => {
@@ -646,7 +596,7 @@ describe("sdkCanonicalMapping — prompt content", () => {
       } as unknown as SDKMessage,
       state,
     );
-    expect(state.liveBackgroundTaskIds).toEqual(new Set(["task-1", "task-2", "task-3"]));
+    expect(state.liveBackgroundSubAgentTaskIds).toEqual(new Set(["task-1"]));
     // The renderer list excludes sub-agent runs (they have their own dock) and
     // classifies everything else by a coarse, provider-agnostic kind.
     expect(firstEvents).toEqual([
@@ -674,7 +624,7 @@ describe("sdkCanonicalMapping — prompt content", () => {
       } as unknown as SDKMessage,
       state,
     );
-    expect(state.liveBackgroundTaskIds).toEqual(new Set(["task-2"]));
+    expect(state.liveBackgroundSubAgentTaskIds).toEqual(new Set());
     expect(secondEvents).toEqual([
       {
         type: "background_tasks.changed",
@@ -756,7 +706,7 @@ describe("sdkCanonicalMapping — prompt content", () => {
     expect(state.pendingGoalCompletionOnTaskDrain).toBeUndefined();
   });
 
-  it("holds a verdict-less goal across live background work and completes it at drain", () => {
+  it("holds a verdict-less goal across a live background subagent and completes it at drain", () => {
     const state = createClaudeMapperState("thread-1");
     startClaudeTurn(state, "turn-goal", "/goal ship it", undefined, "user-goal");
     mapClaudeSdkMessage(
@@ -764,7 +714,9 @@ describe("sdkCanonicalMapping — prompt content", () => {
         type: "system",
         subtype: "background_tasks_changed",
         session_id: "claude-session",
-        tasks: [{ task_id: "bash-1", task_type: "local_bash", description: "cargo test" }],
+        tasks: [
+          { task_id: "agent-1", task_type: "local_agent", description: "review the changes" },
+        ],
       } as unknown as SDKMessage,
       state,
     );

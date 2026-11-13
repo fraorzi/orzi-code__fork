@@ -14,11 +14,6 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import type { PrReviewDecision, ProjectLocation } from "@/shared/contracts";
 import { friendlyError } from "@/shared/messages";
 import { readBridge } from "@/renderer/bridge";
-import {
-  ResponsiveMenuSurface,
-  useResponsiveMenu,
-} from "@/renderer/components/common/ResponsiveMenuSurface";
-
 export function SubmitReviewPopover(props: {
   projectLocation: ProjectLocation;
   prNumber: number;
@@ -29,17 +24,13 @@ export function SubmitReviewPopover(props: {
 }) {
   const { projectLocation, prNumber, hidden, triggerPresentation = "compact", onSubmitted } = props;
   const { t } = useLingui();
-  const { mobile } = useResponsiveMenu();
   const [open, setOpen] = useState(false);
   const [decision, setDecision] = useState<PrReviewDecision>("comment");
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
   const requiresBody = decision !== "approve";
   const bodyEmpty = body.trim().length === 0;
-
   if (hidden) return null;
-
   async function handleSubmit() {
     if (requiresBody && bodyEmpty) return;
     setSubmitting(true);
@@ -67,7 +58,6 @@ export function SubmitReviewPopover(props: {
       setSubmitting(false);
     }
   }
-
   const options: {
     value: PrReviewDecision;
     label: string;
@@ -93,7 +83,6 @@ export function SubmitReviewPopover(props: {
       icon: X,
     },
   ];
-
   const triggerButton = (
     <Button
       size="sm"
@@ -109,7 +98,6 @@ export function SubmitReviewPopover(props: {
       <Trans>Submit review</Trans>
     </Button>
   );
-
   const form = (
     <div className="mt-2 flex flex-col gap-3">
       <TextArea
@@ -158,21 +146,6 @@ export function SubmitReviewPopover(props: {
       </div>
     </div>
   );
-
-  // Mobile PWA: a bottom drawer instead of the cramped 340px desktop popover.
-  if (mobile) {
-    return (
-      <ResponsiveMenuSurface
-        isOpen={open}
-        onOpenChange={setOpen}
-        label={t`Finish your review`}
-        trigger={triggerButton}
-      >
-        <div className="overflow-y-auto px-0.5 pb-1">{form}</div>
-      </ResponsiveMenuSurface>
-    );
-  }
-
   return (
     <Popover isOpen={open} onOpenChange={setOpen}>
       {triggerButton}

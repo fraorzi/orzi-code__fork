@@ -1,5 +1,9 @@
 import { preloadable } from "@/renderer/utils/preloadable";
 
+export const DeferredLocalPortsOverlay = preloadable(() =>
+  import("@/renderer/views/LocalPortsOverlay").then((module) => module.LocalPortsOverlay),
+);
+
 export const DeferredCommandPalette = preloadable(() =>
   import("@/renderer/commands/CommandPalette").then((module) => module.CommandPalette),
 );

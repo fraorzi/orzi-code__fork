@@ -4,6 +4,9 @@ import type { SupervisorEvent } from "@/shared/ipc";
 
 const forkMock = vi.hoisted(() => vi.fn<(...args: unknown[]) => unknown>());
 const terminateChildProcessTreeMock = vi.hoisted(() => vi.fn<() => void>());
+const browserHttpMock = vi.hoisted(() =>
+  vi.fn<typeof import("../usageLogin/browserUsageHttp").requestBrowserUsageHttp>(),
+);
 
 vi.mock("node:child_process", async (importOriginal) => {
   const actual = await importOriginal<typeof import("node:child_process")>();
@@ -37,7 +40,9 @@ function makeFakeChild(): FakeChild {
   return child;
 }
 
-function makeClient(options: Pick<SupervisorClientOptions, "prepareStartThread"> = {}) {
+function makeClient(
+  options: Pick<SupervisorClientOptions, "prepareStartThread" | "requestBrowserUsageHttp"> = {},
+) {
   const child = makeFakeChild();
   forkMock.mockReturnValue(child);
   const client = new SupervisorClient({
@@ -201,5 +206,37 @@ describe("SupervisorClient lifecycle", () => {
 
     expect(terminateChildProcessTreeMock).toHaveBeenCalledExactlyOnceWith(child);
     expect(forkMock).toHaveBeenCalledOnce();
+  });
+
+  it("keeps browser usage HTTP on the private child channel", async () => {
+    const { client, child } = makeClient({ requestBrowserUsageHttp: browserHttpMock });
+    const id = "11111111-1111-4111-8111-111111111111";
+    const reply = {
+      type: "usage-http-reply",
+      id,
+      ok: true,
+      response: { status: 200, headers: {}, body: "[]" },
+    } satisfies Awaited<ReturnType<typeof browserHttpMock>>;
+    browserHttpMock.mockResolvedValue(reply);
+    child.emit("message", {
+      type: "usage-http-request",
+      id,
+      request: { url: "https://claude.ai/api/organizations", headers: { Cookie: "consented" } },
+    });
+    await Promise.resolve();
+    expect(child.send).toHaveBeenCalledWith(reply, expect.any(Function));
+    client.dispose();
+  });
+
+  it("does not advertise the desktop transport in a headless host", () => {
+    const { client } = makeClient();
+    expect(forkMock).toHaveBeenCalledWith(
+      expect.any(String),
+      [],
+      expect.objectContaining({
+        env: expect.objectContaining({ PORACODE_USAGE_BROWSER_HTTP: "0" }),
+      }),
+    );
+    client.dispose();
   });
 });

@@ -105,6 +105,8 @@ export type CanonicalContentBlock = z.infer<typeof canonicalContentBlockSchema>;
 
 export const messageItemPayloadSchema = z.object({
   content: z.array(canonicalContentBlockSchema),
+  // Additive durable receipt. Older messages remain valid; no inferred recovery from text.
+  usageRecoveryResumedAt: z.number().int().nonnegative().optional(),
   // Marks `content` as the display source of truth for a completed message,
   // overriding any accumulated `assistant_text` stream — set only by provider
   // mappers whose final payload can legitimately differ from what streamed

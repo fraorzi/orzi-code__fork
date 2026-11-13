@@ -7,7 +7,7 @@ import { writeFileAtomic } from "@/shared/atomicFile";
 import { setPendingSteerPayloadSchema } from "@/shared/contracts";
 import type { QueueEntry, QueueRecord } from "./followUpQueueState";
 
-// New supervisor-owned store. Older releases have no file and need no migration.
+// v1 remains valid: optional source metadata changes display only; raw input/admission are unchanged.
 const FOLLOW_UP_QUEUE_STORE_VERSION = 1;
 const storedQueueSchema = z
   .object({
@@ -15,6 +15,7 @@ const storedQueueSchema = z
     threadId: z.string().min(1),
     items: z.array(
       z.object({
+        source: z.literal("usage-recovery").optional(),
         id: z.string().min(1),
         stagedAt: z.number().int().nonnegative(),
         payload: setPendingSteerPayloadSchema,
@@ -79,7 +80,8 @@ export class FollowUpQueueStore {
     const serialized = JSON.stringify({
       version: FOLLOW_UP_QUEUE_STORE_VERSION,
       threadId,
-      items: items.map(({ id, stagedAt, payload, userMessageItemId }) => ({
+      items: items.map(({ id, stagedAt, payload, userMessageItemId, source }) => ({
+        ...(source ? { source } : {}),
         id,
         stagedAt,
         payload,

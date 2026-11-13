@@ -12,7 +12,7 @@ describe("OptionMenu", () => {
     delete (window as unknown as { poracode?: unknown }).poracode;
   });
 
-  it("opens a bottom drawer with large tap targets in a remote/mobile session", async () => {
+  it("uses the desktop listbox even when the bridge reports a remote session", async () => {
     // isRemoteSession() keys off window.poracode.appVersion === "remote".
     (window as unknown as { poracode?: unknown }).poracode = { appVersion: "remote" };
     const onChange = vi.fn<(value: string) => void>();
@@ -30,11 +30,8 @@ describe("OptionMenu", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /select/i }));
 
-    // The mobile path renders a drawer dialog with .m-sheet-action rows rather
-    // than the desktop popover listbox.
-    expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    const beta = screen.getByText("Beta");
-    expect(beta.closest("button")?.className).toContain("m-sheet-action");
+    const beta = await screen.findByRole("option", { name: "Beta" });
+    expect(document.querySelector(".m-sheet-backdrop")).toBeNull();
 
     fireEvent.click(beta);
     expect(onChange).toHaveBeenCalledWith("b");

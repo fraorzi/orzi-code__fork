@@ -7,10 +7,10 @@ import type { StructuredSessionUpdate } from "../base";
  * The main turn's `result` settles turn bookkeeping and emits `turn.completed`
  * immediately, but flipping the status channel to idle at that point would mark
  * a GUI thread finished while its background tasks keep running. The stored
- * update is released once the live-task registry drains (the last
- * `task_notification` closes), or flushed verbatim if the stream stops first so
- * the thread never stays stuck `working`. The full update is retained so an
- * error result still surfaces as `error`, not `idle`.
+ * update is released once delegated tasks drain, or flushed verbatim if the
+ * stream stops first so the thread never stays stuck `working`. Failed and
+ * interrupted results bypass this deferral in the session; detached commands
+ * and monitors never hold it open.
  */
 export class DeferredTurnCompletion {
   private pending: StructuredSessionUpdate | undefined;

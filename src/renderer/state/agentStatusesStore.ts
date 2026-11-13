@@ -264,9 +264,9 @@ export const useAgentStatusesStore = create<AgentStatusesStore>()(
     }),
     {
       name: "poracode-agent-statuses-v1",
-      version: 34,
-      // v34 mirrors supervisor STATUS_CACHE_VERSION=37: discard capability
-      // snapshots from the retired inference-based Fast probe.
+      version: 35,
+      // v35 mirrors supervisor STATUS_CACHE_VERSION=38: refresh usage-recovery capability
+      // snapshots so existing profiles discover the new recovery checkbox.
 
       migrate: (persisted) => {
         const prev = (persisted ?? {}) as Partial<AgentStatusesStore>;

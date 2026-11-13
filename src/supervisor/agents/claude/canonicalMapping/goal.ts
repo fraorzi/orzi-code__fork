@@ -157,7 +157,7 @@ export function completeActiveGoalEvents(
   // finishes and the goal's work continues. Hold the goal active and complete
   // it when the last live task drains (completeActiveGoalOnTaskDrainEvents);
   // with a clean turn end, treat it as completion so the dock never sticks.
-  if (hasLiveBackgroundWork(state)) {
+  if (hasLiveSubAgentWork(state)) {
     state.pendingGoalCompletionOnTaskDrain = true;
     return [activeGoalUpdatedEvent(state)];
   }
@@ -173,7 +173,7 @@ export function completeActiveGoalEvents(
  */
 export function completeActiveGoalOnTaskDrainEvents(state: ClaudeMapperState): RuntimeEvent[] {
   if (!state.pendingGoalCompletionOnTaskDrain) return [];
-  if (hasLiveBackgroundWork(state)) return [];
+  if (hasLiveSubAgentWork(state)) return [];
   delete state.pendingGoalCompletionOnTaskDrain;
   if (!hasActiveGoal(state)) return [];
   return completeActiveGoalNow(state);
@@ -195,14 +195,12 @@ function hasLiveSubAgentTaskEntries(state: ClaudeMapperState): boolean {
 }
 
 /**
- * Whether background work of any kind is still live: tracked subagent tasks
- * (edge bookends, present on older CLIs too) or any entry of the
- * `background_tasks_changed` level set — plain backgrounded Bash included.
- * While this is true, a clean turn end is not the end of the goal's work: the
- * CLI wakes the model when a background task finishes and the work continues.
+ * Delegated work still belongs to the goal after the foreground result.
+ * Detached commands and monitors do not: a development server can outlive a
+ * completed goal indefinitely. Later model activity opens its own runtime turn.
  */
-function hasLiveBackgroundWork(state: ClaudeMapperState): boolean {
-  return hasLiveSubAgentTaskEntries(state) || (state.liveBackgroundTaskIds?.size ?? 0) > 0;
+function hasLiveSubAgentWork(state: ClaudeMapperState): boolean {
+  return hasLiveSubAgentTaskEntries(state) || (state.liveBackgroundSubAgentTaskIds?.size ?? 0) > 0;
 }
 
 /**

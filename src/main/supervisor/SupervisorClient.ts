@@ -3,6 +3,11 @@ import type { Readable } from "node:stream";
 import { randomUUID } from "node:crypto";
 import type { PoracodeDiagnosticTags } from "@/shared/diagnostics/sentryPrivacy";
 import { terminateChildProcessTree } from "@/shared/processTree";
+import {
+  browserUsageHttpRequestSchema,
+  type BrowserUsageHttpRequest,
+  type BrowserUsageHttpReply,
+} from "@/shared/usageBrowserHttp";
 import type { StartThreadPayload } from "@/shared/contracts";
 import type {
   IpcProcedurePayload,
@@ -68,6 +73,8 @@ export interface SupervisorClientOptions {
    */
   bundledPluginsDir?: string;
   secretStorageKey: string;
+  /** Desktop-only network transport. Headless hosts retain the Node HTTP stack. */
+  requestBrowserUsageHttp?(message: BrowserUsageHttpRequest): Promise<BrowserUsageHttpReply>;
   /**
    * Optional resolver invoked at every supervisor spawn, returning extra env
    * vars to merge into the child env. Used by the in-app browser MCP wiring
@@ -135,6 +142,7 @@ export class SupervisorClient {
         PORACODE_IS_DEV: this.options.isDev ? "1" : "0",
         PORACODE_DATA_DIR: baseDir,
         PORACODE_SECRET_STORAGE_KEY: this.options.secretStorageKey,
+        PORACODE_USAGE_BROWSER_HTTP: this.options.requestBrowserUsageHttp ? "1" : "0",
         PORACODE_WSL_HELPERS_DIR: this.options.wslHelpersDir,
         // Back-compat for one release; older supervisor builds still read
         // the legacy var. Safe to drop once min supported supervisor knows
@@ -163,23 +171,48 @@ export class SupervisorClient {
       });
     }
 
-    child.on("message", (message: SupervisorReply | SupervisorEvent) => {
-      if (isSupervisorReply(message)) {
-        const pending = this.pendingRequests.get(message.replyTo);
-        if (!pending) {
+    child.on(
+      "message",
+      (message: SupervisorReply | SupervisorEvent | { type: "usage-http-request" }) => {
+        if ("type" in message && message.type === "usage-http-request") {
+          const parsed = browserUsageHttpRequestSchema.safeParse(message);
+          if (parsed.success) {
+            void (
+              this.options.requestBrowserUsageHttp
+                ? this.options.requestBrowserUsageHttp(parsed.data)
+                : Promise.resolve({
+                    type: "usage-http-reply",
+                    id: parsed.data.id,
+                    ok: false,
+                  } satisfies BrowserUsageHttpReply)
+            ).then((reply) => {
+              if (this.child !== child || !child.connected) return;
+              try {
+                child.send(reply, () => {});
+              } catch {
+                // The child can exit after the connected check. Never retry its request.
+              }
+            });
+          }
           return;
         }
-        this.pendingRequests.delete(message.replyTo);
-        if (message.ok) {
-          pending.resolve(message.data);
-        } else {
-          pending.reject(new Error(message.error));
+        if (isSupervisorReply(message)) {
+          const pending = this.pendingRequests.get(message.replyTo);
+          if (!pending) {
+            return;
+          }
+          this.pendingRequests.delete(message.replyTo);
+          if (message.ok) {
+            pending.resolve(message.data);
+          } else {
+            pending.reject(new Error(message.error));
+          }
+          return;
         }
-        return;
-      }
 
-      this.options.onEvent(message);
-    });
+        this.options.onEvent(message);
+      },
+    );
 
     this.options.onStarted?.();
 

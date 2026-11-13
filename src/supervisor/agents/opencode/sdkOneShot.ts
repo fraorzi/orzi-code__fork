@@ -1,3 +1,4 @@
+import { readOpenCodeOneShotUsage } from "./oneShotUsage";
 /**
  * SDK-backed one-shot text generation (commit / PR / title gen).
  *
@@ -150,6 +151,8 @@ export async function runOpenCodeOneShot(input: RunOneShotInput): Promise<string
     }
 
     const promptInfo = result.data?.info;
+    const usage = readOpenCodeOneShotUsage(promptInfo);
+    if (usage) input.onUsage?.(usage);
     const errorMessage = extractInfoErrorMessage(promptInfo);
     if (errorMessage) {
       throw new Error(

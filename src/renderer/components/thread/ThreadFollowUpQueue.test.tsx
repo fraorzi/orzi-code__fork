@@ -30,6 +30,42 @@ describe("ThreadFollowUpQueue", () => {
     bridge.steerQueuedThreadFollowUp.mockReset().mockResolvedValue(undefined);
   });
 
+  it("uses the localized description for automatic recovery rows", () => {
+    render(
+      <ThreadFollowUpQueue
+        threadId="thread"
+        queue={{
+          paused: true,
+          items: [
+            {
+              id: "recovery",
+              stagedAt: 1,
+              prompt: "internal recovery instruction",
+              source: "usage-recovery",
+            },
+          ],
+        }}
+      />,
+    );
+    expect(
+      screen.getByText(
+        "Continue the task interrupted by the usage limit. Check what already completed before proceeding.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("internal recovery instruction")).not.toBeInTheDocument();
+  });
+
+  it("shows quota waiting and prevents manual resume from bypassing it", () => {
+    render(
+      <ThreadFollowUpQueue
+        threadId="thread"
+        queue={{ ...queue, paused: true, waitingForLimit: true }}
+      />,
+    );
+    expect(screen.getByText("Waiting for the usage limit to reset")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Resume queued follow-ups" })).toBeDisabled();
+  });
+
   it("focuses the editor after its pause request finishes", () => {
     const props = {
       item: queue.items[0]!,

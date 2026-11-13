@@ -1638,7 +1638,7 @@ describe("ThreadDraftView", () => {
     );
   });
 
-  it("submits an explicit Fast-off selection in the launch config", async () => {
+  it("omits the globally disabled Fast option from the launch config", async () => {
     const onStart = vi.fn<(input: unknown) => void>();
     useSharedSettings.setState({
       providerModelPreferences: { cursor: { "composer-2": { fast: false } } },
@@ -1678,7 +1678,7 @@ describe("ThreadDraftView", () => {
 
     expect(onStart).toHaveBeenCalledWith(
       expect.objectContaining({
-        config: expect.objectContaining({ fast: false }),
+        config: expect.not.objectContaining({ fast: expect.any(Boolean) }),
       }),
     );
   });
@@ -1948,6 +1948,39 @@ describe("ThreadDraftView", () => {
     });
   });
 
+  it("passes quota recovery opt-in to the very first GUI task", async () => {
+    const onStart = vi.fn<(input: unknown) => void>();
+    const agent: AgentStatus = {
+      ...dualModeCodexStatus,
+      capabilities: { ...dualModeCodexStatus.capabilities, supportsUsageRecovery: true },
+    };
+    render(<ThreadDraftView project={project} agentStatuses={[agent]} onStart={onStart} />);
+    const composer = composerSpy.mock.lastCall?.[0];
+    if (
+      !composer ||
+      typeof composer !== "object" ||
+      !("footerLeading" in composer) ||
+      !isValidElement(composer.footerLeading)
+    )
+      throw new Error("Draft composer missing");
+    const toggle = findElementByTypeName(composer.footerLeading, "UsageRecoveryToggle");
+    expect(toggle?.props.isSelected).toBe(false);
+    const change = toggle?.props.onChange;
+    if (typeof change !== "function") throw new Error("Recovery toggle missing");
+    act(() => {
+      void change(true);
+    });
+    fireEvent.click(screen.getByText("set-prompt"));
+    fireEvent.click(screen.getByText("submit"));
+    expect(onStart).toHaveBeenCalledWith(
+      expect.objectContaining({
+        config: expect.objectContaining({ autoResumeAfterLimit: true }),
+        presentationMode: "gui",
+        prompt: "hello world",
+      }),
+    );
+  });
+
   it.each(["launch", "always"] satisfies Array<"launch" | "always">)(
     "launches teamwork only after an explicit per-draft opt-in (%s MCP)",
     async (scope) => {
@@ -1975,11 +2008,11 @@ describe("ThreadDraftView", () => {
         capabilities: { ...dualModeCodexStatus.capabilities, mcpScope: { gui: scope } },
       };
       render(<ThreadDraftView project={localProject} agentStatuses={[agent]} onStart={onStart} />);
-      const toggle = await screen.findByRole("switch", { name: "Teamwork" });
-      expect(toggle).not.toBeChecked();
+      const toggle = await screen.findByRole("button", { name: "Teamwork" });
+      expect(toggle).toHaveAttribute("aria-pressed", "false");
       expect(toggle).not.toBeDisabled();
       fireEvent.click(toggle);
-      expect(toggle).toBeChecked();
+      expect(toggle).toHaveAttribute("aria-pressed", "true");
       fireEvent.click(screen.getByText("set-prompt"));
       fireEvent.click(screen.getByText("submit"));
       expect(onStart).toHaveBeenCalledWith(
@@ -2253,7 +2286,7 @@ describe("ThreadDraftView", () => {
     });
   });
 
-  it("recalls app-wide effort and Fast choices when switching between Codex models", async () => {
+  it("recalls app-wide effort choices while Fast remains unavailable", async () => {
     useSharedSettings.setState({
       providerConfigs: {
         codex: {
@@ -2300,30 +2333,30 @@ describe("ThreadDraftView", () => {
       if (!call) throw new Error("Composer has not rendered");
       return (call[0] as { controls: ModelControl[] }).controls;
     };
-    const expectSelection = async (model: string, effort: string, fast: boolean) => {
+    const expectSelection = async (model: string, effort: string) => {
       await waitFor(() => {
         const controls = currentControls();
         expect(controls.find((control) => control.kind === "provider-model")?.currentModel).toBe(
           model,
         );
         expect(effortValueOf(controls)).toBe(effort);
-        expect(fastSelectedOf(controls)).toBe(fast);
+        expect(fastSelectedOf(controls)).toBeUndefined();
       });
     };
 
-    await expectSelection("gpt-5.6-luna", "max", true);
+    await expectSelection("gpt-5.6-luna", "max");
     act(() => {
       currentControls()
         .find((control) => control.kind === "provider-model")
         ?.onChange?.({ agentKind: "codex", model: "gpt-5.6-sol" });
     });
-    await expectSelection("gpt-5.6-sol", "high", false);
+    await expectSelection("gpt-5.6-sol", "high");
     act(() => {
       currentControls()
         .find((control) => control.kind === "provider-model")
         ?.onChange?.({ agentKind: "codex", model: "gpt-5.6-luna" });
     });
-    await expectSelection("gpt-5.6-luna", "max", true);
+    await expectSelection("gpt-5.6-luna", "max");
   });
 
   it("keeps simultaneously open draft configs independent while saving defaults for later drafts", async () => {
@@ -2405,7 +2438,7 @@ describe("ThreadDraftView", () => {
       const providerModel = props.controls.find((c) => c.kind === "provider-model");
       expect(providerModel?.currentModel).toBe("composer-2");
       expect(props.controls.some((control) => control.kind === "effort-context")).toBe(false);
-      expect(fastSelectedOf(props.controls)).toBeDefined();
+      expect(fastSelectedOf(props.controls)).toBeUndefined();
     });
   });
 

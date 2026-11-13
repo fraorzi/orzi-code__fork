@@ -103,6 +103,12 @@ function isMuseTeamDashboardUrl(url: string): boolean {
 }
 
 export const PROVIDER_CONFIGS: Record<string, ProviderLoginConfig> = {
+  claude: {
+    kind: "cookie",
+    loginUrl: "https://claude.ai/settings/usage",
+    cookieUrl: "https://claude.ai/",
+    authCookiePattern: /^sessionKey$/u,
+  },
   copilot: {
     kind: "github-device",
     host: "github.com",

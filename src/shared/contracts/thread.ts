@@ -361,6 +361,12 @@ export const editQueuedThreadFollowUpPayloadSchema = removeQueuedThreadFollowUpP
   .refine(hasSendableInput, sendableInput);
 export type EditQueuedThreadFollowUpPayload = z.infer<typeof editQueuedThreadFollowUpPayloadSchema>;
 
+export const setThreadUsageRecoveryPayloadSchema = z.object({
+  threadId: z.string().min(1),
+  enabled: z.boolean(),
+});
+export type SetThreadUsageRecoveryPayload = z.infer<typeof setThreadUsageRecoveryPayloadSchema>;
+
 export const resumeThreadFollowUpsPayloadSchema = z.object({
   threadId: z.string().min(1),
 });
@@ -377,6 +383,8 @@ export type GetThreadFollowUpQueuePayload = z.infer<typeof getThreadFollowUpQueu
  * acknowledging the cancel. `null` (in IPC) clears the slot.
  */
 export interface PendingSteerState {
+  /** Display-only origin; edited recovery prompts become ordinary user input. */
+  source?: "usage-recovery" | undefined;
   /** Stable id allocated by the supervisor at stage time. */
   id: string;
   /** Plaintext preview shown in the composer strip. */
@@ -394,11 +402,13 @@ export const pendingSteerStateSchema = z
     prompt: z.string(),
     segments: z.array(promptSegmentSchema).optional(),
     stagedAt: z.number().int().nonnegative(),
+    source: z.literal("usage-recovery").optional(),
   })
-  .transform(({ id, prompt, segments, stagedAt }): PendingSteerState => ({
+  .transform(({ id, prompt, segments, stagedAt, source }): PendingSteerState => ({
     id,
     prompt,
     ...(segments !== undefined ? { segments } : {}),
+    ...(source ? { source } : {}),
     stagedAt,
   }));
 
@@ -406,10 +416,12 @@ export const pendingSteerStateSchema = z
 export const threadFollowUpQueueStateSchema = z.object({
   items: z.array(pendingSteerStateSchema),
   paused: z.boolean(),
+  waitingForLimit: z.boolean().optional(),
 });
 export interface ThreadFollowUpQueueState {
   items: PendingSteerState[];
   paused: boolean;
+  waitingForLimit?: boolean | undefined;
 }
 
 /**

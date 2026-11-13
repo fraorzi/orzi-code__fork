@@ -8,6 +8,7 @@ import type {
   ThreadFollowUpQueueState,
   ThreadStatus,
 } from "@/shared/contracts";
+import { UsageRecoveryReceiptTracker } from "./usageRecoveryReceipts";
 import type { SupervisorEvent } from "@/shared/ipc";
 import { msg } from "@/shared/messages";
 import { isCompletedWithoutTurn, type StructuredTurnResult } from "../../agents/base";
@@ -38,6 +39,10 @@ function createAdmissionBarrier(): {
 
 export interface FollowUpQueueCoordinatorContext {
   store?: FollowUpQueueStore;
+  shouldWaitForUsage?(session: SessionRuntime, config: SetPendingSteerPayload["config"]): boolean;
+  isWaitingForUsage?(threadId: string): boolean;
+  onUsageFailure?(session: SessionRuntime, message: string): void;
+  onTurnStarted?(session: SessionRuntime): void;
   emit(event: SupervisorEvent): void;
   sessions: Map<string, SessionRuntime>;
   waitForPendingStart(threadId: string): Promise<void>;
@@ -70,6 +75,8 @@ export class FollowUpQueueCoordinator {
   private readonly pausedThreads = new Set<string>();
   private readonly mutationTails = new Map<string, Promise<void>>();
   private readonly storageFailures = new Map<string, unknown>();
+  private readonly restoredFailures = new Set<string>();
+  private readonly usageReceipts = new UsageRecoveryReceiptTracker();
   private disposed = false;
 
   constructor(private readonly ctx: FollowUpQueueCoordinatorContext) {
@@ -110,6 +117,7 @@ export class FollowUpQueueCoordinator {
       const session = this.ctx.sessions.get(snapshot.threadId);
       this.assertQueueSession(session);
       const record = this.records.get(snapshot.threadId) ?? this.createRecord(snapshot.threadId);
+      this.ctx.shouldWaitForUsage?.(session, snapshot.config);
       record.items.push({
         id: `follow-up-${randomUUID()}`,
         stagedAt: Date.now(),
@@ -170,6 +178,7 @@ export class FollowUpQueueCoordinator {
         }),
       };
       delete record.items[index]!.prepared;
+      delete record.items[index]!.source;
       this.emitQueueState(input.threadId);
       this.schedulePump(input.threadId);
     });
@@ -257,11 +266,16 @@ export class FollowUpQueueCoordinator {
     });
   }
 
-  async resumeThreadFollowUps(threadId: string): Promise<void> {
+  async resumeThreadFollowUps(
+    threadId: string,
+    options?: { canResume(): boolean; usageRecovery: true },
+  ): Promise<void> {
     await this.mutate(threadId, () => {
+      if (options && !options.canResume()) return;
       const record = this.records.get(threadId);
       this.pausedThreads.delete(threadId);
       if (!record) return;
+      if (options?.usageRecovery && record.items[0]) this.usageReceipts.arm(record.items[0]);
       record.paused = false;
       this.emitQueueState(threadId);
       this.schedulePump(threadId);
@@ -271,7 +285,53 @@ export class FollowUpQueueCoordinator {
   getThreadFollowUpQueue(threadId: string): ThreadFollowUpQueueState | null {
     const record = this.records.get(threadId);
     if (!record || record.items.length === 0) return null;
-    return { items: record.items.map(pendingState), paused: record.paused };
+    return {
+      items: record.items.map(pendingState),
+      paused: record.paused,
+      ...(this.ctx.isWaitingForUsage?.(threadId) ? { waitingForLimit: true } : {}),
+    };
+  }
+
+  notifyUsageChanged(threadId: string): void {
+    this.emitQueueState(threadId);
+  }
+
+  /** Launch already owns the start lock, so stage synchronously instead of waiting on it. */
+  stageInitialUsageWait(
+    session: SessionRuntime,
+    payload: SetPendingSteerPayload,
+    userMessageItemId?: string,
+  ): void {
+    const record = this.records.get(session.threadId) ?? this.createRecord(session.threadId);
+    record.items.unshift({
+      id: `follow-up-${randomUUID()}`,
+      stagedAt: Date.now(),
+      payload: snapshotPayload(payload),
+      userMessageItemId: userMessageItemId ?? `user-${randomUUID()}`,
+    });
+    record.paused = true;
+    this.pausedThreads.add(session.threadId);
+    this.emitQueueState(session.threadId);
+    const failure = this.storageFailures.get(session.threadId);
+    if (failure)
+      throw new Error(msg("supervisor.followUpQueue.storageUnavailable"), { cause: failure });
+  }
+
+  /** Add a continuation before later messages, retaining an unadmitted original verbatim. */
+  stageUsageContinuation(session: SessionRuntime, prompt: string): void {
+    const record = this.records.get(session.threadId) ?? this.createRecord(session.threadId);
+    if (!this.restoredFailures.has(session.threadId)) {
+      record.items.unshift({
+        id: `follow-up-${randomUUID()}`,
+        stagedAt: Date.now(),
+        source: "usage-recovery",
+        payload: snapshotPayload({ threadId: session.threadId, prompt, config: session.config }),
+        userMessageItemId: `user-${randomUUID()}`,
+      });
+    }
+    record.paused = true;
+    this.pausedThreads.add(session.threadId);
+    this.emitQueueState(session.threadId);
   }
 
   /**
@@ -297,6 +357,7 @@ export class FollowUpQueueCoordinator {
     const record = this.records.get(threadId);
     const lifecycle = this.lifecycles.get(threadId);
     return (
+      this.ctx.isWaitingForUsage?.(threadId) === true ||
       this.directInput.hasReservation(threadId) ||
       lifecycle?.direct === true ||
       (lifecycle?.pendingRequestIds.size ?? 0) > 0 ||
@@ -309,6 +370,7 @@ export class FollowUpQueueCoordinator {
     return this.directInput.beginDirectInput(threadId);
   }
   noteDirectTurnSubmitted(session: SessionRuntime): void {
+    this.restoredFailures.delete(session.threadId);
     this.directInput.noteDirectTurnSubmitted(session);
   }
   noteDirectSteerSubmitted(session: SessionRuntime): void {
@@ -351,6 +413,10 @@ export class FollowUpQueueCoordinator {
     const record = this.records.get(threadId);
     if (!record) return;
     record.paused = true;
+    for (const entry of record.items) this.usageReceipts.cancel(entry);
+    if (record.active) {
+      this.usageReceipts.cancel(record.active.entry);
+    }
     if (record.active && !record.active.dispatched)
       this.restoreActive(record, record.active, false);
     this.emitQueueState(threadId);
@@ -453,6 +519,12 @@ export class FollowUpQueueCoordinator {
     const lifecycle = this.lifecycleFor(session);
     const record = this.records.get(session.threadId);
 
+    if (record?.active?.session === session) {
+      const receipt = this.usageReceipts.accept(record.active, event);
+      if (receipt)
+        this.ctx.emit({ type: "thread-runtime-event", threadId: session.threadId, event: receipt });
+    }
+
     if (event.type === "request.opened") {
       lifecycle.pendingRequestIds.add(event.requestId);
       return;
@@ -464,6 +536,8 @@ export class FollowUpQueueCoordinator {
     }
 
     if (event.type === "turn.started") {
+      this.restoredFailures.delete(session.threadId);
+      this.ctx.onTurnStarted?.(session);
       const active = record?.active;
       lifecycle.turnId = event.turnId;
       lifecycle.turnCompleted = false;
@@ -508,7 +582,10 @@ export class FollowUpQueueCoordinator {
       return;
     }
 
-    if (event.type === "error") this.pauseForFailure(session.threadId, record, lifecycle);
+    if (event.type === "error") {
+      this.pauseForFailure(session.threadId, record, lifecycle);
+      this.ctx.onUsageFailure?.(session, event.message);
+    }
   }
 
   onStructuredUpdate(session: SessionRuntime, status: ThreadStatus): void {
@@ -636,8 +713,10 @@ export class FollowUpQueueCoordinator {
     if (record) {
       if (record.active) {
         this.resolveAdmission(record.active);
-        if (!record.active.turnId) this.restoreActive(record, record.active, false);
-        else delete record.active;
+        if (!record.active.turnId) {
+          this.restoredFailures.add(threadId);
+          this.restoreActive(record, record.active, false);
+        } else delete record.active;
       }
       record.paused = true;
       this.pausedThreads.add(threadId);
@@ -699,6 +778,10 @@ export class FollowUpQueueCoordinator {
     if (restarting ? !this.isRestartReady(record, session) : !this.isReady(record, session)) return;
 
     const entry = record.items[0]!;
+    if (this.ctx.shouldWaitForUsage?.(session, entry.payload.config)) {
+      this.emitQueueState(record.threadId);
+      return;
+    }
     const active: ActiveQueueEntry = { entry, session, dispatched: false };
     record.active = active;
     this.emitQueueState(record.threadId);
@@ -732,6 +815,11 @@ export class FollowUpQueueCoordinator {
       return;
     }
 
+    if (this.ctx.shouldWaitForUsage?.(session, entry.payload.config)) {
+      this.restoreActive(record, active, false);
+      this.emitQueueState(record.threadId);
+      return;
+    }
     entry.prepared = { instanceId: session.instanceId, turn: prepared };
     if (record.items[0] !== entry) {
       this.handleAdmissionFailure(
@@ -909,10 +997,7 @@ export class FollowUpQueueCoordinator {
       if (record) record.paused = true;
       console.error("[supervisor] unable to save follow-up queue", { threadId, error });
     }
-    const queue: ThreadFollowUpQueueState | null =
-      record && record.items.length > 0
-        ? { items: record.items.map(pendingState), paused: record.paused }
-        : null;
+    const queue = this.getThreadFollowUpQueue(threadId);
     this.ctx.emit({ type: "thread-follow-up-queue", threadId, queue });
     if (!queue && record && !record.active && !record.pumpRunning) this.records.delete(threadId);
   }

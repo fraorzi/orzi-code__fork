@@ -1,3 +1,4 @@
+import { UsageRecoveryToggle } from "./ThreadUsageRecovery";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "@heroui/react";
 import { Download, Monitor, Settings2, Webhook, X } from "lucide-react";
@@ -1222,7 +1223,18 @@ export function ThreadDraftComposerArea(props: {
       compact={props.compact ?? false}
       variant="draft"
       controls={controls}
-      footerLeading={worktreeRow}
+      footerLeading={
+        <div className="flex items-center gap-1">
+          {props.presentationMode === "gui" &&
+          props.selectedAgent.capabilities.supportsUsageRecovery ? (
+            <UsageRecoveryToggle
+              isSelected={props.config.autoResumeAfterLimit === true}
+              onChange={(enabled) => props.onConfigChange({ autoResumeAfterLimit: enabled })}
+            />
+          ) : null}
+          {worktreeRow}
+        </div>
+      }
       toolbarLayoutKey={toolbarLayoutKey}
       fixedContent={
         <>

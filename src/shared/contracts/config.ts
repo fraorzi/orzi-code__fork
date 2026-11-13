@@ -17,6 +17,8 @@ const threadConfigShape = {
   crossagentMcp: z.boolean().optional(),
   /** Opt-in delegation with isolated worktrees and automatic integration. */
   teamMode: z.boolean().optional(),
+  /** Resume interrupted GUI work and hold queued input until account quota returns. */
+  autoResumeAfterLimit: z.boolean().optional(),
   computerUse: z.boolean().optional(),
   chromeMcp: z.boolean().optional(),
   /** Runtime environment selected for a provider that cannot execute natively. */
@@ -65,6 +67,7 @@ export function isThreadConfigEqual(
     left.browserMcp === right.browserMcp &&
     left.crossagentMcp === right.crossagentMcp &&
     left.teamMode === right.teamMode &&
+    left.autoResumeAfterLimit === right.autoResumeAfterLimit &&
     left.computerUse === right.computerUse &&
     left.chromeMcp === right.chromeMcp &&
     left.executionEnvironment?.kind === right.executionEnvironment?.kind &&

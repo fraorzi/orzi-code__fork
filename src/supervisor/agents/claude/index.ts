@@ -1,6 +1,9 @@
+import { usageRecovery } from "./usageRecovery";
 import { randomUUID } from "node:crypto";
 import { homedir } from "node:os";
 import { CLAUDE_SESSION_ENV } from "./sessionPolicy";
+import { claudeHeadlessEnvironment } from "./headlessEnvironment";
+import { parseClaudeOneShotOutput } from "./oneShotUsage";
 import path, { posix as posixPath } from "node:path";
 
 import type {
@@ -238,11 +241,13 @@ export function createClaudeAdapter(options: ClaudeAdapterOptions = {}): AgentAd
       "--fallback-model",
       "haiku",
       "--no-session-persistence",
+      "--output-format",
+      "json",
       ...extraArgs,
     ];
     if (effort) args.push("--effort", effort);
     args.push("--settings", JSON.stringify({ fastMode: false }));
-    const env = location ? profileEnv(location) : undefined;
+    const env = claudeHeadlessEnvironment(location, location ? profileEnv(location) : undefined);
     return {
       command: "claude",
       args,
@@ -254,6 +259,7 @@ export function createClaudeAdapter(options: ClaudeAdapterOptions = {}): AgentAd
   return {
     kind,
     label,
+    usageRecovery,
     usageProviderId: kind,
     binary: claudeDetectionSpec.binary,
     mcpRequiresStdioCwdProxy: true,
@@ -388,7 +394,7 @@ export function createClaudeAdapter(options: ClaudeAdapterOptions = {}): AgentAd
     async createStructuredSession(input: CreateStructuredSessionInput) {
       if (input.presentationMode !== "gui") return undefined;
       const env = profileEnv(input.projectLocation);
-      return ClaudeSdkSession.create({ ...input, ...(env ? { env } : {}) });
+      return ClaudeSdkSession.create({ ...input, env: { ...input.env, ...env } });
     },
     async buildAcpLogoutCommand(ctx) {
       const location = detectProbeLocation(ctx);
@@ -427,6 +433,7 @@ export function createClaudeAdapter(options: ClaudeAdapterOptions = {}): AgentAd
     oscHintsDeferToHookPlugin: true,
     workingSilenceTimeoutMs: null,
     defaultOneShotModel: "haiku",
+    parseOneShotOutput: parseClaudeOneShotOutput,
     buildOneShotCommand(model, effort, prompt, location, fast, oneShotOptions) {
       return buildClaudeOneShotCommand(
         model,
@@ -470,7 +477,7 @@ export function createClaudeAdapter(options: ClaudeAdapterOptions = {}): AgentAd
         model ?? "haiku",
         "--no-session-persistence",
       ];
-      const env = profileEnv(location);
+      const env = claudeHeadlessEnvironment(location, profileEnv(location));
       return {
         command: "claude",
         args,

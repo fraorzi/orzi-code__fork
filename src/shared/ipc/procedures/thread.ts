@@ -27,6 +27,7 @@ import {
   startShellPayloadSchema,
   startThreadPayloadSchema,
   resumeThreadFollowUpsPayloadSchema,
+  setThreadUsageRecoveryPayloadSchema,
   updateAcpRegistryAgentPayloadSchema,
   updateAgentBinaryPayloadSchema,
   getLatestAgentVersionPayloadSchema,
@@ -70,6 +71,7 @@ import type {
   SetPendingSteerPayload,
   ResumeThreadFollowUpsPayload,
   ThreadFollowUpQueueState,
+  SetThreadUsageRecoveryPayload,
   StageThreadInputPayload,
   StartShellPayload,
   StartThreadPayload,
@@ -281,6 +283,11 @@ export const threadProcedures = {
     "resumeThreadFollowUps",
     "supervisor",
     resumeThreadFollowUpsPayloadSchema,
+  ),
+  setThreadUsageRecovery: definePayloadProcedure<SetThreadUsageRecoveryPayload, void, "supervisor">(
+    "setThreadUsageRecovery",
+    "supervisor",
+    setThreadUsageRecoveryPayloadSchema,
   ),
   getThreadFollowUpQueue: definePayloadProcedure<
     GetThreadFollowUpQueuePayload,

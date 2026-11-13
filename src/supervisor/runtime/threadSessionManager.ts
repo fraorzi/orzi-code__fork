@@ -1,3 +1,4 @@
+import { UsageRecoveryCoordinator } from "./threadSession/usageRecoveryCoordinator";
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { teamInstructions } from "@/supervisor/crossagentMcp/teamInstructions";
 import { randomUUID } from "node:crypto";
@@ -129,6 +130,7 @@ export class ThreadSessionManager {
   private readonly invalidSessionRecovery: InvalidSessionRecoveryCoordinator;
   private readonly structuredTurnQueue: StructuredTurnQueue;
   private readonly followUpQueue: FollowUpQueueCoordinator;
+  private readonly usageRecovery: UsageRecoveryCoordinator;
   private readonly structuredFailureReporter = new StructuredFailureReporter();
   private readonly recentlyRemovedThreadIds = new Set<string>();
   private disposed = false;
@@ -166,7 +168,28 @@ export class ThreadSessionManager {
       beginFailureEpisode: (session) => this.structuredFailureReporter.beginEpisode(session),
       failStructuredSession: (session, error) => this.failStructuredSession(session, error),
     });
+    this.usageRecovery = new UsageRecoveryCoordinator({
+      readSnapshot: (providerId) => options.readUsageSnapshot?.(providerId),
+      refresh: async (providerId) => options.refreshUsageSnapshot?.(providerId),
+      isCurrentSession: (session) => this.isCurrentSession(session),
+      stageContinuation: (session) =>
+        this.followUpQueue.stageUsageContinuation(
+          session,
+          msg("supervisor.usageRecovery.continue"),
+        ),
+      resume: (threadId, canResume) =>
+        this.followUpQueue.resumeThreadFollowUps(threadId, { canResume, usageRecovery: true }),
+      changed: (threadId) => this.followUpQueue.notifyUsageChanged(threadId),
+    });
     this.followUpQueue = new FollowUpQueueCoordinator({
+      shouldWaitForUsage: (session, config) =>
+        this.usageRecovery.shouldWait(session, {
+          ...config,
+          autoResumeAfterLimit: session.config.autoResumeAfterLimit === true,
+        }),
+      isWaitingForUsage: (threadId) => this.usageRecovery.isWaiting(threadId),
+      onUsageFailure: (session, message) => this.usageRecovery.onFailure(session, message),
+      onTurnStarted: (session) => this.usageRecovery.beginTurn(session),
       ...(options.followUpQueueDir
         ? { store: new FollowUpQueueStore(options.followUpQueueDir) }
         : {}),
@@ -210,6 +233,7 @@ export class ThreadSessionManager {
       indexSessionRef: (session, prevId) => this.indexSessionRef(session, prevId),
     });
     const sessionRuntimeLifecycle = new SessionRuntimeLifecycle({
+      onUsageFailure: (session, message) => this.usageRecovery.onFailure(session, message),
       ...(options.onUsageSnapshot ? { onUsageSnapshot: options.onUsageSnapshot } : {}),
       sessions: this.sessions,
       sessionsBySessionId: this.sessionsBySessionId,
@@ -227,6 +251,22 @@ export class ThreadSessionManager {
     });
     this.spawnPipeline = new SpawnPipeline({
       options: this.options,
+      holdInitialTurnForUsage: (session, payload, userMessageItemId) => {
+        if (!this.usageRecovery.shouldWait(session, payload.config)) return false;
+        session.suppressInitialStructuredIdle = undefined;
+        this.outputPipeline.updateState(session, "idle", "none");
+        this.followUpQueue.stageInitialUsageWait(
+          session,
+          {
+            threadId: session.threadId,
+            prompt: payload.prompt,
+            config: payload.config,
+            ...(payload.segments ? { segments: payload.segments } : {}),
+          },
+          userMessageItemId,
+        );
+        return true;
+      },
       sessions: this.sessions,
       pendingStartInterrupts: this.pendingStartInterrupts,
       pendingStartAborts: this.pendingStartAborts,
@@ -355,6 +395,7 @@ export class ThreadSessionManager {
     const message = error instanceof Error ? error.message : String(error);
     this.outputPipeline.updateState(session, "error", "error", message);
     this.followUpQueue.onStructuredUpdate(session, "error");
+    this.usageRecovery.onFailure(session, message);
     this.enqueueRuntimeEvent(session.threadId, {
       type: "error",
       threadId: session.threadId,
@@ -656,6 +697,15 @@ export class ThreadSessionManager {
     // Match direct submission: apply the snapshot when dispatching. Some
     // providers resolve startTurn only at completion, after a newer steer or
     // model selection may already have changed the live config.
+    turn = {
+      ...turn,
+      config: {
+        ...turn.config,
+        ...(session.config.autoResumeAfterLimit !== undefined
+          ? { autoResumeAfterLimit: session.config.autoResumeAfterLimit }
+          : {}),
+      },
+    };
     session.config = turn.config;
     const start = this.structuredTurnQueue.start(session, turn);
     if (start) this.outputPipeline.emitState(session);
@@ -682,6 +732,22 @@ export class ThreadSessionManager {
     return start;
   }
 
+  acceptUsageSnapshot(snapshot: import("@poracode/agents-usage").UsageSnapshot): void {
+    this.usageRecovery.acceptSnapshot(snapshot);
+  }
+
+  setThreadUsageRecovery({ threadId, enabled }: { threadId: string; enabled: boolean }): void {
+    const session = this.sessions.get(threadId);
+    if (session) {
+      if (!enabled) this.followUpQueue.pauseThread(threadId);
+      this.usageRecovery.setEnabled(session, enabled);
+      if (enabled && this.followUpQueue.getThreadFollowUpQueue(threadId)) {
+        this.usageRecovery.shouldWait(session, session.config);
+      }
+      this.outputPipeline.emitState(session);
+    }
+  }
+
   async queueThreadFollowUp(payload: SetPendingSteerPayload): Promise<void> {
     return this.followUpQueue.queueThreadFollowUp(payload);
   }
@@ -703,10 +769,15 @@ export class ThreadSessionManager {
   }
 
   async removeQueuedThreadFollowUp(input: { threadId: string; id: string }): Promise<void> {
-    return this.followUpQueue.removeQueuedThreadFollowUp(input);
+    await this.followUpQueue.removeQueuedThreadFollowUp(input);
+    const session = this.sessions.get(input.threadId);
+    if (session && !this.followUpQueue.getThreadFollowUpQueue(input.threadId))
+      this.usageRecovery.stop(session);
   }
 
   pauseThreadFollowUps(input: { threadId: string; id: string }) {
+    const session = this.sessions.get(input.threadId);
+    if (session) this.usageRecovery.stop(session);
     return this.followUpQueue.pauseThreadFollowUps(input);
   }
 
@@ -785,6 +856,13 @@ export class ThreadSessionManager {
   }
 
   async sendThreadInput(payload: SendThreadInputPayload): Promise<void> {
+    await this.waitForPendingStart(payload.threadId);
+    const waitingSession = this.sessions.get(payload.threadId);
+    if (waitingSession && !this.usageRecovery.isWaiting(payload.threadId))
+      this.usageRecovery.beginTurn(waitingSession);
+    if (waitingSession && this.usageRecovery.shouldWait(waitingSession, payload.config)) {
+      return this.followUpQueue.queueThreadFollowUp(payload);
+    }
     const directInput = this.followUpQueue.beginDirectInput(payload.threadId);
     try {
       // A queued dispatch can still leave the provider-reported status at idle
@@ -952,6 +1030,8 @@ export class ThreadSessionManager {
     // Stop is an explicit queue pause, not an implicit drain trigger. Set the
     // gate before looking up the session so a Stop racing startup or a queued
     // receipt cannot slip through.
+    const usageSession = this.sessions.get(payload.threadId);
+    if (usageSession) this.usageRecovery.stop(usageSession);
     this.followUpQueue.pauseThread(payload.threadId);
     const session = this.sessions.get(payload.threadId);
     if (!session) {
@@ -1324,6 +1404,7 @@ export class ThreadSessionManager {
   }
 
   async closeThread(payload: CloseThreadPayload): Promise<void> {
+    this.usageRecovery.cancel(payload.threadId);
     const shell = this.shellSessions.get(payload.threadId);
     if (shell) {
       shell.ignoreExit = true;
@@ -1404,6 +1485,9 @@ export class ThreadSessionManager {
     // undefined holes that surface as opaque "posix_spawnp failed" errors.
     const shellEnv: Record<string, string> = {
       ...sanitizedProcessEnv,
+      ...(process.env.PORACODE_PROCESS_OWNER
+        ? { PORACODE_PROCESS_OWNER: process.env.PORACODE_PROCESS_OWNER }
+        : {}),
       ...terminalEnv,
     };
     if (payload.projectLocation.kind === "wsl") {
@@ -1532,6 +1616,7 @@ export class ThreadSessionManager {
 
   async dispose(): Promise<void> {
     this.disposed = true;
+    this.usageRecovery.dispose();
     this.followUpQueue.dispose();
     for (const threadId of this.startLocks.keys()) {
       this.pendingStartAborts.add(threadId);

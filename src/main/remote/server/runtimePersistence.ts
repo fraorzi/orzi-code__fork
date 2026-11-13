@@ -1,3 +1,4 @@
+import { recordAuxiliaryGeneration } from "../../profile/auxiliaryUsage";
 import { dbApplyThreadRuntimeEvents, dbReplaceThreadRuntimeSnapshot } from "../../db";
 import { recordUsageSpentFromRuntimeEvents } from "../../profile/usageLedger";
 import type { RemoteBroadcastEvent } from "./context";
@@ -10,6 +11,10 @@ import { persistThreadStateEvent } from "./threadStatePersistence";
  * persists where" rule lives in one place.
  */
 export function persistSupervisorEvent(event: RemoteBroadcastEvent): void {
+  if (event.type === "auxiliary-generation") {
+    recordAuxiliaryGeneration(event.measurement);
+    return;
+  }
   persistRuntimeEvent(event);
   if (event.type === "thread-state") {
     persistThreadStateEvent(event);

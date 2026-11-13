@@ -84,7 +84,7 @@ export async function composerRedesignScenario({
   await screenshot(client, join(outDir, "redesign-favorites.png"));
   await evaluate(
     client,
-    `(() => { const button = [...document.querySelectorAll('button')].find((entry) => entry.textContent.trim() === 'Add to favorites'); if (!button) throw new Error("missing plus action"); button.click(); })()`,
+    `(() => { const button = [...document.querySelectorAll('button')].find((entry) => entry.textContent.trim() === 'Add model'); if (!button) throw new Error("missing plus action"); button.click(); })()`,
   );
   await waitForValue(
     () =>

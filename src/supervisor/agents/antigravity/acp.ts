@@ -7,6 +7,7 @@ import { buildAntigravityAcpModelCapabilities } from "./models";
 import { createAntigravityAcpExtension } from "./acpExtension";
 import { transformAntigravityBackgroundToolCall } from "./acpTaskNotifications";
 import { parseAntigravityAcpTurnSignal } from "./acpTurnHold";
+import { classifyAntigravityPromptFailure } from "./acpPromptRecovery";
 
 const ANTIGRAVITY_ACP_PROBE_TIMEOUT_MS = 60_000;
 /** Personal Google OAuth is the default Chat sign-in; keep it first in the picker. */
@@ -59,6 +60,7 @@ export function createAntigravityAcpRuntime(
     // Only modes actually advertised by Google's server belong in the picker.
     synthesizeApprovalPolicies: false,
     sessionBehavior: ANTIGRAVITY_ACP_SESSION_BEHAVIOR,
+    promptFailureClassifier: classifyAntigravityPromptFailure,
     // Antigravity multiplexes background-task reports through assistant text
     // and reports file reads as finished only at end of turn; both parsers
     // live here so the shared mapper stays provider-agnostic.

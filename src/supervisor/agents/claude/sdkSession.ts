@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { readAssistantLimitError } from "./usageRecovery";
+import { normalizeClaudeLiveUsage } from "./liveUsage";
 import { CLAUDE_SESSION_ENV } from "./sessionPolicy";
+import { claudeHeadlessEnvironment } from "./headlessEnvironment";
 import { ClaudeTaskUsageTracker } from "./taskUsage";
 import { parseContextWindowTokens } from "@/shared/contextWindow";
 import type { ChildProcess } from "node:child_process";
@@ -57,12 +60,11 @@ import {
   createClaudeMapperState,
   emitActiveGoalTick,
   extractResultErrorMessage,
-  isApiErrorResult,
+  mapResultState,
   mapClaudePermissionRequest,
   mapClaudeQuestionRequest,
   mapClaudeContextUsageResponse,
   mapClaudeSdkMessage,
-  nonDiagnosticErrors,
   parseClaudeQuestions,
   readParentToolUseId,
   startClaudeTurn,
@@ -734,17 +736,18 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
             getPrimedPosixEnv() ??
             (process.env as Record<string, string>))
           : undefined;
+      const headlessEnv = claudeHeadlessEnvironment(this.input.projectLocation, this.input.env);
       const env =
         this.input.projectLocation.kind === "wsl"
           ? {
               CLAUDE_AGENT_SDK_CLIENT_APP: "poracode",
               BROWSER: "/bin/true",
-              ...(this.input.env ?? {}),
+              ...headlessEnv,
             }
           : {
               ...(posixEnv ?? process.env),
               CLAUDE_AGENT_SDK_CLIENT_APP: "poracode",
-              ...(this.input.env ?? {}),
+              ...headlessEnv,
             };
       Object.assign(env, CLAUDE_SESSION_ENV);
       // Posix builds ship without the SDK's bundled `claude` SEA binary
@@ -981,6 +984,11 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
   }
 
   private handleSdkMessage(message: SDKMessage): void {
+    if (message.type === "rate_limit_event") {
+      const snapshot = normalizeClaudeLiveUsage(message, Date.now());
+      if (snapshot) this.listener?.onUsageSnapshot?.(snapshot);
+      return;
+    }
     const sessionId =
       "session_id" in message && typeof message.session_id === "string"
         ? message.session_id
@@ -1021,7 +1029,8 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
         mapped.status !== "idle" ||
         (!this.deferredCompletion.hasPending &&
           !this.currentTurnInFlight &&
-          this.pendingSteers.length === 0)
+          this.pendingSteers.length === 0 &&
+          this.currentStatus !== "error")
       ) {
         this.emitUpdate(mapped);
       }
@@ -1048,9 +1057,10 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
     let wasInterrupted = false;
     let resultState: TurnState | undefined;
     if (message.type === "result") {
+      const mappedResult = mapResultState(message);
       wasInterrupted =
-        this.interruptInFlight || (message.subtype !== "success" && isInterruptedResult(message));
-      if (wasInterrupted) resultState = "interrupted";
+        this.interruptInFlight || mappedResult === "interrupted" || mappedResult === "cancelled";
+      if (this.interruptInFlight) resultState = "interrupted";
     }
     const events = mapClaudeSdkMessage(
       message,
@@ -1058,14 +1068,23 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
       resultState ? { resultState } : undefined,
     );
     this.emitRuntimeEvents(events);
+    const limitError = readAssistantLimitError(message);
+    if (limitError) {
+      this.currentTurnInFlight = false;
+      this.currentTurnAssistantUuid = undefined;
+      this.pendingSteers = [];
+      this.deferredCompletion.clear();
+      this.clearDeferredFlushTimer();
+      this.stopGoalTracking();
+      this.emitUpdate({ status: "error", attention: "error", errorMessage: limitError });
+      return;
+    }
     if (message.type === "result") {
       void this.refreshContextUsage();
       this.interruptInFlight = false;
-      const remaining = nonDiagnosticErrors(message);
       // claude.exe surfaces upstream API failures (e.g. 401 auth, 429 rate
       // limit) as subtype "success" with `is_error: true` / `api_error_status`
       // set — the failure text lives in `result`, not `errors[]`.
-      const apiErrored = isApiErrorResult(message);
       // An interrupt always wins. A steered/aborted turn comes back as
       // `error_during_execution` with `is_error: true` and only
       // `[ede_diagnostic]` lines — that would otherwise trip both the API-error
@@ -1073,10 +1092,9 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
       // failed." every time the user steers. Genuine API failures (401/429)
       // arrive with `wasInterrupted` false, so they still surface. The
       // diagnostic-only case is itself treated as an interrupt via
-      // `isInterruptedResult`, covering external (in-CLI) Esc interrupts where
+      // `mapResultState`, covering external (in-CLI) Esc interrupts where
       // `interruptInFlight` is false.
-      const failed =
-        !wasInterrupted && (apiErrored || (message.subtype !== "success" && remaining.length > 0));
+      const failed = !wasInterrupted && mapResultState(message) === "failed";
       const errorMessage = failed
         ? (extractResultErrorMessage(message) ?? "Claude turn failed.")
         : undefined;
@@ -1101,9 +1119,11 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
       };
       if (failed || wasInterrupted) this.pendingSteers = [];
       if (this.startPendingSteer()) return;
-      if (this.hasLiveBackgroundWork()) {
+      if (!failed && !wasInterrupted && this.hasLiveSubAgentWork()) {
         this.deferredCompletion.defer(completion);
       } else {
+        this.deferredCompletion.clear();
+        this.clearDeferredFlushTimer();
         this.emitUpdate(completion);
       }
     }
@@ -1111,16 +1131,14 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
   }
 
   /**
-   * Whether any background work the model will be woken for is still live:
-   * sub-agent runs (edge-tracked, closed by `task_notification`) or any task in
-   * the CLI's `background_tasks_changed` level set — plain backgrounded Bash
-   * and watchers included. The turn is not over for the user while either is
-   * running, so the held idle must wait for both to drain.
+   * Wait for delegated reasoning work, tracked through task edges or the CLI's
+   * level signal. Detached commands and watchers can intentionally outlive the
+   * response, so their presence must not prevent completion or the next prompt.
    */
-  private hasLiveBackgroundWork(): boolean {
+  private hasLiveSubAgentWork(): boolean {
     return (
       (this.mapperState.activeSubAgentTaskToTool?.size ?? 0) > 0 ||
-      (this.mapperState.liveBackgroundTaskIds?.size ?? 0) > 0
+      (this.mapperState.liveBackgroundSubAgentTaskIds?.size ?? 0) > 0
     );
   }
 
@@ -1140,7 +1158,7 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
    * flushes when the grace expires.
    */
   private flushDeferredCompletionIfDrained(): void {
-    if (this.hasLiveBackgroundWork()) return;
+    if (this.hasLiveSubAgentWork()) return;
     // A goal held open across a clean turn end also drains here, so the
     // pending goal alone is enough to arm the flush, or the dock would sit
     // active until the session ends.
@@ -1154,7 +1172,7 @@ export class ClaudeSdkSession implements StructuredSessionHandle {
     if (this.deferredFlushTimer !== undefined) return;
     this.deferredFlushTimer = setTimeout(() => {
       this.deferredFlushTimer = undefined;
-      if (this.disposed || this.hasLiveBackgroundWork()) return;
+      if (this.disposed || this.hasLiveSubAgentWork()) return;
       this.emitRuntimeEvents(completeActiveGoalOnTaskDrainEvents(this.mapperState));
       const update = this.deferredCompletion.take();
       if (update) this.emitUpdate(update);
@@ -1273,17 +1291,6 @@ function isResumedAssistantActivity(message: SDKMessage): boolean {
     return message.event.type === "message_start";
   }
   return false;
-}
-
-function isInterruptedResult(message: Extract<SDKMessage, { type: "result" }>): boolean {
-  const filtered = nonDiagnosticErrors(message);
-  // claude.exe emits an `error_during_execution` result whose only error is
-  // an `[ede_diagnostic]` line when a turn was interrupted before producing
-  // assistant content. Treat that as an interrupt — the SDK itself filters
-  // those lines out as informational.
-  if (filtered.length === 0) return true;
-  const joined = filtered.join(" ").toLowerCase();
-  return joined.includes("abort") || joined.includes("interrupt");
 }
 
 function mapSessionState(messageState: string): {

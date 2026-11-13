@@ -211,7 +211,16 @@ HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\{333}
         wsl: [],
       }),
     );
-    expect(STATUS_CACHE_VERSION).toBe(37);
+    expect(STATUS_CACHE_VERSION).toBe(38);
+    expect(service.getCachedCapabilities("codex")).toBeUndefined();
+  });
+
+  it("invalidates v37 capabilities without usage-recovery support", () => {
+    const { service, statusCachePath } = makeService(vi.fn<AgentAdapter["detectInstall"]>());
+    writeFileSync(
+      statusCachePath,
+      JSON.stringify({ version: 37, windows: [makeStatus()], wsl: [] }),
+    );
     expect(service.getCachedCapabilities("codex")).toBeUndefined();
   });
 

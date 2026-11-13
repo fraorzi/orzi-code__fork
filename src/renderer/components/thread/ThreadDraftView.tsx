@@ -1,7 +1,7 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { toast } from "@heroui/react";
-import { Users } from "lucide-react";
+import { Button, Tooltip, toast } from "@heroui/react";
+import { Check, Users } from "lucide-react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type {
   AgentStatus,
@@ -23,7 +23,6 @@ import {
 import { getConfigNormalizer } from "@/renderer/components/providers/providerComposer";
 import { useGitStore } from "@/renderer/state/gitStore";
 import { PixelLoader } from "@/renderer/components/common/PixelLoader";
-import { ToggleSwitch } from "@/renderer/components/common/ToggleSwitch";
 import { modelVisibilityKey } from "@/renderer/components/common/ProviderModelMenu/parts/providerIdentity";
 import { useSharedSettings } from "@/renderer/state/sharedSettingsStore";
 import { useAppStore } from "@/renderer/state/appStore";
@@ -261,6 +260,7 @@ export function ThreadDraftView(props: {
   const [browserMcpMention, setBrowserMcpMention] = useState(false);
   const [crossagentMcpMention, setCrossagentMcpMention] = useState(false);
   const [teamMode, setTeamMode] = useState(false);
+  const [autoResumeAfterLimit, setAutoResumeAfterLimit] = useState(false);
   const { t } = useLingui();
   const scopeLabel = isHomeScope ? t`Home` : undefined;
   const [chromeMcpMention, setChromeMcpMention] = useState(false);
@@ -809,6 +809,10 @@ export function ThreadDraftView(props: {
     (next: { agentKind: string; model: string; presentationMode?: ThreadPresentationMode }) => void
   >(() => undefined);
   const onConfigPatch = (patch: Partial<ThreadConfig>) => {
+    if ("autoResumeAfterLimit" in patch) {
+      setAutoResumeAfterLimit(patch.autoResumeAfterLimit === true);
+      return;
+    }
     if ("browserMcp" in patch) {
       // Per-draft mention flag — not part of ProviderDraftConfig, so it bypasses
       // the resolver/persistence below. Set by an `@browser` mention, cleared by
@@ -1251,30 +1255,30 @@ export function ThreadDraftView(props: {
               {...(props.onProjectChange ? { onSelectProject: props.onProjectChange } : {})}
             />
             <div className="flex items-center gap-2">
-              <span
-                title={t`Workers' changes are integrated automatically. Requires a local Git project and a chat agent with Crossagents enabled.`}
-                className={`group flex h-7 items-center rounded-full border pl-1.5 pr-2.5 transition-colors ${
-                  effectiveTeamMode ? "border-accent/70 bg-accent/20" : "border-border"
-                }`}
-              >
-                <ToggleSwitch
+              <Tooltip delay={300}>
+                <Button
+                  isIconOnly
+                  variant="ghost"
                   size="sm"
-                  isSelected={effectiveTeamMode}
+                  className={`relative size-7 min-w-7 rounded-full ${effectiveTeamMode ? "bg-accent/15 text-accent" : "text-muted"}`}
+                  aria-label={t`Teamwork`}
+                  aria-pressed={effectiveTeamMode}
                   isDisabled={!teamAvailable}
-                  onChange={setTeamMode}
+                  onPress={() => setTeamMode(!effectiveTeamMode)}
                 >
-                  <span
-                    className={`flex items-center gap-1.5 text-xs font-medium ${
-                      effectiveTeamMode
-                        ? "text-foreground"
-                        : "text-muted group-hover:text-foreground"
-                    }`}
-                  >
-                    <Users className="size-3.5" />
-                    <Trans>Teamwork</Trans>
-                  </span>
-                </ToggleSwitch>
-              </span>
+                  <Users aria-hidden="true" className="size-4" />
+                  {effectiveTeamMode ? (
+                    <Check
+                      aria-hidden="true"
+                      className="absolute bottom-0 right-0 size-2.5 rounded-full bg-background stroke-[3]"
+                    />
+                  ) : null}
+                </Button>
+                <Tooltip.Content placement="top" className="max-w-xs text-xs">
+                  <span className="block font-medium">{t`Teamwork`}</span>
+                  {t`Workers' changes are integrated automatically. Requires a local Git project and a chat agent with Crossagents enabled.`}
+                </Tooltip.Content>
+              </Tooltip>
               <PresentationModeTabs
                 presentationMode={presentationMode}
                 supportsTerminal={supportsTerminalMode}
@@ -1308,6 +1312,11 @@ export function ThreadDraftView(props: {
               ...(effectiveBrowserMcp ? { browserMcp: true } : {}),
               ...(effectiveCrossagentMcp ? { crossagentMcp: true } : {}),
               ...(effectiveTeamMode ? { teamMode: true } : {}),
+              ...(autoResumeAfterLimit &&
+              presentationMode === "gui" &&
+              selectedAgentForConfig?.capabilities.supportsUsageRecovery
+                ? { autoResumeAfterLimit: true }
+                : {}),
               ...(effectiveChromeMcp ? { chromeMcp: true } : {}),
               ...(effectiveComputerUse ? { computerUse: true } : {}),
             }}

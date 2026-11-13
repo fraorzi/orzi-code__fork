@@ -1,5 +1,8 @@
 import {
   providerUsagePayloadSchema,
+  providerUsageResetPayloadSchema,
+  type ProviderUsageResetPayload,
+  type ProviderUsageResetResponse,
   usageApiKeyPayloadSchema,
   usageLoginConfirmationPayloadSchema,
   usageLoginPayloadSchema,
@@ -17,6 +20,11 @@ import {
 import { definePayloadProcedure } from "../core";
 
 export const usageProcedures = {
+  consumeProviderUsageReset: definePayloadProcedure<
+    ProviderUsageResetPayload,
+    ProviderUsageResetResponse,
+    "supervisor"
+  >("consumeProviderUsageReset", "supervisor", providerUsageResetPayloadSchema),
   startUsageLogin: definePayloadProcedure<UsageLoginPayload, UsageLoginResult, "main-local">(
     "startUsageLogin",
     "main-local",

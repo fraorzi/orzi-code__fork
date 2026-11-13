@@ -15,7 +15,7 @@ import { worktreePlacementPayload } from "@/renderer/actions/worktreePlacement";
 import { deleteWorktreeGroup } from "@/renderer/actions/worktreeActions";
 import { Button } from "../Button";
 import { ConfirmDialog } from "../ConfirmDialog";
-import { ResponsiveMenuSurface } from "../ResponsiveMenuSurface";
+import { MenuPopover } from "../MenuPopover";
 import { useBranchList } from "./parts/useBranchList";
 import { BranchListBox, type OpenPrReviewArgs } from "./parts/BranchListBox";
 import { BranchFooterActions } from "./parts/BranchFooterActions";
@@ -431,7 +431,7 @@ export function BranchSelector(props: BranchSelectorProps) {
   return (
     <div className={`flex items-center gap-1 ${props.className ?? ""}`}>
       {worktreeMode && <span className="shrink-0 text-xs text-muted">from</span>}
-      <ResponsiveMenuSurface
+      <MenuPopover
         isOpen={isOpen}
         onOpenChange={setIsOpen}
         label={t`Select branch`}
@@ -442,7 +442,7 @@ export function BranchSelector(props: BranchSelectorProps) {
         dialogClassName="flex max-h-[24rem] flex-col overflow-hidden !p-0 !pb-1.5"
       >
         {menuBody}
-      </ResponsiveMenuSurface>
+      </MenuPopover>
       <ConfirmDialog
         isOpen={pendingDelete !== null}
         title={pendingDelete?.worktreePath ? t`Remove worktree?` : t`Delete branch?`}

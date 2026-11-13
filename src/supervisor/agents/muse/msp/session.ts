@@ -608,7 +608,13 @@ export class MuseMspStructuredSession implements StructuredSessionHandle {
       }
       case "turn/completed": {
         const turnId = stringValue(params["turnId"]);
-        if (!turnId) return;
+        if (!turnId || this.completedTurnIds.has(turnId)) return;
+        if (this.activeTurnId && this.activeTurnId !== turnId) {
+          // A late completion must not close the newer turn's open items or
+          // publish idle/error over its working state.
+          this.completedTurnIds.add(turnId);
+          return;
+        }
         const state = turnState(params["terminal"]);
         if (state === "failed") {
           const error = recordOf(params["error"]);

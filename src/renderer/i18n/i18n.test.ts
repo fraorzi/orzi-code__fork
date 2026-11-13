@@ -15,9 +15,15 @@ describe("bootstrapAppLocaleFromCache", () => {
   });
 
   it("activates the explicit cached locale before mount", async () => {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ locale: "es" }));
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ locale: "pl" }));
     await bootstrapAppLocaleFromCache();
-    expect(i18n.locale).toBe("es");
+    expect(i18n.locale).toBe("pl");
+  });
+
+  it("handles a cached locale removed by the desktop cleanup", async () => {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ locale: "ja" }));
+    await bootstrapAppLocaleFromCache();
+    expect(i18n.locale).toBe("en");
   });
 
   it("falls back to the source locale when no cache exists", async () => {

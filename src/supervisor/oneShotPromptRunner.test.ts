@@ -1,3 +1,4 @@
+import type { OneShotUsage } from "@/shared/auxiliaryUsage";
 import { EventEmitter } from "node:events";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ProjectLocation } from "@/shared/contracts";
@@ -427,5 +428,88 @@ describe("runOneShotPromptWithFallback", () => {
         attempts: [],
       }),
     ).rejects.toThrow("no attempts provided");
+  });
+});
+
+describe("provider-owned one-shot output decoding", () => {
+  it("reports native CLI usage before surfacing an error result", async () => {
+    const child = createMockChildProcess();
+    spawnMock.mockReturnValueOnce(child);
+    const onUsage = vi.fn<(usage: OneShotUsage) => void>();
+    const adapter = argvProneAdapter();
+    adapter.parseOneShotOutput = () => ({
+      text: "",
+      usage: [{ totalTokens: 5 }],
+      error: "provider rejected",
+    });
+    const pending = runOneShotPromptWithFallback({
+      location: windowsProject,
+      adapter,
+      model: "model",
+      effort: undefined,
+      timeoutMs: 10_000,
+      logTag: "test",
+      onUsage,
+      attempts: [{ level: "full", buildPrompt: () => "hello" }],
+    });
+    const rejected = pending.catch((error: unknown) => error);
+    await flushPromises();
+    child.stdout.emit("data", Buffer.from("native envelope"));
+    child.emit("close", 0);
+    expect(await rejected).toMatchObject({ message: "provider rejected" });
+    expect(onUsage).toHaveBeenCalledExactlyOnceWith({ totalTokens: 5 });
+  });
+
+  it("leaves nonzero CLI exits unmeasured when spawn cannot return their output", async () => {
+    const child = createMockChildProcess();
+    spawnMock.mockReturnValueOnce(child);
+    const onUsage = vi.fn<(usage: OneShotUsage) => void>();
+    const adapter = argvProneAdapter();
+    adapter.parseOneShotOutput = vi.fn<NonNullable<AgentAdapter["parseOneShotOutput"]>>(() => ({
+      text: "",
+      usage: [{ totalTokens: 5 }],
+    }));
+    const pending = runOneShotPromptWithFallback({
+      location: windowsProject,
+      adapter,
+      model: "model",
+      effort: undefined,
+      timeoutMs: 10_000,
+      logTag: "test",
+      onUsage,
+      attempts: [{ level: "full", buildPrompt: () => "hello" }],
+    });
+    const rejected = pending.catch((error: unknown) => error);
+    await flushPromises();
+    child.stdout.emit("data", Buffer.from("error envelope with usage"));
+    child.emit("close", 1);
+    expect(await rejected).toBeInstanceOf(Error);
+    expect(adapter.parseOneShotOutput).not.toHaveBeenCalled();
+    expect(onUsage).not.toHaveBeenCalled();
+  });
+
+  it("passes usage callbacks to structured runners and preserves their plain output", async () => {
+    const onUsage = vi.fn<(usage: OneShotUsage) => void>();
+    const adapter = argvProneAdapter();
+    adapter.runOneShot = async (input) => {
+      input.onUsage?.({ model: "actual", totalTokens: 8 });
+      return "plain text";
+    };
+    adapter.parseOneShotOutput = () => {
+      throw new Error("CLI parser must not run for SDK output");
+    };
+    await expect(
+      runOneShotPromptWithFallback({
+        location: windowsProject,
+        adapter,
+        model: "model",
+        effort: undefined,
+        timeoutMs: 10_000,
+        logTag: "test",
+        onUsage,
+        attempts: [{ level: "full", buildPrompt: () => "hello" }],
+      }),
+    ).resolves.toBe("plain text");
+    expect(onUsage).toHaveBeenCalledExactlyOnceWith({ model: "actual", totalTokens: 8 });
   });
 });

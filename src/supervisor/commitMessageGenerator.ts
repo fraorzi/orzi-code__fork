@@ -1,3 +1,4 @@
+import type { OneShotUsage } from "@/shared/auxiliaryUsage";
 import type { GitFileChange, ProjectLocation } from "@/shared/contracts";
 import { resolveOneShotEffectiveModel, type AgentAdapter } from "./agents/base";
 import { buildDiffPromptContext } from "./diffPromptContext";
@@ -103,6 +104,7 @@ export async function generateCommitMessage(
   effort?: string,
   language?: string,
   fast?: boolean,
+  onUsage?: (usage: OneShotUsage) => void,
 ): Promise<string> {
   const effectiveModel = resolveOneShotEffectiveModel(adapter, model, () => {
     return new Error(`No default one-shot model configured for ${adapter.label}`);
@@ -135,6 +137,7 @@ export async function generateCommitMessage(
   const sourceLabel = `Change source: ${source}`;
   const prompt = buildPrompt(language);
   const raw = await runOneShotPromptWithFallback({
+    onUsage,
     location,
     adapter,
     model: effectiveModel,

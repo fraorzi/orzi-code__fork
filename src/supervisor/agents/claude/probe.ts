@@ -10,6 +10,7 @@ import {
 import { claudeCapabilitiesFromCliVersion, claudeCapabilitiesFromSdkModels } from "./models";
 import { AsyncPromptQueue } from "./promptQueue";
 import { spawnClaudeProbeProcess } from "./sdkProbeProcess";
+import { claudeHeadlessEnvironment } from "./headlessEnvironment";
 
 export { claudeCapabilitiesFromCliVersion } from "./models";
 
@@ -139,7 +140,7 @@ async function probeClaudeSdkPartialNative(
           pathToClaudeCodeExecutable: executablePath,
           persistSession: false,
           cwd: process.platform === "win32" ? (process.env.USERPROFILE ?? process.cwd()) : "/tmp",
-          ...(envOverrides ? { env: { ...process.env, ...envOverrides } } : {}),
+          env: { ...process.env, ...claudeHeadlessEnvironment(undefined, envOverrides) },
           settingSources: ["user", "project", "local"],
           allowedTools: [],
           stderr: () => {},
@@ -192,7 +193,7 @@ async function probeClaudeSdkPartialWsl(
     [workerWslPath, ctx.executablePath, String(timeoutMs)],
     {
       timeout: timeoutMs + 3000,
-      ...(envOverrides ? { env: envOverrides } : {}),
+      env: claudeHeadlessEnvironment(ctx.location, envOverrides),
       ...(ctx.signal ? { signal: ctx.signal } : {}),
     },
   );

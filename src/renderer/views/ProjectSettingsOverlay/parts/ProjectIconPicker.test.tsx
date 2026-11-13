@@ -182,8 +182,8 @@ describe("ProjectIconPicker", () => {
     render(<ProjectIconPicker project={projectWith()} />);
     fireEvent.click(screen.getByRole("button", { name: "Change project icon" }));
 
-    const sheet = await screen.findByRole("dialog", { name: "Project icon" });
-    expect(within(sheet).queryByRole("button", { name: /Use an image/ })).toBeNull();
+    const popover = await screen.findByRole("dialog");
+    expect(within(popover).queryByRole("button", { name: /Use an image/ })).toBeNull();
     expect(pickFiles).not.toHaveBeenCalled();
   });
 });

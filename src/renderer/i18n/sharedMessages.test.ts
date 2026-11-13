@@ -22,22 +22,20 @@ describe("shared message i18n integration", () => {
   });
 
   it("returns translated text once a non-source locale is active", async () => {
-    await dynamicActivate("es");
+    await dynamicActivate("pl");
     const translated = msg("git.commit.failed", { detail: "boom" });
     // Differs from the English source (so a translation was applied) and still
     // interpolates the `{detail}` value.
     expect(translated).not.toBe("Commit failed: boom");
     expect(translated).toContain("boom");
     expect(msg("update.serviceUnavailable")).toBe(
-      "El servicio de actualizaciones no está disponible temporalmente.",
+      "Usługa aktualizacji jest tymczasowo niedostępna.",
     );
-    expect(msg("remote.session.expired")).toBe(
-      "El emparejamiento caducó: empareja de nuevo para reconectar.",
-    );
+    expect(msg("remote.session.expired")).toContain("sparuj ponownie, aby połączyć.");
   });
 
   it("preserves a leading placeholder + newline through translation", async () => {
-    await dynamicActivate("es");
+    await dynamicActivate("pl");
     const translated = msg("git.worktree.cleanupFailed", { original: "ORIG", cleanup: "CLN" });
     // Both placeholders and the newline survive (regression guard for the PO
     // multiline handling of `{original}\n…`).
@@ -48,7 +46,7 @@ describe("shared message i18n integration", () => {
   });
 
   it("keeps GitHub account error placeholders aligned with each message", async () => {
-    await dynamicActivate("es");
+    await dynamicActivate("pl");
     const unavailable = msg("github.accountUnavailable", { login: "octocat" });
     expect(unavailable).toContain("octocat");
     expect(unavailable).toContain("gh auth login");
@@ -63,14 +61,14 @@ describe("shared message i18n integration", () => {
   });
 
   it("translates pattern-matched friendly errors", async () => {
-    await dynamicActivate("es");
+    await dynamicActivate("pl");
     const summary = friendlyError(new Error("CONFLICT (content): Merge conflict in src/x.ts"));
     expect(summary).not.toBe("Merge has conflicts");
     expect(summary.length).toBeGreaterThan(0);
   });
 
   it("translates wrapped ACP authentication verification errors", async () => {
-    await dynamicActivate("es");
+    await dynamicActivate("pl");
     const summary = friendlyError(
       new Error(
         "Error invoking remote method 'poracode:authenticate-acp-agent': Error: My ACP reported authentication success, but Poracode could not verify it. Configure My ACP directly, then try again.",
@@ -78,12 +76,12 @@ describe("shared message i18n integration", () => {
     );
 
     expect(summary).toBe(
-      "My ACP informó que la autenticación se realizó correctamente, pero Poracode no pudo verificarla. Configura My ACP directamente y vuelve a intentarlo.",
+      "My ACP zgłosił pomyślne uwierzytelnienie, ale Orzi Code nie mógł go zweryfikować. Skonfiguruj bezpośrednio My ACP, a następnie spróbuj ponownie.",
     );
   });
 
   it("translates main-process SSH manifest errors and preserves their path", async () => {
-    await dynamicActivate("es");
+    await dynamicActivate("pl");
     const path = "C:\\Poracode\\server.ssh-runtime-manifest.json";
     const summary = friendlyError(
       new Error(`Poracode SSH runtime manifest is missing or invalid: ${path}`),

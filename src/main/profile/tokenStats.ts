@@ -1,3 +1,4 @@
+import { summarizeAuxiliaryUsage } from "./auxiliaryUsage";
 import {
   baseAgentKind,
   type ProfileBreakdownEntry,
@@ -41,6 +42,7 @@ function emptyTokenStats(
   const windowDays = statsWindowDays(req.window) ?? HEATMAP_WINDOW_DAYS;
   const { heatmap } = buildHeatmap(new Map(), todayIndex, "tokens", windowDays);
   return {
+    auxiliary: [],
     available: false,
     scope: req.scope ?? "device",
     device,
@@ -181,7 +183,16 @@ export function computeProfileTokenStats(req: ProfileStatsRequest): ProfileToken
           .map(([provider]) => provider)
           .sort();
 
+  const auxiliary = summarizeAuxiliaryUsage(
+    dbGetAllUsageEvents().filter((row) => {
+      if (req.provider && row.provider !== req.provider) return false;
+      const dayIndex = localDayIndex(row.ts, offset);
+      return startDayIndex === undefined || (dayIndex >= startDayIndex && dayIndex <= todayIndex);
+    }),
+  );
+
   const result: ProfileTokenStats = {
+    auxiliary,
     available: lifetimeTokens > 0,
     scope: req.scope ?? "device",
     device: currentDevice,

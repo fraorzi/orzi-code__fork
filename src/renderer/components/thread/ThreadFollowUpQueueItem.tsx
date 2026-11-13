@@ -70,7 +70,10 @@ export function ThreadFollowUpQueueItem({
   // `prompt` is the canonical flattened text and already excludes attachment
   // segments. Structured segments remain attached for the eventual dispatch,
   // but their filesystem paths must not leak into the queue preview.
-  const preview = item.prompt.trim();
+  const preview =
+    item.source === "usage-recovery"
+      ? t`Continue the task interrupted by the usage limit. Check what already completed before proceeding.`
+      : item.prompt.trim();
   return (
     <li
       ref={(element) => {

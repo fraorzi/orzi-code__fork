@@ -1,3 +1,4 @@
+import type { OneShotUsage } from "@/shared/auxiliaryUsage";
 import type { ProjectLocation } from "@/shared/contracts";
 import {
   resolveAgentProjectLocation,
@@ -59,6 +60,7 @@ export interface OneShotPromptAttempt {
 }
 
 export interface RunOneShotPromptOptions {
+  onUsage?: ((usage: OneShotUsage) => void) | undefined;
   location: ProjectLocation;
   adapter: AgentAdapter;
   model: string;
@@ -149,6 +151,7 @@ async function runOneShotPromptWithFallbackImpl(
       const signal = wrapTimeoutSignal(options.signal, options.timeoutMs);
       try {
         return await runOneShot.call(options.adapter, {
+          onUsage: options.onUsage,
           location: executionLocation,
           model: options.model,
           effort: options.effort,
@@ -209,7 +212,11 @@ async function runOneShotPromptWithFallbackImpl(
     );
 
     try {
-      return await spawn(spawnSpec, cmd.stdin ?? prompt, options.timeoutMs, options.signal);
+      const raw = await spawn(spawnSpec, cmd.stdin ?? prompt, options.timeoutMs, options.signal);
+      const parsed = options.adapter.parseOneShotOutput?.(raw);
+      for (const usage of parsed?.usage ?? []) options.onUsage?.(usage);
+      if (parsed?.error) throw new Error(parsed.error);
+      return parsed?.text ?? raw;
     } catch (err) {
       lastError = err;
       if (hasNextAttempt && isArgvTooLongError(err)) {

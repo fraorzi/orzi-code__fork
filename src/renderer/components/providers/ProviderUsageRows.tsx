@@ -1,5 +1,5 @@
 // Modified for the orzi-code__fork personal fork by Franciszek Orzechowski on 2026-10-06.
-import { UsageResetCredits } from "./UsageResetCredits";
+import { ProviderResetCreditsSection } from "./ProviderResetCreditsSection";
 import { useEffect, useState } from "react";
 import { ChevronUp, Gauge } from "lucide-react";
 import { Trans, useLingui } from "@lingui/react/macro";
@@ -105,7 +105,6 @@ function ProviderUsageDetail({ provider, now }: { provider: UsageProvider; now: 
           {usageStatusText(snapshot, provider.label, provider.id, now)}
         </div>
       )}
-      {snapshot?.resetCredits && <UsageResetCredits credits={snapshot.resetCredits} now={now} />}
     </button>
   );
 }
@@ -120,36 +119,39 @@ export function ProviderUsageRows({ providers }: { providers: readonly UsageProv
     return () => clearInterval(timer);
   }, []);
   return (
-    <div className="-mx-2 shrink-0 border-t border-[var(--separator)] px-2 py-1.5">
-      <button
-        type="button"
-        aria-expanded={expanded}
-        aria-label={expanded ? t`Collapse limits` : t`Expand limits`}
-        className="@container flex min-h-7 w-full items-center gap-2 rounded-[6px] px-2 py-1 text-[13px] text-muted outline-none transition-colors hover:bg-[var(--row-hover)] hover:text-foreground focus-visible:focus-ring"
-        onClick={toggleExpanded}
-      >
-        <Gauge className={`size-4 shrink-0 ${expanded ? "" : "@max-[18rem]:hidden"}`} />
-        <span className={expanded ? "" : "@max-[18rem]:hidden"}>
-          <Trans>Limits</Trans>
-        </span>
-        {expanded ? null : (
-          <span className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-x-2.5 gap-y-1 font-mono text-[11px]">
-            {providers.map((provider) => (
-              <ProviderUsageChip key={provider.id} provider={provider} />
-            ))}
+    <div className="-mx-2 shrink-0">
+      <ProviderResetCreditsSection providers={providers} now={now} />
+      <div className="border-t border-[var(--separator)] px-2 py-1.5">
+        <button
+          type="button"
+          aria-expanded={expanded}
+          aria-label={expanded ? t`Collapse limits` : t`Expand limits`}
+          className="@container flex min-h-7 w-full items-center gap-2 rounded-[6px] px-2 py-1 text-[13px] text-muted outline-none transition-colors hover:bg-[var(--row-hover)] hover:text-foreground focus-visible:focus-ring"
+          onClick={toggleExpanded}
+        >
+          <Gauge className={`size-4 shrink-0 ${expanded ? "" : "@max-[18rem]:hidden"}`} />
+          <span className={expanded ? "" : "@max-[18rem]:hidden"}>
+            <Trans>Limits</Trans>
           </span>
-        )}
-        <ChevronUp
-          className={`size-3.5 shrink-0 transition-transform ${expanded ? "ml-auto rotate-180" : ""}`}
-        />
-      </button>
-      {expanded ? (
-        <div className="max-h-64 overflow-y-auto pt-1">
-          {providers.map((provider) => (
-            <ProviderUsageDetail key={provider.id} provider={provider} now={now} />
-          ))}
-        </div>
-      ) : null}
+          {expanded ? null : (
+            <span className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-x-2.5 gap-y-1 font-mono text-[11px]">
+              {providers.map((provider) => (
+                <ProviderUsageChip key={provider.id} provider={provider} />
+              ))}
+            </span>
+          )}
+          <ChevronUp
+            className={`size-3.5 shrink-0 transition-transform ${expanded ? "ml-auto rotate-180" : ""}`}
+          />
+        </button>
+        {expanded ? (
+          <div className="max-h-64 overflow-y-auto pt-1">
+            {providers.map((provider) => (
+              <ProviderUsageDetail key={provider.id} provider={provider} now={now} />
+            ))}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -192,6 +192,7 @@ const CODEX_BUILT_IN_SLASH_COMMANDS: AgentCapability["slashCommands"] = [
 ];
 
 export const codexDefaultCapabilities: AgentCapability = {
+  supportsUsageRecovery: true,
   models: [],
   efforts: [],
   modelEfforts: {},

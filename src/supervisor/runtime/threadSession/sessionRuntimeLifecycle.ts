@@ -17,6 +17,7 @@ import type { FollowUpQueueCoordinator } from "./followUpQueueCoordinator";
 
 export interface SessionRuntimeLifecycleContext {
   onUsageSnapshot?: ThreadSessionManagerOptions["onUsageSnapshot"];
+  onUsageFailure?(session: SessionRuntime, message: string): void;
   sessions: Map<string, SessionRuntime>;
   sessionsBySessionId: Map<string, SessionRuntime>;
   ptyLifecycle: Pick<PtyLifecycle, "track" | "resolveExit" | "kill">;
@@ -120,8 +121,16 @@ export class SessionRuntimeLifecycle {
       context.indexSessionRef(session, prevId);
     }
 
+    const nextConfig = update.config
+      ? {
+          ...update.config,
+          ...(session.config.autoResumeAfterLimit !== undefined
+            ? { autoResumeAfterLimit: session.config.autoResumeAfterLimit }
+            : {}),
+        }
+      : undefined;
     const configChanged =
-      update.config !== undefined && !isThreadConfigEqual(session.config, update.config);
+      nextConfig !== undefined && !isThreadConfigEqual(session.config, nextConfig);
     const slashCommandsChanged =
       update.slashCommands !== undefined &&
       !areAgentSlashCommandsEqual(session.slashCommands, update.slashCommands);
@@ -129,9 +138,7 @@ export class SessionRuntimeLifecycle {
       session.status !== update.status ||
       session.attention !== update.attention ||
       update.errorMessage !== undefined;
-    if (update.config) {
-      session.config = update.config;
-    }
+    if (nextConfig) session.config = nextConfig;
     if (update.slashCommands !== undefined) {
       session.slashCommands = update.slashCommands;
     }
@@ -179,6 +186,8 @@ export class SessionRuntimeLifecycle {
     // replacement turn; the queue must see that direct activity before it
     // evaluates the newly-settled status.
     context.followUpQueue?.onStructuredUpdate(session, update.status);
+    if (update.status === "error" && update.errorMessage)
+      context.onUsageFailure?.(session, update.errorMessage);
     if (
       (sessionRefChanged || configChanged || slashCommandsChanged) &&
       !stateChanged &&

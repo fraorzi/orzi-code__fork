@@ -7,6 +7,7 @@ import type {
 import type { QueuedStructuredTurn, SessionRuntime } from "../sessionTypes";
 
 export interface QueueEntry {
+  source?: "usage-recovery" | undefined;
   readonly id: string;
   readonly stagedAt: number;
   /** Snapshot at receipt; preparation must not mutate this value. */
@@ -84,6 +85,7 @@ export function snapshotPayload(payload: SetPendingSteerPayload): SetPendingStee
 
 export function pendingState(entry: QueueEntry): PendingSteerState {
   return {
+    ...(entry.source ? { source: entry.source } : {}),
     id: entry.id,
     prompt: entry.payload.prompt,
     stagedAt: entry.stagedAt,

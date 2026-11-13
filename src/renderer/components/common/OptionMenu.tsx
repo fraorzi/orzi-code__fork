@@ -1,19 +1,25 @@
 import { useState, type ReactNode } from "react";
 import { useLingui } from "@lingui/react/macro";
-import type { Selection } from "@heroui/react";
-import { Label, ListBox, ListLayout, Tooltip, Virtualizer } from "@heroui/react";
-import { Check, ChevronDown } from "lucide-react";
+import { Label, ListBox, ListLayout, Tooltip, Virtualizer, Selection } from "@heroui/react";
+import { ChevronDown } from "lucide-react";
 import { Button, type ButtonProps } from "./Button";
-import { ResponsiveMenuSurface, useResponsiveMenu } from "./ResponsiveMenuSurface";
+import { MenuPopover } from "./MenuPopover";
 import {
   LARGE_DROPDOWN_VIRTUALIZATION_THRESHOLD,
   MENU_DROPDOWN_ROW_HEIGHT,
   VIRTUALIZED_MENU_DROPDOWN_ITEM_CLASS,
 } from "./dropdownVirtualization";
-
 export interface OptionMenuProps {
   value: string;
-  options: readonly (string | { id: string; label: string; icon?: ReactNode; hint?: string })[];
+  options: readonly (
+    | string
+    | {
+        id: string;
+        label: string;
+        icon?: ReactNode;
+        hint?: string;
+      }
+  )[];
   onChange: (value: string) => void;
   icon?: ReactNode;
   placeholder?: string;
@@ -27,7 +33,6 @@ export interface OptionMenuProps {
   tooltip?: string | undefined;
   onOpenChange?: (open: boolean) => void;
 }
-
 export function OptionMenu(props: OptionMenuProps) {
   const { t } = useLingui();
   const {
@@ -48,22 +53,28 @@ export function OptionMenu(props: OptionMenuProps) {
   } = props;
   const resolvedPlaceholder = placeholder ?? t`Select`;
   const [isOpen, setIsOpen] = useState(false);
-  const { mobile } = useResponsiveMenu();
   const normalizedOptions = options.map((option) =>
     typeof option === "string"
-      ? { id: option, label: option, icon: undefined, hint: undefined }
+      ? {
+          id: option,
+          label: option,
+          icon: undefined,
+          hint: undefined,
+        }
       : option,
   );
   const currentValue =
     normalizedOptions.find((option) => option.id === value)?.label || value || resolvedPlaceholder;
   const effectiveTooltip = tooltip ?? (hideLabelOnWrap || iconOnly ? currentValue : undefined);
-  const buttonProps = className ? { className } : {};
-
+  const buttonProps = className
+    ? {
+        className,
+      }
+    : {};
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     onOpenChange?.(open);
   };
-
   const button = (
     <Button
       aria-label={resolvedPlaceholder}
@@ -71,9 +82,6 @@ export function OptionMenu(props: OptionMenuProps) {
       size="sm"
       variant={buttonVariant}
       {...buttonProps}
-      // On mobile there is no HeroUI Popover.Trigger wiring the press, so open
-      // the drawer directly from the trigger.
-      {...(mobile ? { onPress: () => handleOpenChange(true) } : {})}
     >
       {icon}
       {!iconOnly && (
@@ -138,31 +146,6 @@ export function OptionMenu(props: OptionMenuProps) {
       )}
     </ListBox>
   );
-
-  // On mobile the drawer renders full-width rows with finger-sized tap targets
-  // (the desktop ListBox rows are ~28px), mirroring the mobile shell's SheetMenu.
-  const mobileList = (
-    <div className="m-sheet-list">
-      {normalizedOptions.map((option) => (
-        <button
-          key={option.id}
-          type="button"
-          className="m-sheet-action"
-          aria-pressed={option.id === value || undefined}
-          onClick={() => {
-            handleOpenChange(false);
-            onChange(option.id);
-          }}
-        >
-          {option.icon}
-          <span className="flex-1 truncate">{option.label}</span>
-          {option.hint ? <span className="shrink-0 text-xs text-muted">{option.hint}</span> : null}
-          {option.id === value ? <Check className="size-4 shrink-0 text-accent" /> : null}
-        </button>
-      ))}
-    </div>
-  );
-
   const desktopTrigger = effectiveTooltip ? (
     <Tooltip>
       {button}
@@ -171,30 +154,29 @@ export function OptionMenu(props: OptionMenuProps) {
   ) : (
     button
   );
-
   return (
-    <ResponsiveMenuSurface
+    <MenuPopover
       isOpen={isOpen}
       onOpenChange={handleOpenChange}
       label={resolvedPlaceholder}
-      // Mobile drops the tooltip wrapper (no hover) and presses open the drawer.
-      trigger={mobile ? button : desktopTrigger}
+      trigger={desktopTrigger}
       placement="top"
       contentClassName="p-0"
       dialogClassName="overflow-hidden"
     >
-      {mobile ? (
-        mobileList
-      ) : isVirtualized ? (
+      {isVirtualized ? (
         <Virtualizer
           layout={ListLayout}
-          layoutOptions={{ padding: 4, rowHeight: MENU_DROPDOWN_ROW_HEIGHT }}
+          layoutOptions={{
+            padding: 4,
+            rowHeight: MENU_DROPDOWN_ROW_HEIGHT,
+          }}
         >
           {listBox}
         </Virtualizer>
       ) : (
         listBox
       )}
-    </ResponsiveMenuSurface>
+    </MenuPopover>
   );
 }

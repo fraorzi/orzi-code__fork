@@ -1,3 +1,4 @@
+import type { OneShotUsage } from "@/shared/auxiliaryUsage";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ProjectLocation } from "@/shared/contracts";
 
@@ -30,6 +31,29 @@ describe("runOpenCodeOneShot", () => {
     mocks.acquireOpenCodeServer.mockResolvedValue({
       client: { session: { create, prompt, abort } },
       dispose,
+    });
+  });
+
+  it("reports actual SDK consumption before checking response errors", async () => {
+    const onUsage = vi.fn<(usage: OneShotUsage) => void>();
+    prompt.mockResolvedValueOnce({
+      data: {
+        info: {
+          modelID: "actual",
+          tokens: { total: 17 },
+          cost: 0.02,
+          error: { data: { message: "failed" } },
+        },
+        parts: [],
+      },
+    });
+    await expect(
+      runOpenCodeOneShot({ location, model: "openai/model", prompt: "title", onUsage }),
+    ).rejects.toThrow(/failed/);
+    expect(onUsage).toHaveBeenCalledExactlyOnceWith({
+      model: "actual",
+      totalTokens: 17,
+      costUsd: 0.02,
     });
   });
 

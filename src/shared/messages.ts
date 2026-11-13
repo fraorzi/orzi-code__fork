@@ -8,6 +8,8 @@
  */
 
 const messages = {
+  "supervisor.usageRecovery.continue":
+    "Continue the task interrupted by the usage limit. Check what already completed before proceeding.",
   "voice.unavailable": "Live voice is unavailable for this thread.",
   "voice.alreadyConnected": "A voice conversation is already active.",
   "voice.subscriptionRequired": "Live voice requires a subscription sign-in for this provider.",

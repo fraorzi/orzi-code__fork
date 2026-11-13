@@ -37,9 +37,9 @@ function backgroundTasksChangedEvent(
  * The payload is the complete live set after the change (REPLACE semantics —
  * never merge), so a missed bookend cannot wedge a stale entry. Per the CLI
  * contract, ambient housekeeping entries are not user work and are dropped
- * everywhere. {@link ClaudeMapperState.liveBackgroundTaskIds} keeps EVERY
- * remaining id (sub-agent runs included) for the "is background work still
- * running" checks that hold turn completion and goal evaluation open. The
+ * everywhere. {@link ClaudeMapperState.liveBackgroundSubAgentTaskIds} keeps only
+ * sub-agent/workflow ids that hold turn completion and goal evaluation open.
+ * Detached commands and monitors remain visible without blocking user input. The
  * emitted `background_tasks.changed` event carries only work that has no other
  * surface: sub-agent runs are excluded because their launch tool row already
  * renders as running and the sub-agent dock lists it.
@@ -63,15 +63,17 @@ export function applyBackgroundTasksChanged(
       if (entry.ambient === true) continue;
       const taskId = readNonEmptyString(entry.task_id);
       if (!taskId) continue;
-      liveIds.add(taskId);
       const isSubAgent =
         state.activeSubAgentTaskToTool?.has(taskId) === true ||
         (typeof entry.task_type === "string" && SUBAGENT_TASK_TYPES.has(entry.task_type));
-      if (isSubAgent) continue;
+      if (isSubAgent) {
+        liveIds.add(taskId);
+        continue;
+      }
       reported.push(toBackgroundTask(taskId, entry.task_type, entry.description));
     }
   }
-  state.liveBackgroundTaskIds = liveIds;
+  state.liveBackgroundSubAgentTaskIds = liveIds;
   state.reportedBackgroundTasks = reported;
   return backgroundTasksChangedEvent(state, reported);
 }
@@ -82,7 +84,7 @@ export function applyBackgroundTasksChanged(
  * if it had anything on it.
  */
 export function clearBackgroundTasks(state: ClaudeMapperState): RuntimeEvent[] {
-  delete state.liveBackgroundTaskIds;
+  delete state.liveBackgroundSubAgentTaskIds;
   state.reportedBackgroundTasks = [];
   return backgroundTasksChangedEvent(state, []);
 }

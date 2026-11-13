@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import type { UsageSnapshot } from "@poracode/agents-usage";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AgentStatus } from "@/shared/contracts";
+import type { AgentStatus, UsageLoginResult } from "@/shared/contracts";
 import { useAgentStatusesStore } from "@/renderer/state/agentStatusesStore";
 import { usePanelStore } from "@/renderer/state/panelStore";
 import { useProviderUsageStore } from "@/renderer/state/providerUsageStore";
@@ -10,7 +10,7 @@ import { useUsageProviderLogin } from "./useUsageProviderLogin";
 
 const bridgeMock = vi.hoisted(() => ({
   isRemoteSession: vi.fn<() => boolean>(() => false),
-  startUsageLogin: vi.fn<() => Promise<{ ok: boolean; cancelled?: boolean }>>(),
+  startUsageLogin: vi.fn<() => Promise<UsageLoginResult>>(),
   cancelUsageLogin: vi.fn<() => Promise<void>>(),
   submitUsageApiKey: vi.fn<() => Promise<{ ok: boolean }>>(),
   clearUsageLogin: vi.fn<() => Promise<{ ok: boolean }>>(),
@@ -266,7 +266,7 @@ describe("useUsageProviderLogin", () => {
 
     const { result } = renderHook(() => useUsageProviderLogin("opencode"));
 
-    let signInDone: Promise<void> | undefined;
+    let signInDone: Promise<UsageLoginResult> | undefined;
     await act(async () => {
       signInDone = result.current.handleSignIn();
     });
@@ -305,6 +305,17 @@ describe("useUsageProviderLogin", () => {
     expect(useUsageLoginStateStore.getState().stored.opencode).toBeUndefined();
     expect(bridgeMock.refreshProviderUsage).not.toHaveBeenCalled();
     expect(result.current.signingIn).toBe(false);
+  });
+
+  it("returns the login failure for the caller to display", async () => {
+    bridgeMock.startUsageLogin.mockResolvedValue({ ok: false, error: "Login timed out" });
+    const { result } = renderHook(() => useUsageProviderLogin("test"));
+    await act(async () => {
+      expect(await result.current.handleSignIn()).toEqual({ ok: false, error: "Login timed out" });
+    });
+    expect(result.current.signingIn).toBe(false);
+    expect(usePanelStore.getState().browserOverlayOpen).toBe(false);
+    expect(bridgeMock.refreshProviderUsage).not.toHaveBeenCalled();
   });
 
   it("refreshes usage after a successful API-key sign-in", async () => {

@@ -23,6 +23,7 @@ export {
   extractResultErrorMessage,
   isApiErrorResult,
   mapClaudeContextUsageResponse,
+  mapResultState,
   nonDiagnosticErrors,
 } from "./canonicalMapping/result";
 export { mapClaudeSdkMessage, readParentToolUseId } from "./canonicalMapping/dispatch";

@@ -2,9 +2,16 @@ import { vi } from "vitest";
 import type { AgentAdapter, StructuredSessionHandle } from "../agents/base";
 import type { SessionRuntime } from "./sessionTypes";
 import type { SupervisorEvent } from "@/shared/ipc";
+import type { ThreadSessionManagerOptions } from "./threadSession/managerOptions";
 import { ThreadSessionManager } from "./threadSessionManager";
 
-export function createFollowUpQueueHarness(followUpQueueDir?: string) {
+export function createFollowUpQueueHarness(
+  followUpQueueDir?: string,
+  usageOptions: Pick<
+    ThreadSessionManagerOptions,
+    "readUsageSnapshot" | "refreshUsageSnapshot"
+  > = {},
+) {
   const emit = vi.fn<(event: SupervisorEvent) => void>();
   const adapter = {
     kind: "test-agent",
@@ -12,6 +19,7 @@ export function createFollowUpQueueHarness(followUpQueueDir?: string) {
     capabilities: { liveInputMode: "server" },
   } as unknown as AgentAdapter;
   const manager = new ThreadSessionManager({
+    ...usageOptions,
     emit,
     isDev: false,
     logsDir: "tmp/queue-tests/logs",

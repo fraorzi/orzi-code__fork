@@ -7,7 +7,12 @@ import {
   type UsageSnapshot,
 } from "@poracode/agents-usage";
 import { coalesceByKey } from "@/shared/coalesce";
-import type { ProviderUsagePayload, ProviderUsageResponse } from "@/shared/contracts";
+import type {
+  ProviderUsagePayload,
+  ProviderUsageResponse,
+  ProviderUsageResetPayload,
+  ProviderUsageResetResponse,
+} from "@/shared/contracts";
 import type { SupervisorEvent } from "@/shared/ipc";
 import { defaultSharedSettings, type SharedSettings, type UsageSettings } from "@/shared/settings";
 import {
@@ -26,6 +31,7 @@ import {
 import { createLocalUsageCollectors, type LocalUsageCollector } from "./localUsageCollectors";
 import { createNodeUsageHost } from "./usageHost";
 import { readSupervisorSharedSettings } from "./supervisorSharedSettings";
+import { UsageResetCoordinator } from "./usageResetCoordinator";
 
 /**
  * Periodic/on-demand provider usage collection, modeled on AgentStatusService:
@@ -43,7 +49,7 @@ import { readSupervisorSharedSettings } from "./supervisorSharedSettings";
  * Cursor account when an SDK key is configured; v5 removes the desktop-app
  * credential fallback from the CLI-backed main tile.
  */
-const USAGE_CACHE_VERSION = 5;
+const USAGE_CACHE_VERSION = 7; // Recollect web inventory previously blocked by the Node HTTP transport.
 /** The full default provider set, from the package catalog (single source of truth). */
 const DEFAULT_PROVIDER_IDS: readonly string[] = allUsageProviderDescriptors().map((d) => d.id);
 const MIN_REFRESH_INTERVAL_MS = 2 * 60_000;
@@ -57,6 +63,7 @@ const DEFAULT_RATE_LIMIT_COOLDOWN_MS = 5 * 60_000;
 
 export interface UsageServiceOptions {
   emit(event: SupervisorEvent): void;
+  onSnapshot?(snapshot: UsageSnapshot): void;
   cachePath: string;
   /** Cache dir; backs the captured-secret store read by the credential host. */
   cacheDir?: string;
@@ -94,6 +101,7 @@ export class UsageService {
   private readonly registry: UsageCollectorRegistry = createUsageCollectorRegistry();
   private readonly localCollectors: Map<string, LocalUsageCollector>;
   private readonly host: HostPort;
+  private readonly resets: UsageResetCoordinator;
   private readonly snapshots = new Map<string, UsageSnapshot>();
   private loadedFromCache = false;
   /** In-flight refreshes keyed by their sorted id-set, so identical concurrent refreshes coalesce. */
@@ -104,6 +112,14 @@ export class UsageService {
 
   constructor(private readonly options: UsageServiceOptions) {
     this.host = options.host ?? createNodeUsageHost(options.cacheDir, options.settingsPath);
+    this.resets = new UsageResetCoordinator({
+      consume: ({ providerId, ...request }) =>
+        this.registry.consumeReset(providerId, this.host, request),
+      refresh: async (providerId) =>
+        (
+          await this.refreshProviderUsage({ providerIds: [providerId], force: true })
+        ).snapshots.find((s) => s.providerId === providerId),
+    });
     this.localCollectors = new Map(
       (
         options.localCollectors ??
@@ -111,6 +127,12 @@ export class UsageService {
       ).map((c) => [c.id, c]),
     );
     this.loadCache();
+  }
+
+  consumeProviderUsageReset(
+    payload: ProviderUsageResetPayload,
+  ): Promise<ProviderUsageResetResponse> {
+    return this.resets.consume(payload);
   }
 
   private defaultProviderIds(): string[] {
@@ -195,6 +217,10 @@ export class UsageService {
    * Returns cached snapshots immediately and kicks off a background refresh when
    * any requested provider is stale. Mirrors `getAgentStatuses`.
    */
+  readSnapshot(providerId: string): UsageSnapshot | undefined {
+    return this.snapshots.get(providerId);
+  }
+
   async getProviderUsage(payload: ProviderUsagePayload): Promise<ProviderUsageResponse> {
     const ids = this.resolveIds(payload);
     const showEstimatedCost = this.readUsageSettings().showEstimatedCost;
@@ -267,6 +293,7 @@ export class UsageService {
         const current = this.snapshots.get(id);
         if (current && current.fetchedAt > snapshot.fetchedAt) snapshot = current;
         this.snapshots.set(id, snapshot);
+        this.options.onSnapshot?.(snapshot);
         this.options.emit({
           type: "provider-usage",
           snapshot: showEstimatedCost ? snapshot : withoutEstimatedCost(snapshot),
@@ -343,6 +370,7 @@ export class UsageService {
     for (const window of snapshot.windows) windows.set(window.id, window);
     const merged = { ...previous, ...snapshot, windows: [...windows.values()] };
     this.snapshots.set(snapshot.providerId, merged);
+    this.options.onSnapshot?.(snapshot);
     this.options.emit({
       type: "provider-usage",
       snapshot: this.readUsageSettings().showEstimatedCost ? merged : withoutEstimatedCost(merged),

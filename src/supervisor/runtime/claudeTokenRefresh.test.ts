@@ -1,10 +1,11 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import type { ClaudeRefreshedToken, OAuthToken } from "@poracode/agents-usage";
+import type { ClaudeRefreshedToken, HttpClient, OAuthToken } from "@poracode/agents-usage";
 import {
   type ClaudeRefreshDeps,
+  defaultClaudeRefreshDeps,
   isClaudeTokenExpired,
   isClaudeTokenRefreshDue,
   mergeClaudeCredentialsJson,
@@ -15,6 +16,92 @@ import {
 
 const NOW = 1_700_000_000_000;
 const PATH = "/home/u/.claude/.credentials.json";
+
+describe("Claude OAuth refresh backoff", () => {
+  it("recovers existing expired credentials on a later cycle without signing in again", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "orzi-claude-refresh-upgrade-"));
+    const path = join(dir, ".credentials.json");
+    const token: OAuthToken = {
+      accessToken: "expired",
+      refreshToken: "existing-refresh",
+      expiresAt: NOW - 1,
+      subscriptionType: "pro",
+    };
+    const content = credsFile({ ...token, scopes: ["user:profile"] });
+    writeFileSync(path, content, { mode: 0o600 });
+    let now = NOW;
+    const request = vi
+      .fn<HttpClient["request"]>()
+      .mockResolvedValueOnce({ status: 429, headers: {}, body: "{}" })
+      .mockResolvedValue({
+        status: 200,
+        headers: {},
+        body: JSON.stringify({
+          access_token: "fresh",
+          refresh_token: "rotated",
+          expires_in: 28800,
+        }),
+      });
+    const deps = { ...defaultClaudeRefreshDeps({ request }), now: () => now };
+    try {
+      expect(await refreshClaudeFileTokenIfExpired(path, content, token, deps)).toBeUndefined();
+      expect(readFileSync(path, "utf8")).toBe(content);
+      now += 2 * 60_000;
+      expect(await refreshClaudeFileTokenIfExpired(path, content, token, deps)).toBeUndefined();
+      expect(request).toHaveBeenCalledTimes(1);
+      now += 3 * 60_000;
+      expect(await refreshClaudeFileTokenIfExpired(path, content, token, deps)).toMatchObject({
+        accessToken: "fresh",
+        subscriptionType: "pro",
+      });
+      expect(request).toHaveBeenCalledTimes(2);
+      expect(JSON.parse(readFileSync(path, "utf8"))).toMatchObject({
+        claudeAiOauth: {
+          accessToken: "fresh",
+          refreshToken: "rotated",
+          subscriptionType: "pro",
+          scopes: ["user:profile"],
+        },
+      });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it.each([
+    { retryAfter: "1200", delay: 20 * 60_000 },
+    { retryAfter: new Date(NOW + 10 * 60_000).toUTCString(), delay: 10 * 60_000 },
+    { retryAfter: "invalid", delay: 5 * 60_000 },
+    { retryAfter: undefined, delay: 5 * 60_000 },
+  ])(
+    "waits before automatically retrying after 429: $retryAfter",
+    async ({ retryAfter, delay }) => {
+      const request = vi
+        .fn<HttpClient["request"]>()
+        .mockResolvedValueOnce({
+          status: 429,
+          headers: retryAfter ? { "retry-after": retryAfter } : {},
+          body: "{}",
+        })
+        .mockResolvedValue({
+          status: 200,
+          headers: {},
+          body: JSON.stringify({
+            access_token: "fresh",
+            refresh_token: "rotated",
+            expires_in: 28800,
+          }),
+        });
+      const deps = defaultClaudeRefreshDeps({ request });
+      expect(await deps.refresh("old", NOW)).toBeUndefined();
+      expect(await deps.refresh("old", NOW + 2 * 60_000)).toBeUndefined();
+      expect(await deps.refresh("old", NOW + delay - 1)).toBeUndefined();
+      expect(request).toHaveBeenCalledTimes(1);
+      expect(await deps.refresh("old", NOW + delay)).toMatchObject({ accessToken: "fresh" });
+      expect(request).toHaveBeenCalledTimes(2);
+    },
+  );
+});
 
 function credsFile(oauth: object): string {
   return JSON.stringify({ claudeAiOauth: oauth });

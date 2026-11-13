@@ -1,3 +1,4 @@
+import { usageRecovery } from "./usageRecovery";
 import { cursorMcpLaunch } from "./mcp";
 import type { AgentInstanceConfig, AgentStatus, PromptSegment } from "@/shared/contracts";
 import { cursorProfileKind } from "@/shared/contracts";
@@ -118,6 +119,7 @@ export function createCursorAdapter(options: CursorAdapterOptions = {}): AgentAd
   const detectionSpec = isProfile ? { ...cursorDetectionSpec, kind, label } : cursorDetectionSpec;
   const profileKeyEnv = options.apiKey ? { CURSOR_API_KEY: options.apiKey } : undefined;
   return {
+    usageRecovery,
     usageProviderId: kind,
     kind,
     label,

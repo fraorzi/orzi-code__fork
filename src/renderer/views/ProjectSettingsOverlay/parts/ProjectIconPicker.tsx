@@ -1,9 +1,9 @@
+import type { Project } from "@/shared/contracts";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "@heroui/react";
 import { msg } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { FolderOpen, ImageIcon, Search } from "lucide-react";
-import type { Project } from "@/shared/contracts";
 import {
   formatFileProjectIcon,
   formatLucideProjectIcon,
@@ -16,10 +16,7 @@ import { updateProjectIcon } from "@/renderer/actions/projectActions";
 import { isRemoteSession, readBridge } from "@/renderer/bridge";
 import { Button } from "@/renderer/components/common";
 import { useProjectIconNode } from "@/renderer/components/common/ProjectIcon";
-import {
-  ResponsiveMenuSurface,
-  useResponsiveMenu,
-} from "@/renderer/components/common/ResponsiveMenuSurface";
+import { MenuPopover } from "@/renderer/components/common/MenuPopover";
 import { i18n } from "@/renderer/i18n/i18n";
 import { projectIconDisplayName, searchProjectIcons } from "@/renderer/utils/projectIcons";
 import { focusFirstProjectIcon, ProjectIconGrid } from "./ProjectIconGrid";
@@ -36,18 +33,16 @@ function relativeToProjectRoot(root: string, picked: string): string | null {
   if (!normalizedPicked.startsWith(`${normalizedRoot}\\`)) return null;
   return picked.slice(trimmedRoot.length + 1).replaceAll("\\", "/");
 }
-
 export function ProjectIconPicker(props: { project: Project }) {
   const { t } = useLingui();
   const { project } = props;
-  const { mobile } = useResponsiveMenu();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
   const spec = parseProjectIcon(project.icon);
   // File-based icons need the project's folder on this machine: a mirrored
-  // project's folder lives on its host, and the PWA bridge has neither the
+
   // folder probe nor a native file dialog. Bundled glyphs stay available.
   const canUseFileIcons = projectSupportsFileIcons(project) && !isRemoteSession();
   const currentIcon = useProjectIconNode(project, "size-4");
@@ -63,17 +58,12 @@ export function ProjectIconPicker(props: { project: Project }) {
     setPrevPickerOpen(open);
     if (!open) setSearch("");
   }
-
   useEffect(() => {
     if (!open) return;
-    // On mobile the drawer opens under the on-screen keyboard if we focus the
-    // field for them; let the user tap it when they want to filter.
-    if (!mobile) {
-      const timer = setTimeout(() => searchRef.current?.focus(), 50);
-      return () => clearTimeout(timer);
-    }
-    return undefined;
-  }, [open, mobile]);
+
+    const timer = setTimeout(() => searchRef.current?.focus(), 50);
+    return () => clearTimeout(timer);
+  }, [open]);
 
   // Probed per opening rather than once, so an icon added to the project while
   // the app is running shows up the next time the picker is opened.
@@ -81,7 +71,9 @@ export function ProjectIconPicker(props: { project: Project }) {
     if (!open || !canUseFileIcons) return;
     let cancelled = false;
     readBridge()
-      .listProjectIconFiles({ projectLocation: location })
+      .listProjectIconFiles({
+        projectLocation: location,
+      })
       .then((paths) => {
         if (!cancelled) setDiscovered(paths);
       })
@@ -92,9 +84,7 @@ export function ProjectIconPicker(props: { project: Project }) {
       cancelled = true;
     };
   }, [open, canUseFileIcons, location]);
-
   const apply = (value: string | undefined) => updateProjectIcon(project.id, value);
-
   const select = (value: string | undefined) => {
     apply(value);
     setOpen(false);
@@ -108,14 +98,18 @@ export function ProjectIconPicker(props: { project: Project }) {
     if (spec?.kind !== "lucide") return;
     apply(formatLucideProjectIcon(spec.name, color));
   };
-
   const pickImageFile = async () => {
     const rootPath = getProjectFsPath(project.location);
     if (!rootPath) return;
     const picked = await readBridge().pickFiles({
       title: t`Choose a project icon image`,
       defaultPath: rootPath,
-      filters: [{ name: t`Images`, extensions: [...IMAGE_EXTENSIONS] }],
+      filters: [
+        {
+          name: t`Images`,
+          extensions: [...IMAGE_EXTENSIONS],
+        },
+      ],
     });
     if (!picked || picked.length === 0) return;
     const relative = relativeToProjectRoot(rootPath, picked[0]!);
@@ -125,7 +119,6 @@ export function ProjectIconPicker(props: { project: Project }) {
     }
     select(formatFileProjectIcon(relative));
   };
-
   const triggerLabel = !spec
     ? t`Default`
     : spec.kind === "auto"
@@ -133,9 +126,8 @@ export function ProjectIconPicker(props: { project: Project }) {
       : spec.kind === "lucide"
         ? projectIconDisplayName(spec.name)
         : (spec.path.split("/").pop() ?? spec.path);
-
   return (
-    <ResponsiveMenuSurface
+    <MenuPopover
       isOpen={open}
       onOpenChange={setOpen}
       label={t`Project icon`}
@@ -147,7 +139,6 @@ export function ProjectIconPicker(props: { project: Project }) {
           variant="tertiary"
           aria-label={t`Change project icon`}
           className="w-[240px] shrink-0 justify-start gap-2 font-normal"
-          {...(mobile ? { onPress: () => setOpen(true) } : {})}
         >
           {currentIcon ?? <FolderOpen className="size-4 shrink-0 text-muted" />}
           <span className="min-w-0 flex-1 truncate text-left text-xs">{triggerLabel}</span>
@@ -223,8 +214,7 @@ export function ProjectIconPicker(props: { project: Project }) {
       </div>
 
       <div className="shrink-0 border-t border-border p-2">
-        {/* The only way back to no custom icon, so it stays available even
-            where file icons cannot resolve (mirrored projects, the PWA). */}
+        {}
         <Button
           variant="ghost"
           isDisabled={!project.icon}
@@ -245,6 +235,6 @@ export function ProjectIconPicker(props: { project: Project }) {
           </Button>
         ) : null}
       </div>
-    </ResponsiveMenuSurface>
+    </MenuPopover>
   );
 }

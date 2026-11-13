@@ -16,6 +16,7 @@ import {
 
 const queueProcedureNames = [
   "queueThreadFollowUp",
+  "setThreadUsageRecovery",
   "removeQueuedThreadFollowUp",
   "reorderQueuedThreadFollowUp",
   "editQueuedThreadFollowUp",

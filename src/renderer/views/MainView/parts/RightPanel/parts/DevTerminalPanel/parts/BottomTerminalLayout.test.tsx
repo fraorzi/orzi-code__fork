@@ -88,10 +88,10 @@ describe("BottomTerminalLayout", () => {
   });
 
   it("localizes the complete accessible action-tab status", async () => {
-    await act(() => dynamicActivate("de"));
+    await act(() => dynamicActivate("pl"));
     const view = renderLayout({ showActionTab: true });
 
-    expect(screen.getByRole("tab", { name: "Dev, Leerlauf" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Dev, Bezczynny" })).toBeInTheDocument();
 
     view.unmount();
     await act(() => dynamicActivate("en"));

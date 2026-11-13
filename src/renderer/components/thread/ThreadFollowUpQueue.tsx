@@ -64,12 +64,18 @@ export function ThreadFollowUpQueue({
       <ThreadDockHeader
         icon={ListOrdered}
         title={t`Queued follow-ups`}
-        countLabel={queue?.paused ? t`Paused` : String(items.length)}
+        countLabel={
+          queue?.waitingForLimit
+            ? t`Waiting for the usage limit to reset`
+            : queue?.paused
+              ? t`Paused`
+              : String(items.length)
+        }
         actions={
           queue?.paused ? (
             <ThreadDockIconButton
               label={t`Resume queued follow-ups`}
-              isDisabled={pending || Boolean(currentEdit)}
+              isDisabled={pending || Boolean(currentEdit) || queue.waitingForLimit === true}
               onPress={() => run(() => readBridge().resumeThreadFollowUps({ threadId }))}
             >
               <Play className="size-3.5" />

@@ -15,6 +15,10 @@ export interface RendererProviderManifest {
   order: number;
   /** Optional override for automatic utility tasks; otherwise `order` applies. */
   utilityOrder?: number;
+  /** Official page for viewing and redeeming saved quota resets. */
+  usageResetUrl?: string;
+  /** Saved-reset inventory may need a separately consented web session. */
+  usageResetBrowserLogin?: boolean;
   /** Ordered quota windows for the collapsed sidebar. Missing windows stay absent. */
   collapsedUsage?: {
     windowIds: readonly string[];

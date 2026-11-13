@@ -36,7 +36,6 @@ resources/wsl-helpers/mcp-stdio.mjs
 resources/agent-plugins/
 resources/computer-use-helper/
 resources/computer-use-helper-dev/
-resources/mobile-ssh-runtime/
 .envrc
 .envrc.local
 /Microsoft/Windows/PowerShell/ModuleAnalysisCache
@@ -49,3 +48,7 @@ website/out/
 
 .vercel
 .env*
+
+.DS_Store
+
+.claude/settings.local.json

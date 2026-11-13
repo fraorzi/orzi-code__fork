@@ -1,68 +1,109 @@
 import { Button } from "@heroui/react";
+import { useState } from "react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type { UsageResetCredits as ResetCredits } from "@poracode/agents-usage/types";
-import { openExternalWithFeedback } from "@/renderer/utils/openExternal";
+import { KeyRound, PanelTop } from "lucide-react";
+import { readBridge, isRemoteSession } from "@/renderer/bridge";
+import { friendlyError } from "@/shared/messages";
+import { useHasStoredSession } from "@/renderer/state/usageLoginStateStore";
+import { UsageResetGrant } from "./UsageResetGrant";
+import { useUsageProviderLogin } from "./useUsageProviderLogin";
+import { getProviderManifest } from "./providerManifest";
+import { activeResetGrants } from "./usageResetFormat";
 
 export function UsageResetCredits({
   credits,
   now,
   allowNavigation = false,
+  manageUrl,
+  providerId,
 }: {
   credits: ResetCredits;
   now: number;
   allowNavigation?: boolean;
+  manageUrl?: string;
+  providerId?: string;
 }) {
-  const { i18n } = useLingui();
-  if (credits.status === "unknown") {
+  const { t } = useLingui();
+  const [error, setError] = useState<string>();
+  const login = useUsageProviderLogin(providerId ?? "");
+  const hasStoredSession = useHasStoredSession(providerId ?? "");
+  const manifest = providerId ? getProviderManifest(providerId) : undefined;
+  // Profile aliases do not inherit the base account's mutation or login route.
+  const nativeProviderId = manifest?.kind === providerId ? providerId : undefined;
+  const browserLogin = nativeProviderId && manifest?.usageResetBrowserLogin && !isRemoteSession();
+  const openUsage = async () => {
+    if (!manageUrl) return;
+    await readBridge().browserCreateTab({ url: manageUrl, activate: true, reveal: true });
+  };
+  if (credits.status === "unknown")
     return (
-      <div className="space-y-0.5 text-[10px] text-muted">
-        <div>
-          {credits.reason === "web-only" ? (
-            <Trans>Resets: check provider website</Trans>
-          ) : (
-            <Trans>Resets: no data</Trans>
-          )}
-        </div>
-        {allowNavigation && credits.manageUrl && (
+      <div className="space-y-2 text-xs text-muted">
+        <p>
+          {credits.reason === "account-mismatch"
+            ? t`Connect the same account used by your agent.`
+            : browserLogin
+              ? hasStoredSession
+                ? t`Account connected, but saved resets could not be read. Try refreshing or open usage in Orzi.`
+                : t`Connect your account to view and activate saved resets here.`
+              : t`Reset availability could not be read. Try refreshing.`}
+        </p>
+        {browserLogin ? (
+          <Button
+            size="sm"
+            variant="secondary"
+            isDisabled={login.signingIn}
+            onPress={() => {
+              setError(undefined);
+              void login
+                .handleSignIn()
+                .then((outcome) => {
+                  if (!outcome.ok && outcome.error) setError(friendlyError(outcome.error));
+                })
+                .catch((cause) => setError(friendlyError(cause)));
+            }}
+          >
+            <KeyRound className="size-3.5" />
+            {hasStoredSession ? <Trans>Reconnect account</Trans> : <Trans>Connect account</Trans>}
+          </Button>
+        ) : null}
+        {allowNavigation && manageUrl && !isRemoteSession() ? (
           <Button
             size="sm"
             variant="ghost"
             onPress={() => {
-              if (credits.manageUrl) openExternalWithFeedback(credits.manageUrl);
+              setError(undefined);
+              void openUsage().catch((cause) => setError(friendlyError(cause)));
             }}
           >
-            <Trans>Open usage page</Trans>
+            <PanelTop className="size-3.5" />
+            <Trans>Open usage in Orzi</Trans>
           </Button>
-        )}
+        ) : null}
+        {error ? (
+          <p role="alert" className="text-danger">
+            {error}
+          </p>
+        ) : null}
       </div>
     );
-  }
-  const grants = credits.grants.filter(
-    (grant) =>
-      (grant.expiresAt === undefined || grant.expiresAt > now) &&
-      (grant.startsAt === undefined || grant.startsAt <= now),
-  );
-  const count = grants.reduce((sum, grant) => sum + grant.remaining, 0);
+  const grants = activeResetGrants(credits, now);
+  if (!grants.length)
+    return (
+      <p className="text-xs text-muted">
+        <Trans>No saved resets</Trans>
+      </p>
+    );
   return (
-    <div className="space-y-0.5 text-[10px] tabular-nums">
-      <div className="font-medium">
-        <Trans>Additional resets: {count}</Trans>
-      </div>
-      {grants.map((grant) => {
-        const date =
-          grant.expiresAt === undefined
-            ? undefined
-            : new Intl.DateTimeFormat(i18n.locale, {
-                dateStyle: "medium",
-                timeStyle: "short",
-              }).format(grant.expiresAt);
-        return (
-          <div key={grant.id} className="text-muted">
-            {grants.length > 1 ? `${grant.remaining}: ` : null}
-            {date ? <Trans>Expires {date}</Trans> : <Trans>Expiry not reported</Trans>}
-          </div>
-        );
-      })}
+    <div>
+      {grants.map((grant) => (
+        <UsageResetGrant
+          key={grant.id}
+          grant={grant}
+          now={now}
+          {...(nativeProviderId ? { providerId: nativeProviderId } : {})}
+        />
+      ))}
     </div>
   );
 }

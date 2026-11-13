@@ -1,4 +1,5 @@
-import { Globe, House, PanelLeft, Plus, Search, Settings2 } from "lucide-react";
+import { Globe, House, Network, PanelLeft, Plus, Search, Settings2 } from "lucide-react";
+import { useLocalPortsStore } from "@/renderer/state/localPortsStore";
 import { startTransition, useEffect, useLayoutEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { Trans, useLingui } from "@lingui/react/macro";
@@ -281,6 +282,12 @@ export function Sidebar() {
               label={t`Browser`}
               isActive={browserVisible}
               onPress={toggleBrowserPanel}
+            />
+            <SidebarButton
+              iconOnly
+              icon={<Network className="size-3.5" />}
+              label={t`Ports`}
+              onPress={() => useLocalPortsStore.getState().setOpen(true)}
             />
             <SidebarButton
               iconOnly

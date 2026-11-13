@@ -15,7 +15,7 @@ import type {
   ThreadConfig,
   ThreadServerRequestId,
 } from "@/shared/contracts";
-import type { StructuredSessionUpdate } from "../base";
+import type { StructuredSessionListener, StructuredSessionUpdate } from "../base";
 import { ClaudeSdkSession } from "./sdkSession";
 
 const mockSdk = vi.hoisted(() => ({
@@ -233,12 +233,15 @@ function sdkSuccessResult(sessionId: string): SDKMessage {
   } as unknown as SDKMessage;
 }
 
-function sdkErrorResult(sessionId: string): SDKMessage {
+function sdkErrorResult(
+  sessionId: string,
+  options: { errors?: string[]; subtype?: "error_during_execution" | "error_max_turns" } = {},
+): SDKMessage {
   return {
     type: "result",
-    subtype: "error_during_execution",
+    subtype: options.subtype ?? "error_during_execution",
     is_error: true,
-    errors: ["upstream API failure"],
+    errors: options.errors ?? ["upstream API failure"],
     session_id: sessionId,
   } as unknown as SDKMessage;
 }
@@ -284,6 +287,102 @@ function sdkTaskNotification(
 }
 
 describe("ClaudeSdkSession", () => {
+  it("publishes account limits during a running turn without waiting for its result", async () => {
+    const fake = createFakeQuery();
+    mockSdk.query.mockReturnValue(fake.runtime);
+    const onUsageSnapshot = vi.fn<NonNullable<StructuredSessionListener["onUsageSnapshot"]>>();
+    const events: RuntimeEvent[] = [];
+    const session = await ClaudeSdkSession.create({
+      threadId: "live-account-usage",
+      projectLocation,
+      config,
+      presentationMode: "gui",
+    });
+    session.setListener({
+      onUsageSnapshot,
+      onRuntimeEvent: (event) => events.push(event),
+      onUpdate: () => {},
+      onError: () => {},
+      onClose: () => {},
+    });
+    try {
+      const id = await session.openThread(config);
+      await session.startTurn("work", config);
+      fake.emitMessage({
+        type: "rate_limit_event",
+        uuid: "00000000-0000-4000-8000-000000000001",
+        session_id: id,
+        rate_limit_info: {
+          status: "allowed_warning",
+          rateLimitType: "five_hour",
+          utilization: 0.97,
+          resetsAt: 1_800_000_000,
+        },
+      });
+      await flushAsyncWork();
+      expect(onUsageSnapshot).toHaveBeenCalledWith({
+        providerId: "claude",
+        status: "ok",
+        fetchedAt: expect.any(Number),
+        windows: [
+          {
+            id: "session-5h",
+            label: "Session (5h)",
+            unit: "percent",
+            usedPercent: 97,
+            resetsAt: 1_800_000_000_000,
+          },
+        ],
+      });
+      expect(events.some((event) => event.type === "turn.completed")).toBe(false);
+    } finally {
+      await session.dispose();
+    }
+  });
+
+  it("reports a synthetic quota rejection immediately while a background task remains live", async () => {
+    const fake = createFakeQuery();
+    mockSdk.query.mockReturnValue(fake.runtime);
+    const events: RuntimeEvent[] = [];
+    const updates: StructuredSessionUpdate[] = [];
+    const session = await ClaudeSdkSession.create({
+      threadId: "quota-background",
+      projectLocation,
+      config,
+      presentationMode: "gui",
+    });
+    session.setListener({
+      onRuntimeEvent: (event) => events.push(event),
+      onUpdate: (update) => updates.push(update),
+      onError: () => {},
+      onClose: () => {},
+    });
+    try {
+      const id = await session.openThread(config);
+      await session.startTurn("work", config);
+      fake.emitMessage(sdkTaskStarted(id, "background", "tool-background"));
+      const message = sdkAssistantMessage(
+        id,
+        "limit",
+        "You've hit your 5-hour limit · resets 8:50pm (Europe/Warsaw)",
+      );
+      if (message.type !== "assistant") throw new Error("Expected assistant fixture");
+      message.error = "rate_limit";
+      fake.emitMessage(message);
+      await flushAsyncWork();
+      expect(events).toContainEqual({
+        type: "error",
+        threadId: "quota-background",
+        message: "You've hit your 5-hour limit · resets 8:50pm (Europe/Warsaw)",
+      });
+      expect(events).toContainEqual(
+        expect.objectContaining({ type: "turn.completed", state: "failed" }),
+      );
+      expect(updates.at(-1)).toMatchObject({ status: "error", attention: "error" });
+    } finally {
+      await session.dispose();
+    }
+  });
   it("publishes deduplicated task consumption and a context baseline through the SDK session", async () => {
     const fake = createFakeQuery();
     mockSdk.query.mockReturnValue(fake.runtime);
@@ -304,7 +403,10 @@ describe("ClaudeSdkSession", () => {
     await session.startTurn("work", config);
     expect(mockSdk.query.mock.calls[0]?.[0]).toMatchObject({
       options: {
-        env: { CLAUDE_CODE_AUTO_COMPACT_WINDOW: "200000" },
+        env: {
+          CLAUDE_CODE_AUTO_COMPACT_WINDOW: "200000",
+          CLAUDE_CODE_ENTRYPOINT: "orzi-code",
+        },
       },
     });
     const sample = {
@@ -1468,6 +1570,42 @@ describe("ClaudeSdkSession", () => {
     await session.dispose();
   });
 
+  it.each(["error_during_execution", "error_max_turns"] as const)(
+    "reports %s without error details as failure instead of cancellation",
+    async (subtype) => {
+      const fake = createFakeQuery();
+      mockSdk.query.mockReturnValue(fake.runtime);
+      const updates: StructuredSessionUpdate[] = [];
+      const events: RuntimeEvent[] = [];
+      const session = await ClaudeSdkSession.create({
+        threadId: "error-details",
+        projectLocation,
+        config,
+        presentationMode: "gui",
+      });
+      session.setListener({
+        onClose: () => {},
+        onError: () => {},
+        onUpdate: (u) => updates.push(u),
+        onRuntimeEvent: (e) => events.push(e),
+      });
+      try {
+        const id = await session.openThread(config);
+        await session.startTurn("task", config);
+        await flushAsyncWork();
+        fake.emitMessage(sdkErrorResult(id, { subtype, errors: [] }));
+        await flushAsyncWork();
+        expect(updates.at(-1)).toMatchObject({ status: "error", attention: "error" });
+        expect(events).toContainEqual(
+          expect.objectContaining({ type: "turn.completed", state: "failed" }),
+        );
+        expect(events).toContainEqual(expect.objectContaining({ type: "error" }));
+      } finally {
+        await session.dispose();
+      }
+    },
+  );
+
   it("keeps the thread working when the main result arrives while a background task is live", async () => {
     const fake = createFakeQuery();
     mockSdk.query.mockReturnValue(fake.runtime);
@@ -1566,71 +1704,53 @@ describe("ClaudeSdkSession", () => {
     }
   });
 
-  it("holds the working status behind a plain backgrounded command until the level signal drains", async () => {
-    vi.useFakeTimers();
+  it("completes the response while a detached server keeps running and accepts the next prompt", async () => {
+    const fake = createFakeQuery();
+    mockSdk.query.mockReturnValue(fake.runtime);
+    const updates: StructuredSessionUpdate[] = [];
+    const runtimeEvents: RuntimeEvent[] = [];
+    const session = await ClaudeSdkSession.create({
+      threadId: "thread-claude-bg-bash",
+      projectLocation,
+      config,
+      presentationMode: "gui",
+    });
+    session.setListener({
+      onRuntimeEvent: (event) => runtimeEvents.push(event),
+      onUpdate: (update) => updates.push(update),
+      onError: () => {},
+      onClose: () => {},
+    });
     try {
-      const fake = createFakeQuery();
-      mockSdk.query.mockReturnValue(fake.runtime);
-      const updates: StructuredSessionUpdate[] = [];
-      const runtimeEvents: RuntimeEvent[] = [];
-      const session = await ClaudeSdkSession.create({
-        threadId: "thread-claude-bg-bash",
-        projectLocation,
-        config,
-        presentationMode: "gui",
-      });
-      session.setListener({
-        onRuntimeEvent: (event) => runtimeEvents.push(event),
-        onUpdate: (update) => updates.push(update),
-        onError: () => {},
-        onClose: () => {},
-      });
-
-      const openedSessionId = await session.openThread(config);
-      await session.startTurn("run the suite in the background", config);
-      await vi.advanceTimersByTimeAsync(0);
-
-      // No `task_started` registers a sub-agent here: a backgrounded Bash is
-      // reported only through the `background_tasks_changed` level.
+      const id = await session.openThread(config);
+      await session.startTurn("start the development server", config);
+      await flushAsyncWork();
       fake.emitMessage(
-        sdkBackgroundTasksChanged(openedSessionId, [
-          { task_id: "bash-1", task_type: "local_bash", description: "pnpm test" },
+        sdkBackgroundTasksChanged(id, [
+          { task_id: "server-1", task_type: "local_bash", description: "pnpm dev" },
         ]),
       );
-      fake.emitMessage(sdkSuccessResult(openedSessionId));
-      await vi.advanceTimersByTimeAsync(0);
-      expect(updates.at(-1)).toMatchObject({ status: "working" });
-      expect(runtimeEvents).toContainEqual({
-        type: "background_tasks.changed",
-        threadId: "thread-claude-bg-bash",
-        tasks: [{ taskId: "bash-1", kind: "command", description: "pnpm test" }],
-      });
-      expect(session.getBackgroundTasks()).toEqual([
-        { taskId: "bash-1", kind: "command", description: "pnpm test" },
-      ]);
-
-      // Still working while the command runs — even well past the grace window.
-      await vi.advanceTimersByTimeAsync(60_000);
-      expect(updates.at(-1)).toMatchObject({ status: "working" });
-
-      fake.emitMessage(sdkBackgroundTasksChanged(openedSessionId, []));
-      await vi.advanceTimersByTimeAsync(0);
-      expect(runtimeEvents.at(-1)).toEqual({
-        type: "background_tasks.changed",
-        threadId: "thread-claude-bg-bash",
-        tasks: [],
-      });
-      expect(session.getBackgroundTasks()).toEqual([]);
-      // Held through the resume grace so a wake-up to consume the result keeps
-      // the thread continuously live; settles idle if nothing resumes.
-      await vi.advanceTimersByTimeAsync(4_999);
-      expect(updates.at(-1)).toMatchObject({ status: "working" });
-      await vi.advanceTimersByTimeAsync(1);
+      fake.emitMessage(sdkSuccessResult(id));
+      await flushAsyncWork();
       expect(updates.at(-1)).toMatchObject({ status: "idle", attention: "none" });
-
-      await session.dispose();
+      expect(session.getBackgroundTasks()).toEqual([
+        { taskId: "server-1", kind: "command", description: "pnpm dev" },
+      ]);
+      expect(runtimeEvents).toContainEqual(
+        expect.objectContaining({ type: "turn.completed", state: "completed" }),
+      );
+      await session.startTurn("next task", config);
+      await flushAsyncWork();
+      expect(updates.at(-1)).toMatchObject({ status: "working" });
+      fake.emitMessage(sdkBackgroundTasksChanged(id, []));
+      await flushAsyncWork();
+      expect(updates.at(-1)).toMatchObject({ status: "working" });
+      fake.emitMessage(sdkSuccessResult(id));
+      await flushAsyncWork();
+      expect(updates.at(-1)).toMatchObject({ status: "idle" });
+      expect(fake.runtime.interrupt).not.toHaveBeenCalled();
     } finally {
-      vi.useRealTimers();
+      await session.dispose();
     }
   });
 
@@ -1701,7 +1821,7 @@ describe("ClaudeSdkSession", () => {
     }
   });
 
-  it("preserves an error result through the deferral", async () => {
+  it("reports an error result immediately while a background subagent is still live", async () => {
     vi.useFakeTimers();
     try {
       const fake = createFakeQuery();
@@ -1726,7 +1846,7 @@ describe("ClaudeSdkSession", () => {
       fake.emitMessage(sdkTaskStarted(openedSessionId, "task-1", "toolu_bg1"));
       fake.emitMessage(sdkErrorResult(openedSessionId));
       await vi.advanceTimersByTimeAsync(0);
-      expect(updates.at(-1)).toMatchObject({ status: "working" });
+      expect(updates.at(-1)).toMatchObject({ status: "error", attention: "error" });
 
       fake.emitMessage(sdkTaskNotification(openedSessionId, "task-1"));
       await vi.advanceTimersByTimeAsync(5_000);
@@ -1816,7 +1936,7 @@ describe("ClaudeSdkSession", () => {
     expect(updates.at(-1)).toMatchObject({ status: "idle", attention: "none" });
   });
 
-  it("keeps a deferred error outcome intact across a suppressed session-state idle", async () => {
+  it("keeps an immediate error outcome intact across a subsequent session-state idle", async () => {
     const fake = createFakeQuery();
     mockSdk.query.mockReturnValue(fake.runtime);
     const updates: StructuredSessionUpdate[] = [];
@@ -1839,11 +1959,11 @@ describe("ClaudeSdkSession", () => {
     fake.emitMessage(sdkTaskStarted(openedSessionId, "task-1", "toolu_bg1"));
     fake.emitMessage(sdkErrorResult(openedSessionId));
     await flushAsyncWork();
-    expect(updates.at(-1)).toMatchObject({ status: "working" });
+    expect(updates.at(-1)).toMatchObject({ status: "error", attention: "error" });
 
     fake.emitMessage(sdkSystemMessage("session_state_changed", openedSessionId, { state: "idle" }));
     await flushAsyncWork();
-    expect(updates.at(-1)).toMatchObject({ status: "working" });
+    expect(updates.at(-1)).toMatchObject({ status: "error", attention: "error" });
 
     fake.emitMessage(sdkTaskNotification(openedSessionId, "task-1"));
     await flushAsyncWork();

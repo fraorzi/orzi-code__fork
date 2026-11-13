@@ -16,11 +16,6 @@ vi.mock("@/renderer/bridge", () => ({
   isRemoteSession: () => responsiveMenuState.mobile,
 }));
 
-vi.mock("@/renderer/components/common/ResponsiveMenuSurface", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/renderer/components/common/ResponsiveMenuSurface")>()),
-  useResponsiveMenu: () => ({ mobile: responsiveMenuState.mobile }),
-}));
-
 function project(id: string, name: string): Project {
   return {
     id,
@@ -257,7 +252,7 @@ describe("SidebarProjectFilter", () => {
       expect(screen.queryByRole("menuitem", { name: "Open terminal" })).not.toBeInTheDocument();
     });
 
-    it("keeps a disabled project available for re-enabling on mobile", async () => {
+    it("re-enables a disabled project through its desktop action menu", async () => {
       responsiveMenuState.mobile = true;
       const disabledProject = { ...projects[1]!, disabled: true };
       useAppStore.setState({ projects: [projects[0]!, disabledProject], threads: [] });

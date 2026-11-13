@@ -8,7 +8,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 const compilerPreset = reactCompilerPreset();
 const linguiPreset = linguiTransformerBabelPreset();
-const CLIENT_SOURCE_RE = /[\\/]src[\\/](?:renderer|mobile)[\\/].*\.[tj]sx?(?:$|\?)/;
+const CLIENT_SOURCE_RE = /[\\/]src[\\/]renderer[\\/].*\.[tj]sx?(?:$|\?)/;
 const DEFAULT_POSTHOG_HOST = "https://us.i.posthog.com";
 const MATERIAL_ICON_DIR = resolve(__dirname, "node_modules/material-icon-theme/icons");
 const MATERIAL_ICON_ASSET_PREFIX = "/assets/material-icons/";
@@ -60,8 +60,6 @@ const CLIENT_OPTIMIZED_DEPS = [
   "style-to-js",
   "use-sync-external-store",
   "use-sync-external-store/shim",
-  // zustand/react/shallow (useShallow) imports this shim; the mobile.html entry
-  // served by the default dev server crashes without it (noDiscovery skips it).
   "use-sync-external-store/shim/with-selector",
   "unified",
   "zod",
@@ -69,20 +67,6 @@ const CLIENT_OPTIMIZED_DEPS = [
   "zustand/middleware",
   "zustand/react/shallow",
   "zustand/shallow",
-  // Mobile-entry-only deps. The default dev server also serves mobile.html and
-  // noDiscovery skips anything not listed — the mobile PWA then crashes on raw
-  // CJS (e.g. dexie) or missing shims. Keep in sync with the mobile graph;
-  // compare against a one-off discovery-enabled cache when dependencies change.
-  "@aparajita/capacitor-secure-storage",
-  "@capacitor/app",
-  "@capacitor/core",
-  "@capacitor/push-notifications",
-  "@chenglou/pretext",
-  "@poracode/activity-bridge",
-  "@poracode/ssh-bridge",
-  "@tanstack/react-router",
-  "dexie",
-  "jsqr",
 ] as const;
 
 function readEnvValue(env: Record<string, string>, key: string): string {
@@ -112,19 +96,6 @@ const poracodeChannel = process.env.PORACODE_CHANNEL === "nightly" ? "nightly" :
 // Keep in sync with scripts/dev-server-port.mjs: smoke runs and parallel
 // worktrees override the dev-server port so isolated apps can run side by side.
 const devServerPort = Number.parseInt(process.env.PORACODE_DEV_SERVER_PORT ?? "", 10) || 3100;
-
-// Mobile-only build target (PORACODE_BUILD_TARGET=mobile) produces a
-// self-contained PWA bundle in dist/mobile for standalone hosting (Vercel),
-// omitting the desktop renderer entry. The default build emits both entries to
-// dist/renderer for the Electron app and its embedded remote-access server.
-const mobileOnly = process.env.PORACODE_BUILD_TARGET === "mobile";
-const vercelAnalyticsEnabled =
-  mobileOnly && ["preview", "production"].includes(process.env.VERCEL_ENV ?? "");
-const mobileBasePath = process.env.PORACODE_MOBILE_BASE_PATH?.trim() || "./";
-const mobileOutputPath =
-  mobileBasePath === "./"
-    ? "dist/mobile"
-    : `dist/mobile/${mobileBasePath.replace(/^\/+|\/+$/g, "")}`;
 
 // Dev-only: connect the renderer to the standalone React DevTools app for
 // inspecting/profiling rerenders. The React DevTools *browser extension* uses
@@ -227,56 +198,6 @@ function rendererBootstrapTiming(): Plugin {
   };
 }
 
-function mobileDevIndex(): Plugin {
-  return {
-    name: "poracode:mobile-dev-index",
-    apply: "serve",
-    configureServer(server) {
-      if (!mobileOnly) return;
-
-      server.middlewares.use((req, _res, next) => {
-        const [pathname, query] = (req.url ?? "").split("?", 2);
-        const acceptsHtml = req.headers.accept?.includes("text/html") ?? false;
-        const isClientRoute =
-          pathname === "/" ||
-          pathname === "/index.html" ||
-          (acceptsHtml &&
-            pathname !== "/mobile.html" &&
-            !pathname?.split("/").at(-1)?.includes("."));
-        if (isClientRoute) {
-          req.url = `/mobile.html${query ? `?${query}` : ""}`;
-        }
-        next();
-      });
-    },
-  };
-}
-
-function mobileSshRuntime(): Plugin {
-  return {
-    name: "poracode:mobile-ssh-runtime",
-    apply: "serve",
-    configureServer(server) {
-      if (!mobileOnly) return;
-      const root = resolve(process.cwd(), "resources/mobile-ssh-runtime");
-      server.middlewares.use((req, res, next) => {
-        const pathname = (req.url ?? "").split("?", 1)[0];
-        const name = pathname?.match(
-          /^\/poracode-ssh-runtime\/(manifest\.json|runtime\.bin)$/,
-        )?.[1];
-        if (!name) return next();
-        const path = resolve(root, name);
-        if (!path.startsWith(root) || !existsSync(path)) return next();
-        res.setHeader(
-          "Content-Type",
-          extname(path) === ".json" ? "application/json" : "application/octet-stream",
-        );
-        createReadStream(path).pipe(res);
-      });
-    },
-  };
-}
-
 function materialIconAssets(): Plugin[] {
   return [
     {
@@ -338,9 +259,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     tailwindcss(),
     resizeObserverLoopErrorFilter(),
-    mobileSshRuntime(),
     rendererBootstrapTiming(),
-    mobileDevIndex(),
     reactDevtoolsStandalone(),
     react(),
     // Babel applies presets right-to-left, so Lingui expands before the React
@@ -357,12 +276,10 @@ export default defineConfig(({ mode }) => ({
     lingui(),
     ...materialIconAssets(),
   ],
-  base: mobileOnly ? mobileBasePath : "./",
+  base: "./",
   define: {
     ...buildPostHogEnvDefines(mode),
     __PORACODE_CHANNEL__: JSON.stringify(poracodeChannel),
-    "import.meta.env.VITE_PORACODE_BUILD_TARGET": JSON.stringify(mobileOnly ? "mobile" : "desktop"),
-    "import.meta.env.VITE_VERCEL_ANALYTICS_ENABLED": JSON.stringify(vercelAnalyticsEnabled),
   },
   resolve: {
     tsconfigPaths: true,
@@ -370,12 +287,6 @@ export default defineConfig(({ mode }) => ({
       "~file-icons": MATERIAL_ICON_DIR,
     },
   },
-  // The default dev server (desktop index.html + mobile.html) and `dev:mobile`
-  // (mobile-only) run side by side in the dev:ios/dev:android flows and during
-  // local PWA verification. With one shared cacheDir their dep-optimizer states
-  // invalidate each other on every start, producing "504 Outdated Optimize Dep"
-  // for whichever server optimized first. Give each target its own cache.
-  cacheDir: mobileOnly ? "node_modules/.vite-mobile" : "node_modules/.vite",
   css: {
     // Tailwind's first-party Vite plugin handles app CSS. Keep the root
     // PostCSS config available to the standalone Next.js website without
@@ -383,17 +294,17 @@ export default defineConfig(({ mode }) => ({
     postcss: { plugins: [] },
   },
   optimizeDeps: {
-    // Both clients include intentionally deferred feature chunks. Re-crawling
-    // either graph on every Vite restart blocks the request queue even when
+    // The renderer includes intentionally deferred feature chunks. Re-crawling
+    // its graph on every Vite restart blocks the request queue even when
     // the optimized dependency cache is already valid.
     noDiscovery: true,
     include: [...CLIENT_OPTIMIZED_DEPS],
   },
   build: {
-    outDir: mobileOnly ? mobileOutputPath : "dist/renderer",
+    outDir: "dist/renderer",
     emptyOutDir: true,
     reportCompressedSize: false,
-    sourcemap: mobileOnly ? false : "hidden",
+    sourcemap: "hidden",
     // Filter modulePreload so the heaviest async chunks (shiki grammars,
     // @git-diff-view, xterm) are not parsed by V8 at startup. They load on
     // demand when the code path that needs them runs (first code block,
@@ -403,12 +314,7 @@ export default defineConfig(({ mode }) => ({
         deps.filter((dep) => !/(?:^|\/)(shiki-|git-diff-|xterm-|vendor-)/.test(dep)),
     },
     rolldownOptions: {
-      input: mobileOnly
-        ? { mobile: resolve(__dirname, "mobile.html") }
-        : {
-            index: resolve(__dirname, "index.html"),
-            mobile: resolve(__dirname, "mobile.html"),
-          },
+      input: { index: resolve(__dirname, "index.html") },
       output: {
         minify: {
           compress: {
@@ -470,11 +376,6 @@ export default defineConfig(({ mode }) => ({
               priority: 25,
             },
             {
-              name: "mobile-vendor",
-              test: /[\\/]node_modules[\\/](jsqr[\\/]|dexie[\\/]|@capacitor[\\/]|@aparajita[\\/]|@poracode[\\/](?:ssh|activity)-bridge[\\/]|@tanstack[\\/](?:react-router|router-core|history)[\\/])/,
-              priority: 20,
-            },
-            {
               // Catch-all for everything not handled above. Excludes
               // @shikijs/langs and @shikijs/themes so each grammar/theme
               // becomes its own auto-chunk (one per file actually used).
@@ -484,7 +385,7 @@ export default defineConfig(({ mode }) => ({
                 !/[\\/]@shikijs[\\/](?:langs|themes)[\\/]/.test(id),
               priority: 10,
             },
-          ].filter((group) => !mobileOnly || group.name === "ui" || group.name === "framework"),
+          ],
         },
       },
     },
@@ -497,16 +398,9 @@ export default defineConfig(({ mode }) => ({
         LEGACY_MANAGED_WORKTREES_GLOB,
         ELECTRON_OUTPUT_GLOB,
         ...TEMP_OUTPUT_GLOBS,
-        "**/ios/App/App/public/**",
-        "**/ios/DerivedData/**",
-        "**/ios/capacitor-cordova-ios-plugins/**",
-        "**/android/app/src/main/assets/public/**",
       ],
     },
-    // Bind all interfaces so phones on the LAN can load the mobile PWA
-    // (mobile.html) straight from the dev server with HMR; the remote access
-    // server redirects /app and /pair here in dev.
-    host: "0.0.0.0",
+    host: "127.0.0.1",
     port: devServerPort,
     strictPort: true,
   },

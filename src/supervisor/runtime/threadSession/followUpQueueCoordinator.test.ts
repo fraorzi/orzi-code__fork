@@ -28,6 +28,96 @@ function harness(initial: ThreadStatus = "working") {
 }
 
 describe("follow-up queue lifecycle", () => {
+  it.each(["completed", "cancelled"] as const)(
+    "records automatic quota recovery only after successful completion: %s",
+    async (outcome) => {
+      const h = harness("idle");
+      h.queue.pauseThread("thread");
+      await h.add("continue");
+      await h.queue.resumeThreadFollowUps("thread", { canResume: () => true, usageRecovery: true });
+      await flush();
+      h.begin("recovered");
+      h.queue.onStructuredRuntimeEvent(h.session, {
+        type: "item.started",
+        threadId: "thread",
+        itemId: "answer",
+        itemType: "assistant_message",
+      });
+      const receipts = () =>
+        h.emit.mock.calls
+          .map(([event]) => event)
+          .filter(
+            (event) => event.type === "thread-runtime-event" && event.event.type === "item.updated",
+          );
+      expect(receipts()).toEqual([]);
+      h.complete("recovered", outcome);
+      const expectedReceipt = expect.objectContaining({
+        event: {
+          type: "item.updated",
+          threadId: "thread",
+          itemId: "answer",
+          payload: { content: [], usageRecoveryResumedAt: expect.any(Number) },
+        },
+      });
+      expect(receipts()).toEqual(outcome === "completed" ? [expectedReceipt] : []);
+    },
+  );
+
+  it("does not turn a stopped quota resume into success after a manual restart", async () => {
+    const h = harness("idle");
+    h.queue.pauseThread("thread");
+    await h.add("continue");
+    await h.queue.resumeThreadFollowUps("thread", { canResume: () => true, usageRecovery: true });
+    h.queue.pauseThread("thread");
+    await h.queue.resumeThreadFollowUps("thread");
+    await flush();
+    h.begin("manual");
+    h.complete("manual");
+    expect(h.emit.mock.calls.some(([event]) => event.type === "thread-runtime-event")).toBe(false);
+  });
+
+  it("preserves authoritative final message content when adding the recovery receipt", async () => {
+    const h = harness("idle");
+    h.queue.pauseThread("thread");
+    await h.add("continue");
+    await h.queue.resumeThreadFollowUps("thread", { canResume: () => true, usageRecovery: true });
+    await flush();
+    h.begin("recovered");
+    h.queue.onStructuredRuntimeEvent(h.session, {
+      type: "item.started",
+      threadId: "thread",
+      itemId: "answer",
+      itemType: "assistant_message",
+    });
+    h.queue.onStructuredRuntimeEvent(h.session, {
+      type: "item.completed",
+      threadId: "thread",
+      itemId: "answer",
+      payload: {
+        content: [{ kind: "text", text: "Final display hook content" }],
+        displayAuthoritative: true,
+      },
+    });
+    h.complete("recovered");
+    const receipt = h.emit.mock.calls
+      .map(([event]) => event)
+      .find((event) => event.type === "thread-runtime-event");
+    expect(receipt).toMatchObject({
+      event: { payload: { usageRecoveryResumedAt: expect.any(Number) } },
+    });
+    expect(
+      receipt && "event" in receipt && "payload" in receipt.event ? receipt.event.payload : null,
+    ).not.toHaveProperty("content");
+  });
+  it("keeps an unadmitted original instead of adding a second recovery prompt", async () => {
+    const h = harness("idle");
+    await h.add("original task");
+    await flush();
+    h.status("error");
+    h.queue.stageUsageContinuation(h.session, "continue interrupted task");
+    expect(h.state()?.items.map((item) => item.prompt)).toEqual(["original task"]);
+  });
+
   it("moves a pending message by ID without dropping concurrent additions or its metadata", async () => {
     const h = harness();
     await h.add("first");

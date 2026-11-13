@@ -83,10 +83,15 @@ function createManager(
     kind: "powershell" as const,
     args: ["-NoLogo"],
   }),
+  usageOptions: Pick<
+    ConstructorParameters<typeof ThreadSessionManager>[0],
+    "readUsageSnapshot"
+  > = {},
 ): ThreadSessionManager {
   const tempDir = mkdtempSync(join(tmpdir(), "poracode-start-close-"));
   tempDirs.push(tempDir);
   const manager = new ThreadSessionManager({
+    ...usageOptions,
     emit,
     isDev: false,
     logsDir: join(tempDir, "logs"),
@@ -320,6 +325,39 @@ describe("ThreadSessionManager start guards", () => {
       );
     },
   );
+
+  it("holds an initial launch prompt without deadlocking on its own start lock", async () => {
+    const structuredSession = createStructuredSession(Promise.resolve());
+    structuredSession.startTurn = vi.fn<NonNullable<StructuredSessionHandle["startTurn"]>>(
+      async () => undefined,
+    );
+    const adapter = createAdapter("test-agent", structuredSession);
+    adapter.usageProviderId = "test-account";
+    adapter.usageRecovery = { isLimitError: () => true, windowIds: () => ["session-5h"] };
+    const manager = createManager("test-agent", adapter, undefined, undefined, {
+      readUsageSnapshot: () => ({
+        providerId: "test-account",
+        status: "ok",
+        fetchedAt: Date.now(),
+        windows: [{ id: "session-5h", label: "5h", usedPercent: 100 }],
+      }),
+    });
+    await manager.startThread({
+      threadId: "held-launch",
+      projectLocation: { kind: "windows", path: "C:\\repo" },
+      agentKind: "test-agent",
+      config: { model: "test-model", autoResumeAfterLimit: true },
+      prompt: "held initial task",
+      userMessageItemId: "initial-user",
+      initialSize: { cols: 80, rows: 24 },
+      presentationMode: "gui",
+    });
+    expect(structuredSession.startTurn).not.toHaveBeenCalled();
+    expect(manager.getThreadFollowUpQueue("held-launch")).toMatchObject({
+      waitingForLimit: true,
+      items: [{ prompt: "held initial task" }],
+    });
+  });
 
   it("only reopens history when a resumed GUI launch has no prompt", async () => {
     const structuredSession = createStructuredSession(Promise.resolve());

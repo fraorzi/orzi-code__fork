@@ -23,8 +23,7 @@ import {
 
 /**
  * Host home dir without `node:os` — sandboxed preload must not import Node
- * built-ins that can fail and drop `window.poracode` (index.html then redirects
- * to mobile.html).
+ * built-ins that can fail and drop `window.poracode`.
  */
 function resolveHomeDir(): string | undefined {
   const env = process.env;

@@ -70,7 +70,7 @@ Shared provider utilities live at the `providers/` root:
 - `commitGen.ts`, `titleGen.ts`, `conflictResolver.ts` — Feature-owned defaults and execution
 
 Import these leaf modules directly inside renderer features. The providers barrel
-does not bootstrap registrations; desktop and mobile entrypoints explicitly load
+does not bootstrap registrations; the desktop entrypoint explicitly loads
 `bootstrap.ts`, keeping pure utility imports and Node tests free of provider TSX
 side effects.
 

@@ -79,10 +79,15 @@ export function mapResultState(message: Extract<SDKMessage, { type: "result" }>)
   if (isApiErrorResult(message)) return "failed";
   if (message.subtype === "success") return "completed";
   const filtered = nonDiagnosticErrors(message);
-  // All errors were diagnostics — claude.exe was interrupted before producing
-  // assistant content. Treat it as a user-initiated interrupt rather than a
-  // failure (the diagnostic itself is informational).
-  if (filtered.length === 0) return "interrupted";
+  // A diagnostic-only execution result acknowledges interruption. Missing
+  // error details on an error result do not establish that the user stopped it.
+  if (
+    message.subtype === "error_during_execution" &&
+    Array.isArray(message.errors) &&
+    message.errors.length > 0 &&
+    filtered.length === 0
+  )
+    return "interrupted";
   const joined = filtered.join(" ").toLowerCase();
   if (joined.includes("abort") || joined.includes("interrupt")) return "interrupted";
   if (joined.includes("cancel")) return "cancelled";

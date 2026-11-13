@@ -1,3 +1,4 @@
+import type { AuxiliaryGenerationMeasurement } from "../auxiliaryUsage";
 import type { OscShellEvent } from "../osc";
 import type { LiveVoiceEvent } from "../contracts/liveVoice";
 import type { LspSessionStatus } from "../lsp";
@@ -37,6 +38,7 @@ export type SupervisorReply =
   | { replyTo: string; ok: false; error: string };
 
 export type SupervisorEvent =
+  | { type: "auxiliary-generation"; measurement: AuxiliaryGenerationMeasurement }
   | {
       type: "crossagent-routing-override-changed";
       requestId: string;

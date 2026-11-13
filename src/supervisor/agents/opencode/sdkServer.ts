@@ -1,4 +1,5 @@
 import { spawn, type ChildProcess } from "node:child_process";
+import { protectTransportPort } from "../base/transportPorts";
 import { terminateChildProcessTree } from "@/shared/processTree";
 import { ExpectedStructuredRuntimeError, type CommandSpec } from "../base";
 import { classifyOpenCodeError } from "./opencodeErrors";
@@ -85,6 +86,7 @@ export function spawnOpenCodeServer(commandSpec: CommandSpec): OpenCodeServerHan
   let stdoutBuf = "";
   let stderrBuf = "";
   let baseUrl: string | undefined;
+  let releaseTransportPort: (() => void) | undefined;
   let pending: PendingResolve | undefined;
 
   const baseUrlPromise = new Promise<string>((resolve, reject) => {
@@ -98,6 +100,7 @@ export function spawnOpenCodeServer(commandSpec: CommandSpec): OpenCodeServerHan
     );
   });
   child.once("exit", (code, signal) => {
+    releaseTransportPort?.();
     activeServerChildren.delete(child);
     if (!baseUrl) {
       const detail = formatOutput();
@@ -144,6 +147,7 @@ export function spawnOpenCodeServer(commandSpec: CommandSpec): OpenCodeServerHan
       const m = line.match(URL_REGEX);
       if (m && m[1]) {
         baseUrl = m[1];
+        releaseTransportPort = protectTransportPort(baseUrl);
         clearTimeout(readyTimeout);
         pending?.resolve(baseUrl);
         return;
@@ -174,6 +178,7 @@ export function spawnOpenCodeServer(commandSpec: CommandSpec): OpenCodeServerHan
   async function dispose(): Promise<void> {
     if (disposed) return;
     disposed = true;
+    releaseTransportPort?.();
     clearTimeout(readyTimeout);
     if (child.exitCode !== null || child.killed) return;
 

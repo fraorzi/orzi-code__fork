@@ -601,7 +601,7 @@ describe("ComposerAddMenu", () => {
       />,
     );
 
-    // Remote session renders the mobile bottom-sheet; open it and drill in.
+    // Open the desktop menu and its plugins submenu.
     fireEvent.click(screen.getByRole("button", { name: "Add attachment or capability" }));
     act(() => {
       fireEvent.click(screen.getByText("Plugins"));
