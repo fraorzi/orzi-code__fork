@@ -4,7 +4,7 @@ Osobisty fork Poracode. Zakres: desktop Electron, interfejs i generowany tekst P
 
 ## Zasady kontynuacji
 
-- Zachowaj istniejące zmiany robocze i indeks. Commit/push wymagają osobnego polecenia użytkownika.
+- Stan Git i commitowanie: stosuj [AGENTS.md](../../AGENTS.md). Polecenie użytkownika z 2026-11-13 zastępuje wcześniejszą blokadę commitów; historyczne notatki opisują stan z dnia ich sporządzenia.
 - Zachowaj historię użytkownika. Import historii jest wykonany; nie przywracaj automatycznego kasowania archiwum po 30 dniach.
 - Zachowaj wszystkich providerów i funkcje desktopu, w tym SSH, WSL, przeglądarkę, computer-use, zespoły, zdalne połączenia desktopu i lokalne aktualizacje.
 - Produkcyjna aplikacja i jej profil nie służą do QA. Używaj izolowanego profilu i portów. Instalacja przygotowanych paczek odbywa się zielonym przyciskiem po zakończeniu zadań.

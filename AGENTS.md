@@ -11,6 +11,7 @@ Desktop Electron fork of Poracode. Read [the current handoff](docs/fork/HANDOFF.
 - Preserve desktop providers, SSH/WSL, browser tools, computer-use, teams, history and local updates. Removing another feature requires a user request.
 - `website/` is a separate project with its own lockfile and checks. Work there only for an explicit website task; desktop installation, lint and formatting exclude it.
 - Preserve existing worktree and index changes. Keep scratch files under `tmp/` or `.tmp/`.
+- Commit each completed logical change separately after the relevant checks, without waiting for another user request. Include only changes belonging to the current task. Report commit hashes and any remaining uncommitted changes. Push requires an explicit user request.
 - Respond concisely in Polish. Use only ASCII hyphen-minus (-), never typographic dashes.
 - Prefer inline expressions for simple single-use values. Extract values when reuse, domain meaning, readability, cost or typing warrants it.
 - If a build requires internet and access is unavailable, do not run it.
